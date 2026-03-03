@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import KPICard from "@/components/KPICard";
 import {
   Box, DollarSign, Layers, TrendingUp, FileText, Megaphone, Lightbulb,
-  AlertTriangle, MapPin, RefreshCw, ChevronRight, Activity, Bell,
+  AlertTriangle, MapPin, RefreshCw, ChevronRight, Activity, Bell, X, Rocket,
 } from "lucide-react";
 
 interface DashboardProps {
@@ -177,6 +177,14 @@ const DashboardSection = ({ onNavigate }: DashboardProps) => {
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const [expandedAnomaly, setExpandedAnomaly] = useState<number | null>(null);
+  const [campaignModal, setCampaignModal] = useState<typeof anomalies[0] | null>(null);
+  const [campaignLaunched, setCampaignLaunched] = useState(false);
+  const [campaignForm, setCampaignForm] = useState({
+    budget: "25000",
+    duration: "7",
+    platforms: ["Amazon", "Flipkart"] as string[],
+    bidStrategy: "aggressive",
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -341,7 +349,10 @@ const DashboardSection = ({ onNavigate }: DashboardProps) => {
                     >
                       Go to {a.kpi} Module →
                     </button>
-                    <button className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-muted transition-colors">
+                    <button
+                      onClick={() => { setCampaignModal(a); setCampaignLaunched(false); }}
+                      className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-muted transition-colors"
+                    >
                       Launch Campaign
                     </button>
                   </div>
@@ -389,6 +400,150 @@ const DashboardSection = ({ onNavigate }: DashboardProps) => {
             );
           })}
         </div>
+      </div>
+      {/* Campaign Modal */}
+      {campaignModal && (
+        <CampaignLaunchModal
+          anomaly={campaignModal}
+          form={campaignForm}
+          setForm={setCampaignForm}
+          launched={campaignLaunched}
+          setLaunched={setCampaignLaunched}
+          onClose={() => setCampaignModal(null)}
+        />
+      )}
+    </div>
+  );
+};
+
+/* Campaign Launch Modal */
+const CampaignLaunchModal = ({
+  anomaly, form, setForm, launched, setLaunched, onClose
+}: {
+  anomaly: typeof anomalies[0];
+  form: { budget: string; duration: string; platforms: string[]; bidStrategy: string };
+  setForm: (f: any) => void;
+  launched: boolean;
+  setLaunched: (v: boolean) => void;
+  onClose: () => void;
+}) => {
+  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "BigBasket"];
+  const togglePlatform = (p: string) => {
+    setForm({ ...form, platforms: form.platforms.includes(p) ? form.platforms.filter((x: string) => x !== p) : [...form.platforms, p] });
+  };
+
+  const kpiToStrategy: Record<string, { strategy: string; type: string; keywords: string[] }> = {
+    Availability: { strategy: "Back in Stock Blitz", type: "Push Notification + Sponsored Display", keywords: ["back in stock", anomaly.brand.toLowerCase(), anomaly.sku.split('(')[1]?.replace(')', '').trim().toLowerCase() || "product"].filter(Boolean) },
+    Pricing: { strategy: "Price Defense Campaign", type: "Sponsored Brand + Keyword Conquesting", keywords: ["best price " + anomaly.brand.toLowerCase(), "cheap " + (anomaly.sku.split('(')[1]?.replace(')', '').trim().toLowerCase() || "product"), "deal " + anomaly.brand.toLowerCase()] },
+    "Market Share": { strategy: "Rank Recovery Assault", type: "Exact Match + Category Targeting", keywords: [anomaly.sku.split('(')[1]?.replace(')', '').trim().toLowerCase() || "product", "best " + (anomaly.sku.split('(')[1]?.replace(')', '').trim().toLowerCase() || "product"), anomaly.brand.toLowerCase() + " vs competitor"] },
+    Content: { strategy: "Review Recovery Campaign", type: "Vine + Follow-Up Email", keywords: [anomaly.brand.toLowerCase(), anomaly.sku.split('(')[1]?.replace(')', '').trim().toLowerCase() || "product"] },
+    SoS: { strategy: "Share Capture Blitz", type: "Sponsored Products + Display Ads", keywords: ["best " + (anomaly.sku.split('(')[1]?.replace(')', '').trim().toLowerCase() || "product"), anomaly.brand.toLowerCase()] },
+  };
+
+  const strat = kpiToStrategy[anomaly.kpi] || kpiToStrategy["Availability"];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-fade-in" onClick={onClose}>
+      <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h2 className="font-heading font-bold text-foreground text-lg">Launch Campaign</h2>
+            <p className="text-xs text-muted-foreground">{anomaly.kpi} response for {anomaly.brand} — {anomaly.location}</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="h-4 w-4 text-muted-foreground" /></button>
+        </div>
+
+        {!launched ? (
+          <div className="p-6 space-y-5">
+            <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+              <p className="text-xs font-bold text-destructive uppercase tracking-wider mb-1">Anomaly Context</p>
+              <p className="text-sm text-foreground">{anomaly.detail}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Strategy</p>
+                <p className="text-sm font-bold text-foreground">{strat.strategy}</p>
+              </div>
+              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Campaign Type</p>
+                <p className="text-sm font-bold text-foreground">{strat.type}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Target Keywords</p>
+              <div className="flex flex-wrap gap-1.5">
+                {strat.keywords.map((kw, i) => (
+                  <span key={i} className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">{kw}</span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Platforms</p>
+              <div className="flex flex-wrap gap-2">
+                {allPlatforms.map(p => (
+                  <button key={p} onClick={() => togglePlatform(p)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${form.platforms.includes(p) ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Daily Budget (₹)</label>
+                <input type="number" value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Duration (days)</label>
+                <input type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Bid Strategy</p>
+              <div className="flex gap-2">
+                {[{ id: "aggressive", label: "Aggressive" }, { id: "balanced", label: "Balanced" }, { id: "conservative", label: "Conservative" }].map(b => (
+                  <button key={b.id} onClick={() => setForm({ ...form, bidStrategy: b.id })}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${form.bidStrategy === b.id ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}>
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-success/5 border border-success/20">
+              <p className="text-[10px] text-success uppercase font-bold tracking-wider mb-1">Estimated Impact</p>
+              <p className="text-sm font-bold text-foreground">₹{(parseInt(form.budget) * parseInt(form.duration) * 3.7 / 1000).toFixed(1)}L projected revenue • {parseInt(form.duration)}-day campaign across {form.platforms.length} platforms</p>
+            </div>
+            <button onClick={() => setLaunched(true)}
+              className="w-full py-3 gradient-primary text-primary-foreground rounded-lg font-bold shadow-card hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+              <Rocket className="h-4 w-4" /> Launch Campaign
+            </button>
+          </div>
+        ) : (
+          <div className="p-6 text-center space-y-4">
+            <div className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
+              <Rocket className="h-8 w-8 text-success" />
+            </div>
+            <h3 className="font-heading font-bold text-foreground text-lg">Campaign Launched!</h3>
+            <p className="text-sm text-muted-foreground">{strat.strategy} is now live across {form.platforms.join(", ")} targeting {anomaly.brand} {anomaly.sku}.</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="p-2 bg-muted/50 rounded-lg border border-border text-center">
+                <p className="text-[10px] text-muted-foreground uppercase font-bold">Budget</p>
+                <p className="text-sm font-bold text-foreground">₹{form.budget}/day</p>
+              </div>
+              <div className="p-2 bg-muted/50 rounded-lg border border-border text-center">
+                <p className="text-[10px] text-muted-foreground uppercase font-bold">Duration</p>
+                <p className="text-sm font-bold text-foreground">{form.duration} days</p>
+              </div>
+              <div className="p-2 bg-muted/50 rounded-lg border border-border text-center">
+                <p className="text-[10px] text-muted-foreground uppercase font-bold">Platforms</p>
+                <p className="text-sm font-bold text-foreground">{form.platforms.length}</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="w-full py-2.5 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-muted transition-colors">Close</button>
+          </div>
+        )}
       </div>
     </div>
   );
