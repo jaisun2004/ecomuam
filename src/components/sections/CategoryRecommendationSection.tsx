@@ -1,3 +1,33 @@
+import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
+import { Target, Zap } from "lucide-react";
+
+const categoryTriggers: CampaignTrigger[] = [
+  {
+    id: "cat-1",
+    signal: "Whitespace detected: Mango Chilli variant",
+    signalDetail: "High demand (45K monthly searches) with only 2 niche competitors — launch window open",
+    strategy: "New Product Launch Blitz",
+    campaignType: "Sponsored Product + Video Ads + Display",
+    platforms: ["Amazon", "Flipkart", "Blinkit", "Zepto"],
+    keywords: ["mango chilli drink", "spicy mango", "tangy fruit drink", "new energy drink"],
+    estimatedImpact: "Capture 15% category share in first 30 days at ₹50 price point",
+    urgency: "high",
+    icon: <Zap className="h-4 w-4 text-warning" />,
+  },
+  {
+    id: "cat-2",
+    signal: "Competitor delisted Cola 1.5L variant",
+    signalDetail: "Competitor A removed their Cola 1.5L — opportunity to capture their search traffic",
+    strategy: "Competitor Delist Capture",
+    campaignType: "Keyword Targeting on competitor brand terms",
+    platforms: ["Amazon", "Flipkart"],
+    keywords: ["cola 1.5l", "large cola bottle", "party cola", "cola family pack"],
+    estimatedImpact: "+₹2.8L revenue from competitor's abandoned traffic",
+    urgency: "critical",
+    icon: <Target className="h-4 w-4 text-destructive" />,
+  },
+];
+
 const flavorOpportunities = [
   { label: 'Mango Chilli', demand: 85, competition: 20, potential: 'High' as const },
   { label: 'Blueberry Mint', demand: 78, competition: 35, potential: 'High' as const },
@@ -16,8 +46,10 @@ const CategoryRecommendationSection = () => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-heading font-bold text-foreground">Category & New Product Development</h1>
-        <p className="text-muted-foreground text-sm mt-1">Identify whitespace opportunities, optimize assortment, and plan NPD</p>
+        <p className="text-muted-foreground text-sm mt-1">Identify whitespace opportunities, optimize assortment, and auto-trigger launch campaigns</p>
       </div>
+
+      <CampaignTriggerPanel triggers={categoryTriggers} title="Category & NPD Campaign Triggers" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Hero Card */}

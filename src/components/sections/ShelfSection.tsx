@@ -1,5 +1,6 @@
 import KPICard from "@/components/KPICard";
-import { Layers, Eye, Search, TrendingUp } from "lucide-react";
+import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
+import { Layers, Eye, Search, TrendingUp, Target, Shield } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend, BarChart, Bar,
 } from "recharts";
@@ -46,6 +47,33 @@ const categoryShare = [
   { category: "Household", you: 22, compA: 18, compB: 22, compC: 16 },
 ];
 
+const campaignTriggers: CampaignTrigger[] = [
+  {
+    id: "shelf-1",
+    signal: "Lost #1 organic rank on 'Face Wash'",
+    signalDetail: "Competitor A overtook your organic position with aggressive SEO + sponsored ads",
+    strategy: "Rank Recovery Blitz",
+    campaignType: "Sponsored Product Ads (exact match)",
+    platforms: ["Amazon", "Flipkart"],
+    keywords: ["face wash", "face cleanser", "best face wash", "face wash for oily skin"],
+    estimatedImpact: "Recover #1 rank in 5-7 days, protect ₹3.8L weekly revenue",
+    urgency: "critical",
+    icon: <Target className="h-4 w-4 text-destructive" />,
+  },
+  {
+    id: "shelf-2",
+    signal: "Competitor reducing ad spend on Shampoo",
+    signalDetail: "Competitor B sponsored visibility dropped 40% this week — opportunity to gain shelf share",
+    strategy: "Ad Gap Exploitation",
+    campaignType: "Category Targeting + Sponsored Display",
+    platforms: ["Amazon", "Blinkit", "BigBasket"],
+    keywords: ["shampoo", "anti dandruff shampoo", "hair care", "natural shampoo"],
+    estimatedImpact: "+8% shelf share in Shampoo category",
+    urgency: "high",
+    icon: <Shield className="h-4 w-4 text-warning" />,
+  },
+];
+
 const RankRow = ({ items, label }: { items: typeof organicRanks; label: string }) => (
   <div className="rounded-xl border bg-card shadow-card p-5">
     <h3 className="font-heading font-semibold text-foreground mb-1">{label}</h3>
@@ -64,8 +92,7 @@ const RankRow = ({ items, label }: { items: typeof organicRanks; label: string }
             </div>
             <div className={`text-xs font-bold px-2 py-1 rounded-full ${
               item.change < 0 ? 'bg-destructive/10 text-destructive' :
-              item.change > 0 ? 'bg-success/10 text-success' :
-              'bg-muted text-muted-foreground'
+              item.change > 0 ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'
             }`}>
               {item.change > 0 ? '▲' : item.change < 0 ? '▼' : '−'} {Math.abs(item.change)}
             </div>
@@ -81,7 +108,7 @@ const ShelfSection = () => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-heading font-bold text-foreground">Share of Shelf</h1>
-        <p className="text-muted-foreground text-sm mt-1">Measure digital shelf visibility across search results and category pages</p>
+        <p className="text-muted-foreground text-sm mt-1">Measure digital shelf visibility and auto-trigger campaigns to reclaim lost positions</p>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -90,6 +117,9 @@ const ShelfSection = () => {
         <KPICard title="Sponsored Share" value="16%" change={-2} changeLabel="ad placements" icon={<Search className="h-5 w-5" />} variant="warning" />
         <KPICard title="Keywords Tracked" value="342" change={8} changeLabel="active keywords" icon={<TrendingUp className="h-5 w-5" />} />
       </div>
+
+      {/* Campaign Triggers */}
+      <CampaignTriggerPanel triggers={campaignTriggers} title="Shelf-Based Campaign Triggers" />
 
       {/* Organic + Sponsored Rank Trackers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -106,10 +136,7 @@ const ShelfSection = () => {
             {shareBreakdown.map((item, idx) => (
               <div key={idx} className="flex flex-col items-center">
                 <div className="relative w-16 bg-muted rounded-t-lg overflow-hidden border border-border border-b-0" style={{ height: '140px' }}>
-                  <div
-                    className="absolute bottom-0 left-0 right-0 transition-all duration-500 rounded-t-lg"
-                    style={{ height: `${item.value}%`, backgroundColor: item.color }}
-                  ></div>
+                  <div className="absolute bottom-0 left-0 right-0 transition-all duration-500 rounded-t-lg" style={{ height: `${item.value}%`, backgroundColor: item.color }}></div>
                 </div>
                 <span className="mt-2 text-xl font-bold text-foreground">{item.value}%</span>
                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">{item.type}</span>
@@ -155,7 +182,6 @@ const ShelfSection = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-
         <div className="rounded-xl border bg-card shadow-card p-5">
           <h3 className="font-heading font-semibold text-foreground mb-4">Keyword Visibility: You vs Competition</h3>
           <ResponsiveContainer width="100%" height={280}>

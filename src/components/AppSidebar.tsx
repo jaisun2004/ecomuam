@@ -53,7 +53,7 @@ const AppSidebar = ({ activeSection, onSectionChange }: SidebarProps) => {
       <div className="px-5 py-5 flex items-center gap-2.5">
         <Activity className="h-7 w-7 text-sidebar-primary" />
         <span className="font-heading text-lg font-bold text-sidebar-primary-foreground tracking-tight">
-          EcomIntel
+          MarketLift AI
         </span>
       </div>
 

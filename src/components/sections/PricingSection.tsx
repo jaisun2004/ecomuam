@@ -1,75 +1,38 @@
 import { useState } from "react";
 import KPICard from "@/components/KPICard";
 import ActionableList, { ActionItem } from "@/components/ActionableList";
-import { DollarSign, TrendingDown, TrendingUp, BarChart3 } from "lucide-react";
+import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
+import { DollarSign, TrendingDown, TrendingUp, BarChart3, Target, Shield } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend,
 } from "recharts";
 
 const pricingActions = [
-  {
-    type: 'COMPETITIVE',
-    title: 'Price Competitive',
-    subtitle: 'Index < 98 vs. Market',
-    skus: ['SKU-101 (Energy)', 'SKU-404 (Bar)'],
-    recommendation: 'Increase Bids (+15%) to capture demand.',
-    actionLabel: 'Boost Bids',
-  },
-  {
-    type: 'UNCOMPETITIVE',
-    title: 'Price Uncompetitive',
-    subtitle: 'Index > 110 vs. Market',
-    skus: ['SKU-300 (Tea)', 'SKU-505 (Mix)'],
-    recommendation: 'Reduce Bids (-25%) to protect margin.',
-    actionLabel: 'Reduce Spend',
-  },
-  {
-    type: 'DEFENSIVE',
-    title: 'Competitor Price Cut',
-    subtitle: 'Comp A dropped >15%',
-    skus: ['SKU-205 (Hydrate)'],
-    recommendation: 'Trigger defensive ad placement.',
-    actionLabel: 'Defend Now',
-  }
+  { type: 'COMPETITIVE', title: 'Price Competitive', subtitle: 'Index < 98 vs. Market', skus: ['SKU-101 (Energy)', 'SKU-404 (Bar)'], recommendation: 'Increase Bids (+15%) to capture demand.', actionLabel: 'Boost Bids' },
+  { type: 'UNCOMPETITIVE', title: 'Price Uncompetitive', subtitle: 'Index > 110 vs. Market', skus: ['SKU-300 (Tea)', 'SKU-505 (Mix)'], recommendation: 'Reduce Bids (-25%) to protect margin.', actionLabel: 'Reduce Spend' },
+  { type: 'DEFENSIVE', title: 'Competitor Price Cut', subtitle: 'Comp A dropped >15%', skus: ['SKU-205 (Hydrate)'], recommendation: 'Trigger defensive ad placement.', actionLabel: 'Defend Now' }
 ];
 
 const elasticityData: Record<string, { price: number; volume: number; confidence: number }[]> = {
   'SKU-101': [
-    { price: -20, volume: 48, confidence: 5 },
-    { price: -15, volume: 32, confidence: 4 },
-    { price: -10, volume: 18, confidence: 3 },
-    { price: -5, volume: 8, confidence: 2 },
-    { price: 0, volume: 0, confidence: 0 },
-    { price: 5, volume: -12, confidence: 3 },
-    { price: 10, volume: -28, confidence: 5 },
-    { price: 15, volume: -45, confidence: 7 },
-    { price: 20, volume: -60, confidence: 9 },
+    { price: -20, volume: 48, confidence: 5 }, { price: -15, volume: 32, confidence: 4 }, { price: -10, volume: 18, confidence: 3 },
+    { price: -5, volume: 8, confidence: 2 }, { price: 0, volume: 0, confidence: 0 }, { price: 5, volume: -12, confidence: 3 },
+    { price: 10, volume: -28, confidence: 5 }, { price: 15, volume: -45, confidence: 7 }, { price: 20, volume: -60, confidence: 9 },
   ],
   'SKU-205': [
-    { price: -20, volume: 25, confidence: 6 },
-    { price: -15, volume: 18, confidence: 5 },
-    { price: -10, volume: 12, confidence: 4 },
-    { price: -5, volume: 5, confidence: 2 },
-    { price: 0, volume: 0, confidence: 0 },
-    { price: 5, volume: -4, confidence: 2 },
-    { price: 10, volume: -10, confidence: 4 },
-    { price: 15, volume: -18, confidence: 6 },
-    { price: 20, volume: -28, confidence: 8 },
+    { price: -20, volume: 25, confidence: 6 }, { price: -15, volume: 18, confidence: 5 }, { price: -10, volume: 12, confidence: 4 },
+    { price: -5, volume: 5, confidence: 2 }, { price: 0, volume: 0, confidence: 0 }, { price: 5, volume: -4, confidence: 2 },
+    { price: 10, volume: -10, confidence: 4 }, { price: 15, volume: -18, confidence: 6 }, { price: 20, volume: -28, confidence: 8 },
   ]
 };
 
 const priceDistribution = [
-  { range: "₹0-100", own: 12, competitor: 18 },
-  { range: "₹100-300", own: 28, competitor: 22 },
-  { range: "₹300-500", own: 35, competitor: 30 },
-  { range: "₹500-1K", own: 18, competitor: 20 },
-  { range: "₹1K+", own: 7, competitor: 10 },
+  { range: "₹0-100", own: 12, competitor: 18 }, { range: "₹100-300", own: 28, competitor: 22 },
+  { range: "₹300-500", own: 35, competitor: 30 }, { range: "₹500-1K", own: 18, competitor: 20 }, { range: "₹1K+", own: 7, competitor: 10 },
 ];
 
 const priceTrend = [
-  { date: "Jan", avgPrice: 342, competitorAvg: 355 },
-  { date: "Feb", avgPrice: 338, competitorAvg: 350 },
-  { date: "Mar", avgPrice: 345, competitorAvg: 348 },
+  { date: "Jan", avgPrice: 342, competitorAvg: 355 }, { date: "Feb", avgPrice: 338, competitorAvg: 350 }, { date: "Mar", avgPrice: 345, competitorAvg: 348 },
 ];
 
 const priceActionItems: ActionItem[] = [
@@ -80,6 +43,33 @@ const priceActionItems: ActionItem[] = [
   { id: "5", severity: "success", title: "Price parity achieved", description: "All Beverages SKUs now within 2% across all platforms", metric: "±2%", action: "Monitor" },
 ];
 
+const campaignTriggers: CampaignTrigger[] = [
+  {
+    id: "price-1",
+    signal: "Competitor A slashed prices 15% on Hydration",
+    signalDetail: "Comp A dropped prices on 4 hydration SKUs across Amazon & Flipkart — likely clearing inventory",
+    strategy: "Defensive Brand Protection",
+    campaignType: "Sponsored Brand + Video Ads",
+    platforms: ["Amazon", "Flipkart", "Blinkit"],
+    keywords: ["electrolyte water", "hydration drink", "sports drink", "ORS drink"],
+    estimatedImpact: "Protect ₹5.2L weekly revenue from share erosion",
+    urgency: "critical",
+    icon: <Shield className="h-4 w-4 text-destructive" />,
+  },
+  {
+    id: "price-2",
+    signal: "Your SKUs 15% cheaper than competition",
+    signalDetail: "Energy drink range priced significantly below market — high bid opportunity",
+    strategy: "Price Advantage Amplification",
+    campaignType: "Keyword Bidding + Display Ads",
+    platforms: ["Amazon", "Flipkart", "Zepto"],
+    keywords: ["cheap energy drink", "affordable caffeine", "energy drink deal", "energy drink offer"],
+    estimatedImpact: "+22% conversion rate, ₹4.8L incremental revenue",
+    urgency: "high",
+    icon: <Target className="h-4 w-4 text-warning" />,
+  },
+];
+
 const PricingSection = () => {
   const [selectedSku, setSelectedSku] = useState<'SKU-101' | 'SKU-205'>('SKU-101');
   const currentElasticity = elasticityData[selectedSku];
@@ -88,7 +78,7 @@ const PricingSection = () => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-heading font-bold text-foreground">Pricing Analysis & Analytics</h1>
-        <p className="text-muted-foreground text-sm mt-1">Track pricing trends, detect MAP violations, and optimize competitive pricing</p>
+        <p className="text-muted-foreground text-sm mt-1">Track pricing trends, detect MAP violations, and auto-trigger competitive campaigns</p>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -97,6 +87,9 @@ const PricingSection = () => {
         <KPICard title="Price Competitiveness" value="87%" change={3} changeLabel="within 5% of competition" icon={<BarChart3 className="h-5 w-5" />} variant="success" />
         <KPICard title="Margin Opportunity" value="₹8.2L" change={12} changeLabel="monthly potential" icon={<TrendingUp className="h-5 w-5" />} variant="warning" />
       </div>
+
+      {/* Campaign Triggers */}
+      <CampaignTriggerPanel triggers={campaignTriggers} title="Pricing-Based Campaign Triggers" />
 
       {/* 3-Bucket Action System */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -108,9 +101,7 @@ const PricingSection = () => {
           }`}>
             <div>
               <h3 className={`text-lg font-heading font-bold ${
-                item.type === 'COMPETITIVE' ? 'text-success' :
-                item.type === 'UNCOMPETITIVE' ? 'text-warning' :
-                'text-destructive'
+                item.type === 'COMPETITIVE' ? 'text-success' : item.type === 'UNCOMPETITIVE' ? 'text-warning' : 'text-destructive'
               }`}>{item.title}</h3>
               <p className="text-sm text-muted-foreground mb-4 font-medium">{item.subtitle}</p>
               <div className="bg-card rounded-lg p-3 mb-4 border border-border shadow-card">
@@ -146,11 +137,8 @@ const PricingSection = () => {
             </div>
             <div className="bg-muted rounded-lg p-1 flex gap-1 border border-border">
               {['SKU-101', 'SKU-205'].map(sku => (
-                <button
-                  key={sku}
-                  onClick={() => setSelectedSku(sku as any)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${selectedSku === sku ? 'bg-card text-primary shadow-card' : 'text-muted-foreground hover:text-foreground'}`}
-                >
+                <button key={sku} onClick={() => setSelectedSku(sku as any)}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${selectedSku === sku ? 'bg-card text-primary shadow-card' : 'text-muted-foreground hover:text-foreground'}`}>
                   {sku}
                 </button>
               ))}
@@ -165,35 +153,13 @@ const PricingSection = () => {
               <text x="90" y="48" fontSize="3" fill="hsl(260, 10%, 50%)" fontWeight="bold">+Price</text>
               <text x="5" y="48" fontSize="3" fill="hsl(260, 10%, 50%)" fontWeight="bold">-Price</text>
               <path
-                d={`
-                  M ${currentElasticity.map(d => {
-                    const x = ((d.price + 25) / 50) * 100;
-                    const y = 50 - ((d.volume + d.confidence) / 100) * 80;
-                    return `${x},${y}`;
-                  }).join(' L ')}
-                  L ${currentElasticity.slice().reverse().map(d => {
-                    const x = ((d.price + 25) / 50) * 100;
-                    const y = 50 - ((d.volume - d.confidence) / 100) * 80;
-                    return `${x},${y}`;
-                  }).join(' L ')}
-                  Z
-                `}
-                fill="hsl(270, 70%, 50%, 0.1)"
-                stroke="none"
-              />
+                d={`M ${currentElasticity.map(d => { const x = ((d.price + 25) / 50) * 100; const y = 50 - ((d.volume + d.confidence) / 100) * 80; return `${x},${y}`; }).join(' L ')} L ${currentElasticity.slice().reverse().map(d => { const x = ((d.price + 25) / 50) * 100; const y = 50 - ((d.volume - d.confidence) / 100) * 80; return `${x},${y}`; }).join(' L ')} Z`}
+                fill="hsl(270, 70%, 50%, 0.1)" stroke="none" />
               <path
-                d={`M ${currentElasticity.map(d => {
-                  const x = ((d.price + 25) / 50) * 100;
-                  const y = 50 - (d.volume / 100) * 80;
-                  return `${x},${y}`;
-                }).join(' L ')}`}
-                fill="none"
-                stroke="hsl(270, 70%, 50%)"
-                strokeWidth="1.5"
-              />
+                d={`M ${currentElasticity.map(d => { const x = ((d.price + 25) / 50) * 100; const y = 50 - (d.volume / 100) * 80; return `${x},${y}`; }).join(' L ')}`}
+                fill="none" stroke="hsl(270, 70%, 50%)" strokeWidth="1.5" />
               {currentElasticity.map((d, i) => {
-                const x = ((d.price + 25) / 50) * 100;
-                const y = 50 - (d.volume / 100) * 80;
+                const x = ((d.price + 25) / 50) * 100; const y = 50 - (d.volume / 100) * 80;
                 return <circle key={i} cx={x} cy={y} r="1.5" fill="white" stroke="hsl(270, 70%, 50%)" strokeWidth="1" />;
               })}
             </svg>
@@ -205,7 +171,6 @@ const PricingSection = () => {
             </div>
           </div>
         </div>
-
         <div className="rounded-xl border bg-card shadow-card p-5">
           <h3 className="font-heading font-semibold text-foreground mb-1">Scenario Simulator</h3>
           <p className="text-xs text-muted-foreground mb-6">Project outcomes for {selectedSku}</p>
@@ -219,17 +184,12 @@ const PricingSection = () => {
                 <div className="w-[30%] bg-primary h-2 rounded-l-full"></div>
                 <div className="absolute top-1/2 left-[30%] w-4 h-4 bg-card border-2 border-primary rounded-full -translate-y-1/2 shadow cursor-pointer hover:scale-110 transition-transform"></div>
               </div>
-              <div className="flex justify-between text-xs text-muted-foreground mt-1 font-medium">
-                <span>-20%</span>
-                <span>+20%</span>
-              </div>
+              <div className="flex justify-between text-xs text-muted-foreground mt-1 font-medium"><span>-20%</span><span>+20%</span></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-muted/50 p-3 rounded-lg text-center border border-border">
                 <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Est. Volume</p>
-                <p className={`text-xl font-bold ${selectedSku === 'SKU-101' ? 'text-success' : 'text-success'}`}>
-                  {selectedSku === 'SKU-101' ? '+18%' : '+12%'}
-                </p>
+                <p className="text-xl font-bold text-success">{selectedSku === 'SKU-101' ? '+18%' : '+12%'}</p>
               </div>
               <div className="bg-muted/50 p-3 rounded-lg text-center border border-border">
                 <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Est. Margin</p>
@@ -260,7 +220,6 @@ const PricingSection = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
         <div className="rounded-xl border bg-card shadow-card p-5">
           <h3 className="font-heading font-semibold text-foreground mb-4">Competitive Price Index Trend</h3>
           <ResponsiveContainer width="100%" height={280}>
@@ -277,7 +236,6 @@ const PricingSection = () => {
         </div>
       </div>
 
-      {/* Actionables */}
       <ActionableList items={priceActionItems} title="Pricing Actions" />
     </div>
   );
