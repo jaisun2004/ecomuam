@@ -3,7 +3,7 @@ import KPICard from "@/components/KPICard";
 import ActionableList, { ActionItem } from "@/components/ActionableList";
 import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
 import DeepDiveToggle from "@/components/DeepDiveToggle";
-import { DollarSign, TrendingDown, TrendingUp, BarChart3, Target, Shield } from "lucide-react";
+import { DollarSign, TrendingDown, TrendingUp, BarChart3, Target, Shield, X, Check, AlertTriangle } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend,
 } from "recharts";
@@ -65,10 +65,24 @@ const campaignTriggers: CampaignTrigger[] = [
   },
 ];
 
+const ownSkuPricing = [
+  { sku: "SKU-101 (Energy Drink)", platform: "Amazon", currentPrice: 199, competitorPrice: 175, margin: "32%", stock: "Healthy" },
+  { sku: "SKU-101 (Energy Drink)", platform: "Flipkart", currentPrice: 195, competitorPrice: 178, margin: "31%", stock: "Healthy" },
+  { sku: "SKU-205 (Electrolyte)", platform: "Amazon", currentPrice: 159, competitorPrice: 122, margin: "28%", stock: "Low" },
+  { sku: "SKU-205 (Electrolyte)", platform: "Flipkart", currentPrice: 155, competitorPrice: 118, margin: "27%", stock: "Healthy" },
+  { sku: "SKU-300 (Green Tea)", platform: "Amazon", currentPrice: 450, competitorPrice: 420, margin: "35%", stock: "Healthy" },
+  { sku: "SKU-300 (Green Tea)", platform: "Blinkit", currentPrice: 460, competitorPrice: 430, margin: "34%", stock: "Low" },
+  { sku: "SKU-404 (Protein Bar)", platform: "Amazon", currentPrice: 299, competitorPrice: 275, margin: "30%", stock: "Healthy" },
+  { sku: "SKU-505 (Energy Mix)", platform: "Zepto", currentPrice: 189, competitorPrice: 165, margin: "25%", stock: "Healthy" },
+];
+
 const PricingSection = () => {
   const [deepDive, setDeepDive] = useState(false);
   const [selectedSku, setSelectedSku] = useState<'SKU-101' | 'SKU-205'>('SKU-101');
   const currentElasticity = elasticityData[selectedSku];
+  const [priceReductionModal, setPriceReductionModal] = useState<typeof ownSkuPricing[0] | null>(null);
+  const [priceReductionForm, setPriceReductionForm] = useState({ newPrice: "", reason: "competitor_match", effectiveDate: "immediate", platforms: [] as string[] });
+  const [priceSubmitted, setPriceSubmitted] = useState(false);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -126,6 +140,143 @@ const PricingSection = () => {
           </div>
 
           <ActionableList items={priceActionItems} title="Pricing Actions" />
+
+          {/* Price Reduction Trigger Table */}
+          <div className="rounded-xl border bg-card shadow-card p-5">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-heading font-semibold text-foreground">Quick Price Adjustment</h3>
+              <span className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-full font-bold">Click "Reduce" to trigger</span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">Directly adjust your product pricing across platforms</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-muted/50 border-b border-border">
+                  <tr>
+                    {["SKU", "Platform", "Your Price", "Comp. Price", "Gap", "Margin", "Stock", ""].map(h => (
+                      <th key={h} className="p-2.5 font-bold text-muted-foreground uppercase">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  {ownSkuPricing.map((row, i) => {
+                    const gap = row.currentPrice - row.competitorPrice;
+                    const gapPct = ((gap / row.currentPrice) * 100).toFixed(1);
+                    return (
+                      <tr key={i} className="hover:bg-muted/30 transition-colors">
+                        <td className="p-2.5 font-mono font-medium text-foreground">{row.sku}</td>
+                        <td className="p-2.5 text-foreground">{row.platform}</td>
+                        <td className="p-2.5 font-mono font-bold text-foreground">₹{row.currentPrice}</td>
+                        <td className="p-2.5 font-mono text-muted-foreground">₹{row.competitorPrice}</td>
+                        <td className={`p-2.5 font-bold ${gap > 20 ? 'text-destructive' : gap > 0 ? 'text-warning' : 'text-success'}`}>
+                          {gap > 0 ? `+₹${gap} (${gapPct}%)` : `₹${gap}`}
+                        </td>
+                        <td className="p-2.5 text-foreground">{row.margin}</td>
+                        <td className="p-2.5">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${row.stock === 'Healthy' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>{row.stock}</span>
+                        </td>
+                        <td className="p-2.5">
+                          {gap > 0 && (
+                            <button onClick={() => {
+                              setPriceReductionModal(row);
+                              setPriceReductionForm({ newPrice: String(row.competitorPrice - 1), reason: "competitor_match", effectiveDate: "immediate", platforms: [row.platform] });
+                              setPriceSubmitted(false);
+                            }} className="px-3 py-1 rounded-lg bg-destructive/10 text-destructive text-[10px] font-bold hover:bg-destructive/20 transition-colors">
+                              Reduce ↓
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Price Reduction Modal */}
+          {priceReductionModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-fade-in" onClick={() => setPriceReductionModal(null)}>
+              <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
+                <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+                  <div>
+                    <h2 className="font-heading font-bold text-foreground text-lg">Price Reduction</h2>
+                    <p className="text-xs text-muted-foreground">{priceReductionModal.sku} on {priceReductionModal.platform}</p>
+                  </div>
+                  <button onClick={() => setPriceReductionModal(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="h-4 w-4 text-muted-foreground" /></button>
+                </div>
+                {!priceSubmitted ? (
+                  <div className="p-6 space-y-5">
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Current</p>
+                        <p className="text-lg font-bold text-foreground">₹{priceReductionModal.currentPrice}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-center">
+                        <p className="text-[10px] text-destructive uppercase font-bold">Competitor</p>
+                        <p className="text-lg font-bold text-destructive">₹{priceReductionModal.competitorPrice}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-success/5 border border-success/20 text-center">
+                        <p className="text-[10px] text-success uppercase font-bold">New Price</p>
+                        <input type="number" value={priceReductionForm.newPrice}
+                          onChange={e => setPriceReductionForm({ ...priceReductionForm, newPrice: e.target.value })}
+                          className="text-lg font-bold text-success w-full text-center bg-transparent outline-none" />
+                      </div>
+                    </div>
+
+                    {/* Margin impact */}
+                    <div className="p-3 rounded-lg bg-warning/5 border border-warning/20 flex items-start gap-2">
+                      <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-bold text-warning">Margin Impact</p>
+                        <p className="text-xs text-foreground">
+                          New margin: ~{Math.max(0, parseInt(priceReductionModal.margin) - Math.round((priceReductionModal.currentPrice - parseInt(priceReductionForm.newPrice || "0")) / priceReductionModal.currentPrice * 100))}% (from {priceReductionModal.margin})
+                          • Revenue delta: ₹{Math.abs(priceReductionModal.currentPrice - parseInt(priceReductionForm.newPrice || "0"))}/unit
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Reason</p>
+                      <div className="flex gap-2">
+                        {[{ id: "competitor_match", label: "Match Competitor" }, { id: "promotion", label: "Promotion" }, { id: "clearance", label: "Clearance" }].map(r => (
+                          <button key={r.id} onClick={() => setPriceReductionForm({ ...priceReductionForm, reason: r.id })}
+                            className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${priceReductionForm.reason === r.id ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}>
+                            {r.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Effective</p>
+                      <div className="flex gap-2">
+                        {[{ id: "immediate", label: "Immediately" }, { id: "scheduled", label: "Next 24 hrs" }].map(e => (
+                          <button key={e.id} onClick={() => setPriceReductionForm({ ...priceReductionForm, effectiveDate: e.id })}
+                            className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${priceReductionForm.effectiveDate === e.id ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}>
+                            {e.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button onClick={() => setPriceSubmitted(true)}
+                      className="w-full py-3 bg-destructive text-destructive-foreground rounded-lg font-bold shadow-card hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 text-sm">
+                      <TrendingDown className="h-4 w-4" /> Confirm Price Reduction to ₹{priceReductionForm.newPrice}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center space-y-4">
+                    <div className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
+                      <Check className="h-8 w-8 text-success" />
+                    </div>
+                    <h3 className="font-heading font-bold text-foreground text-lg">Price Updated!</h3>
+                    <p className="text-sm text-muted-foreground">{priceReductionModal.sku} on {priceReductionModal.platform} updated from ₹{priceReductionModal.currentPrice} → ₹{priceReductionForm.newPrice}</p>
+                    <button onClick={() => setPriceReductionModal(null)} className="w-full py-2.5 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-muted transition-colors">Close</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <>

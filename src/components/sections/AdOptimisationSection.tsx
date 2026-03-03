@@ -2,13 +2,19 @@ import { useState } from "react";
 import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
 import KPICard from "@/components/KPICard";
 import DeepDiveToggle from "@/components/DeepDiveToggle";
-import { Target, Shield, Zap, DollarSign, TrendingUp, BarChart3, Megaphone } from "lucide-react";
+import { Target, Shield, Zap, DollarSign, TrendingUp, BarChart3, Megaphone, X, Plus, Check } from "lucide-react";
 
 const AdOptimisationSection = () => {
   const [deepDive, setDeepDive] = useState(false);
   const [selectedStrategy, setSelectedStrategy] = useState('Brand Defense');
   const [strategyBidMultipliers, setStrategyBidMultipliers] = useState<Record<string, Record<string, number>>>({
     'Brand Defense': {}, 'Conquesting': {}, 'Awareness': {}
+  });
+  const [showRuleModal, setShowRuleModal] = useState(false);
+  const [ruleCreated, setRuleCreated] = useState(false);
+  const [customRules, setCustomRules] = useState<{ name: string; metric: string; operator: string; value: string; action: string; actionValue: string; platforms: string[] }[]>([]);
+  const [ruleForm, setRuleForm] = useState({
+    name: "", metric: "ROAS", operator: "less_than", value: "", action: "pause_keyword", actionValue: "", platforms: ["Amazon"] as string[],
   });
 
   const currentMultipliers = strategyBidMultipliers[selectedStrategy] || {};
@@ -116,8 +122,19 @@ const AdOptimisationSection = () => {
                   </div>
                 ))}
               </div>
-              <button className="mt-4 w-full py-2.5 border-2 border-dashed border-border rounded-lg text-muted-foreground text-sm hover:bg-muted transition-colors">
-                + Add New Rule
+              {/* Custom rules */}
+              {customRules.map((rule, i) => (
+                <div key={`custom-${i}`} className="flex items-center justify-between p-3 bg-primary/5 border border-primary/20 rounded-lg shadow-card">
+                  <div>
+                    <p className="font-bold text-sm text-foreground">{rule.name}</p>
+                    <p className="text-xs text-muted-foreground">If {rule.metric} {rule.operator === 'less_than' ? '<' : rule.operator === 'greater_than' ? '>' : '='} {rule.value} → <span className="text-primary font-medium">{rule.action.replace(/_/g, ' ')}{rule.actionValue ? ` ${rule.actionValue}` : ''}</span></p>
+                  </div>
+                  <div className="w-3 h-3 rounded-full bg-success"></div>
+                </div>
+              ))}
+              <button onClick={() => { setShowRuleModal(true); setRuleCreated(false); setRuleForm({ name: "", metric: "ROAS", operator: "less_than", value: "", action: "pause_keyword", actionValue: "", platforms: ["Amazon"] }); }}
+                className="mt-4 w-full py-2.5 border-2 border-dashed border-border rounded-lg text-muted-foreground text-sm hover:bg-muted transition-colors flex items-center justify-center gap-1.5">
+                <Plus className="h-3.5 w-3.5" /> Add New Rule
               </button>
             </div>
           </div>
@@ -259,6 +276,158 @@ const AdOptimisationSection = () => {
           </div>
         </>
       )}
+      {/* Rule Modal */}
+      {showRuleModal && (
+        <AddRuleModal
+          form={ruleForm}
+          setForm={setRuleForm}
+          created={ruleCreated}
+          setCreated={setRuleCreated}
+          onClose={() => setShowRuleModal(false)}
+          onSave={(rule) => setCustomRules([...customRules, rule])}
+        />
+      )}
+    </div>
+  );
+};
+
+/* Add Rule Modal */
+const AddRuleModal = ({
+  form, setForm, created, setCreated, onClose, onSave
+}: {
+  form: { name: string; metric: string; operator: string; value: string; action: string; actionValue: string; platforms: string[] };
+  setForm: (f: any) => void;
+  created: boolean;
+  setCreated: (v: boolean) => void;
+  onClose: () => void;
+  onSave: (rule: typeof form) => void;
+}) => {
+  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto"];
+  const metrics = ["ROAS", "CPC", "CTR", "Impressions", "Spend", "ACoS", "Conversion Rate"];
+  const operators = [
+    { id: "less_than", label: "Less than (<)" },
+    { id: "greater_than", label: "Greater than (>)" },
+    { id: "equals", label: "Equals (=)" },
+  ];
+  const actions = [
+    { id: "pause_keyword", label: "Pause Keyword" },
+    { id: "pause_campaign", label: "Pause Campaign" },
+    { id: "increase_bid", label: "Increase Bid" },
+    { id: "decrease_bid", label: "Decrease Bid" },
+    { id: "increase_budget", label: "Increase Daily Budget" },
+    { id: "send_alert", label: "Send Alert" },
+  ];
+  const togglePlatform = (p: string) => {
+    setForm({ ...form, platforms: form.platforms.includes(p) ? form.platforms.filter((x: string) => x !== p) : [...form.platforms, p] });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-fade-in" onClick={onClose}>
+      <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h2 className="font-heading font-bold text-foreground text-lg">Create Custom Rule</h2>
+            <p className="text-xs text-muted-foreground">Define automated optimization rules</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="h-4 w-4 text-muted-foreground" /></button>
+        </div>
+
+        {!created ? (
+          <div className="p-6 space-y-5">
+            {/* Rule Name */}
+            <div>
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Rule Name</label>
+              <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Pause Low Performers"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            </div>
+
+            {/* Condition: IF */}
+            <div className="p-4 rounded-lg bg-muted/30 border border-border">
+              <p className="text-xs font-bold text-primary uppercase tracking-wider mb-3">IF (Condition)</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase font-bold mb-1 block">Metric</label>
+                  <select value={form.metric} onChange={e => setForm({ ...form, metric: e.target.value })}
+                    className="w-full px-2 py-2 rounded-lg border border-border bg-card text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                    {metrics.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase font-bold mb-1 block">Operator</label>
+                  <select value={form.operator} onChange={e => setForm({ ...form, operator: e.target.value })}
+                    className="w-full px-2 py-2 rounded-lg border border-border bg-card text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                    {operators.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase font-bold mb-1 block">Value</label>
+                  <input type="text" value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} placeholder="e.g. 1.5"
+                    className="w-full px-2 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                </div>
+              </div>
+            </div>
+
+            {/* Action: THEN */}
+            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xs font-bold text-primary uppercase tracking-wider mb-3">THEN (Action)</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase font-bold mb-1 block">Action</label>
+                  <select value={form.action} onChange={e => setForm({ ...form, action: e.target.value })}
+                    className="w-full px-2 py-2 rounded-lg border border-border bg-card text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                    {actions.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
+                  </select>
+                </div>
+                {(form.action === "increase_bid" || form.action === "decrease_bid" || form.action === "increase_budget") && (
+                  <div>
+                    <label className="text-[10px] text-muted-foreground uppercase font-bold mb-1 block">By (%)</label>
+                    <input type="text" value={form.actionValue} onChange={e => setForm({ ...form, actionValue: e.target.value })} placeholder="e.g. 10%"
+                      className="w-full px-2 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Platforms */}
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Apply To Platforms</p>
+              <div className="flex flex-wrap gap-2">
+                {allPlatforms.map(p => (
+                  <button key={p} onClick={() => togglePlatform(p)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${form.platforms.includes(p) ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Preview */}
+            <div className="p-3 rounded-lg bg-muted/50 border border-border">
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Rule Preview</p>
+              <p className="text-sm text-foreground">
+                <span className="font-bold text-primary">IF</span> {form.metric} {form.operator === 'less_than' ? '<' : form.operator === 'greater_than' ? '>' : '='} {form.value || '?'}{' '}
+                <span className="font-bold text-primary">THEN</span> {actions.find(a => a.id === form.action)?.label}{form.actionValue ? ` by ${form.actionValue}` : ''}{' '}
+                <span className="font-bold text-primary">ON</span> {form.platforms.join(', ')}
+              </p>
+            </div>
+
+            <button onClick={() => { onSave(form); setCreated(true); }}
+              disabled={!form.name || !form.value}
+              className="w-full py-3 gradient-primary text-primary-foreground rounded-lg font-bold shadow-card hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              <Plus className="h-4 w-4" /> Create Rule
+            </button>
+          </div>
+        ) : (
+          <div className="p-6 text-center space-y-4">
+            <div className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
+              <Check className="h-8 w-8 text-success" />
+            </div>
+            <h3 className="font-heading font-bold text-foreground text-lg">Rule Created!</h3>
+            <p className="text-sm text-muted-foreground">"{form.name}" is now active and will auto-execute when conditions are met.</p>
+            <button onClick={onClose} className="w-full py-2.5 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-muted transition-colors">Close</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
