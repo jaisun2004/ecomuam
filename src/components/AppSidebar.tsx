@@ -1,18 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
-  BarChart3,
-  Box,
-  DollarSign,
-  Layers,
-  TrendingUp,
-  Activity,
-  Settings,
-  HelpCircle,
-  LayoutDashboard,
-  FileText,
-  Megaphone,
-  Lightbulb,
-  PieChart,
+  BarChart3, Box, DollarSign, Layers, TrendingUp, Activity, Settings, HelpCircle,
+  LayoutDashboard, FileText, Megaphone, Lightbulb,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -22,10 +11,16 @@ interface SidebarProps {
 
 const navSections = [
   {
+    label: "COMMAND CENTER",
+    items: [
+      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
     label: "INTELLIGENCE",
     items: [
       { id: "availability", label: "Availability", icon: Box },
-      { id: "pricing", label: "Pricing Analysis", icon: DollarSign },
+      { id: "pricing", label: "Pricing", icon: DollarSign },
       { id: "shelf", label: "Share of Shelf", icon: Layers },
       { id: "rank", label: "Rank & Market Share", icon: TrendingUp },
     ],
@@ -33,16 +28,9 @@ const navSections = [
   {
     label: "OPTIMISATION",
     items: [
-      { id: "content", label: "Content Audit", icon: FileText },
+      { id: "content", label: "Content & SEO", icon: FileText },
       { id: "ads", label: "Ad Optimisation", icon: Megaphone },
       { id: "category", label: "Category & NPD", icon: Lightbulb },
-    ],
-  },
-  {
-    label: "OVERVIEW",
-    items: [
-      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { id: "reports", label: "Reports", icon: BarChart3 },
     ],
   },
 ];
