@@ -5,12 +5,18 @@ import AvailabilitySection from "@/components/sections/AvailabilitySection";
 import PricingSection from "@/components/sections/PricingSection";
 import ShelfSection from "@/components/sections/ShelfSection";
 import RankMarketShareSection from "@/components/sections/RankMarketShareSection";
+import ContentAuditSection from "@/components/sections/ContentAuditSection";
+import AdOptimisationSection from "@/components/sections/AdOptimisationSection";
+import CategoryRecommendationSection from "@/components/sections/CategoryRecommendationSection";
 
 const sectionComponents: Record<string, React.FC> = {
   availability: AvailabilitySection,
   pricing: PricingSection,
   shelf: ShelfSection,
   rank: RankMarketShareSection,
+  content: ContentAuditSection,
+  ads: AdOptimisationSection,
+  category: CategoryRecommendationSection,
 };
 
 const Index = () => {
