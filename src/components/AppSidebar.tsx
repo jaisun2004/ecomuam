@@ -8,8 +8,11 @@ import {
   Activity,
   Settings,
   HelpCircle,
-  ChevronDown,
   LayoutDashboard,
+  FileText,
+  Megaphone,
+  Lightbulb,
+  PieChart,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -28,6 +31,14 @@ const navSections = [
     ],
   },
   {
+    label: "OPTIMISATION",
+    items: [
+      { id: "content", label: "Content Audit", icon: FileText },
+      { id: "ads", label: "Ad Optimisation", icon: Megaphone },
+      { id: "category", label: "Category & NPD", icon: Lightbulb },
+    ],
+  },
+  {
     label: "OVERVIEW",
     items: [
       { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -39,7 +50,6 @@ const navSections = [
 const AppSidebar = ({ activeSection, onSectionChange }: SidebarProps) => {
   return (
     <aside className="w-[240px] min-h-screen gradient-sidebar flex flex-col">
-      {/* Logo */}
       <div className="px-5 py-5 flex items-center gap-2.5">
         <Activity className="h-7 w-7 text-sidebar-primary" />
         <span className="font-heading text-lg font-bold text-sidebar-primary-foreground tracking-tight">
@@ -47,7 +57,6 @@ const AppSidebar = ({ activeSection, onSectionChange }: SidebarProps) => {
         </span>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-3 py-2 space-y-6">
         {navSections.map((section) => (
           <div key={section.label}>
@@ -79,7 +88,6 @@ const AppSidebar = ({ activeSection, onSectionChange }: SidebarProps) => {
         ))}
       </nav>
 
-      {/* Bottom */}
       <div className="px-3 pb-4 space-y-0.5">
         <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors">
           <Settings className="h-[18px] w-[18px]" />
