@@ -2,7 +2,7 @@ import { useState } from "react";
 import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
 import KPICard from "@/components/KPICard";
 import DeepDiveToggle from "@/components/DeepDiveToggle";
-import { Target, Shield, Zap, DollarSign, TrendingUp, BarChart3, Megaphone, X, Plus, Check } from "lucide-react";
+import { Target, Shield, Zap, DollarSign, TrendingUp, BarChart3, Megaphone, X, Plus, Check, Sparkles, History, FileEdit, ChevronLeft, ArrowRight } from "lucide-react";
 
 const AdOptimisationSection = () => {
   const [deepDive, setDeepDive] = useState(false);
@@ -11,6 +11,7 @@ const AdOptimisationSection = () => {
     'Brand Defense': {}, 'Conquesting': {}, 'Awareness': {}
   });
   const [showRuleModal, setShowRuleModal] = useState(false);
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [ruleCreated, setRuleCreated] = useState(false);
   const [customRules, setCustomRules] = useState<{ name: string; metric: string; operator: string; value: string; action: string; actionValue: string; platforms: string[] }[]>([]);
   const [ruleForm, setRuleForm] = useState({
@@ -99,7 +100,7 @@ const AdOptimisationSection = () => {
                   </div>
                 ))}
               </div>
-              <button className="mt-4 w-full py-2.5 gradient-primary text-primary-foreground rounded-lg font-bold shadow-card hover:opacity-90 text-sm">
+              <button onClick={() => setShowCampaignModal(true)} className="mt-4 w-full py-2.5 gradient-primary text-primary-foreground rounded-lg font-bold shadow-card hover:opacity-90 text-sm">
                 + Create New Campaign
               </button>
             </div>
@@ -287,6 +288,10 @@ const AdOptimisationSection = () => {
           onSave={(rule) => setCustomRules([...customRules, rule])}
         />
       )}
+      {/* Campaign Creator Modal */}
+      {showCampaignModal && (
+        <CampaignCreatorModal onClose={() => setShowCampaignModal(false)} />
+      )}
     </div>
   );
 };
@@ -427,6 +432,197 @@ const AddRuleModal = ({
             <button onClick={onClose} className="w-full py-2.5 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-muted transition-colors">Close</button>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+/* Campaign Creator Modal */
+const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
+  const [step, setStep] = useState<'choose' | 'autonomous' | 'history' | 'manual'>('choose');
+  const [campaignCreated, setCampaignCreated] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    name: '', type: 'Sponsored Products', platforms: ['Amazon'] as string[],
+    budget: '', duration: '7', keywords: '',
+  });
+
+  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "BigBasket"];
+
+  const historicalCampaigns = [
+    { name: 'Summer Sale - Energy Drinks', date: 'Jun 2025', roas: '4.2x', spend: '₹50K' },
+    { name: 'Competitor Conquesting - RedBull', date: 'May 2025', roas: '2.8x', spend: '₹30K' },
+    { name: 'Diwali Festival Push', date: 'Oct 2024', roas: '5.6x', spend: '₹1.2L' },
+  ];
+
+  const aiSuggestions = [
+    { name: 'Stock Recovery Blitz', reason: 'Competitor X out of stock on 3 SKUs in Mumbai', platforms: ['Amazon', 'Blinkit'], budget: '₹25K', estRoas: '4.5x', keywords: ['energy drink', 'protein shake', 'health drink'] },
+    { name: 'Price Advantage Campaign', reason: 'Your MRP is 12% lower than Competitor Y on Flipkart', platforms: ['Flipkart'], budget: '₹15K', estRoas: '3.8x', keywords: ['affordable energy', 'best price protein'] },
+    { name: 'Weekend Warrior Push', reason: '40% higher conversions on weekends historically', platforms: ['Amazon', 'Zepto', 'Blinkit'], budget: '₹20K', estRoas: '5.1x', keywords: ['weekend deal', 'quick delivery drink'] },
+  ];
+
+  const togglePlatform = (p: string) => {
+    setManualForm({ ...manualForm, platforms: manualForm.platforms.includes(p) ? manualForm.platforms.filter(x => x !== p) : [...manualForm.platforms, p] });
+  };
+
+  if (campaignCreated) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-fade-in" onClick={onClose}>
+        <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-8 text-center space-y-4" onClick={e => e.stopPropagation()}>
+          <div className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
+            <Check className="h-8 w-8 text-success" />
+          </div>
+          <h3 className="font-heading font-bold text-foreground text-lg">Campaign Created!</h3>
+          <p className="text-sm text-muted-foreground">Your campaign is now live and will start delivering across selected platforms.</p>
+          <button onClick={onClose} className="w-full py-2.5 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-muted transition-colors">Close</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-fade-in" onClick={onClose}>
+      <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {step !== 'choose' && (
+              <button onClick={() => setStep('choose')} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+                <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+              </button>
+            )}
+            <div>
+              <h2 className="font-heading font-bold text-foreground text-lg">
+                {step === 'choose' ? 'Autonomous Campaign Creator' : step === 'autonomous' ? 'AI-Recommended Campaigns' : step === 'history' ? 'Create from History' : 'Manual Campaign Setup'}
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                {step === 'choose' ? 'Choose your campaign creation method' : step === 'autonomous' ? 'AI has analyzed signals and recommends these' : step === 'history' ? 'Clone and customize a past campaign' : 'Configure everything yourself'}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="h-4 w-4 text-muted-foreground" /></button>
+        </div>
+
+        <div className="p-6">
+          {step === 'choose' && (
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { id: 'autonomous' as const, icon: <Sparkles className="h-6 w-6" />, title: 'Autonomous AI', desc: 'AI recommends everything automatically', gradient: 'from-purple-500 to-blue-500' },
+                { id: 'history' as const, icon: <History className="h-6 w-6" />, title: 'From History', desc: 'Use historical campaigns to create new campaigns', gradient: 'from-blue-500 to-cyan-500' },
+                { id: 'manual' as const, icon: <FileEdit className="h-6 w-6" />, title: 'Manual Entry', desc: 'Configure everything yourself manually', gradient: 'from-slate-600 to-slate-800' },
+              ].map(method => (
+                <button key={method.id} onClick={() => setStep(method.id)}
+                  className="p-6 rounded-xl border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all text-center group">
+                  <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${method.gradient} flex items-center justify-center mx-auto mb-4 text-white shadow-lg`}>
+                    {method.icon}
+                  </div>
+                  <h3 className="font-heading font-bold text-foreground mb-1">{method.title}</h3>
+                  <p className="text-xs text-muted-foreground">{method.desc}</p>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {step === 'autonomous' && (
+            <div className="space-y-4">
+              {aiSuggestions.map((s, i) => (
+                <div key={i} className="p-4 rounded-xl border border-border bg-muted/20 hover:border-primary/30 transition-all">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h4 className="font-bold text-foreground text-sm">{s.name}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">{s.reason}</p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-success/10 text-success text-xs font-bold">Est. {s.estRoas}</span>
+                  </div>
+                  <div className="flex items-center gap-3 mt-3 text-xs">
+                    <span className="text-muted-foreground">Platforms: <span className="text-foreground font-medium">{s.platforms.join(', ')}</span></span>
+                    <span className="text-muted-foreground">Budget: <span className="text-foreground font-medium">{s.budget}</span></span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {s.keywords.map(k => <span key={k} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">{k}</span>)}
+                  </div>
+                  <button onClick={() => setCampaignCreated(true)}
+                    className="mt-3 w-full py-2 gradient-primary text-primary-foreground rounded-lg text-xs font-bold hover:opacity-90 flex items-center justify-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5" /> Launch This Campaign
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {step === 'history' && (
+            <div className="space-y-3">
+              {historicalCampaigns.map((c, i) => (
+                <div key={i} className="p-4 rounded-xl border border-border bg-muted/20 flex items-center justify-between hover:border-primary/30 transition-all">
+                  <div>
+                    <h4 className="font-bold text-foreground text-sm">{c.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{c.date} • Spend: {c.spend} • ROAS: {c.roas}</p>
+                  </div>
+                  <button onClick={() => setCampaignCreated(true)}
+                    className="px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-xs font-bold hover:opacity-90 flex items-center gap-1.5">
+                    Clone <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {step === 'manual' && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Campaign Name</label>
+                  <input type="text" value={manualForm.name} onChange={e => setManualForm({ ...manualForm, name: e.target.value })} placeholder="e.g. Summer Push 2026"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Campaign Type</label>
+                  <select value={manualForm.type} onChange={e => setManualForm({ ...manualForm, type: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+                    {['Sponsored Products', 'Sponsored Brands', 'Display Ads', 'Keyword Conquesting', 'Category Targeting'].map(t => <option key={t}>{t}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Platforms</p>
+                <div className="flex flex-wrap gap-2">
+                  {allPlatforms.map(p => (
+                    <button key={p} onClick={() => togglePlatform(p)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${manualForm.platforms.includes(p) ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}>
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Daily Budget (₹)</label>
+                  <input type="number" value={manualForm.budget} onChange={e => setManualForm({ ...manualForm, budget: e.target.value })} placeholder="5000"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Duration (days)</label>
+                  <select value={manualForm.duration} onChange={e => setManualForm({ ...manualForm, duration: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+                    {['7', '14', '30', '60', '90'].map(d => <option key={d} value={d}>{d} days</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Keywords (comma-separated)</label>
+                <textarea value={manualForm.keywords} onChange={e => setManualForm({ ...manualForm, keywords: e.target.value })} placeholder="energy drink, protein bar, health supplement"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none h-20" />
+              </div>
+
+              <button onClick={() => setCampaignCreated(true)}
+                disabled={!manualForm.name || !manualForm.budget}
+                className="w-full py-3 gradient-primary text-primary-foreground rounded-lg font-bold shadow-card hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                <Plus className="h-4 w-4" /> Launch Campaign
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
