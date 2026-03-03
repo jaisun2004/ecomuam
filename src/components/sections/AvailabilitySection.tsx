@@ -1,7 +1,8 @@
 import { useState } from "react";
 import KPICard from "@/components/KPICard";
 import ActionableList, { ActionItem } from "@/components/ActionableList";
-import { Box, PackageCheck, PackageX, AlertTriangle } from "lucide-react";
+import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
+import { Box, PackageCheck, PackageX, AlertTriangle, Target, Shield, TrendingUp } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell,
 } from "recharts";
@@ -49,12 +50,51 @@ const actionItems: ActionItem[] = [
   { id: "6", severity: "success", title: "Stock recovered: Premium Range", description: "All 15 premium SKUs back in stock after restock action", metric: "100%", action: "Details" },
 ];
 
+const campaignTriggers: CampaignTrigger[] = [
+  {
+    id: "avail-1",
+    signal: "Competitor OOS on Energy Drinks",
+    signalDetail: "RedBull & Monster out of stock on Blinkit NCR & Zepto Mumbai for 48+ hours",
+    strategy: "Competitor OOS Conquesting",
+    campaignType: "Sponsored Product + Banner Ad",
+    platforms: ["Blinkit", "Zepto", "Amazon"],
+    keywords: ["energy drink", "caffeine drink", "gym drink", "pre workout drink"],
+    estimatedImpact: "+₹8.5L revenue capture in 7 days",
+    urgency: "critical",
+    icon: <Target className="h-4 w-4 text-destructive" />,
+  },
+  {
+    id: "avail-2",
+    signal: "Your SKU-404 back in stock",
+    signalDetail: "Protein Bar range restored across all platforms after 5 days OOS",
+    strategy: "Restock Awareness Blitz",
+    campaignType: "Search + Display Ads",
+    platforms: ["Amazon", "Flipkart", "BigBasket"],
+    keywords: ["protein bar", "healthy snack", "gym snack", "energy bar"],
+    estimatedImpact: "Recover ₹3.2L lost demand in 3 days",
+    urgency: "high",
+    icon: <TrendingUp className="h-4 w-4 text-warning" />,
+  },
+  {
+    id: "avail-3",
+    signal: "Competitor low stock on Hydration category",
+    signalDetail: "Competitor A showing 'Only 2 left' on 6 SKUs across Amazon & Flipkart",
+    strategy: "Low-Stock Preemptive Strike",
+    campaignType: "Keyword Targeting + Category Ads",
+    platforms: ["Amazon", "Flipkart"],
+    keywords: ["electrolyte water", "hydration drink", "coconut water", "sports drink"],
+    estimatedImpact: "+15% market share in Hydration for 2 weeks",
+    urgency: "high",
+    icon: <Shield className="h-4 w-4 text-warning" />,
+  },
+];
+
 const AvailabilitySection = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-heading font-bold text-foreground">Availability Actionables & Analytics</h1>
-        <p className="text-muted-foreground text-sm mt-1">Monitor stock health, detect OOS risks, and take corrective action</p>
+        <p className="text-muted-foreground text-sm mt-1">Monitor stock health, detect OOS risks, and auto-trigger campaigns on competitor weaknesses</p>
       </div>
 
       {/* KPIs */}
@@ -64,6 +104,9 @@ const AvailabilitySection = () => {
         <KPICard title="Revenue at Risk (OOS)" value="₹12.4L" change={-8} changeLabel="daily est. loss" icon={<AlertTriangle className="h-5 w-5" />} variant="warning" />
         <KPICard title="Total Active SKUs" value="1,284" change={3.5} changeLabel="across 4 platforms" icon={<Box className="h-5 w-5" />} />
       </div>
+
+      {/* Campaign Triggers */}
+      <CampaignTriggerPanel triggers={campaignTriggers} title="Availability-Based Campaign Triggers" />
 
       {/* OOS Heatmap + Lost Revenue */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
+import { Target, Shield, Zap } from "lucide-react";
 
 const AdOptimisationSection = () => {
   const [activeTab, setActiveTab] = useState<'planning' | 'creation' | 'reporting' | 'optimisation'>('reporting');
@@ -30,6 +32,33 @@ const AdOptimisationSection = () => {
     return 'bg-info/10 hover:bg-info/20';
   };
 
+  const adCampaignTriggers: CampaignTrigger[] = [
+    {
+      id: "ad-1",
+      signal: "Low ROAS keywords detected — auto-pause recommended",
+      signalDetail: "3 keywords running below 1.5x ROAS for 5+ days — burning budget without returns",
+      strategy: "Budget Reallocation",
+      campaignType: "Pause low performers, boost high ROAS keywords",
+      platforms: ["Amazon", "Flipkart"],
+      keywords: ["energy supplement", "health drink powder", "vitamin mix"],
+      estimatedImpact: "Save ₹15K/week and redirect to 4x+ ROAS keywords",
+      urgency: "high",
+      icon: <Target className="h-4 w-4 text-warning" />,
+    },
+    {
+      id: "ad-2",
+      signal: "Competitor reduced ad spend on 'protein bar'",
+      signalDetail: "Competitor B dropped sponsored visibility 60% this week — prime conquesting opportunity",
+      strategy: "Opportunistic Conquesting",
+      campaignType: "Exact Match + Category Targeting",
+      platforms: ["Amazon", "Blinkit"],
+      keywords: ["protein bar", "whey protein bar", "gym snack bar"],
+      estimatedImpact: "+25% impression share on protein bar category",
+      urgency: "critical",
+      icon: <Zap className="h-4 w-4 text-destructive" />,
+    },
+  ];
+
   const tabs = [
     { id: 'planning', label: 'Planning' },
     { id: 'creation', label: 'Campaign Creation' },
@@ -59,6 +88,8 @@ const AdOptimisationSection = () => {
           </button>
         ))}
       </div>
+
+      <CampaignTriggerPanel triggers={adCampaignTriggers} title="Ad Intelligence Campaign Triggers" />
 
       {activeTab === 'planning' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-fade-in">

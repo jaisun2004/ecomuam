@@ -1,7 +1,8 @@
 import { useState } from "react";
 import KPICard from "@/components/KPICard";
 import ActionableList, { ActionItem } from "@/components/ActionableList";
-import { TrendingUp, Award, PieChart as PieIcon, BarChart3 } from "lucide-react";
+import CampaignTriggerPanel, { CampaignTrigger } from "@/components/CampaignTriggerPanel";
+import { TrendingUp, Award, PieChart as PieIcon, BarChart3, Target, Shield } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, ComposedChart, Area,
 } from "recharts";
@@ -48,6 +49,33 @@ const cityShareData = [
   { city: "Hyderabad", share: 19, change: 0.2, issue: "" },
 ];
 
+const rankCampaignTriggers: CampaignTrigger[] = [
+  {
+    id: "rank-1",
+    signal: "Lost #1 rank on 3 high-volume keywords",
+    signalDetail: "Competitor A overtook on 'organic shampoo', 'natural face wash', 'vitamin c serum' — likely due to price cuts + ad spend increase",
+    strategy: "Rank Recovery Campaign",
+    campaignType: "Exact Match Sponsored + Display Retargeting",
+    platforms: ["Amazon", "Flipkart"],
+    keywords: ["organic shampoo", "natural face wash", "vitamin c serum", "best face wash"],
+    estimatedImpact: "Recover #1 rank on 2/3 keywords within 10 days",
+    urgency: "critical" as const,
+    icon: <Target className="h-4 w-4 text-destructive" />,
+  },
+  {
+    id: "rank-2",
+    signal: "Market share declining 2% MoM in Hair Care",
+    signalDetail: "Competitor gaining through aggressive promotions and bundling in Mumbai & Delhi",
+    strategy: "Market Share Defense",
+    campaignType: "Category Ads + Deal of the Day",
+    platforms: ["Amazon", "Flipkart", "BigBasket"],
+    keywords: ["hair care", "shampoo", "hair oil", "anti dandruff"],
+    estimatedImpact: "Stabilize share loss and recover 1% within 30 days",
+    urgency: "high" as const,
+    icon: <Shield className="h-4 w-4 text-warning" />,
+  },
+];
+
 const RankMarketShareSection = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'where' | 'who' | 'why' | 'synthesis'>('overview');
 
@@ -85,6 +113,8 @@ const RankMarketShareSection = () => {
 
       {activeTab === 'overview' && (
         <>
+          <CampaignTriggerPanel triggers={rankCampaignTriggers} title="Rank & Market Share Campaign Triggers" />
+
           <div className="grid grid-cols-4 gap-4">
             <KPICard title="Overall Market Share" value="24%" change={2} changeLabel="vs last quarter" icon={<PieIcon className="h-5 w-5" />} variant="primary" />
             <KPICard title="Avg Category Rank" value="#3.2" change={18} changeLabel="improved from #4.1" icon={<Award className="h-5 w-5" />} variant="success" />
