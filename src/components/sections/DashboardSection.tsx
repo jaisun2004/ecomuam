@@ -193,7 +193,21 @@ const DashboardSection = ({ onNavigate }: DashboardProps) => {
                   <p className="text-sm text-foreground">{a.detail}</p>
                   <span className="text-[10px] text-muted-foreground mt-1 block">{a.time}</span>
                 </div>
-                <button className="text-primary text-xs font-bold shrink-0 hover:underline">Investigate</button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const kpiToSection: Record<string, string> = {
+                      "Availability": "availability",
+                      "Pricing": "pricing",
+                      "Market Share": "rank",
+                      "Content": "content",
+                      "SoS": "shelf",
+                      "Ads": "ads",
+                    };
+                    onNavigate(kpiToSection[a.kpi] || "availability");
+                  }}
+                  className="text-primary text-xs font-bold shrink-0 hover:underline"
+                >Investigate</button>
               </div>
             </div>
           ))}
