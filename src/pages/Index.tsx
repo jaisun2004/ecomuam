@@ -1,45 +1,42 @@
 import { useState } from "react";
-import AppSidebar from "@/components/AppSidebar";
-import TopBar from "@/components/TopBar";
-import DashboardSection from "@/components/sections/DashboardSection";
-import AvailabilitySection from "@/components/sections/AvailabilitySection";
-import PricingSection from "@/components/sections/PricingSection";
-import ShelfSection from "@/components/sections/ShelfSection";
-import RankMarketShareSection from "@/components/sections/RankMarketShareSection";
-import ContentAuditSection from "@/components/sections/ContentAuditSection";
-import AdOptimisationSection from "@/components/sections/AdOptimisationSection";
-import CategoryRecommendationSection from "@/components/sections/CategoryRecommendationSection";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Sidebar from "@/components/Sidebar";
+import Topbar from "@/components/Topbar";
+import AIBar from "@/components/AIBar";
+import ShelfView from "@/views/ShelfView";
+import CampaignView from "@/views/CampaignView";
+import DiscoveryView from "@/views/DiscoveryView";
+import ReportsView from "@/views/ReportsView";
+import CompetitorsView from "@/views/CompetitorsView";
+import AlertsView from "@/views/AlertsView";
+import AccountView from "@/views/AccountView";
 
-const sectionComponents: Record<string, React.FC<any>> = {
-  availability: AvailabilitySection,
-  pricing: PricingSection,
-  shelf: ShelfSection,
-  rank: RankMarketShareSection,
-  content: ContentAuditSection,
-  ads: AdOptimisationSection,
-  category: CategoryRecommendationSection,
+const views: Record<string, React.FC> = {
+  shelf: ShelfView,
+  campaigns: CampaignView,
+  discovery: DiscoveryView,
+  reports: ReportsView,
+  competitors: CompetitorsView,
+  alerts: AlertsView,
+  account: AccountView,
 };
 
 const Index = () => {
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [active, setActive] = useState("shelf");
+
+  const View = views[active] || ShelfView;
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <AppSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
-        <TopBar />
-        <main className="flex-1 overflow-auto p-6">
-          {activeSection === "dashboard" ? (
-            <DashboardSection onNavigate={setActiveSection} />
-          ) : (
-            (() => {
-              const SectionComponent = sectionComponents[activeSection];
-              return SectionComponent ? <SectionComponent /> : <DashboardSection onNavigate={setActiveSection} />;
-            })()
-          )}
+    <TooltipProvider>
+      <div className="min-h-screen bg-background">
+        <Sidebar active={active} onChange={setActive} />
+        <Topbar active={active} onChange={setActive} />
+        <main className="ml-[68px] mt-[60px] p-7">
+          <View key={active} />
         </main>
+        <AIBar />
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
