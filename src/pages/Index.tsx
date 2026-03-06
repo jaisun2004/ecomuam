@@ -7,7 +7,8 @@ import ShelfView from "@/views/ShelfView";
 import CampaignView from "@/views/CampaignView";
 import DiscoveryView from "@/views/DiscoveryView";
 import ReportsView from "@/views/ReportsView";
-import CompetitorsView from "@/views/CompetitorsView";
+import AvailabilityView from "@/views/AvailabilityView";
+import PricingView from "@/views/PricingView";
 import AlertsView from "@/views/AlertsView";
 import AccountView from "@/views/AccountView";
 
@@ -16,7 +17,8 @@ const views: Record<string, React.FC> = {
   campaigns: CampaignView,
   discovery: DiscoveryView,
   reports: ReportsView,
-  competitors: CompetitorsView,
+  availability: AvailabilityView,
+  pricing: PricingView,
   alerts: AlertsView,
   account: AccountView,
 };

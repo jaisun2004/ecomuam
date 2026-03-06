@@ -1,0 +1,208 @@
+import React, { useState } from "react";
+import KPICard from "@/components/sw/KPICard";
+import PanelCard from "@/components/sw/PanelCard";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot } from "recharts";
+import { Megaphone, TrendingDown, TrendingUp, AlertTriangle } from "lucide-react";
+
+const priceHistory = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  yours: 2499,
+  muscleblaze: i >= 12 ? 2199 : 2299,
+  on: i >= 18 ? 3299 : 3499,
+  asitis: 1899,
+}));
+
+const competitorMatrix = [
+  { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "Dymatize ISO 100", you: false, price: "₹4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+];
+
+const priceAlerts = [
+  { sku: "Creatine 250g", competitor: "MuscleBlaze", platform: "Amazon", yourPrice: "₹799", compPrice: "₹699", gap: "+14.3%", impact: "Conversion -22%", severity: "high" },
+  { sku: "Pre-Workout 300g", competitor: "BigMuscles", platform: "Amazon", yourPrice: "₹1,899", compPrice: "₹1,599", gap: "+18.8%", impact: "Conversion -15%", severity: "high" },
+  { sku: "BCAA Tropical", competitor: "ON", platform: "Flipkart", yourPrice: "₹1,299", compPrice: "₹1,199", gap: "+8.3%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "Multi-Vit 60ct", competitor: "HealthKart", platform: "Zepto", yourPrice: "₹649", compPrice: "₹599", gap: "+8.3%", impact: "Conversion -4%", severity: "low" },
+];
+
+const platformPricing = [
+  { platform: "Amazon", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1 },
+  { platform: "Flipkart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1 },
+  { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0 },
+  { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0 },
+  { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0 },
+];
+
+const contentGaps = [
+  { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
+  { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
+  { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
+  { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
+];
+
+const PricingView: React.FC = () => {
+  const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
+  const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
+
+  return (
+    <div className="space-y-6 pb-20">
+      <div className="grid grid-cols-4 gap-4">
+        <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
+        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Across all platforms" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Revenue at Risk" value="₹3.8L" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
+      </div>
+
+      {/* Competitor Matrix */}
+      <PanelCard title="Competitor Intelligence Matrix — Whey Protein 1kg · Amazon" badge="Real-time" badgeColor="red" delay={0.2}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-muted-foreground">
+                <th className="text-left py-2 font-normal">Brand / SKU</th>
+                <th className="text-right py-2 font-normal">Price</th>
+                <th className="text-right py-2 font-normal">Rating</th>
+                <th className="text-right py-2 font-normal">Reviews</th>
+                <th className="text-right py-2 font-normal">Position</th>
+                <th className="text-right py-2 font-normal">SoS</th>
+                <th className="text-right py-2 font-normal">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {competitorMatrix.map((r) => (
+                <tr key={r.brand} className={r.you ? "bg-primary/5" : ""}>
+                  <td className="py-3 text-foreground">
+                    <span className="flex items-center gap-1.5">
+                      {r.you && <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-primary/20 text-primary">YOU</span>}
+                      {r.brand}
+                    </span>
+                  </td>
+                  <td className={`py-3 text-right font-mono ${r.priceColor}`}>{r.price}</td>
+                  <td className={`py-3 text-right font-mono ${r.ratingColor}`}>{r.rating}</td>
+                  <td className="py-3 text-right font-mono text-foreground">{r.reviews}</td>
+                  <td className={`py-3 text-right font-mono ${r.posColor}`}>{r.pos}</td>
+                  <td className={`py-3 text-right font-mono ${r.sosColor}`}>{r.sos}</td>
+                  <td className="py-3 text-right"><span className={`font-mono text-[10px] px-2 py-0.5 rounded-full ${r.stockColor}`}>{r.stock}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </PanelCard>
+
+      {/* Price Alerts + Platform Pricing Index */}
+      <div className="grid grid-cols-2 gap-4">
+        <PanelCard title="Active Price Alerts" badge={`${priceAlerts.length} alerts`} badgeColor="red" delay={0.3}>
+          <div className="space-y-2">
+            {priceAlerts.map((a, i) => (
+              <div key={i} className={`p-3 rounded-xl border ${
+                a.severity === "high" ? "bg-sw-red-dim/30 border-sw-red/20" : a.severity === "medium" ? "bg-sw-amber-dim/30 border-sw-amber/20" : "bg-surface-2 border-subtle"
+              }`}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-foreground font-medium">{a.sku}</span>
+                  <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
+                    a.severity === "high" ? "bg-sw-red-dim text-sw-red" : "bg-sw-amber-dim text-sw-amber"
+                  }`}>{a.gap}</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  {a.competitor} on {a.platform}: {a.compPrice} vs your {a.yourPrice} · {a.impact}
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      actionStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
+                    }`}>
+                    {actionStates[i] ? "✓ Price Matched" : "Match Price"}
+                  </button>
+                  <button onClick={() => setCampaignStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      campaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Megaphone size={10} />
+                    {campaignStates[i] ? "✓ Campaign Live" : "Value Campaign"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </PanelCard>
+
+        <PanelCard title="Platform Price Index" badge="vs Competition" badgeColor="accent" delay={0.35}>
+          <div className="space-y-3">
+            {platformPricing.map((p) => (
+              <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="flex items-center gap-2 text-xs text-foreground">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                    {p.platform}
+                  </span>
+                  <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
+                    {p.avgIndex.toFixed(2)}x
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-[10px]">
+                  <span className="text-sw-green">{p.skusBelowComp} below comp</span>
+                  <span className="text-muted-foreground">{p.parity} at parity</span>
+                  <span className="text-sw-red">{p.skusAboveComp} above comp</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </PanelCard>
+      </div>
+
+      {/* Price History + Content Gap */}
+      <div className="grid grid-cols-2 gap-4">
+        <PanelCard title="Price History — 30 Days" badge="Whey 1kg · Amazon" badgeColor="accent" delay={0.4}>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={priceHistory}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={6} />
+              <YAxis domain={[1700, 3700]} tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
+              <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
+              <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price" />
+              <Line type="monotone" dataKey="muscleblaze" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name="MuscleBlaze" />
+              <Line type="monotone" dataKey="on" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name="ON" />
+              <Line type="monotone" dataKey="asitis" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name="AS-IT-IS" />
+              <ReferenceDot x="Mar 13" y={2199} r={5} fill="hsl(0,76%,57%)" stroke="none" />
+              <ReferenceDot x="Mar 19" y={3299} r={5} fill="hsl(38,92%,50%)" stroke="none" />
+            </LineChart>
+          </ResponsiveContainer>
+          <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground flex-wrap">
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> You</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-red rounded-full" /> MuscleBlaze</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-amber rounded-full" /> ON</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> AS-IT-IS</span>
+          </div>
+          <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">
+            <p className="text-[11px] text-foreground">⚠ 14.3% price gap — action recommended. MuscleBlaze cut price on Mar 12. Conversion rate dropped 8% since then.</p>
+          </div>
+        </PanelCard>
+
+        <PanelCard title="Content Gap vs MuscleBlaze" badge="Amazon" badgeColor="amber" delay={0.45}>
+          <div className="space-y-4">
+            {contentGaps.map((g) => (
+              <div key={g.label}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-foreground">{g.label}</span>
+                  <span className={`font-mono text-[10px] ${g.color}`}>You {g.you} / Them {g.them}</span>
+                </div>
+                <div className="h-2.5 bg-surface-3 rounded-full overflow-hidden flex">
+                  <div className="h-full bg-primary rounded-l-full" style={{ width: `${g.youPct}%` }} />
+                  <div className="h-full bg-sw-red/40 rounded-r-full" style={{ width: `${100 - g.youPct}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 p-3 rounded-xl bg-sw-red-dim border border-sw-red/20">
+            <p className="text-[11px] text-foreground">🔴 Priority fix: Add A+ Content — improves conversion by 5–10%. MuscleBlaze has it, you don't.</p>
+          </div>
+        </PanelCard>
+      </div>
+    </div>
+  );
+};
+
+export default PricingView;
