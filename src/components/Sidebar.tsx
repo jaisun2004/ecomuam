@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Target, Radio, User } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navItems = [
@@ -8,7 +8,8 @@ const navItems = [
   { id: "divider1", icon: null, label: "", notify: false },
   { id: "discovery", icon: Search, label: "Discovery", notify: false },
   { id: "reports", icon: BarChart2, label: "Reports", notify: false },
-  { id: "competitors", icon: Target, label: "Competitors", notify: false },
+  { id: "availability", icon: Package, label: "Availability", notify: false },
+  { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
   { id: "alerts", icon: Radio, label: "Alerts", notify: true },
 ];
 
@@ -20,7 +21,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ active, onChange }) => {
   return (
     <div className="fixed left-0 top-0 bottom-0 w-[68px] bg-background border-r border-subtle flex flex-col items-center py-4 z-50">
-      {/* Logo */}
       <div
         className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center mb-6 accent-glow cursor-pointer"
         onClick={() => onChange("shelf")}
@@ -28,7 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange }) => {
         <span className="font-display font-bold text-primary-foreground text-sm">SW</span>
       </div>
 
-      {/* Nav Items */}
       <div className="flex-1 flex flex-col items-center gap-1">
         {navItems.map((item) => {
           if (item.id.startsWith("divider")) {
@@ -61,7 +60,6 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange }) => {
         })}
       </div>
 
-      {/* Account at bottom */}
       <Tooltip>
         <TooltipTrigger asChild>
           <button

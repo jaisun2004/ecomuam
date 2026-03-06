@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import { ChevronDown, ChevronRight, FileText, X } from "lucide-react";
 
+/* ── existing mock data ── */
 const revenueData = [
   { day: "Mar 1", revenue: 180, spend: 40 },
   { day: "Mar 5", revenue: 195, spend: 42 },
@@ -52,11 +54,166 @@ const copilotCards = [
   { impact: "MED IMPACT", emoji: "⚡", text: "Pre-Workout trending +47% on Blinkit South Delhi. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
 ];
 
+/* ── Hierarchical Report Data ── */
+type ReportKeyword = {
+  keyword: string;
+  impressions: string;
+  clicks: string;
+  spend: string;
+  revenue: string;
+  roas: string;
+  roasColor: string;
+  cities?: { city: string; impressions: string; clicks: string; spend: string; revenue: string; roas: string; roasColor: string; products: { code: string; title: string; spend: string; revenue: string; roas: string; roasColor: string }[] }[];
+};
+
+type ReportCampaign = {
+  name: string;
+  status: string;
+  spend: string;
+  revenue: string;
+  roas: string;
+  roasColor: string;
+  impressions: string;
+  clicks: string;
+  ctr: string;
+  keywords: ReportKeyword[];
+};
+
+type ReportPlatform = {
+  platform: string;
+  color: string;
+  totalSpend: string;
+  totalRevenue: string;
+  blendedRoas: string;
+  roasColor: string;
+  campaigns: ReportCampaign[];
+};
+
+const reportData: ReportPlatform[] = [
+  {
+    platform: "Amazon", color: "#FF9900", totalSpend: "₹7.8L", totalRevenue: "₹39.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
+    campaigns: [
+      {
+        name: "Whey Protein — Sponsored", status: "LIVE", spend: "₹4.2L", revenue: "₹21.4L", roas: "5.1x", roasColor: "text-sw-green",
+        impressions: "842K", clicks: "28.4K", ctr: "3.4%",
+        keywords: [
+          {
+            keyword: "whey protein 1kg", impressions: "342K", clicks: "12.8K", spend: "₹1.8L", revenue: "₹11.2L", roas: "6.2x", roasColor: "text-sw-green",
+            cities: [
+              { city: "Delhi NCR", impressions: "98K", clicks: "4.1K", spend: "₹52K", revenue: "₹3.4L", roas: "6.5x", roasColor: "text-sw-green",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹32K", revenue: "₹2.1L", roas: "6.6x", roasColor: "text-sw-green" },
+                  { code: "SKU-WH1K-VN", title: "Whey 1kg Vanilla", spend: "₹20K", revenue: "₹1.3L", roas: "6.5x", roasColor: "text-sw-green" },
+                ]},
+              { city: "Mumbai", impressions: "82K", clicks: "3.2K", spend: "₹44K", revenue: "₹2.8L", roas: "6.4x", roasColor: "text-sw-green",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹28K", revenue: "₹1.8L", roas: "6.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-WH1K-VN", title: "Whey 1kg Vanilla", spend: "₹16K", revenue: "₹1.0L", roas: "6.3x", roasColor: "text-sw-green" },
+                ]},
+              { city: "Bangalore", impressions: "68K", clicks: "2.6K", spend: "₹38K", revenue: "₹2.2L", roas: "5.8x", roasColor: "text-sw-green",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹38K", revenue: "₹2.2L", roas: "5.8x", roasColor: "text-sw-green" },
+                ]},
+            ],
+          },
+          {
+            keyword: "protein powder", impressions: "498K", clicks: "14.2K", spend: "₹2.1L", revenue: "₹6.5L", roas: "3.1x", roasColor: "text-sw-amber",
+            cities: [
+              { city: "Delhi NCR", impressions: "142K", clicks: "4.8K", spend: "₹68K", revenue: "₹2.1L", roas: "3.1x", roasColor: "text-sw-amber",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹42K", revenue: "₹1.4L", roas: "3.3x", roasColor: "text-sw-amber" },
+                  { code: "SKU-WH500-CH", title: "Whey 500g Chocolate", spend: "₹26K", revenue: "₹0.7L", roas: "2.7x", roasColor: "text-sw-amber" },
+                ]},
+              { city: "Hyderabad", impressions: "88K", clicks: "2.4K", spend: "₹34K", revenue: "₹0.9L", roas: "2.6x", roasColor: "text-sw-amber",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹34K", revenue: "₹0.9L", roas: "2.6x", roasColor: "text-sw-amber" },
+                ]},
+            ],
+          },
+        ],
+      },
+      {
+        name: "Creatine — Keyword Target", status: "PAUSED", spend: "₹1.8L", revenue: "₹3.8L", roas: "2.1x", roasColor: "text-sw-red",
+        impressions: "284K", clicks: "8.2K", ctr: "2.9%",
+        keywords: [
+          {
+            keyword: "creatine monohydrate", impressions: "187K", clicks: "5.4K", spend: "₹1.2L", revenue: "₹1.7L", roas: "1.4x", roasColor: "text-sw-red",
+            cities: [
+              { city: "Delhi NCR", impressions: "62K", clicks: "1.8K", spend: "₹42K", revenue: "₹58K", roas: "1.4x", roasColor: "text-sw-red",
+                products: [
+                  { code: "SKU-CR250", title: "Creatine Monohydrate 250g", spend: "₹42K", revenue: "₹58K", roas: "1.4x", roasColor: "text-sw-red" },
+                ]},
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹3.3L", totalRevenue: "₹12.5L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
+    campaigns: [
+      {
+        name: "Q-Commerce Launch Push", status: "LIVE", spend: "₹2.8L", revenue: "₹10.6L", roas: "3.8x", roasColor: "text-sw-amber",
+        impressions: "412K", clicks: "14.8K", ctr: "3.6%",
+        keywords: [
+          {
+            keyword: "whey protein", impressions: "188K", clicks: "7.2K", spend: "₹1.4L", revenue: "₹5.6L", roas: "4.0x", roasColor: "text-sw-green",
+            cities: [
+              { city: "Delhi NCR", impressions: "92K", clicks: "3.8K", spend: "₹72K", revenue: "₹3.1L", roas: "4.3x", roasColor: "text-sw-green",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹48K", revenue: "₹2.1L", roas: "4.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-WH500-CH", title: "Whey 500g Chocolate", spend: "₹24K", revenue: "₹1.0L", roas: "4.2x", roasColor: "text-sw-green" },
+                ]},
+              { city: "Mumbai", impressions: "68K", clicks: "2.4K", spend: "₹48K", revenue: "₹1.8L", roas: "3.8x", roasColor: "text-sw-amber",
+                products: [
+                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹48K", revenue: "₹1.8L", roas: "3.8x", roasColor: "text-sw-amber" },
+                ]},
+            ],
+          },
+          {
+            keyword: "pre workout", impressions: "124K", clicks: "4.8K", spend: "₹88K", revenue: "₹3.2L", roas: "3.6x", roasColor: "text-sw-amber",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    platform: "Flipkart", color: "#2F77FF", totalSpend: "₹5.2L", totalRevenue: "₹10.9L", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    campaigns: [
+      {
+        name: "Creatine Retargeting", status: "PAUSED", spend: "₹3.0L", revenue: "₹6.3L", roas: "2.1x", roasColor: "text-sw-red",
+        impressions: "524K", clicks: "12.8K", ctr: "2.4%",
+        keywords: [
+          {
+            keyword: "creatine supplement", impressions: "284K", clicks: "6.2K", spend: "₹1.8L", revenue: "₹2.5L", roas: "1.4x", roasColor: "text-sw-red",
+            cities: [
+              { city: "Delhi NCR", impressions: "82K", clicks: "1.8K", spend: "₹52K", revenue: "₹72K", roas: "1.4x", roasColor: "text-sw-red",
+                products: [
+                  { code: "SKU-CR250", title: "Creatine Monohydrate 250g", spend: "₹52K", revenue: "₹72K", roas: "1.4x", roasColor: "text-sw-red" },
+                ]},
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
+
 const CampaignView: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(0);
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
   const [copilotStates, setCopilotStates] = useState<Record<number, boolean>>({});
   const [reallocApplied, setReallocApplied] = useState(false);
+  const [showReports, setShowReports] = useState(false);
+  const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
+  const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
+  const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
+  const [expandedCities, setExpandedCities] = useState<Record<string, boolean>>({});
+
+  const togglePlatform = (i: number) => setExpandedPlatforms(p => ({ ...p, [i]: !p[i] }));
+  const toggleCampaign = (k: string) => setExpandedCampaigns(p => ({ ...p, [k]: !p[k] }));
+  const toggleKeyword = (k: string) => setExpandedKeywords(p => ({ ...p, [k]: !p[k] }));
+  const toggleCity = (k: string) => setExpandedCities(p => ({ ...p, [k]: !p[k] }));
 
   return (
     <div className="space-y-6 pb-20">
@@ -66,6 +223,126 @@ const CampaignView: React.FC = () => {
         <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
         <KPICard title="Attributed Revenue" value="₹77L" delta="▲ 18% MoM" deltaType="positive" sub="Across all ad-attributed orders" accentColor="bg-sw-cyan" delay={0.15} />
       </div>
+
+      {/* Reports toggle */}
+      <div className="flex items-center justify-end">
+        <button onClick={() => setShowReports(!showReports)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+            showReports ? "bg-primary/20 text-primary" : "bg-surface-2 border border-subtle text-foreground hover:bg-surface-3"
+          }`}>
+          <FileText size={14} />
+          {showReports ? "Close Campaign Reports" : "View Campaign Reports"}
+        </button>
+      </div>
+
+      {/* ── CAMPAIGN REPORTS SECTION ── */}
+      {showReports && (
+        <PanelCard title="Campaign Performance Reports" badge="Drill-down View" badgeColor="accent" delay={0.05}>
+          <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-wide">Platform → Campaign → Keyword → City → Product</p>
+          <div className="space-y-2">
+            {reportData.map((plat, pi) => (
+              <div key={plat.platform} className="border border-subtle rounded-xl overflow-hidden">
+                {/* Platform level */}
+                <button onClick={() => togglePlatform(pi)}
+                  className="w-full flex items-center gap-3 p-3.5 hover:bg-surface-2 transition-colors">
+                  {expandedPlatforms[pi] ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronRight size={14} className="text-muted-foreground" />}
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: plat.color }} />
+                  <span className="text-sm text-foreground font-semibold">{plat.platform}</span>
+                  <div className="ml-auto flex items-center gap-4 text-[11px]">
+                    <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{plat.totalSpend}</span></span>
+                    <span className="text-muted-foreground">Revenue <span className="font-mono text-foreground">{plat.totalRevenue}</span></span>
+                    <span className={`font-mono font-bold ${plat.roasColor}`}>{plat.blendedRoas}</span>
+                  </div>
+                </button>
+                {expandedPlatforms[pi] && (
+                  <div className="border-t border-subtle">
+                    {plat.campaigns.map((camp, ci) => {
+                      const ck = `${pi}-${ci}`;
+                      return (
+                        <div key={ck} className="border-b border-subtle last:border-0">
+                          <button onClick={() => toggleCampaign(ck)}
+                            className="w-full flex items-center gap-3 p-3 pl-8 hover:bg-surface-2/50 transition-colors">
+                            {expandedCampaigns[ck] ? <ChevronDown size={12} className="text-muted-foreground" /> : <ChevronRight size={12} className="text-muted-foreground" />}
+                            <span className="text-xs text-foreground font-medium">{camp.name}</span>
+                            <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${camp.status === "LIVE" ? "bg-sw-green-dim text-sw-green" : "bg-sw-amber-dim text-sw-amber"}`}>{camp.status}</span>
+                            <div className="ml-auto flex items-center gap-3 text-[10px]">
+                              <span className="text-muted-foreground">Imp <span className="font-mono text-foreground">{camp.impressions}</span></span>
+                              <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{camp.clicks}</span></span>
+                              <span className="text-muted-foreground">CTR <span className="font-mono text-foreground">{camp.ctr}</span></span>
+                              <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{camp.spend}</span></span>
+                              <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{camp.revenue}</span></span>
+                              <span className={`font-mono font-bold ${camp.roasColor}`}>{camp.roas}</span>
+                            </div>
+                          </button>
+                          {expandedCampaigns[ck] && (
+                            <div className="bg-surface-2/30">
+                              {camp.keywords.map((kw, ki) => {
+                                const kwk = `${ck}-${ki}`;
+                                return (
+                                  <div key={kwk} className="border-t border-subtle/50">
+                                    <button onClick={() => toggleKeyword(kwk)}
+                                      className="w-full flex items-center gap-3 p-2.5 pl-14 hover:bg-surface-2/50 transition-colors">
+                                      {kw.cities ? (expandedKeywords[kwk] ? <ChevronDown size={11} /> : <ChevronRight size={11} />) : <span className="w-[11px]" />}
+                                      <span className="font-mono text-[11px] text-foreground">"{kw.keyword}"</span>
+                                      <div className="ml-auto flex items-center gap-3 text-[10px]">
+                                        <span className="text-muted-foreground">Imp <span className="font-mono text-foreground">{kw.impressions}</span></span>
+                                        <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{kw.clicks}</span></span>
+                                        <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{kw.spend}</span></span>
+                                        <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{kw.revenue}</span></span>
+                                        <span className={`font-mono font-bold ${kw.roasColor}`}>{kw.roas}</span>
+                                      </div>
+                                    </button>
+                                    {expandedKeywords[kwk] && kw.cities && (
+                                      <div className="bg-surface-3/30">
+                                        {kw.cities.map((city, cii) => {
+                                          const cityk = `${kwk}-${cii}`;
+                                          return (
+                                            <div key={cityk} className="border-t border-subtle/30">
+                                              <button onClick={() => toggleCity(cityk)}
+                                                className="w-full flex items-center gap-3 p-2 pl-20 hover:bg-surface-3/50 transition-colors">
+                                                {expandedCities[cityk] ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
+                                                <span className="text-[11px] text-foreground">📍 {city.city}</span>
+                                                <div className="ml-auto flex items-center gap-3 text-[9px]">
+                                                  <span className="text-muted-foreground">Imp <span className="font-mono text-foreground">{city.impressions}</span></span>
+                                                  <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{city.clicks}</span></span>
+                                                  <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{city.spend}</span></span>
+                                                  <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{city.revenue}</span></span>
+                                                  <span className={`font-mono font-bold ${city.roasColor}`}>{city.roas}</span>
+                                                </div>
+                                              </button>
+                                              {expandedCities[cityk] && (
+                                                <div className="bg-surface-3/20">
+                                                  {city.products.map((prod) => (
+                                                    <div key={prod.code} className="flex items-center gap-3 p-2 pl-28 border-t border-subtle/20 text-[10px]">
+                                                      <span className="font-mono text-muted-foreground">{prod.code}</span>
+                                                      <span className="text-foreground flex-1">{prod.title}</span>
+                                                      <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{prod.spend}</span></span>
+                                                      <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{prod.revenue}</span></span>
+                                                      <span className={`font-mono font-bold ${prod.roasColor}`}>{prod.roas}</span>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </PanelCard>
+      )}
 
       {/* Chart + Campaign cards */}
       <div className="grid grid-cols-3 gap-4">
@@ -99,13 +376,10 @@ const CampaignView: React.FC = () => {
         <PanelCard title="Active Campaigns" badge="AI managing 16" badgeColor="purple" delay={0.25}>
           <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
             {campaigns.map((c, i) => (
-              <div
-                key={c.name}
-                onClick={() => setSelectedCampaign(i)}
+              <div key={c.name} onClick={() => setSelectedCampaign(i)}
                 className={`p-3 rounded-xl border cursor-pointer transition-all ${
                   selectedCampaign === i ? "border-primary bg-primary/5" : "border-subtle bg-surface-2 hover:border-border-visible"
-                }`}
-              >
+                }`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-foreground font-medium truncate">{c.name}</span>
                   <span className="text-[9px] px-1.5 py-0.5 rounded-full font-mono" style={{ backgroundColor: c.platformColor + "22", color: c.platformColor }}>{c.platform}</span>
@@ -181,12 +455,10 @@ const CampaignView: React.FC = () => {
                   <p className="text-[9px] text-muted-foreground font-mono">{k.bid} · {k.imp} imp</p>
                 </div>
                 <span className={`font-mono text-[10px] ${k.roasColor}`}>{k.roas}</span>
-                <button
-                  onClick={() => setBidStates((p) => ({ ...p, [i]: k.action.includes("Raise") ? "↑ ₹34" : k.action.includes("Lower") ? "↓ ₹16" : "— ₹45" }))}
+                <button onClick={() => setBidStates((p) => ({ ...p, [i]: k.action.includes("Raise") ? "↑ ₹34" : k.action.includes("Lower") ? "↓ ₹16" : "— ₹45" }))}
                   className={`px-2 py-0.5 rounded text-[9px] font-medium border transition-all ${
                     bidStates[i] ? "bg-sw-green-dim text-sw-green border-sw-green/20" : k.actionColor
-                  }`}
-                >
+                  }`}>
                   {bidStates[i] || k.action}
                 </button>
               </div>
@@ -209,12 +481,10 @@ const CampaignView: React.FC = () => {
                 <p className="text-sm text-foreground mt-3">{c.emoji} {c.text}</p>
                 <p className="text-[10px] text-muted-foreground mt-2 font-mono">Confidence: {c.confidence}%</p>
                 <div className="flex items-center gap-2 mt-3">
-                  <button
-                    onClick={() => setCopilotStates((p) => ({ ...p, [i]: true }))}
+                  <button onClick={() => setCopilotStates((p) => ({ ...p, [i]: true }))}
                     className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                       copilotStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"
-                    }`}
-                  >
+                    }`}>
                     {copilotStates[i] ? "✓ Applied!" : c.action}
                   </button>
                   {!copilotStates[i] && <button className="px-3 py-1.5 rounded-lg text-[11px] text-muted-foreground hover:text-foreground">Dismiss</button>}
