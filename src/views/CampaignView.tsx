@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
-import { ChevronDown, ChevronRight, FileText, X } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical } from "lucide-react";
 
 /* ── existing mock data ── */
 const revenueData = [
@@ -199,16 +199,184 @@ const reportData: ReportPlatform[] = [
   },
 ];
 
+/* ── Day Parting Data ── */
+const dayPartingSlots = [
+  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push"], budgetPct: 15 },
+  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Whey Protein — Sponsored", "BCAA Brand Awareness", "Pre-Workout New Users"], budgetPct: 25 },
+  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Creatine Retargeting", "BCAA Brand Awareness"], budgetPct: 15 },
+  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push", "Pre-Workout New Users", "BCAA Brand Awareness"], budgetPct: 30 },
+  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push"], budgetPct: 12 },
+  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Creatine Retargeting"], budgetPct: 3 },
+];
+
+/* ── Campaign Creator Modal ── */
+const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
+  const [method, setMethod] = useState<null | "ai" | "history" | "manual">(null);
+  const [launched, setLaunched] = useState(false);
+
+  if (!open) return null;
+
+  const aiSuggestions = [
+    { name: "Stock Recovery Blitz", signal: "Whey 500g OOS on Instamart — 6 pincodes", roas: "4.8x", budget: "₹15K", duration: "3 days", keywords: ["whey protein", "protein powder"] },
+    { name: "Price Advantage Push", signal: "Creatine 14% cheaper than MuscleBlaze", roas: "5.2x", budget: "₹20K", duration: "7 days", keywords: ["creatine monohydrate", "creatine supplement"] },
+    { name: "Trending Capture", signal: "Pre-workout +47% search on Blinkit", roas: "3.9x", budget: "₹12K", duration: "5 days", keywords: ["pre workout", "pre workout energy"] },
+  ];
+
+  const historyCampaigns = [
+    { name: "Whey Summer Push 2025", platform: "Amazon", spend: "₹3.2L", roas: "4.9x", duration: "14 days" },
+    { name: "Festive Season Blast", platform: "Flipkart", spend: "₹5.1L", roas: "5.6x", duration: "21 days" },
+    { name: "Q-Commerce Pilot", platform: "Blinkit", spend: "₹1.8L", roas: "3.4x", duration: "7 days" },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-surface-1 border border-border-visible rounded-2xl w-[720px] max-h-[85vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-6 border-b border-subtle">
+          <div>
+            <h2 className="font-display font-bold text-lg text-foreground">Autonomous Campaign Creator</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Choose your campaign creation method</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground"><X size={16} /></button>
+        </div>
+
+        {!method && (
+          <div className="p-6 grid grid-cols-3 gap-4">
+            {[
+              { key: "ai" as const, icon: Sparkles, label: "Autonomous AI", desc: "AI recommends everything automatically", gradient: "from-sw-purple to-primary" },
+              { key: "history" as const, icon: History, label: "From History", desc: "Use historical campaigns to create new campaigns", gradient: "from-primary to-sw-cyan" },
+              { key: "manual" as const, icon: FileEdit, label: "Manual Entry", desc: "Configure everything yourself manually", gradient: "from-surface-3 to-surface-2" },
+            ].map(m => (
+              <button key={m.key} onClick={() => setMethod(m.key)}
+                className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-subtle bg-surface-2 hover:border-primary/40 hover:bg-surface-3 transition-all group">
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center`}>
+                  <m.icon size={24} className="text-foreground" />
+                </div>
+                <span className="font-display font-bold text-sm text-foreground">{m.label}</span>
+                <span className="text-[11px] text-muted-foreground text-center">{m.desc}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {method === "ai" && !launched && (
+          <div className="p-6 space-y-3">
+            <button onClick={() => setMethod(null)} className="text-[11px] text-primary mb-2">← Back to methods</button>
+            <p className="text-xs text-muted-foreground mb-3">AI-generated campaigns based on current signals</p>
+            {aiSuggestions.map((s, i) => (
+              <div key={i} className="p-4 rounded-xl border border-subtle bg-surface-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-display font-bold text-sm text-foreground">{s.name}</span>
+                  <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-sw-green-dim text-sw-green">Est. ROAS {s.roas}</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">📡 Signal: {s.signal}</p>
+                <div className="flex gap-3 text-[10px] font-mono text-muted2">
+                  <span>Budget: {s.budget}</span><span>Duration: {s.duration}</span>
+                  <span>Keywords: {s.keywords.join(", ")}</span>
+                </div>
+                <button onClick={() => setLaunched(true)} className="mt-1 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/20 text-primary hover:bg-primary/30">
+                  🚀 Launch Campaign
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {method === "history" && !launched && (
+          <div className="p-6 space-y-3">
+            <button onClick={() => setMethod(null)} className="text-[11px] text-primary mb-2">← Back to methods</button>
+            <p className="text-xs text-muted-foreground mb-3">Clone and customize a past campaign</p>
+            {historyCampaigns.map((h, i) => (
+              <div key={i} className="p-4 rounded-xl border border-subtle bg-surface-2 flex items-center justify-between">
+                <div>
+                  <span className="text-sm font-medium text-foreground">{h.name}</span>
+                  <div className="flex gap-3 text-[10px] font-mono text-muted-foreground mt-1">
+                    <span>{h.platform}</span><span>Spend: {h.spend}</span><span>ROAS: {h.roas}</span><span>{h.duration}</span>
+                  </div>
+                </div>
+                <button onClick={() => setLaunched(true)} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/20 text-primary hover:bg-primary/30">
+                  Clone & Edit
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {method === "manual" && !launched && (
+          <div className="p-6 space-y-4">
+            <button onClick={() => setMethod(null)} className="text-[11px] text-primary mb-2">← Back to methods</button>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">Campaign Name</label>
+                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="e.g. Summer Whey Push" />
+              </div>
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">Platform</label>
+                <select className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground">
+                  <option>Amazon</option><option>Flipkart</option><option>Blinkit</option><option>Zepto</option><option>Instamart</option><option>Instagram</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">Campaign Type</label>
+                <select className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground">
+                  <option>Sponsored Products</option><option>Keyword Conquesting</option><option>Retargeting</option><option>Brand Awareness</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">Daily Budget</label>
+                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="₹5,000" />
+              </div>
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">Duration (days)</label>
+                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="14" type="number" />
+              </div>
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">Target ROAS</label>
+                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="4.0x" />
+              </div>
+            </div>
+            <div>
+              <label className="text-[11px] text-muted-foreground block mb-1">Keywords (comma-separated)</label>
+              <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="whey protein, protein powder, gym supplement" />
+            </div>
+            <button onClick={() => setLaunched(true)} className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-foreground hover:bg-primary/80">
+              🚀 Create Campaign
+            </button>
+          </div>
+        )}
+
+        {launched && (
+          <div className="p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-sw-green-dim flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">✓</span>
+            </div>
+            <h3 className="font-display font-bold text-foreground text-lg">Campaign Created!</h3>
+            <p className="text-xs text-muted-foreground mt-1">Your campaign is now live and being optimized by AI</p>
+            <button onClick={onClose} className="mt-4 px-4 py-2 rounded-lg text-sm bg-surface-3 text-foreground hover:bg-surface-2">Close</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const CampaignView: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(0);
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
   const [copilotStates, setCopilotStates] = useState<Record<number, boolean>>({});
   const [reallocApplied, setReallocApplied] = useState(false);
   const [showReports, setShowReports] = useState(false);
+  const [showDayParting, setShowDayParting] = useState(false);
+  const [showCreator, setShowCreator] = useState(false);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
   const [expandedCities, setExpandedCities] = useState<Record<string, boolean>>({});
+  const [expandedSlots, setExpandedSlots] = useState<Record<number, boolean>>({});
+  const [slotStates, setSlotStates] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    dayPartingSlots.forEach((s, si) => s.campaigns.forEach((_, ci) => { init[`${si}-${ci}`] = true; }));
+    return init;
+  });
 
   const togglePlatform = (i: number) => setExpandedPlatforms(p => ({ ...p, [i]: !p[i] }));
   const toggleCampaign = (k: string) => setExpandedCampaigns(p => ({ ...p, [k]: !p[k] }));
@@ -217,6 +385,8 @@ const CampaignView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
+      <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
+
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x · 93% of goal" accentColor="bg-sw-green" delay={0.05} />
@@ -224,16 +394,94 @@ const CampaignView: React.FC = () => {
         <KPICard title="Attributed Revenue" value="₹77L" delta="▲ 18% MoM" deltaType="positive" sub="Across all ad-attributed orders" accentColor="bg-sw-cyan" delay={0.15} />
       </div>
 
-      {/* Reports toggle */}
-      <div className="flex items-center justify-end">
+      {/* Action bar */}
+      <div className="flex items-center gap-3 justify-end">
+        <button onClick={() => setShowCreator(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-primary text-foreground hover:bg-primary/80 transition-all">
+          <Plus size={14} /> Create Campaign
+        </button>
+        <button onClick={() => setShowDayParting(!showDayParting)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+            showDayParting ? "bg-sw-amber-dim text-sw-amber border border-sw-amber/20" : "bg-surface-2 border border-subtle text-foreground hover:bg-surface-3"
+          }`}>
+          <Clock size={14} /> Day Parting
+        </button>
         <button onClick={() => setShowReports(!showReports)}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
             showReports ? "bg-primary/20 text-primary" : "bg-surface-2 border border-subtle text-foreground hover:bg-surface-3"
           }`}>
           <FileText size={14} />
-          {showReports ? "Close Campaign Reports" : "View Campaign Reports"}
+          {showReports ? "Close Reports" : "Campaign Reports"}
         </button>
       </div>
+
+      {/* ── DAY PARTING SECTION ── */}
+      {showDayParting && (
+        <PanelCard title="Day Parting Configuration" badge="6 time slots" badgeColor="amber" delay={0.05}>
+          <p className="text-[10px] text-muted-foreground mb-4">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
+          {/* Visual timeline bar */}
+          <div className="mb-5">
+            <div className="flex h-8 rounded-xl overflow-hidden border border-subtle">
+              {dayPartingSlots.map((s, i) => {
+                const colors = ["bg-primary/40", "bg-sw-green/40", "bg-sw-amber/40", "bg-sw-purple/40", "bg-sw-cyan/40", "bg-surface-3"];
+                return (
+                  <div key={i} className={`${colors[i]} flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity`}
+                    style={{ width: `${s.budgetPct}%` }}
+                    onClick={() => setExpandedSlots(p => ({ ...p, [i]: !p[i] }))}>
+                    <span className="text-[8px] font-mono text-foreground truncate px-1">{s.budgetPct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex mt-1">
+              {dayPartingSlots.map((s, i) => (
+                <div key={i} className="text-center" style={{ width: `${s.budgetPct}%` }}>
+                  <span className="text-[7px] text-muted-foreground">{s.time.split("–")[0].trim()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            {dayPartingSlots.map((s, si) => (
+              <div key={si} className="border border-subtle rounded-xl overflow-hidden">
+                <button onClick={() => setExpandedSlots(p => ({ ...p, [si]: !p[si] }))}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-surface-2 transition-colors">
+                  {expandedSlots[si] ? <ChevronDown size={13} className="text-muted-foreground" /> : <ChevronRight size={13} className="text-muted-foreground" />}
+                  <Clock size={13} className="text-sw-amber" />
+                  <span className="text-xs font-medium text-foreground">{s.slot}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">{s.time}</span>
+                  <span className="ml-auto flex items-center gap-3">
+                    <span className="font-mono text-[10px] text-sw-amber">{s.budgetPct}% budget</span>
+                    <span className="text-[10px] text-muted-foreground">{s.campaigns.length} campaigns</span>
+                  </span>
+                </button>
+                {expandedSlots[si] && (
+                  <div className="border-t border-subtle p-3 bg-surface-2/30 space-y-1.5">
+                    {s.campaigns.map((cName, ci) => {
+                      const campData = campaigns.find(c => c.name === cName);
+                      const key = `${si}-${ci}`;
+                      return (
+                        <div key={ci} className="flex items-center gap-3 p-2 rounded-lg bg-surface-2 border border-subtle">
+                          <GripVertical size={12} className="text-muted-foreground" />
+                          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: campData?.platformColor || "#4F6EF7" }} />
+                          <span className="text-[11px] text-foreground flex-1">{cName}</span>
+                          {campData && <span className="font-mono text-[10px] text-muted-foreground">{campData.roas} ROAS</span>}
+                          <button onClick={() => setSlotStates(p => ({ ...p, [key]: !p[key] }))}
+                            className={`px-2 py-0.5 rounded text-[9px] font-mono transition-all ${
+                              slotStates[key] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
+                            }`}>
+                            {slotStates[key] ? "ACTIVE" : "OFF"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </PanelCard>
+      )}
 
       {/* ── CAMPAIGN REPORTS SECTION ── */}
       {showReports && (
