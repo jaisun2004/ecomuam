@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import { AlertTriangle, Megaphone, MapPin, Store } from "lucide-react";
 
 const oosTimeline = [
   { day: "Mar 1", oos: 4 }, { day: "Mar 5", oos: 6 }, { day: "Mar 10", oos: 3 },
@@ -44,25 +45,67 @@ const stockForecast = [
   { sku: "BCAA Tropical", platform: "Amazon", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
 ];
 
-const pincodeCoverage = [
-  { region: "Delhi NCR", pincodes: 18, avgAvailability: 72, oosCount: 3 },
-  { region: "Mumbai", pincodes: 12, avgAvailability: 68, oosCount: 4 },
-  { region: "Bangalore", pincodes: 8, avgAvailability: 81, oosCount: 1 },
-  { region: "Hyderabad", pincodes: 6, avgAvailability: 55, oosCount: 3 },
-  { region: "Chennai", pincodes: 5, avgAvailability: 62, oosCount: 2 },
+/* Darkstore listing gaps by city */
+const darkstoreGaps = [
+  {
+    city: "Delhi NCR", totalDarkstores: 142,
+    products: [
+      { sku: "Whey 1kg", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
+      { sku: "Whey 500g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
+      { sku: "Pre-Workout", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
+      { sku: "Creatine", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "BCAA", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
+      { sku: "Multi-Vit", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
+    ],
+  },
+  {
+    city: "Mumbai", totalDarkstores: 98,
+    products: [
+      { sku: "Whey 1kg", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
+      { sku: "Whey 500g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
+      { sku: "Pre-Workout", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
+      { sku: "Creatine", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "BCAA", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
+      { sku: "Multi-Vit", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
+    ],
+  },
+  {
+    city: "Bangalore", totalDarkstores: 76,
+    products: [
+      { sku: "Whey 1kg", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
+      { sku: "Whey 500g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
+      { sku: "Pre-Workout", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
+      { sku: "Creatine", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
+    ],
+  },
 ];
+
+const adWasteAlerts = darkstoreGaps.flatMap(city =>
+  city.products
+    .filter(p => p.wastingBudget)
+    .map(p => ({
+      city: city.city,
+      sku: p.sku,
+      coverage: p.coverage,
+      unlisted: p.unlisted,
+      totalDarkstores: city.totalDarkstores,
+      wastedSpend: `₹${Math.round(p.unlisted * 0.12)}K/day`,
+    }))
+).slice(0, 6);
 
 const AvailabilityView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState(0);
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
+  const [selectedCity, setSelectedCity] = useState(0);
+  const [adPauseStates, setAdPauseStates] = useState<Record<number, boolean>>({});
 
   return (
     <div className="space-y-6 pb-20">
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 6 platforms · 48 SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="OOS Events (30d)" value="14" delta="▲ 4 vs last wk" deltaType="negative" sub="₹8.4L estimated revenue lost" accentColor="bg-sw-red" delay={0.05} />
-        <KPICard title="Avg Days to Restock" value="3.2d" delta="▼ 0.8d improved" deltaType="positive" sub="After supply chain optimization" accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Revenue at Risk" value="₹4.2L" delta="Active stock-outs" deltaType="negative" sub="₹4.2L/day from current OOS" accentColor="bg-sw-amber" delay={0.15} />
+        <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Across 3 cities · Q-Commerce" accentColor="bg-sw-amber" delay={0.1} />
+        <KPICard title="Ad Budget Wasted" value="₹2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Pause campaigns in unlisted areas" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
       {/* OOS Timeline + Platform Breakdown */}
@@ -107,9 +150,102 @@ const AvailabilityView: React.FC = () => {
         </PanelCard>
       </div>
 
-      {/* SKU Breakdown for selected platform + Revenue Impact */}
+      {/* Darkstore Listing Gaps — NEW */}
+      <PanelCard title="Darkstore Listing Gaps" badge="Q-Commerce Coverage" badgeColor="amber" delay={0.28}>
+        <div className="flex items-center gap-2 mb-4">
+          {darkstoreGaps.map((c, i) => (
+            <button key={c.city} onClick={() => setSelectedCity(i)}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                selectedCity === i ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+              }`}>
+              <MapPin size={10} className="inline mr-1" />{c.city} · {c.totalDarkstores} stores
+            </button>
+          ))}
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-muted-foreground">
+                <th className="text-left py-2 font-normal">Product</th>
+                <th className="text-right py-2 font-normal">Listed</th>
+                <th className="text-right py-2 font-normal">Unlisted</th>
+                <th className="text-right py-2 font-normal">Coverage</th>
+                <th className="text-center py-2 font-normal">Ads Running?</th>
+                <th className="text-center py-2 font-normal">Issue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {darkstoreGaps[selectedCity].products.map((p, i) => (
+                <tr key={p.sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
+                    <Store size={12} className="text-muted-foreground" /> {p.sku}
+                  </td>
+                  <td className="py-2.5 text-right font-mono text-sw-green">{p.listed}</td>
+                  <td className="py-2.5 text-right font-mono text-sw-red">{p.unlisted}</td>
+                  <td className="py-2.5 text-right">
+                    <div className="inline-flex items-center gap-1.5">
+                      <div className="w-16 h-2 bg-surface-3 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{
+                          width: `${p.coverage}%`,
+                          backgroundColor: p.coverage >= 70 ? "hsl(160,70%,48%)" : p.coverage >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)"
+                        }} />
+                      </div>
+                      <span className={`font-mono text-[11px] ${
+                        p.coverage >= 70 ? "text-sw-green" : p.coverage >= 50 ? "text-sw-amber" : "text-sw-red"
+                      }`}>{p.coverage}%</span>
+                    </div>
+                  </td>
+                  <td className="py-2.5 text-center">
+                    <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
+                      p.campaignsRunning ? "bg-sw-green-dim text-sw-green" : "bg-surface-3 text-muted-foreground"
+                    }`}>{p.campaignsRunning ? "YES" : "NO"}</span>
+                  </td>
+                  <td className="py-2.5 text-center">
+                    {p.wastingBudget ? (
+                      <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-red-dim text-sw-red flex items-center gap-0.5 justify-center">
+                        <AlertTriangle size={9} /> WASTING BUDGET
+                      </span>
+                    ) : (
+                      <span className="text-[9px] text-muted-foreground">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-3 p-3 rounded-xl bg-sw-red-dim border border-sw-red/20">
+          <p className="text-[11px] text-foreground">⚠ {darkstoreGaps[selectedCity].products.filter(p => p.wastingBudget).length} products have campaigns running in areas where they're not listed on darkstores. Estimated budget waste: ₹{Math.round(darkstoreGaps[selectedCity].products.filter(p => p.wastingBudget).reduce((s, p) => s + p.unlisted * 0.12, 0))}K/day</p>
+        </div>
+      </PanelCard>
+
+      {/* Ad Waste Alerts */}
+      <PanelCard title="Ad Budget Waste — Campaigns in Unlisted Areas" badge={`${adWasteAlerts.length} alerts`} badgeColor="red" delay={0.32}>
+        <p className="text-[10px] text-muted-foreground mb-3">Campaigns running in cities/pincodes where products are not listed on enough darkstores. Pause or geo-restrict these campaigns.</p>
+        <div className="grid grid-cols-2 gap-3">
+          {adWasteAlerts.map((a, i) => (
+            <div key={i} className="p-3 rounded-xl bg-sw-red-dim/30 border border-sw-red/20">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-foreground font-medium">{a.sku} — {a.city}</span>
+                <span className="font-mono text-[9px] text-sw-red">{a.wastedSpend} wasted</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Only {a.coverage}% coverage ({a.unlisted}/{a.totalDarkstores} stores unlisted)</p>
+              <div className="flex items-center gap-2 mt-2">
+                <button onClick={() => setAdPauseStates(p => ({ ...p, [i]: true }))}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    adPauseStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
+                  }`}>
+                  {adPauseStates[i] ? "✓ Campaign Geo-Restricted" : "Pause Ads in Unlisted Areas"}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </PanelCard>
+
+      {/* SKU Breakdown + Revenue Impact */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title={`SKU Availability — ${platformAvailability[selectedPlatform].name}`} badge="SKU Level" badgeColor="accent" delay={0.3}>
+        <PanelCard title={`SKU Availability — ${platformAvailability[selectedPlatform].name}`} badge="SKU Level" badgeColor="accent" delay={0.35}>
           <div className="space-y-2">
             {platformAvailability[selectedPlatform].skus.map((s) => (
               <div key={s.sku} className="flex items-center gap-3 p-2 bg-surface-2 rounded-xl border border-subtle">
@@ -128,7 +264,7 @@ const AvailabilityView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <PanelCard title="Revenue Impact — Stock-outs" badge="₹8.4L lost" badgeColor="red" delay={0.35}>
+        <PanelCard title="Revenue Impact — Stock-outs" badge="₹8.4L lost" badgeColor="red" delay={0.4}>
           <table className="w-full text-xs">
             <thead>
               <tr className="text-muted-foreground">
@@ -152,58 +288,34 @@ const AvailabilityView: React.FC = () => {
         </PanelCard>
       </div>
 
-      {/* Stock Forecast + Regional Coverage */}
-      <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Stock-out Forecast" badge="AI Prediction" badgeColor="purple" delay={0.4}>
-          <div className="space-y-2">
-            {stockForecast.map((s, i) => (
-              <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${
-                s.trend === "critical" ? "bg-sw-red-dim/50 border-sw-red/20" : s.trend === "warning" ? "bg-sw-amber-dim/50 border-sw-amber/20" : "bg-surface-2 border-subtle"
-              }`}>
-                <div className="flex-1">
-                  <p className="text-xs text-foreground font-medium">{s.sku}</p>
-                  <p className="text-[10px] text-muted-foreground">{s.platform} · Stock: {s.currentStock}%</p>
-                </div>
-                <div className="text-right">
-                  <p className={`font-mono text-sm font-bold ${
-                    s.trend === "critical" ? "text-sw-red" : s.trend === "warning" ? "text-sw-amber" : "text-sw-green"
-                  }`}>{s.daysToOOS}d</p>
-                  <p className="text-[9px] text-muted-foreground">to stock-out</p>
-                </div>
-                <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    actionStates[i] ? "bg-sw-green-dim text-sw-green" :
-                    s.trend === "critical" ? "bg-sw-red/20 text-sw-red hover:bg-sw-red/30" : "bg-surface-3 text-foreground hover:bg-primary/10"
-                  }`}>
-                  {actionStates[i] ? "✓ Ordered" : "Reorder"}
-                </button>
+      {/* Stock Forecast */}
+      <PanelCard title="Stock-out Forecast" badge="AI Prediction" badgeColor="purple" delay={0.45}>
+        <div className="grid grid-cols-2 gap-2">
+          {stockForecast.map((s, i) => (
+            <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${
+              s.trend === "critical" ? "bg-sw-red-dim/50 border-sw-red/20" : s.trend === "warning" ? "bg-sw-amber-dim/50 border-sw-amber/20" : "bg-surface-2 border-subtle"
+            }`}>
+              <div className="flex-1">
+                <p className="text-xs text-foreground font-medium">{s.sku}</p>
+                <p className="text-[10px] text-muted-foreground">{s.platform} · Stock: {s.currentStock}%</p>
               </div>
-            ))}
-          </div>
-        </PanelCard>
-
-        <PanelCard title="Regional Coverage — Q-Commerce" badge="5 regions" badgeColor="amber" delay={0.45}>
-          <div className="space-y-2">
-            {pincodeCoverage.map((r) => (
-              <div key={r.region} className="flex items-center gap-3 p-3 bg-surface-2 rounded-xl border border-subtle">
-                <div className="flex-1">
-                  <p className="text-xs text-foreground font-medium">{r.region}</p>
-                  <p className="text-[10px] text-muted-foreground">{r.pincodes} pincodes · {r.oosCount} OOS</p>
-                </div>
-                <div className="w-20 h-2 bg-surface-3 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{
-                    width: `${r.avgAvailability}%`,
-                    backgroundColor: r.avgAvailability >= 70 ? "hsl(160,70%,48%)" : r.avgAvailability >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)"
-                  }} />
-                </div>
-                <span className={`font-mono text-[11px] w-10 text-right ${
-                  r.avgAvailability >= 70 ? "text-sw-green" : r.avgAvailability >= 50 ? "text-sw-amber" : "text-sw-red"
-                }`}>{r.avgAvailability}%</span>
+              <div className="text-right">
+                <p className={`font-mono text-sm font-bold ${
+                  s.trend === "critical" ? "text-sw-red" : s.trend === "warning" ? "text-sw-amber" : "text-sw-green"
+                }`}>{s.daysToOOS}d</p>
+                <p className="text-[9px] text-muted-foreground">to stock-out</p>
               </div>
-            ))}
-          </div>
-        </PanelCard>
-      </div>
+              <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  actionStates[i] ? "bg-sw-green-dim text-sw-green" :
+                  s.trend === "critical" ? "bg-sw-red/20 text-sw-red hover:bg-sw-red/30" : "bg-surface-3 text-foreground hover:bg-primary/10"
+                }`}>
+                {actionStates[i] ? "✓ Ordered" : "Reorder"}
+              </button>
+            </div>
+          ))}
+        </div>
+      </PanelCard>
     </div>
   );
 };

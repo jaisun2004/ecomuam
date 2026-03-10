@@ -11,6 +11,10 @@ import AvailabilityView from "@/views/AvailabilityView";
 import PricingView from "@/views/PricingView";
 import AlertsView from "@/views/AlertsView";
 import AccountView from "@/views/AccountView";
+import CompetitorAdsView from "@/views/CompetitorAdsView";
+import FestivalCampaignsView from "@/views/FestivalCampaignsView";
+import BudgetOptimiserView from "@/views/BudgetOptimiserView";
+import OfflineAdsView from "@/views/OfflineAdsView";
 
 const views: Record<string, React.FC> = {
   shelf: ShelfView,
@@ -21,6 +25,10 @@ const views: Record<string, React.FC> = {
   pricing: PricingView,
   alerts: AlertsView,
   account: AccountView,
+  competitors: CompetitorAdsView,
+  festival: FestivalCampaignsView,
+  budget: BudgetOptimiserView,
+  offline: OfflineAdsView,
 };
 
 const Index = () => {
