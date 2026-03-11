@@ -52,7 +52,7 @@ const Index = () => {
           style={{ marginLeft: sidebarWidth }}
         >
           <Topbar active={active} onChange={setActive} />
-          <main className="mt-[60px] p-7">
+          <main className="p-7">
             <View key={active} />
           </main>
         </div>
