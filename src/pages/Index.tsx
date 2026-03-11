@@ -33,17 +33,29 @@ const views: Record<string, React.FC> = {
 
 const Index = () => {
   const [active, setActive] = useState("shelf");
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
   const View = views[active] || ShelfView;
+  const sidebarWidth = sidebarExpanded ? 220 : 68;
 
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background">
-        <Sidebar active={active} onChange={setActive} />
-        <Topbar active={active} onChange={setActive} />
-        <main className="ml-[68px] mt-[60px] p-7">
-          <View key={active} />
-        </main>
+        <Sidebar
+          active={active}
+          onChange={setActive}
+          expanded={sidebarExpanded}
+          onToggleExpand={() => setSidebarExpanded(!sidebarExpanded)}
+        />
+        <div
+          className="transition-all duration-300 ease-in-out"
+          style={{ marginLeft: sidebarWidth }}
+        >
+          <Topbar active={active} onChange={setActive} />
+          <main className="mt-[60px] p-7">
+            <View key={active} />
+          </main>
+        </div>
         <AIBar />
       </div>
     </TooltipProvider>
