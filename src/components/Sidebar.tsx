@@ -1,5 +1,5 @@
-import React from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv } from "lucide-react";
+import React, { useState } from "react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navSections = [
@@ -44,33 +44,91 @@ const navSections = [
 interface SidebarProps {
   active: string;
   onChange: (id: string) => void;
+  expanded: boolean;
+  onToggleExpand: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ active, onChange }) => {
+const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleExpand }) => {
   return (
-    <div className="fixed left-0 top-0 bottom-0 w-[68px] bg-background border-r border-subtle flex flex-col items-center py-4 z-50 overflow-y-auto">
-      <div
-        className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center mb-4 accent-glow cursor-pointer flex-shrink-0"
-        onClick={() => onChange("shelf")}
-      >
-        <span className="font-display font-bold text-primary-foreground text-sm">SW</span>
+    <div
+      className={`fixed left-0 top-0 bottom-0 bg-background border-r border-subtle flex flex-col py-4 z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
+        expanded ? "w-[220px]" : "w-[68px]"
+      }`}
+    >
+      {/* Logo + toggle */}
+      <div className={`flex items-center mb-4 flex-shrink-0 ${expanded ? "px-4 justify-between" : "justify-center"}`}>
+        <div
+          className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center accent-glow cursor-pointer flex-shrink-0"
+          onClick={() => onChange("shelf")}
+        >
+          <span className="font-display font-bold text-primary-foreground text-sm">SW</span>
+        </div>
+        {expanded && (
+          <span className="font-display font-bold text-foreground text-sm ml-2 flex-1 truncate">
+            shelf<span className="text-primary">wise</span>
+          </span>
+        )}
+        <button
+          onClick={onToggleExpand}
+          className={`p-1.5 rounded-lg text-muted-foreground hover:bg-surface-3 hover:text-foreground transition-all flex-shrink-0 ${
+            expanded ? "" : "mt-2"
+          }`}
+        >
+          {expanded ? <PanelLeftClose size={16} /> : <PanelLeft size={16} />}
+        </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center gap-0.5">
+      {/* Navigation */}
+      <div className={`flex-1 flex flex-col gap-0.5 ${expanded ? "px-3" : "items-center"}`}>
         {navSections.map((section, si) => (
           <React.Fragment key={section.label}>
-            {si > 0 && <div className="w-8 h-px bg-surface-3 my-1.5 flex-shrink-0" />}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="text-[6px] font-mono text-muted-foreground tracking-widest uppercase mb-0.5 cursor-default">{section.label.slice(0, 3)}</span>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
+            {si > 0 && (
+              <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
+            )}
+
+            {/* Section label */}
+            {expanded ? (
+              <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase px-2 py-1.5 flex-shrink-0">
                 {section.label}
-              </TooltipContent>
-            </Tooltip>
+              </p>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-[6px] font-mono text-muted-foreground tracking-widest uppercase mb-0.5 cursor-default">
+                    {section.label.slice(0, 3)}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
+                  {section.label}
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            {/* Items */}
             {section.items.map((item) => {
               const Icon = item.icon;
               const isActive = active === item.id;
+
+              if (expanded) {
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onChange(item.id)}
+                    className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 flex-shrink-0 text-left ${
+                      isActive
+                        ? "bg-primary/15 text-primary"
+                        : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                    }`}
+                  >
+                    <Icon size={16} className="flex-shrink-0" />
+                    <span className="text-[12px] font-medium truncate">{item.label}</span>
+                    {item.notify && (
+                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
+                    )}
+                  </button>
+                );
+              }
+
               return (
                 <Tooltip key={item.id}>
                   <TooltipTrigger asChild>
@@ -98,23 +156,41 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange }) => {
         ))}
       </div>
 
-      <Tooltip>
-        <TooltipTrigger asChild>
+      {/* Account */}
+      {expanded ? (
+        <div className="px-3 pt-2 flex-shrink-0">
+          <div className="h-px bg-surface-3 mb-2" />
           <button
             onClick={() => onChange("account")}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
               active === "account"
-                ? "bg-primary/20 text-primary"
+                ? "bg-primary/15 text-primary"
                 : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
             }`}
           >
-            <User size={18} />
+            <User size={16} />
+            <span className="text-[12px] font-medium">Account</span>
           </button>
-        </TooltipTrigger>
-        <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
-          Account
-        </TooltipContent>
-      </Tooltip>
+        </div>
+      ) : (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => onChange("account")}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 self-center ${
+                active === "account"
+                  ? "bg-primary/20 text-primary"
+                  : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+              }`}
+            >
+              <User size={18} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
+            Account
+          </TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 };

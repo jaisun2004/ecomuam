@@ -4,6 +4,11 @@ import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
 import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle } from "lucide-react";
 
+const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto"];
+const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
+
+const keywordOptions = ["whey protein", "protein powder", "creatine monohydrate", "pre workout", "bcaa supplement"];
+
 /* Competition ad activity by hour */
 const competitorHourlyData = Array.from({ length: 24 }, (_, h) => ({
   hour: `${h}:00`,
@@ -50,11 +55,26 @@ const competitorAdProfiles = [
   },
 ];
 
-const budgetExhaustionAlerts = [
-  { competitor: "Optimum Nutrition", platform: "Amazon", keyword: "whey protein 1kg", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid ₹28→₹18, maintain position at lower cost" },
-  { competitor: "BigMuscles", platform: "Blinkit", keyword: "pre workout", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹35→₹22, capture their traffic organically" },
-  { competitor: "AS-IT-IS", platform: "Amazon", keyword: "creatine monohydrate", lastSeen: "1h ago (intermittent)", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
-];
+const budgetExhaustionByKeyword: Record<string, { competitor: string; platform: string; keyword: string; lastSeen: string; sponsoredRank: string; opportunity: string }[]> = {
+  "whey protein": [
+    { competitor: "Optimum Nutrition", platform: "Amazon", keyword: "whey protein 1kg", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid ₹28→₹18, maintain position at lower cost" },
+    { competitor: "BigMuscles", platform: "Blinkit", keyword: "whey protein", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹35→₹22, capture their traffic organically" },
+  ],
+  "protein powder": [
+    { competitor: "AS-IT-IS", platform: "Amazon", keyword: "protein powder india", lastSeen: "1h ago", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
+    { competitor: "MuscleBlaze", platform: "Flipkart", keyword: "best protein powder", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid ₹42→₹30, save ₹12K/day" },
+  ],
+  "creatine monohydrate": [
+    { competitor: "AS-IT-IS", platform: "Amazon", keyword: "creatine monohydrate", lastSeen: "1h ago (intermittent)", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
+  ],
+  "pre workout": [
+    { competitor: "BigMuscles", platform: "Blinkit", keyword: "pre workout", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹35→₹22, capture their traffic organically" },
+    { competitor: "ON", platform: "Amazon", keyword: "pre workout energy", lastSeen: "6h ago", sponsoredRank: "Not visible since morning", opportunity: "Lower bid ₹40→₹28" },
+  ],
+  "bcaa supplement": [
+    { competitor: "Dymatize", platform: "Flipkart", keyword: "bcaa supplement", lastSeen: "5h ago", sponsoredRank: "Absent", opportunity: "Reduce bid ₹25→₹15" },
+  ],
+};
 
 const keywordConquestOpps = [
   { keyword: "optimum nutrition whey", volume: "32K", competition: "ON", compSoS: "58%", yourSoS: "0%", bidEst: "₹22", projROAS: "4.8x" },
@@ -66,6 +86,14 @@ const keywordConquestOpps = [
 const CompetitorAdsView: React.FC = () => {
   const [bidActions, setBidActions] = useState<Record<number, boolean>>({});
   const [conquestActions, setConquestActions] = useState<Record<number, boolean>>({});
+  const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
+  const [selectedKeyword, setSelectedKeyword] = useState("whey protein");
+
+  const filteredProfiles = selectedPlatform === "All Platforms"
+    ? competitorAdProfiles
+    : competitorAdProfiles.filter(c => c.platforms.includes(selectedPlatform));
+
+  const budgetAlerts = budgetExhaustionByKeyword[selectedKeyword] || [];
 
   return (
     <div className="space-y-6 pb-20">
@@ -76,10 +104,21 @@ const CompetitorAdsView: React.FC = () => {
         <KPICard title="Est. Competitor Spend" value="₹12.2L/wk" delta="▲ 22% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
       </div>
 
-      {/* Competitor Ad Profiles */}
+      {/* Competitor Ad Profiles with platform filter */}
       <PanelCard title="Competitor Ad Profiles" badge="Real-time monitoring" badgeColor="red" delay={0.2}>
+        <div className="flex items-center gap-2 mb-4">
+          {platformFilter.map(p => (
+            <button key={p} onClick={() => setSelectedPlatform(p)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+              }`}>
+              {p !== "All Platforms" && <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />}
+              {p}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-2 gap-3">
-          {competitorAdProfiles.map((c) => (
+          {filteredProfiles.map((c) => (
             <div key={c.name} className="p-4 rounded-xl border border-subtle bg-surface-2">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-foreground font-medium flex items-center gap-2">
@@ -111,31 +150,47 @@ const CompetitorAdsView: React.FC = () => {
         </div>
       </PanelCard>
 
-      {/* Budget Exhaustion Alerts + Hourly Activity */}
+      {/* Budget Exhaustion Alerts with keyword toggle + Hourly Activity */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Budget Exhaustion — Bid Reduction Opps" badge="3 detected" badgeColor="green" delay={0.3}>
-          <p className="text-[10px] text-muted-foreground mb-3">Competitors out of budget — reduce bids to save spend while maintaining position</p>
-          <div className="space-y-2.5">
-            {budgetExhaustionAlerts.map((a, i) => (
-              <div key={i} className="p-3 rounded-xl bg-sw-green-dim/30 border border-sw-green/20">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-foreground font-medium">{a.competitor} — {a.platform}</span>
-                  <span className="text-[9px] text-muted-foreground">{a.lastSeen}</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground">Keyword: <span className="font-mono text-foreground">"{a.keyword}"</span></p>
-                <p className="text-[10px] text-muted-foreground">{a.sponsoredRank}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-[10px] text-sw-green">💡 {a.opportunity}</p>
-                  <button onClick={() => setBidActions(p => ({ ...p, [i]: true }))}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      bidActions[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-green/20 text-sw-green hover:bg-sw-green/30"
-                    }`}>
-                    {bidActions[i] ? "✓ Bid Reduced" : "Reduce Bid"}
-                  </button>
-                </div>
-              </div>
+        <PanelCard title="Budget Exhaustion — Bid Reduction Opps" badge={`${budgetAlerts.length} detected`} badgeColor="green" delay={0.3}>
+          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+            {keywordOptions.map(kw => (
+              <button key={kw} onClick={() => setSelectedKeyword(kw)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedKeyword === kw ? "bg-sw-green/20 text-sw-green" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
+                "{kw}"
+              </button>
             ))}
           </div>
+          <p className="text-[10px] text-muted-foreground mb-3">Competitors out of budget on "{selectedKeyword}" — reduce bids to save spend</p>
+          {budgetAlerts.length === 0 ? (
+            <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+              <p className="text-xs text-muted-foreground">No budget exhaustion detected for this keyword right now</p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {budgetAlerts.map((a, i) => (
+                <div key={i} className="p-3 rounded-xl bg-sw-green-dim/30 border border-sw-green/20">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-foreground font-medium">{a.competitor} — {a.platform}</span>
+                    <span className="text-[9px] text-muted-foreground">{a.lastSeen}</span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">Keyword: <span className="font-mono text-foreground">"{a.keyword}"</span></p>
+                  <p className="text-[10px] text-muted-foreground">{a.sponsoredRank}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-[10px] text-sw-green">💡 {a.opportunity}</p>
+                    <button onClick={() => setBidActions(p => ({ ...p, [i]: true }))}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                        bidActions[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-green/20 text-sw-green hover:bg-sw-green/30"
+                      }`}>
+                      {bidActions[i] ? "✓ Bid Reduced" : "Reduce Bid"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </PanelCard>
 
         <PanelCard title="Competitor Ad Activity — Hourly Pattern" badge="Today" badgeColor="accent" delay={0.35}>

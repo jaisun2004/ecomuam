@@ -2,13 +2,37 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 
-const plRows = [
-  { platform: "Amazon", color: "#FF9900", rev: "₹98L", spend: "₹7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
-  { platform: "Flipkart", color: "#2F77FF", rev: "₹54L", spend: "₹5.2L", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
-  { platform: "Blinkit", color: "#FDDC2B", rev: "₹38L", spend: "₹2.9L", returns: "2.1%", retColor: "text-sw-green", margin: "42%", mColor: "text-sw-green font-bold" },
-  { platform: "Zepto", color: "#833AB4", rev: "₹24L", spend: "₹1.8L", returns: "1.8%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
-  { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹26L", spend: "₹2.3L", returns: "1.2%", retColor: "text-sw-green", margin: "51%", mColor: "text-sw-green font-bold" },
-];
+const timeRangeOptions = ["7D", "30D", "90D"];
+
+const plRowsByTime: Record<string, { platform: string; color: string; rev: string; spend: string; returns: string; retColor: string; margin: string; mColor: string }[]> = {
+  "7D": [
+    { platform: "Amazon", color: "#FF9900", rev: "₹24L", spend: "₹1.9L", returns: "6.8%", retColor: "text-sw-amber", margin: "39%", mColor: "text-sw-green font-bold" },
+    { platform: "Flipkart", color: "#2F77FF", rev: "₹13L", spend: "₹1.3L", returns: "9.1%", retColor: "text-sw-red", margin: "29%", mColor: "text-sw-amber font-bold" },
+    { platform: "Blinkit", color: "#FDDC2B", rev: "₹9L", spend: "₹0.7L", returns: "2.0%", retColor: "text-sw-green", margin: "43%", mColor: "text-sw-green font-bold" },
+    { platform: "Zepto", color: "#833AB4", rev: "₹6L", spend: "₹0.4L", returns: "1.7%", retColor: "text-sw-green", margin: "45%", mColor: "text-sw-green font-bold" },
+    { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹6L", spend: "₹0.5L", returns: "1.1%", retColor: "text-sw-green", margin: "52%", mColor: "text-sw-green font-bold" },
+  ],
+  "30D": [
+    { platform: "Amazon", color: "#FF9900", rev: "₹98L", spend: "₹7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
+    { platform: "Flipkart", color: "#2F77FF", rev: "₹54L", spend: "₹5.2L", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
+    { platform: "Blinkit", color: "#FDDC2B", rev: "₹38L", spend: "₹2.9L", returns: "2.1%", retColor: "text-sw-green", margin: "42%", mColor: "text-sw-green font-bold" },
+    { platform: "Zepto", color: "#833AB4", rev: "₹24L", spend: "₹1.8L", returns: "1.8%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
+    { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹26L", spend: "₹2.3L", returns: "1.2%", retColor: "text-sw-green", margin: "51%", mColor: "text-sw-green font-bold" },
+  ],
+  "90D": [
+    { platform: "Amazon", color: "#FF9900", rev: "₹2.8Cr", spend: "₹22L", returns: "6.9%", retColor: "text-sw-amber", margin: "40%", mColor: "text-sw-green font-bold" },
+    { platform: "Flipkart", color: "#2F77FF", rev: "₹1.5Cr", spend: "₹14L", returns: "9.2%", retColor: "text-sw-red", margin: "30%", mColor: "text-sw-amber font-bold" },
+    { platform: "Blinkit", color: "#FDDC2B", rev: "₹1.1Cr", spend: "₹8L", returns: "2.0%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
+    { platform: "Zepto", color: "#833AB4", rev: "₹68L", spend: "₹5L", returns: "1.6%", retColor: "text-sw-green", margin: "46%", mColor: "text-sw-green font-bold" },
+    { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹74L", spend: "₹6L", returns: "1.0%", retColor: "text-sw-green", margin: "53%", mColor: "text-sw-green font-bold" },
+  ],
+};
+
+const kpisByTime: Record<string, { rev: string; revDelta: string; margin: string; marginDelta: string; returnRate: string; returnDelta: string }> = {
+  "7D": { rev: "₹58L", revDelta: "▲ 12% WoW", margin: "36%", marginDelta: "▲ 2% vs last wk", returnRate: "5.8%", returnDelta: "▼ 0.4%" },
+  "30D": { rev: "₹2.4Cr", revDelta: "▲ 18% MoM", margin: "34%", marginDelta: "▲ 3% vs last mo", returnRate: "6.2%", returnDelta: "▲ 0.8% — investigate" },
+  "90D": { rev: "₹7.0Cr", revDelta: "▲ 22% QoQ", margin: "37%", marginDelta: "▲ 5% vs last qtr", returnRate: "5.9%", returnDelta: "▼ 0.3%" },
+};
 
 const reports = [
   { name: "Weekly Shelf Report", schedule: "Every Monday 8AM", to: "CEO + Marketing Head", status: "ACTIVE", sColor: "text-sw-green bg-sw-green-dim" },
@@ -19,18 +43,36 @@ const reports = [
 
 const ReportsView: React.FC = () => {
   const [planAdded, setPlanAdded] = useState(false);
+  const [timeRange, setTimeRange] = useState("30D");
+  const [reportAdded, setReportAdded] = useState(false);
+
+  const plRows = plRowsByTime[timeRange];
+  const kpis = kpisByTime[timeRange];
 
   return (
     <div className="space-y-6 pb-20">
+      {/* Time range toggle */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground mr-2">Time Range:</span>
+        {timeRangeOptions.map(t => (
+          <button key={t} onClick={() => setTimeRange(t)}
+            className={`px-4 py-1.5 rounded-lg font-mono text-xs font-medium transition-all ${
+              timeRange === t ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+            }`}>
+            {t}
+          </button>
+        ))}
+      </div>
+
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Total Revenue (30D)" value="₹2.4Cr" delta="▲ 18% MoM" deltaType="positive" sub="Across all platforms" accentColor="bg-primary" delay={0} />
-        <KPICard title="Net Contribution Margin" value="34%" delta="▲ 3% vs last mo" deltaType="positive" sub="After ad spend, returns, fees" accentColor="bg-sw-green" delay={0.05} />
-        <KPICard title="Return Rate" value="6.2%" delta="▲ 0.8% — investigate" deltaType="negative" sub="Amazon return rate rising" accentColor="bg-sw-amber" delay={0.1} />
+        <KPICard title={`Total Revenue (${timeRange})`} value={kpis.rev} delta={kpis.revDelta} deltaType="positive" sub="Across all platforms" accentColor="bg-primary" delay={0} />
+        <KPICard title="Net Contribution Margin" value={kpis.margin} delta={kpis.marginDelta} deltaType="positive" sub="After ad spend, returns, fees" accentColor="bg-sw-green" delay={0.05} />
+        <KPICard title="Return Rate" value={kpis.returnRate} delta={kpis.returnDelta} deltaType={kpis.returnDelta.includes("▲") ? "negative" : "positive"} sub="Amazon return rate rising" accentColor="bg-sw-amber" delay={0.1} />
         <KPICard title="Scheduled Reports" value="12" delta="Next: Tomorrow 8AM" deltaType="neutral" sub="3 stakeholders · Weekly" accentColor="bg-sw-purple" delay={0.15} />
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <PanelCard title="Revenue Breakdown by Platform — 30D P&L" badge="Net Margin View" badgeColor="accent" className="col-span-2" delay={0.2}>
+        <PanelCard title={`Revenue Breakdown by Platform — ${timeRange} P&L`} badge="Net Margin View" badgeColor="accent" className="col-span-2" delay={0.2}>
           <table className="w-full text-xs">
             <thead>
               <tr className="text-muted-foreground">
@@ -69,7 +111,12 @@ const ReportsView: React.FC = () => {
         <PanelCard title="Scheduled Reports" delay={0.25}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-muted-foreground">{reports.length} active</span>
-            <button className="px-3 py-1 rounded-lg border border-primary/30 text-primary text-[11px] hover:bg-primary/10">+ New</button>
+            <button onClick={() => setReportAdded(true)}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium ${
+                reportAdded ? "bg-sw-green-dim text-sw-green" : "border border-primary/30 text-primary hover:bg-primary/10"
+              }`}>
+              {reportAdded ? "✓ Report Added" : "+ New"}
+            </button>
           </div>
           <div className="space-y-3">
             {reports.map((r) => (

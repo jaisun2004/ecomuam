@@ -4,21 +4,85 @@ import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot } from "recharts";
 import { Megaphone, TrendingDown, TrendingUp, AlertTriangle } from "lucide-react";
 
-const priceHistory = Array.from({ length: 30 }, (_, i) => ({
-  day: `Mar ${i + 1}`,
-  yours: 2499,
-  muscleblaze: i >= 12 ? 2199 : 2299,
-  on: i >= 18 ? 3299 : 3499,
-  asitis: 1899,
-}));
+const skuOptions = ["Whey Protein 1kg", "Creatine 250g", "Pre-Workout 300g", "BCAA Tropical", "Multi-Vit 60ct"];
+const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
+const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
-const competitorMatrix = [
-  { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Dymatize ISO 100", you: false, price: "₹4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
-];
+const priceHistoryBySku: Record<string, any[]> = {
+  "Whey Protein 1kg": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    yours: 2499,
+    comp1: i >= 12 ? 2199 : 2299,
+    comp2: i >= 18 ? 3299 : 3499,
+    comp3: 1899,
+  })),
+  "Creatine 250g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    yours: 799,
+    comp1: i >= 8 ? 699 : 749,
+    comp2: 849,
+    comp3: 679,
+  })),
+  "Pre-Workout 300g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    yours: 1899,
+    comp1: i >= 15 ? 1599 : 1699,
+    comp2: 1799,
+    comp3: 1549,
+  })),
+  "BCAA Tropical": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    yours: 1299,
+    comp1: i >= 10 ? 1199 : 1249,
+    comp2: 1399,
+    comp3: 1149,
+  })),
+  "Multi-Vit 60ct": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    yours: 649,
+    comp1: 599,
+    comp2: 699,
+    comp3: 549,
+  })),
+};
+
+const competitorMatrixByPlatform: Record<string, any[]> = {
+  Amazon: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Dymatize ISO 100", you: false, price: "₹4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+  ],
+  Flipkart: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,549", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,299", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,599", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "38,540", pos: "#2", posColor: "text-sw-amber", sos: "24%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,949", priceColor: "text-sw-green", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "7,210", pos: "#3", posColor: "text-sw-green", sos: "12%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  ],
+  Blinkit: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,599", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,399", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,699", priceColor: "text-sw-amber", rating: "4.4★", ratingColor: "text-sw-green", reviews: "890", pos: "#3", posColor: "text-sw-amber", sos: "15%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+  ],
+  Zepto: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,649", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,449", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "ON", you: false, price: "₹3,599", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "680", pos: "#2", posColor: "text-sw-amber", sos: "18%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  ],
+  Instamart: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,699", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,499", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  ],
+};
+
+const compNamesBySku: Record<string, string[]> = {
+  "Whey Protein 1kg": ["MuscleBlaze", "ON", "AS-IT-IS"],
+  "Creatine 250g": ["MuscleBlaze", "AS-IT-IS", "BigMuscles"],
+  "Pre-Workout 300g": ["BigMuscles", "ON", "GNC"],
+  "BCAA Tropical": ["ON", "MuscleBlaze", "Dymatize"],
+  "Multi-Vit 60ct": ["HealthKart", "MuscleBlaze", "GNC"],
+};
 
 const priceAlerts = [
   { sku: "Creatine 250g", competitor: "MuscleBlaze", platform: "Amazon", yourPrice: "₹799", compPrice: "₹699", gap: "+14.3%", impact: "Conversion -22%", severity: "high" },
@@ -35,16 +99,49 @@ const platformPricing = [
   { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0 },
 ];
 
-const contentGaps = [
-  { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
-  { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
-  { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-  { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
-];
+const contentGapsBySku: Record<string, { label: string; you: number | string; them: number | string; youPct: number; color: string }[]> = {
+  "Whey Protein 1kg": [
+    { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
+    { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
+    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
+    { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
+  ],
+  "Creatine 250g": [
+    { label: "Title Keywords", you: 4, them: 9, youPct: 44, color: "text-sw-red" },
+    { label: "Images Count", you: 5, them: 7, youPct: 71, color: "text-sw-green" },
+    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
+    { label: "Review Count", you: "1.2K", them: "9.6K", youPct: 12, color: "text-sw-red" },
+  ],
+  "Pre-Workout 300g": [
+    { label: "Title Keywords", you: 3, them: 8, youPct: 38, color: "text-sw-red" },
+    { label: "Images Count", you: 4, them: 7, youPct: 57, color: "text-sw-amber" },
+    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
+    { label: "Review Count", you: "890", them: "12K", youPct: 7, color: "text-sw-red" },
+  ],
+  "BCAA Tropical": [
+    { label: "Title Keywords", you: 7, them: 9, youPct: 78, color: "text-sw-green" },
+    { label: "Images Count", you: 6, them: 6, youPct: 100, color: "text-sw-green" },
+    { label: "A+ Content", you: "Yes", them: "Yes", youPct: 100, color: "text-sw-green" },
+    { label: "Review Count", you: "3.4K", them: "15K", youPct: 23, color: "text-sw-red" },
+  ],
+  "Multi-Vit 60ct": [
+    { label: "Title Keywords", you: 5, them: 10, youPct: 50, color: "text-sw-amber" },
+    { label: "Images Count", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
+    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
+    { label: "Review Count", you: "620", them: "8K", youPct: 8, color: "text-sw-red" },
+  ],
+};
 
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
+  const [selectedSku, setSelectedSku] = useState("Whey Protein 1kg");
+  const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+
+  const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Whey Protein 1kg"];
+  const competitorMatrix = competitorMatrixByPlatform[selectedPlatform] || competitorMatrixByPlatform["Amazon"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Whey Protein 1kg"];
+  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Whey Protein 1kg"];
 
   return (
     <div className="space-y-6 pb-20">
@@ -55,8 +152,19 @@ const PricingView: React.FC = () => {
         <KPICard title="Revenue at Risk" value="₹3.8L" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
-      {/* Competitor Matrix */}
-      <PanelCard title="Competitor Intelligence Matrix — Whey Protein 1kg · Amazon" badge="Real-time" badgeColor="red" delay={0.2}>
+      {/* Competitor Matrix with platform toggle */}
+      <PanelCard title="Competitor Intelligence Matrix" badge="Real-time" badgeColor="red" delay={0.2}>
+        <div className="flex items-center gap-2 mb-4">
+          {platformOptions.map(p => (
+            <button key={p} onClick={() => setSelectedPlatform(p)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+              }`}>
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />
+              {p}
+            </button>
+          ))}
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -71,7 +179,7 @@ const PricingView: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {competitorMatrix.map((r) => (
+              {competitorMatrix.map((r: any) => (
                 <tr key={r.brand} className={r.you ? "bg-primary/5" : ""}>
                   <td className="py-3 text-foreground">
                     <span className="flex items-center gap-1.5">
@@ -153,35 +261,50 @@ const PricingView: React.FC = () => {
         </PanelCard>
       </div>
 
-      {/* Price History + Content Gap */}
+      {/* Price History with SKU toggle + Content Gap with SKU toggle */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Price History — 30 Days" badge="Whey 1kg · Amazon" badgeColor="accent" delay={0.4}>
+        <PanelCard title="Price History — 30 Days" badge={`${selectedSku} · ${selectedPlatform}`} badgeColor="accent" delay={0.4}>
+          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+            {skuOptions.map(s => (
+              <button key={s} onClick={() => setSelectedSku(s)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedSku === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
+                {s}
+              </button>
+            ))}
+          </div>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={priceHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
               <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={6} />
-              <YAxis domain={[1700, 3700]} tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
               <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price" />
-              <Line type="monotone" dataKey="muscleblaze" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name="MuscleBlaze" />
-              <Line type="monotone" dataKey="on" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name="ON" />
-              <Line type="monotone" dataKey="asitis" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name="AS-IT-IS" />
-              <ReferenceDot x="Mar 13" y={2199} r={5} fill="hsl(0,76%,57%)" stroke="none" />
-              <ReferenceDot x="Mar 19" y={3299} r={5} fill="hsl(38,92%,50%)" stroke="none" />
+              <Line type="monotone" dataKey="comp1" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name={compNames[0]} />
+              <Line type="monotone" dataKey="comp2" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[1]} />
+              <Line type="monotone" dataKey="comp3" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[2]} />
             </LineChart>
           </ResponsiveContainer>
           <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> You</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-red rounded-full" /> MuscleBlaze</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-amber rounded-full" /> ON</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> AS-IT-IS</span>
-          </div>
-          <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">
-            <p className="text-[11px] text-foreground">⚠ 14.3% price gap — action recommended. MuscleBlaze cut price on Mar 12. Conversion rate dropped 8% since then.</p>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-red rounded-full" /> {compNames[0]}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-amber rounded-full" /> {compNames[1]}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> {compNames[2]}</span>
           </div>
         </PanelCard>
 
-        <PanelCard title="Content Gap vs MuscleBlaze" badge="Amazon" badgeColor="amber" delay={0.45}>
+        <PanelCard title={`Content Gap vs Top Competitor`} badge={selectedSku} badgeColor="amber" delay={0.45}>
+          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+            {skuOptions.map(s => (
+              <button key={s} onClick={() => setSelectedSku(s)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedSku === s ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
+                {s}
+              </button>
+            ))}
+          </div>
           <div className="space-y-4">
             {contentGaps.map((g) => (
               <div key={g.label}>
@@ -195,9 +318,6 @@ const PricingView: React.FC = () => {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="mt-4 p-3 rounded-xl bg-sw-red-dim border border-sw-red/20">
-            <p className="text-[11px] text-foreground">🔴 Priority fix: Add A+ Content — improves conversion by 5–10%. MuscleBlaze has it, you don't.</p>
           </div>
         </PanelCard>
       </div>

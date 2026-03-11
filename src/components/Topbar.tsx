@@ -17,7 +17,7 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
   const [timeRange, setTimeRange] = useState("30D");
 
   return (
-    <div className="fixed top-0 left-[68px] right-0 h-[60px] bg-background border-b border-subtle flex items-center justify-between px-6 z-40">
+    <div className="sticky top-0 h-[60px] bg-background border-b border-subtle flex items-center justify-between px-6 z-40">
       {/* Brand + Tabs */}
       <div className="flex items-center gap-6">
         <h1 className="font-display font-bold text-lg">
