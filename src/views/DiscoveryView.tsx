@@ -1,23 +1,78 @@
-import React from "react";
+import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import { Megaphone } from "lucide-react";
 
-const trendingKws = [
-  { kw: "pre workout citrus", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim" },
-  { kw: "women protein shake", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim" },
-  { kw: "electrolyte sachets", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim" },
-  { kw: "vegan protein bar", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim" },
-  { kw: "creatine gummies", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim" },
-  { kw: "whey isolate zero sugar", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim" },
-  { kw: "gym supplement combo", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3" },
-];
+const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
+const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
+const categoryFilter = ["All Categories", "Protein", "Creatine", "Pre-Workout", "BCAA", "Vitamins"];
 
-const forecasts = [
-  { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
-  { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
-  { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
-  { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
-];
+const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: string; opp: string; oppColor: string; platform?: string }[]> = {
+  "All Categories": [
+    { kw: "pre workout citrus", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Blinkit" },
+    { kw: "women protein shake", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
+    { kw: "electrolyte sachets", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
+    { kw: "vegan protein bar", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
+    { kw: "creatine gummies", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
+    { kw: "whey isolate zero sugar", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Flipkart" },
+    { kw: "gym supplement combo", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", platform: "Amazon" },
+  ],
+  Protein: [
+    { kw: "women protein shake", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
+    { kw: "vegan protein bar", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
+    { kw: "whey isolate zero sugar", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Flipkart" },
+    { kw: "whey protein 2kg value pack", vol: "38.7K", wow: "+14%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
+  ],
+  Creatine: [
+    { kw: "creatine gummies", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
+    { kw: "creatine for women", vol: "8.2K", wow: "+42%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
+    { kw: "creatine hcl", vol: "6.1K", wow: "+18%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Flipkart" },
+  ],
+  "Pre-Workout": [
+    { kw: "pre workout citrus", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Blinkit" },
+    { kw: "pre workout caffeine free", vol: "12.3K", wow: "+35%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Amazon" },
+    { kw: "pre workout pump formula", vol: "9.8K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
+  ],
+  BCAA: [
+    { kw: "bcaa intra workout", vol: "15.2K", wow: "+19%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
+    { kw: "eaa supplement", vol: "22.8K", wow: "+33%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Flipkart" },
+  ],
+  Vitamins: [
+    { kw: "electrolyte sachets", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
+    { kw: "ashwagandha ksm 66", vol: "41.2K", wow: "+52%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
+    { kw: "daily multivitamin men", vol: "28.9K", wow: "+11%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", platform: "Amazon" },
+  ],
+};
+
+const forecastsByCategory: Record<string, { sku: string; delta: string; color: string; weeks: number[] }[]> = {
+  "All Categories": [
+    { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
+    { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
+    { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
+    { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
+  ],
+  Protein: [
+    { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
+    { sku: "Whey 500g Vanilla", delta: "+12%", color: "bg-sw-green", weeks: [50, 54, 58, 62] },
+    { sku: "Whey Isolate 1kg", delta: "+24%", color: "bg-sw-cyan", weeks: [35, 42, 50, 60] },
+  ],
+  Creatine: [
+    { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
+    { sku: "Creatine HCL 120caps", delta: "+15%", color: "bg-sw-green", weeks: [30, 35, 40, 48] },
+  ],
+  "Pre-Workout": [
+    { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
+    { sku: "Pre-Workout Berry", delta: "+22%", color: "bg-sw-purple", weeks: [45, 50, 58, 65] },
+  ],
+  BCAA: [
+    { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
+    { sku: "EAA Lemon", delta: "+28%", color: "bg-sw-green", weeks: [30, 38, 48, 58] },
+  ],
+  Vitamins: [
+    { sku: "Multi-Vit 60ct", delta: "+5%", color: "bg-sw-amber", weeks: [60, 62, 63, 65] },
+    { sku: "Ashwagandha 120caps", delta: "+38%", color: "bg-sw-green", weeks: [25, 35, 48, 62] },
+  ],
+};
 
 const opportunities = [
   { emoji: "⚡", title: "Creatine Gummies", desc: "61% search growth, <3 sellers on Blinkit, 0 Q-commerce competitors in category", tags: ["BLINKIT GAP", "HIGH IMPACT"], gradient: "from-sw-cyan/20 to-sw-cyan/5" },
@@ -26,6 +81,15 @@ const opportunities = [
 ];
 
 const DiscoveryView: React.FC = () => {
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
+  const [campaignActions, setCampaignActions] = useState<Record<number, boolean>>({});
+
+  const trendingKws = (trendingKwsByCategory[selectedCategory] || trendingKwsByCategory["All Categories"])
+    .filter(k => selectedPlatform === "All Platforms" || k.platform === selectedPlatform);
+
+  const forecasts = forecastsByCategory[selectedCategory] || forecastsByCategory["All Categories"];
+
   return (
     <div className="space-y-6 pb-20">
       <div className="grid grid-cols-4 gap-4">
@@ -36,7 +100,31 @@ const DiscoveryView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="🔥 Trending Keywords — This Week" badge="All Platforms" badgeColor="accent" delay={0.2}>
+        <PanelCard title="🔥 Trending Keywords" badge={selectedCategory} badgeColor="accent" delay={0.2}>
+          {/* Filters */}
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <div className="flex items-center gap-1 flex-wrap">
+              {categoryFilter.map(c => (
+                <button key={c} onClick={() => setSelectedCategory(c)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    selectedCategory === c ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                  }`}>
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-1 mb-3 flex-wrap">
+            {platformFilter.map(p => (
+              <button key={p} onClick={() => setSelectedPlatform(p)}
+                className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-medium transition-all ${
+                  selectedPlatform === p ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
+                {p !== "All Platforms" && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColors[p] }} />}
+                {p}
+              </button>
+            ))}
+          </div>
           <table className="w-full text-xs">
             <thead>
               <tr className="text-muted-foreground">
@@ -47,21 +135,35 @@ const DiscoveryView: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {trendingKws.map((k, i) => (
-                <tr key={k.kw} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2.5 text-foreground font-mono text-[11px]">{k.kw}</td>
-                  <td className="py-2.5 text-right font-mono text-foreground">{k.vol}</td>
-                  <td className={`py-2.5 text-right font-mono ${k.wow.startsWith("+") ? "text-sw-green" : "text-sw-red"}`}>{k.wow}</td>
-                  <td className="py-2.5 text-right">
-                    <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full ${k.oppColor}`}>{k.opp}</span>
-                  </td>
-                </tr>
-              ))}
+              {trendingKws.length === 0 ? (
+                <tr><td colSpan={4} className="py-4 text-center text-muted-foreground">No keywords match current filters</td></tr>
+              ) : (
+                trendingKws.map((k, i) => (
+                  <tr key={k.kw} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 text-foreground font-mono text-[11px]">{k.kw}</td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{k.vol}</td>
+                    <td className={`py-2.5 text-right font-mono ${k.wow.startsWith("+") ? "text-sw-green" : "text-sw-red"}`}>{k.wow}</td>
+                    <td className="py-2.5 text-right">
+                      <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full ${k.oppColor}`}>{k.opp}</span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </PanelCard>
 
-        <PanelCard title="📈 4-Week Demand Forecast" badge="AI · 91% accuracy" badgeColor="green" delay={0.25}>
+        <PanelCard title="📈 4-Week Demand Forecast" badge={`${selectedCategory} · 91% accuracy`} badgeColor="green" delay={0.25}>
+          <div className="flex items-center gap-1 mb-3 flex-wrap">
+            {categoryFilter.map(c => (
+              <button key={c} onClick={() => setSelectedCategory(c)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedCategory === c ? "bg-sw-green/20 text-sw-green" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
+                {c}
+              </button>
+            ))}
+          </div>
           <div className="space-y-5">
             {forecasts.map((f) => (
               <div key={f.sku}>
@@ -85,16 +187,23 @@ const DiscoveryView: React.FC = () => {
 
       <PanelCard title="💡 Category White-Space Opportunities" badge="9 actionable" badgeColor="green" delay={0.3}>
         <div className="grid grid-cols-3 gap-4">
-          {opportunities.map((o) => (
+          {opportunities.map((o, i) => (
             <div key={o.title} className={`bg-gradient-to-br ${o.gradient} rounded-xl border border-subtle p-5`}>
               <p className="text-2xl mb-2">{o.emoji}</p>
               <h4 className="font-display font-bold text-foreground text-sm">{o.title}</h4>
               <p className="text-xs text-muted-foreground mt-1">{o.desc}</p>
-              <div className="flex items-center gap-1.5 mt-3">
+              <div className="flex items-center gap-1.5 mt-3 flex-wrap">
                 {o.tags.map((t) => (
                   <span key={t} className="font-mono text-[9px] px-2 py-0.5 rounded-full bg-surface-3 text-foreground">{t}</span>
                 ))}
               </div>
+              <button onClick={() => setCampaignActions(p => ({ ...p, [i]: true }))}
+                className={`mt-3 flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
+                  campaignActions[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                }`}>
+                <Megaphone size={10} />
+                {campaignActions[i] ? "✓ Campaign Created" : "Create Campaign"}
+              </button>
             </div>
           ))}
         </div>
