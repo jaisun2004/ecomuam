@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft } from "lucide-react";
+import React from "react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, Tv, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navSections = [
   {
     label: "PLANNING",
     items: [
-      { id: "shelf", icon: LayoutGrid, label: "Digital Shelf", notify: false },
+      { id: "shelf", icon: LayoutGrid, label: "Command Centre", notify: false },
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
     ],
   },
@@ -86,7 +86,6 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
               <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
             )}
 
-            {/* Section label */}
             {expanded ? (
               <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase px-2 py-1.5 flex-shrink-0">
                 {section.label}
@@ -104,7 +103,6 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
               </Tooltip>
             )}
 
-            {/* Items */}
             {section.items.map((item) => {
               const Icon = item.icon;
               const isActive = active === item.id;
