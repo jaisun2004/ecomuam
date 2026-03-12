@@ -97,7 +97,6 @@ export default {
           flipkart: "#2F77FF",
           zepto: "#833AB4",
           instamart: "#FC8019",
-          instagram: "#E1306C",
         },
       },
       borderRadius: {

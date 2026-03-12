@@ -1,121 +1,84 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import type { ViewProps } from "@/pages/Index";
 
-const timeRangeOptions = ["7D", "30D", "90D"];
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
+const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 
-const plRowsByTime: Record<string, { platform: string; color: string; rev: string; spend: string; returns: string; retColor: string; margin: string; mColor: string }[]> = {
-  "7D": [
-    { platform: "Amazon", color: "#FF9900", rev: "₹24L", spend: "₹1.9L", returns: "6.8%", retColor: "text-sw-amber", margin: "39%", mColor: "text-sw-green font-bold" },
-    { platform: "Flipkart", color: "#2F77FF", rev: "₹13L", spend: "₹1.3L", returns: "9.1%", retColor: "text-sw-red", margin: "29%", mColor: "text-sw-amber font-bold" },
-    { platform: "Blinkit", color: "#FDDC2B", rev: "₹9L", spend: "₹0.7L", returns: "2.0%", retColor: "text-sw-green", margin: "43%", mColor: "text-sw-green font-bold" },
-    { platform: "Zepto", color: "#833AB4", rev: "₹6L", spend: "₹0.4L", returns: "1.7%", retColor: "text-sw-green", margin: "45%", mColor: "text-sw-green font-bold" },
-    { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹6L", spend: "₹0.5L", returns: "1.1%", retColor: "text-sw-green", margin: "52%", mColor: "text-sw-green font-bold" },
-  ],
-  "30D": [
-    { platform: "Amazon", color: "#FF9900", rev: "₹98L", spend: "₹7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
-    { platform: "Flipkart", color: "#2F77FF", rev: "₹54L", spend: "₹5.2L", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
-    { platform: "Blinkit", color: "#FDDC2B", rev: "₹38L", spend: "₹2.9L", returns: "2.1%", retColor: "text-sw-green", margin: "42%", mColor: "text-sw-green font-bold" },
-    { platform: "Zepto", color: "#833AB4", rev: "₹24L", spend: "₹1.8L", returns: "1.8%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
-    { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹26L", spend: "₹2.3L", returns: "1.2%", retColor: "text-sw-green", margin: "51%", mColor: "text-sw-green font-bold" },
-  ],
-  "90D": [
-    { platform: "Amazon", color: "#FF9900", rev: "₹2.8Cr", spend: "₹22L", returns: "6.9%", retColor: "text-sw-amber", margin: "40%", mColor: "text-sw-green font-bold" },
-    { platform: "Flipkart", color: "#2F77FF", rev: "₹1.5Cr", spend: "₹14L", returns: "9.2%", retColor: "text-sw-red", margin: "30%", mColor: "text-sw-amber font-bold" },
-    { platform: "Blinkit", color: "#FDDC2B", rev: "₹1.1Cr", spend: "₹8L", returns: "2.0%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
-    { platform: "Zepto", color: "#833AB4", rev: "₹68L", spend: "₹5L", returns: "1.6%", retColor: "text-sw-green", margin: "46%", mColor: "text-sw-green font-bold" },
-    { platform: "Direct/D2C", color: "#4F6EF7", rev: "₹74L", spend: "₹6L", returns: "1.0%", retColor: "text-sw-green", margin: "53%", mColor: "text-sw-green font-bold" },
-  ],
+const plRows: Record<string, { rev: string; spend: string; returns: string; retColor: string; margin: string; mColor: string }> = {
+  "7D": { rev: "₹24L", spend: "₹1.9L", returns: "6.8%", retColor: "text-sw-amber", margin: "39%", mColor: "text-sw-green font-bold" },
+  "30D": { rev: "₹98L", spend: "₹7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
+  "90D": { rev: "₹2.8Cr", spend: "₹22L", returns: "6.9%", retColor: "text-sw-amber", margin: "40%", mColor: "text-sw-green font-bold" },
 };
 
 const kpisByTime: Record<string, { rev: string; revDelta: string; margin: string; marginDelta: string; returnRate: string; returnDelta: string }> = {
-  "7D": { rev: "₹58L", revDelta: "▲ 12% WoW", margin: "36%", marginDelta: "▲ 2% vs last wk", returnRate: "5.8%", returnDelta: "▼ 0.4%" },
-  "30D": { rev: "₹2.4Cr", revDelta: "▲ 18% MoM", margin: "34%", marginDelta: "▲ 3% vs last mo", returnRate: "6.2%", returnDelta: "▲ 0.8% — investigate" },
-  "90D": { rev: "₹7.0Cr", revDelta: "▲ 22% QoQ", margin: "37%", marginDelta: "▲ 5% vs last qtr", returnRate: "5.9%", returnDelta: "▼ 0.3%" },
+  "7D": { rev: "₹24L", revDelta: "▲ 12% WoW", margin: "39%", marginDelta: "▲ 2% vs last wk", returnRate: "6.8%", returnDelta: "▼ 0.4%" },
+  "30D": { rev: "₹98L", revDelta: "▲ 18% MoM", margin: "38%", marginDelta: "▲ 3% vs last mo", returnRate: "7.1%", returnDelta: "▲ 0.8%" },
+  "90D": { rev: "₹2.8Cr", revDelta: "▲ 22% QoQ", margin: "40%", marginDelta: "▲ 5% vs last qtr", returnRate: "6.9%", returnDelta: "▼ 0.3%" },
 };
+
+const skuPerformance = [
+  { sku: "Original 500ml", rev: "₹38L", share: 39, trend: "+12%" },
+  { sku: "Sugar Free 500ml", rev: "₹22L", share: 22, trend: "+28%" },
+  { sku: "Berry 350ml", rev: "₹18L", share: 18, trend: "+45%" },
+  { sku: "Citrus 250ml", rev: "₹10L", share: 10, trend: "-3%" },
+  { sku: "Electrolyte 500ml", rev: "₹7L", share: 7, trend: "+8%" },
+  { sku: "Shot 60ml", rev: "₹3L", share: 3, trend: "+61%" },
+];
 
 const reports = [
   { name: "Weekly Shelf Report", schedule: "Every Monday 8AM", to: "CEO + Marketing Head", status: "ACTIVE", sColor: "text-sw-green bg-sw-green-dim" },
   { name: "Daily ROAS Digest", schedule: "Every day 7AM", to: "E-commerce Manager", status: "ACTIVE", sColor: "text-sw-green bg-sw-green-dim" },
-  { name: "Monthly P&L Report", schedule: "1st of month", to: "CFO + Brand Head", status: "1st of month", sColor: "text-primary bg-primary/15" },
+  { name: "Monthly P&L Report", schedule: "1st of month", to: "CFO + Brand Head", status: "SCHEDULED", sColor: "text-primary bg-primary/15" },
   { name: "Competitor Price Alert", schedule: "On trigger", to: "Trade Marketing Lead", status: "REAL-TIME", sColor: "text-sw-amber bg-sw-amber-dim" },
 ];
 
-const ReportsView: React.FC = () => {
-  const [planAdded, setPlanAdded] = useState(false);
-  const [timeRange, setTimeRange] = useState("30D");
+const ReportsView: React.FC<ViewProps> = ({ platform, timeRange }) => {
   const [reportAdded, setReportAdded] = useState(false);
-
-  const plRows = plRowsByTime[timeRange];
-  const kpis = kpisByTime[timeRange];
+  const kpis = kpisByTime[timeRange] || kpisByTime["30D"];
+  const pl = plRows[timeRange] || plRows["30D"];
 
   return (
-    <div className="space-y-6 pb-20">
-      {/* Time range toggle */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground mr-2">Time Range:</span>
-        {timeRangeOptions.map(t => (
-          <button key={t} onClick={() => setTimeRange(t)}
-            className={`px-4 py-1.5 rounded-lg font-mono text-xs font-medium transition-all ${
-              timeRange === t ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-            }`}>
-            {t}
-          </button>
-        ))}
-      </div>
+    <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-6 pb-20">
+      <motion.div variants={fadeUp} className="grid grid-cols-4 gap-4">
+        <KPICard title={`Revenue (${timeRange})`} value={kpis.rev} delta={kpis.revDelta} deltaType="positive" sub={`${platform} · Energy Drinks`} accentColor="bg-primary" delay={0} />
+        <KPICard title="Net Margin" value={kpis.margin} delta={kpis.marginDelta} deltaType="positive" sub="After ad spend, returns" accentColor="bg-sw-green" delay={0.05} />
+        <KPICard title="Return Rate" value={kpis.returnRate} delta={kpis.returnDelta} deltaType={kpis.returnDelta.includes("▲") ? "negative" : "positive"} sub="Monitor trend" accentColor="bg-sw-amber" delay={0.1} />
+        <KPICard title="Scheduled Reports" value="12" delta="Next: Tomorrow 8AM" deltaType="neutral" sub="3 stakeholders" accentColor="bg-primary" delay={0.15} />
+      </motion.div>
 
-      <div className="grid grid-cols-4 gap-4">
-        <KPICard title={`Total Revenue (${timeRange})`} value={kpis.rev} delta={kpis.revDelta} deltaType="positive" sub="Across all platforms" accentColor="bg-primary" delay={0} />
-        <KPICard title="Net Contribution Margin" value={kpis.margin} delta={kpis.marginDelta} deltaType="positive" sub="After ad spend, returns, fees" accentColor="bg-sw-green" delay={0.05} />
-        <KPICard title="Return Rate" value={kpis.returnRate} delta={kpis.returnDelta} deltaType={kpis.returnDelta.includes("▲") ? "negative" : "positive"} sub="Amazon return rate rising" accentColor="bg-sw-amber" delay={0.1} />
-        <KPICard title="Scheduled Reports" value="12" delta="Next: Tomorrow 8AM" deltaType="neutral" sub="3 stakeholders · Weekly" accentColor="bg-sw-purple" delay={0.15} />
-      </div>
+      <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4">
+        <PanelCard title={`P&L Summary — ${platform} · ${timeRange}`} badge="Net Margin View" badgeColor="accent" className="col-span-2" delay={0}>
+          <div className="grid grid-cols-4 gap-4 p-4 rounded-xl bg-surface-2 border border-subtle">
+            <div><span className="text-[10px] text-muted-foreground">Revenue</span><p className="font-mono text-lg font-bold text-foreground">{pl.rev}</p></div>
+            <div><span className="text-[10px] text-muted-foreground">Ad Spend</span><p className="font-mono text-lg font-bold text-foreground">{pl.spend}</p></div>
+            <div><span className="text-[10px] text-muted-foreground">Returns</span><p className={`font-mono text-lg font-bold ${pl.retColor}`}>{pl.returns}</p></div>
+            <div><span className="text-[10px] text-muted-foreground">Net Margin</span><p className={`font-mono text-lg font-bold ${pl.mColor}`}>{pl.margin}</p></div>
+          </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <PanelCard title={`Revenue Breakdown by Platform — ${timeRange} P&L`} badge="Net Margin View" badgeColor="accent" className="col-span-2" delay={0.2}>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-muted-foreground">
-                <th className="text-left py-2 font-normal">Platform</th>
-                <th className="text-right py-2 font-normal">Revenue</th>
-                <th className="text-right py-2 font-normal">Ad Spend</th>
-                <th className="text-right py-2 font-normal">Returns</th>
-                <th className="text-right py-2 font-normal">Net Margin</th>
-              </tr>
-            </thead>
-            <tbody>
-              {plRows.map((r, i) => (
-                <tr key={r.platform} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-3">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: r.color }} />
-                      <span className="text-foreground">{r.platform}</span>
-                    </span>
-                  </td>
-                  <td className="py-3 text-right font-mono text-foreground">{r.rev}</td>
-                  <td className="py-3 text-right font-mono text-muted-foreground">{r.spend}</td>
-                  <td className={`py-3 text-right font-mono ${r.retColor}`}>{r.returns}</td>
-                  <td className={`py-3 text-right font-mono ${r.mColor}`}>{r.margin}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className={`mt-4 p-3 rounded-xl ${planAdded ? "bg-sw-green-dim border border-sw-green/20" : "bg-primary/10 border border-primary/20"}`}>
-            <p className="text-[11px] text-foreground">💡 D2C has the highest net margin (51%). Shift 10% of Flipkart spend to D2C to add ~₹8L/mo in net profit.</p>
-            <button onClick={() => setPlanAdded(true)} className={`mt-2 px-3 py-1.5 rounded-lg text-[11px] font-medium ${planAdded ? "bg-sw-green/20 text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"}`}>
-              {planAdded ? "✓ Added to Plan" : "Add to Plan"}
-            </button>
+          <h4 className="font-display font-bold text-sm text-foreground mt-6 mb-3">SKU Performance</h4>
+          <div className="space-y-2">
+            {skuPerformance.map((s) => (
+              <div key={s.sku} className="flex items-center gap-3">
+                <span className="text-xs text-foreground w-36">{s.sku}</span>
+                <div className="flex-1 h-3 bg-surface-3 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full" style={{ width: `${s.share * 2.5}%` }} />
+                </div>
+                <span className="font-mono text-[11px] text-foreground w-14 text-right">{s.rev}</span>
+                <span className={`font-mono text-[10px] w-10 text-right ${s.trend.startsWith("+") ? "text-sw-green" : "text-sw-red"}`}>{s.trend}</span>
+              </div>
+            ))}
           </div>
         </PanelCard>
 
-        <PanelCard title="Scheduled Reports" delay={0.25}>
+        <PanelCard title="Scheduled Reports" delay={0}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-muted-foreground">{reports.length} active</span>
             <button onClick={() => setReportAdded(true)}
-              className={`px-3 py-1 rounded-lg text-[11px] font-medium ${
-                reportAdded ? "bg-sw-green-dim text-sw-green" : "border border-primary/30 text-primary hover:bg-primary/10"
-              }`}>
-              {reportAdded ? "✓ Report Added" : "+ New"}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium ${reportAdded ? "bg-sw-green-dim text-sw-green" : "border border-primary/30 text-primary hover:bg-primary/10"}`}>
+              {reportAdded ? "✓ Added" : "+ New"}
             </button>
           </div>
           <div className="space-y-3">
@@ -128,8 +91,8 @@ const ReportsView: React.FC = () => {
             ))}
           </div>
         </PanelCard>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

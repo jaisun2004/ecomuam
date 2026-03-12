@@ -1,65 +1,81 @@
-import React, { useState } from "react";
+import React from "react";
+import { ChevronDown, Calendar } from "lucide-react";
+
+export const PLATFORMS = [
+  { name: "Amazon", color: "#FF9900", isNational: true },
+  { name: "Flipkart", color: "#2F77FF", isNational: true },
+  { name: "Blinkit", color: "#FDDC2B", isNational: false },
+  { name: "Zepto", color: "#833AB4", isNational: false },
+  { name: "Instamart", color: "#FC8019", isNational: false },
+];
+
+const timeRanges = ["7D", "30D", "90D"];
+
+const viewLabels: Record<string, string> = {
+  shelf: "Command Centre",
+  campaigns: "Campaign Manager",
+  discovery: "Discovery",
+  reports: "Reports",
+  availability: "Availability",
+  pricing: "Pricing",
+  alerts: "Alerts",
+  account: "Account",
+  competitors: "Competitor Ads Hub",
+  festival: "Festival Campaigns",
+  budget: "Budget Optimiser",
+  offline: "Offline Ads",
+};
 
 interface TopbarProps {
   active: string;
   onChange: (id: string) => void;
+  selectedPlatform: string;
+  onPlatformChange: (p: string) => void;
+  timeRange: string;
+  onTimeRangeChange: (t: string) => void;
 }
 
-const timeRanges = ["7D", "30D", "90D"];
-
-const platformFilters = [
-  { name: "Amazon", color: "#FF9900" },
-  { name: "Blinkit", color: "#FDDC2B" },
-  { name: "Flipkart", color: "#2F77FF" },
-];
-
-const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
-  const [timeRange, setTimeRange] = useState("30D");
-
+const Topbar: React.FC<TopbarProps> = ({ active, onChange, selectedPlatform, onPlatformChange, timeRange, onTimeRangeChange }) => {
   return (
-    <div className="sticky top-0 h-[60px] bg-background border-b border-subtle flex items-center justify-between px-6 z-40">
-      {/* Brand + Tabs */}
-      <div className="flex items-center gap-6">
-        <h1 className="font-display font-bold text-lg">
-          <span className="text-foreground">shelf</span>
-          <span className="text-primary">wise</span>
-        </h1>
-
-        <div className="flex items-center bg-surface-2 rounded-full p-0.5">
-          <button
-            onClick={() => onChange("shelf")}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-              active === "shelf"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            📦 Digital Shelf
-          </button>
-          <button
-            onClick={() => onChange("campaigns")}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-              active === "campaigns"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            📣 Campaigns
-          </button>
+    <div className="sticky top-0 h-[56px] bg-background/80 backdrop-blur-xl border-b border-subtle flex items-center justify-between px-6 z-40">
+      {/* Left: Breadcrumb + View Name */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Beverages</span>
+          <ChevronDown size={12} className="text-muted-foreground" />
         </div>
+        <div className="h-4 w-px bg-surface-3" />
+        <h2 className="font-display font-bold text-sm text-foreground">{viewLabels[active] || "Dashboard"}</h2>
       </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-4">
-        {/* Time Range */}
+      {/* Center: Platform selector */}
+      <div className="flex items-center bg-surface-2 rounded-xl p-1 gap-0.5">
+        {PLATFORMS.map((p) => (
+          <button
+            key={p.name}
+            onClick={() => onPlatformChange(p.name)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+              selectedPlatform === p.name
+                ? "bg-primary/20 text-primary shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: p.color }} />
+            {p.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Right: Time + Avatar */}
+      <div className="flex items-center gap-3">
         <div className="flex items-center bg-surface-2 rounded-lg p-0.5">
           {timeRanges.map((t) => (
             <button
               key={t}
-              onClick={() => setTimeRange(t)}
+              onClick={() => onTimeRangeChange(t)}
               className={`px-3 py-1 rounded-md font-mono text-[11px] font-medium transition-all ${
                 timeRange === t
-                  ? "bg-surface-3 text-foreground"
+                  ? "bg-primary/20 text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -68,22 +84,12 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
           ))}
         </div>
 
-        {/* Platform pills */}
-        <div className="flex items-center gap-1.5">
-          {platformFilters.map((p) => (
-            <div
-              key={p.name}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-2 text-[11px] text-muted-foreground"
-            >
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-              {p.name}
-            </div>
-          ))}
-          <div className="px-2.5 py-1 rounded-full bg-surface-2 text-[11px] text-primary">+3 more</div>
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-2 text-[11px] text-muted-foreground">
+          <Calendar size={12} />
+          <span>Mar 5 – Mar 12</span>
         </div>
 
-        {/* Avatar */}
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-sw-purple flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
           <span className="font-mono text-[10px] font-medium text-primary-foreground">AM</span>
         </div>
       </div>
