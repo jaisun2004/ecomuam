@@ -1,119 +1,171 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
-import { ArrowRight } from "lucide-react";
-import type { ViewProps } from "@/pages/Index";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot } from "recharts";
+import { Megaphone, TrendingDown, TrendingUp, AlertTriangle } from "lucide-react";
 
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
-const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
-
-const skuOptions = ["Original 500ml", "Sugar Free 500ml", "Citrus 250ml", "Berry 350ml", "Shot 60ml"];
+const skuOptions = ["Whey Protein 1kg", "Creatine 250g", "Pre-Workout 300g", "BCAA Tropical", "Multi-Vit 60ct"];
+const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
+const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
 const priceHistoryBySku: Record<string, any[]> = {
-  "Original 500ml": Array.from({ length: 30 }, (_, i) => ({
+  "Whey Protein 1kg": Array.from({ length: 30 }, (_, i) => ({
     day: `Mar ${i + 1}`,
-    yours: 99,
-    redBull: 125,
-    monster: i >= 15 ? 109 : 119,
-    sting: 50,
+    yours: 2499,
+    comp1: i >= 12 ? 2199 : 2299,
+    comp2: i >= 18 ? 3299 : 3499,
+    comp3: 1899,
   })),
-  "Sugar Free 500ml": Array.from({ length: 30 }, (_, i) => ({
+  "Creatine 250g": Array.from({ length: 30 }, (_, i) => ({
     day: `Mar ${i + 1}`,
-    yours: 119,
-    redBull: i >= 10 ? 99 : 110,
-    monster: 129,
-    sting: 55,
+    yours: 799,
+    comp1: i >= 8 ? 699 : 749,
+    comp2: 849,
+    comp3: 679,
   })),
-  "Citrus 250ml": Array.from({ length: 30 }, (_, i) => ({
+  "Pre-Workout 300g": Array.from({ length: 30 }, (_, i) => ({
     day: `Mar ${i + 1}`,
-    yours: 49,
-    redBull: 55,
-    monster: 59,
-    sting: 25,
+    yours: 1899,
+    comp1: i >= 15 ? 1599 : 1699,
+    comp2: 1799,
+    comp3: 1549,
   })),
-  "Berry 350ml": Array.from({ length: 30 }, (_, i) => ({
+  "BCAA Tropical": Array.from({ length: 30 }, (_, i) => ({
     day: `Mar ${i + 1}`,
-    yours: 69,
-    redBull: 75,
-    monster: 79,
-    sting: 35,
+    yours: 1299,
+    comp1: i >= 10 ? 1199 : 1249,
+    comp2: 1399,
+    comp3: 1149,
   })),
-  "Shot 60ml": Array.from({ length: 30 }, (_, i) => ({
+  "Multi-Vit 60ct": Array.from({ length: 30 }, (_, i) => ({
     day: `Mar ${i + 1}`,
-    yours: 35,
-    redBull: 45,
-    monster: 40,
-    sting: 20,
+    yours: 649,
+    comp1: 599,
+    comp2: 699,
+    comp3: 549,
   })),
 };
 
-const competitorMatrix = [
-  { brand: "EnergyMax (You)", you: true, price: "₹99", rating: "4.2★", reviews: "2,847", pos: "#3", sos: "18%", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Red Bull 250ml", you: false, price: "₹125", rating: "4.5★", reviews: "44,102", pos: "#1", sos: "35%", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Monster 500ml", you: false, price: "₹119", rating: "4.3★", reviews: "18,241", pos: "#2", sos: "22%", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Sting 250ml", you: false, price: "₹50", rating: "4.0★", reviews: "28,710", pos: "#4", sos: "15%", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Hell Energy 500ml", you: false, price: "₹99", rating: "3.9★", reviews: "3,210", pos: "#5", sos: "6%", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
-];
+const competitorMatrixByPlatform: Record<string, any[]> = {
+  Amazon: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Dymatize ISO 100", you: false, price: "₹4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+  ],
+  Flipkart: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,549", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,299", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,599", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "38,540", pos: "#2", posColor: "text-sw-amber", sos: "24%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,949", priceColor: "text-sw-green", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "7,210", pos: "#3", posColor: "text-sw-green", sos: "12%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  ],
+  Blinkit: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,599", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,399", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,699", priceColor: "text-sw-amber", rating: "4.4★", ratingColor: "text-sw-green", reviews: "890", pos: "#3", posColor: "text-sw-amber", sos: "15%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+  ],
+  Zepto: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,649", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,449", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "ON", you: false, price: "₹3,599", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "680", pos: "#2", posColor: "text-sw-amber", sos: "18%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  ],
+  Instamart: [
+    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,699", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,499", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  ],
+};
+
+const compNamesBySku: Record<string, string[]> = {
+  "Whey Protein 1kg": ["MuscleBlaze", "ON", "AS-IT-IS"],
+  "Creatine 250g": ["MuscleBlaze", "AS-IT-IS", "BigMuscles"],
+  "Pre-Workout 300g": ["BigMuscles", "ON", "GNC"],
+  "BCAA Tropical": ["ON", "MuscleBlaze", "Dymatize"],
+  "Multi-Vit 60ct": ["HealthKart", "MuscleBlaze", "GNC"],
+};
 
 const priceAlerts = [
-  { sku: "Sugar Free 500ml", competitor: "Red Bull", yourPrice: "₹119", compPrice: "₹99", gap: "+20.2%", severity: "high" },
-  { sku: "Shot 60ml", competitor: "Sting", yourPrice: "₹35", compPrice: "₹20", gap: "+75%", severity: "high" },
-  { sku: "Citrus 250ml", competitor: "Red Bull", yourPrice: "₹49", compPrice: "₹55", gap: "-10.9%", severity: "low" },
+  { sku: "Creatine 250g", competitor: "MuscleBlaze", platform: "Amazon", yourPrice: "₹799", compPrice: "₹699", gap: "+14.3%", impact: "Conversion -22%", severity: "high" },
+  { sku: "Pre-Workout 300g", competitor: "BigMuscles", platform: "Amazon", yourPrice: "₹1,899", compPrice: "₹1,599", gap: "+18.8%", impact: "Conversion -15%", severity: "high" },
+  { sku: "BCAA Tropical", competitor: "ON", platform: "Flipkart", yourPrice: "₹1,299", compPrice: "₹1,199", gap: "+8.3%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "Multi-Vit 60ct", competitor: "HealthKart", platform: "Zepto", yourPrice: "₹649", compPrice: "₹599", gap: "+8.3%", impact: "Conversion -4%", severity: "low" },
+];
+
+const platformPricing = [
+  { platform: "Amazon", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1 },
+  { platform: "Flipkart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1 },
+  { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0 },
+  { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0 },
+  { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0 },
 ];
 
 const contentGapsBySku: Record<string, { label: string; you: number | string; them: number | string; youPct: number; color: string }[]> = {
-  "Original 500ml": [
+  "Whey Protein 1kg": [
     { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
-    { label: "Images Count", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
+    { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "2.8K", them: "44K", youPct: 6, color: "text-sw-red" },
+    { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
   ],
-  "Sugar Free 500ml": [
+  "Creatine 250g": [
     { label: "Title Keywords", you: 4, them: 9, youPct: 44, color: "text-sw-red" },
+    { label: "Images Count", you: 5, them: 7, youPct: 71, color: "text-sw-green" },
+    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
+    { label: "Review Count", you: "1.2K", them: "9.6K", youPct: 12, color: "text-sw-red" },
+  ],
+  "Pre-Workout 300g": [
+    { label: "Title Keywords", you: 3, them: 8, youPct: 38, color: "text-sw-red" },
     { label: "Images Count", you: 4, them: 7, youPct: 57, color: "text-sw-amber" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "890", them: "18K", youPct: 5, color: "text-sw-red" },
+    { label: "Review Count", you: "890", them: "12K", youPct: 7, color: "text-sw-red" },
   ],
-  "Citrus 250ml": [
-    { label: "Title Keywords", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
-    { label: "Images Count", you: 6, them: 6, youPct: 100, color: "text-sw-green" },
-    { label: "A+ Content", you: "Yes", them: "Yes", youPct: 100, color: "text-sw-green" },
-    { label: "Review Count", you: "1.2K", them: "28K", youPct: 4, color: "text-sw-red" },
-  ],
-  "Berry 350ml": [
+  "BCAA Tropical": [
     { label: "Title Keywords", you: 7, them: 9, youPct: 78, color: "text-sw-green" },
-    { label: "Images Count", you: 6, them: 7, youPct: 86, color: "text-sw-green" },
+    { label: "Images Count", you: 6, them: 6, youPct: 100, color: "text-sw-green" },
     { label: "A+ Content", you: "Yes", them: "Yes", youPct: 100, color: "text-sw-green" },
     { label: "Review Count", you: "3.4K", them: "15K", youPct: 23, color: "text-sw-red" },
   ],
-  "Shot 60ml": [
-    { label: "Title Keywords", you: 3, them: 10, youPct: 30, color: "text-sw-red" },
-    { label: "Images Count", you: 3, them: 8, youPct: 38, color: "text-sw-red" },
+  "Multi-Vit 60ct": [
+    { label: "Title Keywords", you: 5, them: 10, youPct: 50, color: "text-sw-amber" },
+    { label: "Images Count", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "156", them: "12K", youPct: 1, color: "text-sw-red" },
+    { label: "Review Count", you: "620", them: "8K", youPct: 8, color: "text-sw-red" },
   ],
 };
 
-const PricingView: React.FC<ViewProps> = ({ platform, onNavigate }) => {
-  const [selectedSku, setSelectedSku] = useState("Original 500ml");
+const PricingView: React.FC = () => {
+  const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
+  const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
+  const [selectedSku, setSelectedSku] = useState("Whey Protein 1kg");
+  const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
 
-  const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Original 500ml"];
-  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Original 500ml"];
+  const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Whey Protein 1kg"];
+  const competitorMatrix = competitorMatrixByPlatform[selectedPlatform] || competitorMatrixByPlatform["Amazon"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Whey Protein 1kg"];
+  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Whey Protein 1kg"];
 
   return (
-    <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-6 pb-20">
-      <motion.div variants={fadeUp} className="grid grid-cols-4 gap-4">
-        <KPICard title="Price Competitiveness" value="#3" delta="Behind Red Bull, Monster" deltaType="warning" sub={`${platform} · Energy Drinks`} accentColor="bg-sw-green" delay={0} />
-        <KPICard title="Price Changes (24h)" value="3" delta="⚠ 1 affects your SKU" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
-        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub={`vs competition on ${platform}`} accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Best Value Advantage" value="Original 500ml" delta="-20% vs Red Bull" deltaType="positive" sub="Strongest price position" accentColor="bg-sw-green" delay={0.15} />
-      </motion.div>
+    <div className="space-y-6 pb-20">
+      <div className="grid grid-cols-4 gap-4">
+        <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
+        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Across all platforms" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Revenue at Risk" value="₹3.8L" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
+      </div>
 
-      {/* Competitor Matrix */}
-      <motion.div variants={fadeUp}>
-        <PanelCard title={`Competitor Intelligence Matrix — ${platform}`} badge="Real-time" badgeColor="red" delay={0}>
+      {/* Competitor Matrix with platform toggle */}
+      <PanelCard title="Competitor Intelligence Matrix" badge="Real-time" badgeColor="red" delay={0.2}>
+        <div className="flex items-center gap-2 mb-4">
+          {platformOptions.map(p => (
+            <button key={p} onClick={() => setSelectedPlatform(p)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+              }`}>
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />
+              {p}
+            </button>
+          ))}
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="text-muted-foreground">
@@ -127,7 +179,7 @@ const PricingView: React.FC<ViewProps> = ({ platform, onNavigate }) => {
               </tr>
             </thead>
             <tbody>
-              {competitorMatrix.map((r) => (
+              {competitorMatrix.map((r: any) => (
                 <tr key={r.brand} className={r.you ? "bg-primary/5" : ""}>
                   <td className="py-3 text-foreground">
                     <span className="flex items-center gap-1.5">
@@ -135,76 +187,125 @@ const PricingView: React.FC<ViewProps> = ({ platform, onNavigate }) => {
                       {r.brand}
                     </span>
                   </td>
-                  <td className="py-3 text-right font-mono text-foreground">{r.price}</td>
-                  <td className="py-3 text-right font-mono text-sw-green">{r.rating}</td>
+                  <td className={`py-3 text-right font-mono ${r.priceColor}`}>{r.price}</td>
+                  <td className={`py-3 text-right font-mono ${r.ratingColor}`}>{r.rating}</td>
                   <td className="py-3 text-right font-mono text-foreground">{r.reviews}</td>
-                  <td className="py-3 text-right font-mono text-foreground">{r.pos}</td>
-                  <td className="py-3 text-right font-mono text-foreground">{r.sos}</td>
+                  <td className={`py-3 text-right font-mono ${r.posColor}`}>{r.pos}</td>
+                  <td className={`py-3 text-right font-mono ${r.sosColor}`}>{r.sos}</td>
                   <td className="py-3 text-right"><span className={`font-mono text-[10px] px-2 py-0.5 rounded-full ${r.stockColor}`}>{r.stock}</span></td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </PanelCard>
-      </motion.div>
+        </div>
+      </PanelCard>
 
-      {/* Price Alerts + Price History */}
-      <motion.div variants={fadeUp} className="grid grid-cols-2 gap-4">
-        <PanelCard title="Active Price Alerts" badge={`${priceAlerts.length} alerts`} badgeColor="red" delay={0}>
+      {/* Price Alerts + Platform Pricing Index */}
+      <div className="grid grid-cols-2 gap-4">
+        <PanelCard title="Active Price Alerts" badge={`${priceAlerts.length} alerts`} badgeColor="red" delay={0.3}>
           <div className="space-y-2">
             {priceAlerts.map((a, i) => (
-              <div key={i} className={`p-3 rounded-xl border ${a.severity === "high" ? "bg-sw-red-dim/30 border-sw-red/20" : "bg-surface-2 border-subtle"}`}>
+              <div key={i} className={`p-3 rounded-xl border ${
+                a.severity === "high" ? "bg-sw-red-dim/30 border-sw-red/20" : a.severity === "medium" ? "bg-sw-amber-dim/30 border-sw-amber/20" : "bg-surface-2 border-subtle"
+              }`}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs text-foreground font-medium">{a.sku}</span>
-                  <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${a.gap.startsWith("+") ? "bg-sw-red-dim text-sw-red" : "bg-sw-green-dim text-sw-green"}`}>{a.gap}</span>
+                  <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
+                    a.severity === "high" ? "bg-sw-red-dim text-sw-red" : "bg-sw-amber-dim text-sw-amber"
+                  }`}>{a.gap}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground">{a.competitor}: {a.compPrice} vs your {a.yourPrice}</p>
+                <p className="text-[10px] text-muted-foreground">
+                  {a.competitor} on {a.platform}: {a.compPrice} vs your {a.yourPrice} · {a.impact}
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      actionStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
+                    }`}>
+                    {actionStates[i] ? "✓ Price Matched" : "Match Price"}
+                  </button>
+                  <button onClick={() => setCampaignStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      campaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Megaphone size={10} />
+                    {campaignStates[i] ? "✓ Campaign Live" : "Value Campaign"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
-          <div className="mt-3 text-[10px]">
-            <button onClick={() => onNavigate("campaigns")} className="text-primary hover:underline flex items-center gap-1">
-              Launch value campaigns <ArrowRight size={10} />
-            </button>
-          </div>
         </PanelCard>
 
-        <PanelCard title="Price History — 30 Days" badge={selectedSku} badgeColor="accent" delay={0}>
+        <PanelCard title="Platform Price Index" badge="vs Competition" badgeColor="accent" delay={0.35}>
+          <div className="space-y-3">
+            {platformPricing.map((p) => (
+              <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="flex items-center gap-2 text-xs text-foreground">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                    {p.platform}
+                  </span>
+                  <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
+                    {p.avgIndex.toFixed(2)}x
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-[10px]">
+                  <span className="text-sw-green">{p.skusBelowComp} below comp</span>
+                  <span className="text-muted-foreground">{p.parity} at parity</span>
+                  <span className="text-sw-red">{p.skusAboveComp} above comp</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </PanelCard>
+      </div>
+
+      {/* Price History with SKU toggle + Content Gap with SKU toggle */}
+      <div className="grid grid-cols-2 gap-4">
+        <PanelCard title="Price History — 30 Days" badge={`${selectedSku} · ${selectedPlatform}`} badgeColor="accent" delay={0.4}>
           <div className="flex items-center gap-1.5 mb-3 flex-wrap">
             {skuOptions.map(s => (
               <button key={s} onClick={() => setSelectedSku(s)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${selectedSku === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedSku === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
                 {s}
               </button>
             ))}
           </div>
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={200}>
             <LineChart data={priceHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(255,8%,46%)" }} axisLine={false} tickLine={false} interval={6} />
-              <YAxis tick={{ fontSize: 9, fill: "hsl(255,8%,46%)" }} axisLine={false} tickLine={false} />
-              <RTooltip contentStyle={{ background: "hsl(260,22%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
-              <Line type="monotone" dataKey="yours" stroke="hsl(268,78%,54%)" strokeWidth={2} dot={false} name="You" />
-              <Line type="monotone" dataKey="redBull" stroke="hsl(0,76%,57%)" strokeWidth={1.5} strokeDasharray="5 5" dot={false} name="Red Bull" />
-              <Line type="monotone" dataKey="monster" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name="Monster" />
-              <Line type="monotone" dataKey="sting" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name="Sting" />
+              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={6} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
+              <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
+              <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price" />
+              <Line type="monotone" dataKey="comp1" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name={compNames[0]} />
+              <Line type="monotone" dataKey="comp2" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[1]} />
+              <Line type="monotone" dataKey="comp3" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[2]} />
             </LineChart>
           </ResponsiveContainer>
+          <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground flex-wrap">
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> You</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-red rounded-full" /> {compNames[0]}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-amber rounded-full" /> {compNames[1]}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> {compNames[2]}</span>
+          </div>
         </PanelCard>
-      </motion.div>
 
-      {/* Content Gap */}
-      <motion.div variants={fadeUp}>
-        <PanelCard title={`Content Gap vs Top Competitor — ${selectedSku}`} badge="Deep Dive" badgeColor="amber" delay={0}>
+        <PanelCard title={`Content Gap vs Top Competitor`} badge={selectedSku} badgeColor="amber" delay={0.45}>
           <div className="flex items-center gap-1.5 mb-3 flex-wrap">
             {skuOptions.map(s => (
               <button key={s} onClick={() => setSelectedSku(s)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${selectedSku === s ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedSku === s ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>
                 {s}
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+          <div className="space-y-4">
             {contentGaps.map((g) => (
               <div key={g.label}>
                 <div className="flex items-center justify-between mb-1">
@@ -219,8 +320,8 @@ const PricingView: React.FC<ViewProps> = ({ platform, onNavigate }) => {
             ))}
           </div>
         </PanelCard>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
