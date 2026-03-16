@@ -168,6 +168,46 @@ const OfflineAdsView: React.FC = () => {
           </tbody>
         </table>
       </PanelCard>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Offline Channel Performance" badge="ROI Comparison" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={channelPerformance}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="channel" tick={{ fontSize: 9, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="roi" fill="hsl(var(--sw-purple))" radius={[4, 4, 0, 0]} name="ROI (x)" />
+              </BarChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+              <h3 className="text-sm font-medium text-foreground mb-2">Estimated ROI Summary</h3>
+              <div className="space-y-2">
+                {channelPerformance.map((c) => (
+                  <div key={c.channel} className="flex items-center justify-between py-1.5 border-b border-subtle/50 last:border-b-0">
+                    <span className="text-xs text-foreground">{c.channel}</span>
+                    <span className="font-mono text-xs text-sw-green">{c.roi}x</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+              <h3 className="text-sm font-medium text-foreground mb-2">Reach Estimates (K)</h3>
+              <div className="space-y-2">
+                {channelPerformance.map((c) => (
+                  <div key={c.channel} className="flex items-center justify-between py-1.5 border-b border-subtle/50 last:border-b-0">
+                    <span className="text-xs text-foreground">{c.channel}</span>
+                    <span className="font-mono text-xs text-foreground">{c.reach}K/mo</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

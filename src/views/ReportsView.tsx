@@ -134,6 +134,29 @@ const ReportsView: React.FC = () => {
           </div>
         </PanelCard>
       </div>
+      </>) : (
+        <div className="space-y-5">
+          <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+            <h3 className="text-sm font-medium text-foreground mb-3">Raw Data Tables</h3>
+            <p className="text-xs text-muted-foreground mb-4">Export raw performance data for custom analysis</p>
+            <div className="grid grid-cols-3 gap-3">
+              {["Campaign Performance", "Keyword Metrics", "Platform Revenue", "SKU Analytics", "Attribution Data", "Audience Segments"].map((t) => (
+                <button key={t} className="p-3 rounded-xl bg-surface-2 border border-subtle text-left hover:bg-surface-3 transition-colors">
+                  <p className="text-xs text-foreground font-medium">{t}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Export CSV / View</p>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+            <h3 className="text-sm font-medium text-foreground mb-3">Chart Builder</h3>
+            <p className="text-xs text-muted-foreground">Select metrics and dimensions to create custom visualisations</p>
+            <div className="mt-4 p-8 rounded-xl bg-surface-2 border border-subtle text-center">
+              <p className="text-muted-foreground text-xs">Chart builder coming soon — select data tables above to explore raw data</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -379,6 +379,38 @@ const GuardrailsView: React.FC = () => {
           </div>
         </div>
       </div>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Rule Trigger History — 30 Days" badge="Timeline" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={triggerHistory}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="triggers" stroke="hsl(0,76%,57%)" strokeWidth={2} dot={false} name="Triggers" />
+              </LineChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="Action Block/Allow Ratio" badge="By Insight Type" badgeColor="red" delay={0.1}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={blockAllowData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="type" tick={{ fontSize: 9, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="allowed" fill="hsl(160,70%,48%)" radius={[4, 4, 0, 0]} name="Allowed" />
+                <Bar dataKey="blocked" fill="hsl(0,76%,57%)" radius={[4, 4, 0, 0]} name="Blocked" opacity={0.7} />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> Allowed</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-red" /> Blocked</span>
+            </div>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };
