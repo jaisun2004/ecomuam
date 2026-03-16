@@ -70,8 +70,12 @@ const FestivalCampaignsView: React.FC = () => {
   const [launchedCampaigns, setLaunchedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedFestival, setExpandedFestival] = useState<number>(0);
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Campaigns ready to deploy" accentColor="bg-sw-amber" delay={0} />
         <KPICard title="Pre-built Campaigns" value="9" delta="AI-optimised & pre-fed" deltaType="positive" sub="Across all festivals" accentColor="bg-sw-purple" delay={0.05} />
