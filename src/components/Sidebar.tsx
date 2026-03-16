@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navSections = [
@@ -8,6 +8,7 @@ const navSections = [
     items: [
       { id: "shelf", icon: LayoutGrid, label: "Digital Shelf", notify: false },
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
+      { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
     ],
   },
   {

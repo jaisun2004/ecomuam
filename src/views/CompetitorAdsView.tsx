@@ -3,6 +3,7 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
 import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle } from "lucide-react";
+import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
@@ -95,8 +96,33 @@ const CompetitorAdsView: React.FC = () => {
 
   const budgetAlerts = budgetExhaustionByKeyword[selectedKeyword] || [];
 
+  const g = useGuardrails();
+  const defenseBlocked = g.hasDefenseBlocked();
+  const defenseActive = g.hasDefenseActive();
+
   return (
     <div className="space-y-6 pb-20">
+      {/* Conflict alert banner — only when defense is BLOCKED */}
+      {defenseBlocked && (
+        <div className="rounded-xl p-4" style={{
+          backgroundColor: "rgba(245,166,35,0.10)",
+          border: "1px solid rgba(245,166,35,0.25)",
+          borderRadius: "8px",
+        }}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-foreground">
+                <AlertTriangle size={12} className="inline mr-1" style={{ color: "#F5A623" }} />
+                Defense action queued — blocked by <strong>Availability threshold</strong>. Auto-fires when stock recovers above 20%. Est. {g.estResolutionTime}.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#F5A623" }}>Override manually</button>
+              <button onClick={() => g.navigateTo("guardrails")} className="text-[11px] font-medium" style={{ color: "#4F7FFF" }}>View guardrail →</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Real-time sponsored rank tracking" accentColor="bg-sw-red" delay={0} />
         <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Competitors out of budget today" accentColor="bg-sw-green" delay={0.05} />
@@ -128,6 +154,11 @@ const CompetitorAdsView: React.FC = () => {
                 <div className="flex items-center gap-2">
                   {c.budgetExhausted && (
                     <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green">BUDGET EXHAUSTED</span>
+                  )}
+                  {defenseActive && c.topKeywords.includes("whey protein") && (
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
+                      Defense active — Campaign Manager
+                    </span>
                   )}
                   <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${c.sponsoredActive ? "bg-sw-red-dim text-sw-red" : "bg-surface-3 text-muted-foreground"}`}>
                     {c.sponsoredActive ? "ADS ACTIVE" : "ADS PAUSED"}
