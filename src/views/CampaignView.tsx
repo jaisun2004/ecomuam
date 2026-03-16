@@ -426,6 +426,30 @@ const CampaignView: React.FC = () => {
     setTimeout(() => setUndoToast(null), 5000);
   };
 
+  const [tab, setTab] = useState("overview");
+
+  // Analytics mock data
+  const spendRoasTrend = Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    spend: Math.round(40 + Math.random() * 20),
+    roas: +(3.5 + Math.random() * 2).toFixed(1),
+  }));
+
+  const scatterData = campaigns.map((c) => ({
+    name: c.name,
+    spend: parseInt(c.spend.replace(/[₹KL,]/g, "")) || 50,
+    roas: parseFloat(c.roas) || 3,
+    impressions: 500,
+  }));
+
+  const actionHistory = [
+    { time: "Mar 16 09:42", action: "Defense bid increase", campaign: "Whey Protein — Sponsored", roasBefore: "4.8x", roasAfter: "5.1x", trigger: "Auto" },
+    { time: "Mar 15 14:20", action: "Budget reallocation", campaign: "Creatine Retargeting", roasBefore: "2.1x", roasAfter: "2.1x", trigger: "Manual" },
+    { time: "Mar 15 08:00", action: "Daypart shift", campaign: "Q-Commerce Launch Push", roasBefore: "3.5x", roasAfter: "3.8x", trigger: "Auto" },
+    { time: "Mar 14 16:45", action: "Keyword expansion", campaign: "BCAA Brand Awareness", roasBefore: "4.2x", roasAfter: "4.4x", trigger: "Auto" },
+    { time: "Mar 13 10:30", action: "Bid reduction", campaign: "Pre-Workout New Users", roasBefore: "2.8x", roasAfter: "3.2x", trigger: "Auto" },
+  ];
+
   return (
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
