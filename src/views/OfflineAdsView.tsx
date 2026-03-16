@@ -74,8 +74,12 @@ const cityWiseOpps = [
 const OfflineAdsView: React.FC = () => {
   const [channelActions, setChannelActions] = useState<Record<number, boolean>>({});
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" sub="No online issues detected" accentColor="bg-sw-green" delay={0} />
         <KPICard title="Offline Opportunity" value="₹33L/mo" delta="Incremental revenue potential" deltaType="positive" sub="Across 4 offline channels" accentColor="bg-sw-purple" delay={0.05} />
