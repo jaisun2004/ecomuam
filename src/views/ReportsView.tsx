@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 
 const timeRangeOptions = ["7D", "30D", "90D"];
 
