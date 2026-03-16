@@ -1,10 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, Legend } from "recharts";
-import { ArrowRight, AlertCircle } from "lucide-react";
+import { ArrowRight, AlertCircle, MapPin, X } from "lucide-react";
+
+/* ── Dark Store pincode-level data ── */
+interface DarkStore {
+  id: string;
+  name: string;
+  pincode: string;
+  city: string;
+  platform: "Blinkit" | "Zepto" | "Swiggy Instamart";
+  lat: number; // mapped to SVG Y
+  lng: number; // mapped to SVG X
+  marketShare: number;
+  availability: number;
+  avgDeliveryMin: number;
+  ordersPerDay: number;
+  revenue: string;
+  topSku: string;
+  oosRate: number;
+  competitorPresence: number;
+  slotShare: number;
+}
+
+const darkStores: DarkStore[] = [
+  // Delhi NCR
+  { id: "ds-1", name: "Blinkit Connaught Place", pincode: "110001", city: "Delhi", platform: "Blinkit", lat: 148, lng: 192, marketShare: 34, availability: 96, avgDeliveryMin: 11, ordersPerDay: 142, revenue: "₹1.8L", topSku: "Whey 1kg Chocolate", oosRate: 4, competitorPresence: 5, slotShare: 42 },
+  { id: "ds-2", name: "Zepto Hauz Khas", pincode: "110016", city: "Delhi", platform: "Zepto", lat: 153, lng: 188, marketShare: 28, availability: 91, avgDeliveryMin: 14, ordersPerDay: 98, revenue: "₹1.2L", topSku: "Pre-Workout Citrus", oosRate: 9, competitorPresence: 4, slotShare: 31 },
+  { id: "ds-3", name: "Blinkit Noida Sec 18", pincode: "201301", city: "Noida", platform: "Blinkit", lat: 156, lng: 200, marketShare: 31, availability: 93, avgDeliveryMin: 12, ordersPerDay: 110, revenue: "₹1.4L", topSku: "Creatine Monohydrate", oosRate: 7, competitorPresence: 3, slotShare: 38 },
+  { id: "ds-4", name: "Instamart Dwarka", pincode: "110075", city: "Delhi", platform: "Swiggy Instamart", lat: 150, lng: 182, marketShare: 22, availability: 88, avgDeliveryMin: 18, ordersPerDay: 65, revenue: "₹82K", topSku: "BCAA Tropical", oosRate: 12, competitorPresence: 6, slotShare: 24 },
+  { id: "ds-5", name: "Zepto Gurugram DLF", pincode: "122002", city: "Gurugram", platform: "Zepto", lat: 155, lng: 178, marketShare: 26, availability: 90, avgDeliveryMin: 15, ordersPerDay: 88, revenue: "₹1.1L", topSku: "Whey Isolate 1kg", oosRate: 10, competitorPresence: 4, slotShare: 29 },
+  // Mumbai
+  { id: "ds-6", name: "Blinkit Andheri West", pincode: "400058", city: "Mumbai", platform: "Blinkit", lat: 285, lng: 155, marketShare: 38, availability: 97, avgDeliveryMin: 10, ordersPerDay: 168, revenue: "₹2.1L", topSku: "Whey 1kg Chocolate", oosRate: 3, competitorPresence: 6, slotShare: 45 },
+  { id: "ds-7", name: "Zepto Bandra", pincode: "400050", city: "Mumbai", platform: "Zepto", lat: 288, lng: 160, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 125, revenue: "₹1.6L", topSku: "Pre-Workout Citrus", oosRate: 8, competitorPresence: 5, slotShare: 33 },
+  { id: "ds-8", name: "Instamart Powai", pincode: "400076", city: "Mumbai", platform: "Swiggy Instamart", lat: 282, lng: 165, marketShare: 24, availability: 86, avgDeliveryMin: 16, ordersPerDay: 72, revenue: "₹92K", topSku: "Creatine Monohydrate", oosRate: 14, competitorPresence: 4, slotShare: 22 },
+  // Bangalore
+  { id: "ds-9", name: "Blinkit Koramangala", pincode: "560034", city: "Bangalore", platform: "Blinkit", lat: 340, lng: 185, marketShare: 36, availability: 95, avgDeliveryMin: 11, ordersPerDay: 155, revenue: "₹1.9L", topSku: "Whey 1kg Chocolate", oosRate: 5, competitorPresence: 5, slotShare: 40 },
+  { id: "ds-10", name: "Zepto HSR Layout", pincode: "560102", city: "Bangalore", platform: "Zepto", lat: 345, lng: 190, marketShare: 29, availability: 90, avgDeliveryMin: 14, ordersPerDay: 102, revenue: "₹1.3L", topSku: "BCAA Tropical", oosRate: 10, competitorPresence: 4, slotShare: 30 },
+  { id: "ds-11", name: "Blinkit Whitefield", pincode: "560066", city: "Bangalore", platform: "Blinkit", lat: 338, lng: 196, marketShare: 32, availability: 93, avgDeliveryMin: 13, ordersPerDay: 120, revenue: "₹1.5L", topSku: "Pre-Workout Citrus", oosRate: 7, competitorPresence: 3, slotShare: 35 },
+  // Pune
+  { id: "ds-12", name: "Blinkit Hinjewadi", pincode: "411057", city: "Pune", platform: "Blinkit", lat: 295, lng: 170, marketShare: 33, availability: 94, avgDeliveryMin: 12, ordersPerDay: 95, revenue: "₹1.2L", topSku: "Whey 1kg Chocolate", oosRate: 6, competitorPresence: 3, slotShare: 37 },
+  { id: "ds-13", name: "Zepto Kothrud", pincode: "411038", city: "Pune", platform: "Zepto", lat: 298, lng: 175, marketShare: 25, availability: 89, avgDeliveryMin: 15, ordersPerDay: 78, revenue: "₹98K", topSku: "Creatine Monohydrate", oosRate: 11, competitorPresence: 4, slotShare: 26 },
+  // Hyderabad
+  { id: "ds-14", name: "Blinkit Madhapur", pincode: "500081", city: "Hyderabad", platform: "Blinkit", lat: 305, lng: 215, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 118, revenue: "₹1.5L", topSku: "Whey Isolate 1kg", oosRate: 8, competitorPresence: 4, slotShare: 34 },
+  { id: "ds-15", name: "Instamart Gachibowli", pincode: "500032", city: "Hyderabad", platform: "Swiggy Instamart", lat: 308, lng: 210, marketShare: 20, availability: 84, avgDeliveryMin: 19, ordersPerDay: 55, revenue: "₹70K", topSku: "BCAA Tropical", oosRate: 16, competitorPresence: 5, slotShare: 20 },
+  // Chennai
+  { id: "ds-16", name: "Blinkit T. Nagar", pincode: "600017", city: "Chennai", platform: "Blinkit", lat: 370, lng: 215, marketShare: 27, availability: 91, avgDeliveryMin: 14, ordersPerDay: 85, revenue: "₹1.1L", topSku: "Whey 1kg Chocolate", oosRate: 9, competitorPresence: 3, slotShare: 30 },
+  { id: "ds-17", name: "Zepto Anna Nagar", pincode: "600040", city: "Chennai", platform: "Zepto", lat: 375, lng: 220, marketShare: 23, availability: 87, avgDeliveryMin: 16, ordersPerDay: 68, revenue: "₹86K", topSku: "Pre-Workout Citrus", oosRate: 13, competitorPresence: 4, slotShare: 25 },
+  // Kolkata
+  { id: "ds-18", name: "Blinkit Salt Lake", pincode: "700091", city: "Kolkata", platform: "Blinkit", lat: 230, lng: 282, marketShare: 22, availability: 85, avgDeliveryMin: 17, ordersPerDay: 62, revenue: "₹78K", topSku: "Whey 1kg Chocolate", oosRate: 15, competitorPresence: 3, slotShare: 24 },
+  // Jaipur
+  { id: "ds-19", name: "Blinkit Malviya Nagar", pincode: "302017", city: "Jaipur", platform: "Blinkit", lat: 182, lng: 152, marketShare: 18, availability: 80, avgDeliveryMin: 20, ordersPerDay: 42, revenue: "₹52K", topSku: "Creatine Monohydrate", oosRate: 20, competitorPresence: 2, slotShare: 18 },
+  // Ahmedabad
+  { id: "ds-20", name: "Zepto SG Highway", pincode: "380054", city: "Ahmedabad", platform: "Zepto", lat: 230, lng: 140, marketShare: 20, availability: 82, avgDeliveryMin: 18, ordersPerDay: 48, revenue: "₹60K", topSku: "Whey 1kg Chocolate", oosRate: 18, competitorPresence: 2, slotShare: 20 },
+  // Lucknow
+  { id: "ds-21", name: "Blinkit Gomti Nagar", pincode: "226010", city: "Lucknow", platform: "Blinkit", lat: 180, lng: 230, marketShare: 16, availability: 78, avgDeliveryMin: 22, ordersPerDay: 35, revenue: "₹44K", topSku: "Whey 1kg Chocolate", oosRate: 22, competitorPresence: 2, slotShare: 16 },
+  // Chandigarh
+  { id: "ds-22", name: "Blinkit Sector 17", pincode: "160017", city: "Chandigarh", platform: "Blinkit", lat: 120, lng: 176, marketShare: 25, availability: 90, avgDeliveryMin: 14, ordersPerDay: 72, revenue: "₹90K", topSku: "Pre-Workout Citrus", oosRate: 10, competitorPresence: 3, slotShare: 28 },
+  // Indore
+  { id: "ds-23", name: "Zepto Vijay Nagar", pincode: "452010", city: "Indore", platform: "Zepto", lat: 238, lng: 175, marketShare: 14, availability: 76, avgDeliveryMin: 24, ordersPerDay: 28, revenue: "₹35K", topSku: "BCAA Tropical", oosRate: 24, competitorPresence: 2, slotShare: 14 },
+  // Kochi
+  { id: "ds-24", name: "Blinkit Edappally", pincode: "682024", city: "Kochi", platform: "Blinkit", lat: 395, lng: 192, marketShare: 21, availability: 88, avgDeliveryMin: 16, ordersPerDay: 58, revenue: "₹72K", topSku: "Whey 1kg Chocolate", oosRate: 12, competitorPresence: 2, slotShare: 22 },
+];
+
+const platformColorMap: Record<string, string> = {
+  Blinkit: "#FDDC2B",
+  Zepto: "#833AB4",
+  "Swiggy Instamart": "#FC8019",
+};
 
 const platforms = ["Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"];
 const competitors = ["MuscleBlaze", "Optimum Nutrition", "MyProtein", "GNC", "Wellbeing Nutrition"];
