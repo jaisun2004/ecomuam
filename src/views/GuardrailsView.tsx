@@ -56,6 +56,8 @@ const GuardrailsView: React.FC = () => {
     return { bg: "rgba(255,92,92,0.15)", color: "#FF5C5C", label: "Block" };
   };
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
       {/* Header */}
@@ -67,6 +69,9 @@ const GuardrailsView: React.FC = () => {
           Rules that govern all automated insight actions. Higher tiers always evaluate first.
         </p>
       </div>
+
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
 
       {/* Card A — Hard Stops */}
       <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden" style={{ borderLeft: "3px solid #FF5C5C" }}>
