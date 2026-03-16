@@ -1,7 +1,27 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { CalendarDays, Megaphone, TrendingUp, Sparkles } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, AreaChart, Area } from "recharts";
+
+const festivalComparison = [
+  { festival: "Diwali", spend: 450, roas: 6.8, conversions: 2800 },
+  { festival: "Republic Day", spend: 180, roas: 5.4, conversions: 1200 },
+  { festival: "New Year", spend: 120, roas: 4.1, conversions: 800 },
+];
+
+const rampUpData = Array.from({ length: 14 }, (_, i) => ({
+  day: `D-${14 - i}`,
+  diwali: Math.round(20 + (i * i * 2)),
+  republicDay: Math.round(15 + (i * i * 1.2)),
+}));
+
+const categoryShareData = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  festival: Math.round(30 + Math.random() * 20),
+  nonFestival: Math.round(50 + Math.random() * 15),
+}));
 
 const upcomingFestivals = [
   {
