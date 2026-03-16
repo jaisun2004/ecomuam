@@ -216,9 +216,10 @@ const CompetitorAdsView: React.FC = () => {
                     <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green">BUDGET EXHAUSTED</span>
                   )}
                   {defenseActive && c.topKeywords.includes("whey protein") && (
-                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
+                    <button onClick={() => g.navigateTo("campaigns", "defense-insight")}
+                      className="font-mono text-[9px] px-1.5 py-0.5 rounded cursor-pointer" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
                       Defense active — Campaign Manager
-                    </span>
+                    </button>
                   )}
                   <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${c.sponsoredActive ? "bg-sw-red-dim text-sw-red" : "bg-surface-3 text-muted-foreground"}`}>
                     {c.sponsoredActive ? "ADS ACTIVE" : "ADS PAUSED"}
