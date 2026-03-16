@@ -1,9 +1,24 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import ScreenTabs from "@/components/ScreenTabs";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
 import { ArrowRight, Zap, TrendingUp, TrendingDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+
+const budgetUtilData = [
+  { name: "Whey Protein", ratio: 82, color: "hsl(160,70%,48%)" },
+  { name: "Q-Commerce", ratio: 91, color: "hsl(38,92%,50%)" },
+  { name: "Creatine RT", ratio: 98, color: "hsl(0,76%,57%)" },
+  { name: "BCAA Brand", ratio: 67, color: "hsl(160,70%,48%)" },
+  { name: "Pre-Workout", ratio: 88, color: "hsl(38,92%,50%)" },
+];
+
+const wastedSpendData = [
+  { name: "Efficient (>3x ROAS)", value: 65, color: "hsl(160,70%,48%)" },
+  { name: "Moderate (2-3x)", value: 22, color: "hsl(38,92%,50%)" },
+  { name: "Wasted (<2x)", value: 13, color: "hsl(0,76%,57%)" },
+];
 
 /* Same-platform reallocation */
 const samePlatformShifts = [
@@ -78,8 +93,12 @@ const BudgetOptimiserView: React.FC = () => {
     { type: "Festival", tier1: false, tier2: false },
   ];
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Budget to Reallocate" value="₹3.5L" delta="From underperformers" deltaType="positive" sub="6 reallocation recommendations" accentColor="bg-primary" delay={0} />
         <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" sub="Blended across all platforms" accentColor="bg-sw-green" delay={0.05} />
@@ -224,6 +243,71 @@ const BudgetOptimiserView: React.FC = () => {
           </div>
         )}
       </div>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Budget Utilisation by Campaign" badge="Spend / Cap Ratio" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={budgetUtilData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={false} vertical={true} />
+                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 100]} unit="%" />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} width={100} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="ratio" radius={[0, 4, 4, 0]} name="Utilisation %">
+                  {budgetUtilData.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="Wasted Spend Analysis" badge="Efficiency Breakdown" badgeColor="red" delay={0.1}>
+            <div className="flex items-center gap-8">
+              <ResponsiveContainer width={200} height={200}>
+                <PieChart>
+                  <Pie data={wastedSpendData} dataKey="value" cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2}>
+                    {wastedSpendData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2">
+                {wastedSpendData.map((d) => (
+                  <div key={d.name} className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: d.color }} />
+                    <span className="text-xs text-foreground">{d.name}</span>
+                    <span className="font-mono text-xs text-muted-foreground">{d.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </PanelCard>
+
+          <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+            <h3 className="text-sm font-medium text-foreground mb-1">Budget Shift Impact Simulator</h3>
+            <p className="text-[11px] text-muted-foreground mb-3">Estimate the ROAS impact of moving budget between campaigns (read-only)</p>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="text-[10px] text-muted-foreground">From Campaign</label>
+                <p className="text-xs text-foreground mt-1">Creatine Retargeting (2.1x ROAS)</p>
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground">To Campaign</label>
+                <p className="text-xs text-foreground mt-1">Whey Protein — Sponsored (5.1x ROAS)</p>
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground">Amount</label>
+                <p className="text-xs text-foreground mt-1">₹50,000</p>
+              </div>
+            </div>
+            <div className="mt-3 p-3 rounded-xl bg-sw-green-dim border border-sw-green/20">
+              <p className="text-[11px] text-foreground">Estimated impact: Blended ROAS +0.4x, incremental revenue +₹2.6L</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

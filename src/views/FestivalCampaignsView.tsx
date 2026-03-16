@@ -1,7 +1,27 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { CalendarDays, Megaphone, TrendingUp, Sparkles } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, AreaChart, Area } from "recharts";
+
+const festivalComparison = [
+  { festival: "Diwali", spend: 450, roas: 6.8, conversions: 2800 },
+  { festival: "Republic Day", spend: 180, roas: 5.4, conversions: 1200 },
+  { festival: "New Year", spend: 120, roas: 4.1, conversions: 800 },
+];
+
+const rampUpData = Array.from({ length: 14 }, (_, i) => ({
+  day: `D-${14 - i}`,
+  diwali: Math.round(20 + (i * i * 2)),
+  republicDay: Math.round(15 + (i * i * 1.2)),
+}));
+
+const categoryShareData = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  festival: Math.round(30 + Math.random() * 20),
+  nonFestival: Math.round(50 + Math.random() * 15),
+}));
 
 const upcomingFestivals = [
   {
@@ -50,8 +70,12 @@ const FestivalCampaignsView: React.FC = () => {
   const [launchedCampaigns, setLaunchedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedFestival, setExpandedFestival] = useState<number>(0);
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Campaigns ready to deploy" accentColor="bg-sw-amber" delay={0} />
         <KPICard title="Pre-built Campaigns" value="9" delta="AI-optimised & pre-fed" deltaType="positive" sub="Across all festivals" accentColor="bg-sw-purple" delay={0.05} />
@@ -120,6 +144,48 @@ const FestivalCampaignsView: React.FC = () => {
           </div>
         </PanelCard>
       ))}
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Festival Performance Comparison" badge="Last 3 Festivals" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={festivalComparison}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="festival" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.6} radius={[4, 4, 0, 0]} name="Spend (₹K)" />
+                <Bar dataKey="conversions" fill="hsl(160,70%,48%)" opacity={0.8} radius={[4, 4, 0, 0]} name="Conversions" />
+              </BarChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="Pre-Festival Ramp-Up Timeline" badge="14 Days Before" badgeColor="amber" delay={0.1}>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={rampUpData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="diwali" stroke="hsl(38,92%,50%)" strokeWidth={2} dot={false} name="Diwali" />
+                <Line type="monotone" dataKey="republicDay" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Republic Day" />
+              </LineChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="Category Share — Festival vs Non-Festival" badge="30 Days" badgeColor="purple" delay={0.2}>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={categoryShareData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Area type="monotone" dataKey="festival" stackId="1" fill="hsl(var(--sw-amber))" stroke="hsl(38,92%,50%)" fillOpacity={0.3} name="Festival Period" />
+                <Area type="monotone" dataKey="nonFestival" stackId="1" fill="hsl(var(--primary))" stroke="hsl(228,90%,64%)" fillOpacity={0.2} name="Non-Festival" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,34 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
-import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle } from "lucide-react";
+import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle, ArrowRight } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+
+/* SoV trend data */
+const sovTrend = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  you: Math.round(30 + Math.random() * 10),
+  muscleBlaze: Math.round(35 + Math.random() * 12),
+  on: Math.round(15 + Math.random() * 8),
+  asItIs: Math.round(8 + Math.random() * 6),
+}));
+
+/* 7x24 heatmap */
+const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const heatmapGrid = daysOfWeek.map(day =>
+  Array.from({ length: 24 }, (_, h) => Math.round(Math.random() * 100))
+);
+
+/* Top contested keywords */
+const contestedKeywords = [
+  { keyword: "whey protein 1kg", yourPos: "#3", topComp: "MuscleBlaze", compBidIndex: "1.4x", overlap: 28, yourShare: "28%", action: "Raise bid" },
+  { keyword: "protein powder", yourPos: "#5", topComp: "MuscleBlaze", compBidIndex: "1.6x", overlap: 30, yourShare: "18%", action: "Add to defence" },
+  { keyword: "creatine monohydrate", yourPos: "#4", topComp: "AS-IT-IS", compBidIndex: "1.2x", overlap: 22, yourShare: "19%", action: "Monitor" },
+  { keyword: "pre workout", yourPos: "#2", topComp: "BigMuscles", compBidIndex: "0.9x", overlap: 18, yourShare: "33%", action: "Monitor" },
+  { keyword: "bcaa supplement", yourPos: "#6", topComp: "MuscleBlaze", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
+];
 
 const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
@@ -100,8 +125,13 @@ const CompetitorAdsView: React.FC = () => {
   const defenseBlocked = g.hasDefenseBlocked();
   const defenseActive = g.hasDefenseActive();
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+
+      {tab === "overview" ? (<>
       {/* Conflict alert banner — only when defense is BLOCKED */}
       {defenseBlocked && (
         <div className="rounded-xl p-4" style={{
@@ -123,6 +153,36 @@ const CompetitorAdsView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Competitive summary bar */}
+      <div className="grid grid-cols-4 gap-3">
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Share of Voice</p>
+          <div className="flex items-center gap-1 h-3 rounded-full overflow-hidden">
+            <div className="h-full rounded-l-full" style={{ width: "34%", backgroundColor: "hsl(var(--sw-purple))" }} />
+            <div className="h-full rounded-r-full" style={{ width: "66%", backgroundColor: "hsl(var(--sw-red))", opacity: 0.5 }} />
+          </div>
+          <p className="text-[10px] font-mono text-foreground mt-1">You 34% · Rivals 66%</p>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Competitor Spend Index</p>
+          <p className="font-mono text-sm font-bold text-foreground">Rival A: ~1.4x</p>
+          <p className="text-[9px] text-sw-red flex items-center gap-0.5"><TrendingUp size={9} /> spending more</p>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Keyword Overlap Score</p>
+          <p className="font-mono text-sm font-bold text-sw-red">68% overlap</p>
+          <p className="text-[9px] text-muted-foreground">&gt;60% = high competition</p>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Brand Defence Status</p>
+          <p className="font-mono text-sm font-bold" style={{ color: defenseActive ? "#2ECF8E" : defenseBlocked ? "#F5A623" : "#2ECF8E" }}>
+            {defenseActive ? "Active" : defenseBlocked ? "Queued" : "Clear"}
+          </p>
+          <button onClick={() => g.navigateTo("campaigns", "defense-insight")} className="text-[9px]" style={{ color: "#4F7FFF" }}>View in Campaign Manager →</button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Real-time sponsored rank tracking" accentColor="bg-sw-red" delay={0} />
         <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Competitors out of budget today" accentColor="bg-sw-green" delay={0.05} />
@@ -156,9 +216,10 @@ const CompetitorAdsView: React.FC = () => {
                     <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green">BUDGET EXHAUSTED</span>
                   )}
                   {defenseActive && c.topKeywords.includes("whey protein") && (
-                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
+                    <button onClick={() => g.navigateTo("campaigns", "defense-insight")}
+                      className="font-mono text-[9px] px-1.5 py-0.5 rounded cursor-pointer" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
                       Defense active — Campaign Manager
-                    </span>
+                    </button>
                   )}
                   <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${c.sponsoredActive ? "bg-sw-red-dim text-sw-red" : "bg-surface-3 text-muted-foreground"}`}>
                     {c.sponsoredActive ? "ADS ACTIVE" : "ADS PAUSED"}
@@ -290,6 +351,106 @@ const CompetitorAdsView: React.FC = () => {
           </div>
         </PanelCard>
       </div>
+      </>) : (
+        /* Analytics tab */
+        <div className="space-y-5">
+          <PanelCard title="Share of Voice — 30 Days" badge="You vs Top 3 Competitors" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={sovTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} unit="%" />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="you" stroke="hsl(var(--sw-purple))" strokeWidth={2} dot={false} name="Your Brand" />
+                <Line type="monotone" dataKey="muscleBlaze" stroke="#FF5722" strokeWidth={2} dot={false} name="MuscleBlaze" />
+                <Line type="monotone" dataKey="on" stroke="#FF9800" strokeWidth={2} dot={false} name="ON" />
+                <Line type="monotone" dataKey="asItIs" stroke="#4CAF50" strokeWidth={2} dot={false} name="AS-IT-IS" />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-purple" /> You</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> MuscleBlaze</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> ON</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> AS-IT-IS</span>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Estimated Competitor Activity Heatmap" badge="Days × Hours" badgeColor="red" delay={0.1}>
+            <div className="overflow-x-auto">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <span className="w-8" />
+                  {Array.from({ length: 24 }, (_, h) => (
+                    <span key={h} className="w-4 text-center text-[7px] font-mono text-muted-foreground">{h}</span>
+                  ))}
+                </div>
+                {daysOfWeek.map((day, di) => (
+                  <div key={day} className="flex items-center gap-1">
+                    <span className="w-8 text-[9px] text-muted-foreground">{day}</span>
+                    {heatmapGrid[di].map((val, hi) => (
+                      <div key={hi} className="w-4 h-4 rounded-sm" style={{
+                        backgroundColor: `rgba(255,92,92,${val / 120})`,
+                      }} title={`${day} ${hi}:00 — Activity: ${val}%`} />
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <p className="text-[9px] text-muted-foreground mt-2">Activity estimated from auction pressure signals. Not actual spend data.</p>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Top Contested Keywords" badge="Sortable" badgeColor="amber" delay={0.2}>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">Keyword</th>
+                  <th className="text-right py-2 font-normal">Your Pos</th>
+                  <th className="text-left py-2 font-normal">Top Competitor</th>
+                  <th className="text-right py-2 font-normal">Comp Bid Index</th>
+                  <th className="text-right py-2 font-normal">Overlap Days</th>
+                  <th className="text-right py-2 font-normal">Your Share</th>
+                  <th className="text-right py-2 font-normal">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {contestedKeywords.map((k, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 font-mono text-foreground">"{k.keyword}"</td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{k.yourPos}</td>
+                    <td className="py-2.5 text-foreground">{k.topComp}</td>
+                    <td className="py-2.5 text-right font-mono text-sw-red">{k.compBidIndex}</td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{k.overlap}/30</td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{k.yourShare}</td>
+                    <td className="py-2.5 text-right">
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full cursor-pointer ${
+                        k.action === "Raise bid" ? "bg-sw-green-dim text-sw-green" : k.action === "Add to defence" ? "bg-sw-amber-dim text-sw-amber" : "bg-surface-3 text-muted-foreground"
+                      }`}>{k.action}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </PanelCard>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+              <h3 className="text-sm font-medium text-foreground mb-1">Revenue at Risk</h3>
+              <p className="font-mono text-2xl font-bold text-sw-red mt-2">₹4.2L</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Estimated from impression share lost × historical conversion value</p>
+              <p className="text-[10px] text-sw-red mt-1">▲ ₹0.8L vs last 7 days</p>
+            </div>
+            <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+              <h3 className="text-sm font-medium text-foreground mb-1">Recoverable with Defence</h3>
+              <p className="font-mono text-2xl font-bold text-sw-green mt-2">₹3.1L</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Estimated recovery if defence campaigns are activated</p>
+              <button onClick={() => g.navigateTo("campaigns", "defense-insight")} className="mt-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+                Activate defence →
+              </button>
+            </div>
+          </div>
+          <p className="text-[9px] text-muted-foreground">Estimates based on historical ROAS and auction signal modelling.</p>
+        </div>
+      )}
     </div>
   );
 };

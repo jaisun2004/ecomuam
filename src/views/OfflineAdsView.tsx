@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { Tv, CheckCircle2, TrendingUp, MapPin, Megaphone } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+
+const channelPerformance = [
+  { channel: "Gym Partnerships", roi: 3.2, reach: 240 },
+  { channel: "Metro/Transit", roi: 2.8, reach: 1800 },
+  { channel: "Influencer Events", roi: 4.1, reach: 200 },
+  { channel: "Podcast Sponsorships", roi: 5.2, reach: 800 },
+];
 
 const onlineHealthSummary = {
   overallROAS: "4.2x",
@@ -65,8 +74,12 @@ const cityWiseOpps = [
 const OfflineAdsView: React.FC = () => {
   const [channelActions, setChannelActions] = useState<Record<number, boolean>>({});
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" sub="No online issues detected" accentColor="bg-sw-green" delay={0} />
         <KPICard title="Offline Opportunity" value="₹33L/mo" delta="Incremental revenue potential" deltaType="positive" sub="Across 4 offline channels" accentColor="bg-sw-purple" delay={0.05} />
@@ -155,6 +168,46 @@ const OfflineAdsView: React.FC = () => {
           </tbody>
         </table>
       </PanelCard>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Offline Channel Performance" badge="ROI Comparison" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={channelPerformance}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="channel" tick={{ fontSize: 9, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="roi" fill="hsl(var(--sw-purple))" radius={[4, 4, 0, 0]} name="ROI (x)" />
+              </BarChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+              <h3 className="text-sm font-medium text-foreground mb-2">Estimated ROI Summary</h3>
+              <div className="space-y-2">
+                {channelPerformance.map((c) => (
+                  <div key={c.channel} className="flex items-center justify-between py-1.5 border-b border-subtle/50 last:border-b-0">
+                    <span className="text-xs text-foreground">{c.channel}</span>
+                    <span className="font-mono text-xs text-sw-green">{c.roi}x</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+              <h3 className="text-sm font-medium text-foreground mb-2">Reach Estimates (K)</h3>
+              <div className="space-y-2">
+                {channelPerformance.map((c) => (
+                  <div key={c.channel} className="flex items-center justify-between py-1.5 border-b border-subtle/50 last:border-b-0">
+                    <span className="text-xs text-foreground">{c.channel}</span>
+                    <span className="font-mono text-xs text-foreground">{c.reach}K/mo</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

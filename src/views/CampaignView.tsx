@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import ScreenTabs from "@/components/ScreenTabs";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
 import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical, Shield, AlertTriangle, Swords, TrendingUp, Target, DollarSign, Zap } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
@@ -425,9 +426,35 @@ const CampaignView: React.FC = () => {
     setTimeout(() => setUndoToast(null), 5000);
   };
 
+  const [tab, setTab] = useState("overview");
+
+  // Analytics mock data
+  const spendRoasTrend = Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`,
+    spend: Math.round(40 + Math.random() * 20),
+    roas: +(3.5 + Math.random() * 2).toFixed(1),
+  }));
+
+  const scatterData = campaigns.map((c) => ({
+    name: c.name,
+    spend: parseInt(c.spend.replace(/[₹KL,]/g, "")) || 50,
+    roas: parseFloat(c.roas) || 3,
+    impressions: 500,
+  }));
+
+  const actionHistory = [
+    { time: "Mar 16 09:42", action: "Defense bid increase", campaign: "Whey Protein — Sponsored", roasBefore: "4.8x", roasAfter: "5.1x", trigger: "Auto" },
+    { time: "Mar 15 14:20", action: "Budget reallocation", campaign: "Creatine Retargeting", roasBefore: "2.1x", roasAfter: "2.1x", trigger: "Manual" },
+    { time: "Mar 15 08:00", action: "Daypart shift", campaign: "Q-Commerce Launch Push", roasBefore: "3.5x", roasAfter: "3.8x", trigger: "Auto" },
+    { time: "Mar 14 16:45", action: "Keyword expansion", campaign: "BCAA Brand Awareness", roasBefore: "4.2x", roasAfter: "4.4x", trigger: "Auto" },
+    { time: "Mar 13 10:30", action: "Bid reduction", campaign: "Pre-Workout New Users", roasBefore: "2.8x", roasAfter: "3.2x", trigger: "Auto" },
+  ];
+
   return (
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
+
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
 
       {/* Undo toast */}
       {undoToast && (
@@ -438,6 +465,7 @@ const CampaignView: React.FC = () => {
         </div>
       )}
 
+      {tab === "overview" ? (<>
       {/* Insert 1 — Conflict callout banner */}
       {g.hasActiveTier1() && (
         <div id="campaign-conflict-banner" className="rounded-xl border p-4" style={{
@@ -495,10 +523,10 @@ const CampaignView: React.FC = () => {
           </div>
         )}
 
-        {/* Insight rows */}
+      {/* Insight rows */}
         <div className="divide-y divide-subtle/50">
           {visibleDigest.map((d) => (
-            <div key={d.id} className={`flex items-center gap-3 px-4 py-3 ${d.blocked ? "opacity-[0.45]" : ""}`}
+            <div key={d.id} data-insight-type={d.insight.includes("Defense") ? "defense" : d.insight.includes("Budget") ? "budget" : "other"} data-status={d.blocked ? "blocked" : d.ownedBy ? "handled" : "active"} className={`flex items-center gap-3 px-4 py-3 ${d.blocked ? "opacity-[0.45]" : ""}`}
               style={{ borderLeft: `3px solid ${tierColor(d.tier)}` }}>
               {!d.blocked && !d.ownedBy && (
                 <input type="checkbox" checked={!!selectedDigest[d.id]}
@@ -910,6 +938,57 @@ const CampaignView: React.FC = () => {
           </div>
         </div>
       </div>
+      </>) : (
+        /* Analytics tab */
+        <div className="space-y-5">
+          <PanelCard title="Spend vs ROAS — 30 Day Trend" badge="Dual Axis" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={spendRoasTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis yAxisId="spend" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="roas" orientation="right" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹K)" />
+                <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-amber opacity-50" /> Spend</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> ROAS</span>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Action History Log" badge="Last 30 days" badgeColor="purple" delay={0.1}>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">Timestamp</th>
+                  <th className="text-left py-2 font-normal">Action</th>
+                  <th className="text-left py-2 font-normal">Campaign</th>
+                  <th className="text-right py-2 font-normal">ROAS Before</th>
+                  <th className="text-right py-2 font-normal">ROAS After</th>
+                  <th className="text-right py-2 font-normal">Trigger</th>
+                </tr>
+              </thead>
+              <tbody>
+                {actionHistory.map((a, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 font-mono text-muted-foreground">{a.time}</td>
+                    <td className="py-2.5 text-foreground">{a.action}</td>
+                    <td className="py-2.5 text-foreground">{a.campaign}</td>
+                    <td className="py-2.5 text-right font-mono text-muted-foreground">{a.roasBefore}</td>
+                    <td className="py-2.5 text-right font-mono text-sw-green">{a.roasAfter}</td>
+                    <td className="py-2.5 text-right">
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${a.trigger === "Auto" ? "bg-sw-purple-dim text-sw-purple" : "bg-surface-3 text-muted-foreground"}`}>{a.trigger}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useGuardrails, PermissionState } from "@/contexts/GuardrailContext";
 import { Shield, AlertTriangle } from "lucide-react";
+import ScreenTabs from "@/components/ScreenTabs";
+import PanelCard from "@/components/sw/PanelCard";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+
+const triggerHistory = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  triggers: Math.floor(Math.random() * 5),
+}));
+
+const blockAllowData = [
+  { type: "Defense", blocked: 3, allowed: 12 },
+  { type: "Opportunity", blocked: 1, allowed: 18 },
+  { type: "Bid optimisation", blocked: 2, allowed: 22 },
+  { type: "Daypart", blocked: 0, allowed: 8 },
+  { type: "Budget shift", blocked: 4, allowed: 6 },
+];
 
 const insightTypes = ["Defense", "Opportunity", "Bid optimisation", "Daypart adjustment", "Budget shift"];
 const campaignTypes = ["Brand Search", "Performance Max", "Non-Brand", "Retargeting", "Festival"];
@@ -40,6 +56,8 @@ const GuardrailsView: React.FC = () => {
     return { bg: "rgba(255,92,92,0.15)", color: "#FF5C5C", label: "Block" };
   };
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
       {/* Header */}
@@ -51,6 +69,9 @@ const GuardrailsView: React.FC = () => {
           Rules that govern all automated insight actions. Higher tiers always evaluate first.
         </p>
       </div>
+
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
 
       {/* Card A — Hard Stops */}
       <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden" style={{ borderLeft: "3px solid #FF5C5C" }}>
@@ -358,6 +379,38 @@ const GuardrailsView: React.FC = () => {
           </div>
         </div>
       </div>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Rule Trigger History — 30 Days" badge="Timeline" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={triggerHistory}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="triggers" stroke="hsl(0,76%,57%)" strokeWidth={2} dot={false} name="Triggers" />
+              </LineChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="Action Block/Allow Ratio" badge="By Insight Type" badgeColor="red" delay={0.1}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={blockAllowData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="type" tick={{ fontSize: 9, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="allowed" fill="hsl(160,70%,48%)" radius={[4, 4, 0, 0]} name="Allowed" />
+                <Bar dataKey="blocked" fill="hsl(0,76%,57%)" radius={[4, 4, 0, 0]} name="Blocked" opacity={0.7} />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> Allowed</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-red" /> Blocked</span>
+            </div>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };

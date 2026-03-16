@@ -1,7 +1,22 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { Megaphone } from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+
+const searchTrendData = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  volume: Math.round(40000 + Math.random() * 20000),
+}));
+
+const demandForecast = [
+  { category: "Protein", current: 85, forecast: 102 },
+  { category: "Creatine", current: 42, forecast: 38 },
+  { category: "Pre-Workout", current: 55, forecast: 78 },
+  { category: "BCAA", current: 30, forecast: 35 },
+  { category: "Vitamins", current: 48, forecast: 62 },
+];
 
 const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
@@ -90,8 +105,12 @@ const DiscoveryView: React.FC = () => {
 
   const forecasts = forecastsByCategory[selectedCategory] || forecastsByCategory["All Categories"];
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Across 6 platforms" accentColor="bg-sw-cyan" delay={0} />
         <KPICard title="Category Opportunities" value="9" delta="▲ High demand, low comp." deltaType="positive" sub="Ready to capture" accentColor="bg-sw-purple" delay={0.05} />
@@ -208,6 +227,38 @@ const DiscoveryView: React.FC = () => {
           ))}
         </div>
       </PanelCard>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Search Volume Trend — 30 Days" badge="All Categories" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={searchTrendData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="volume" stroke="hsl(187,92%,43%)" strokeWidth={2} dot={false} name="Search Volume" />
+              </LineChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="Category Demand Forecast" badge="Current vs Projected" badgeColor="green" delay={0.1}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={demandForecast}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="category" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="current" fill="hsl(228,90%,64%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Current" />
+                <Bar dataKey="forecast" fill="hsl(160,70%,48%)" opacity={0.8} radius={[4, 4, 0, 0]} name="4-Week Forecast" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-primary opacity-50" /> Current</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> Forecast</span>
+            </div>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };
