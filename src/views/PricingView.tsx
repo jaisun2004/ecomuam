@@ -167,8 +167,13 @@ const PricingView: React.FC = () => {
   const compNames = compNamesBySku[selectedSku] || compNamesBySku["Whey Protein 1kg"];
   const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Whey Protein 1kg"];
 
+  const g = useGuardrails();
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
