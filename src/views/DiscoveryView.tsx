@@ -96,10 +96,49 @@ const opportunities = [
   { emoji: "💧", title: "Electrolyte Sachets", desc: "Summer surge incoming. 28% WoW growth, no sponsored listings on Zepto yet", tags: ["SEASONAL", "ACT NOW"], gradient: "from-sw-amber/20 to-sw-amber/5" },
 ];
 
+// SoS data
+const sosData = {
+  yourSos: 28, sosChange: 2.4, topGainer: "MuscleBlaze", topGainerGain: 3.1, leader: "MuscleBlaze", leaderSos: 32,
+};
+
+const poachingIncidents = [
+  { keyword: "shelfwise whey protein", competitor: "MuscleBlaze", platforms: ["Amazon", "Flipkart"], firstDetected: "Mar 12", severity: "High" },
+  { keyword: "shelfwise creatine", competitor: "GNC", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
+  { keyword: "shelfwise bcaa", competitor: "MyProtein", platforms: ["Zepto", "Amazon"], firstDetected: "Mar 15", severity: "Low" },
+];
+
+const retailerIssues = [
+  { platform: "Zepto", desc: "SoS on Zepto down 12% WoW for Brand Search terms", keywords: 8 },
+  { platform: "Blinkit", desc: "Not appearing in top 10 on Blinkit for 8 category keywords", keywords: 8 },
+];
+
+// SoS analytics data
+const sosOverTime = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  you: Math.round(26 + Math.sin(i / 5) * 4 + Math.random() * 2),
+  rival1: Math.round(30 + Math.cos(i / 6) * 3 + Math.random() * 2),
+  rival2: Math.round(18 + Math.sin(i / 8) * 3 + Math.random() * 2),
+  rival3: Math.round(12 + Math.random() * 3),
+  categoryAvg: Math.round(20 + Math.random() * 2),
+}));
+
+const sosRetailerHeatmap = ["Blinkit", "Zepto", "Instamart", "Amazon", "Flipkart"].map(r => ({
+  retailer: r,
+  weeks: Array.from({ length: 8 }, () => Math.round(15 + Math.random() * 25)),
+}));
+
+const poachingHistory = [
+  { keyword: "shelfwise whey", competitor: "MuscleBlaze", platform: "Amazon", duration: 12, impact: "-3% SoS", status: "Active" },
+  { keyword: "shelfwise creatine", competitor: "GNC", platform: "Blinkit", duration: 5, impact: "-1% SoS", status: "Active" },
+  { keyword: "shelfwise protein", competitor: "ON", platform: "Flipkart", duration: 18, impact: "-2% SoS", status: "Resolved" },
+];
+
 const DiscoveryView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
   const [campaignActions, setCampaignActions] = useState<Record<number, boolean>>({});
+  const g = useGuardrails();
+  const [sosPlatformFilter, setSosPlatformFilter] = useState("All");
 
   const trendingKws = (trendingKwsByCategory[selectedCategory] || trendingKwsByCategory["All Categories"])
     .filter(k => selectedPlatform === "All Platforms" || k.platform === selectedPlatform);
