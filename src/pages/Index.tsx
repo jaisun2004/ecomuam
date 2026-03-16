@@ -18,6 +18,7 @@ import OfflineAdsView from "@/views/OfflineAdsView";
 import GuardrailsView from "@/views/GuardrailsView";
 import MarketShareView from "@/views/MarketShareView";
 import ContentAuditView from "@/views/ContentAuditView";
+import ContentAuditSkuDetailView from "@/views/ContentAuditSkuDetailView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
@@ -49,13 +50,10 @@ const IndexInner = () => {
     if (target) {
       setScrollTarget(target);
       setTimeout(() => {
-        // Try by ID first
         let el = document.getElementById(target);
-        // Try by data-insight-type attribute
         if (!el && target === "defense-insight") {
           el = document.querySelector('[data-insight-type="defense"]') as HTMLElement;
         }
-        // Fallback targets
         if (!el && target === "campaign-conflict-banner") {
           el = document.getElementById("campaign-digest");
         }
@@ -74,6 +72,9 @@ const IndexInner = () => {
     g.setNavigateTo(handleNavigate);
   }, [handleNavigate]);
 
+  // Check for SKU detail sub-route in contentaudit
+  const isSkuDetail = active === "contentaudit" && g.contextFilter?.type === "sku-detail";
+
   const View = views[active] || CentralCockpitView;
   const sidebarWidth = sidebarExpanded ? 220 : 68;
 
@@ -81,7 +82,11 @@ const IndexInner = () => {
     <div className="min-h-screen bg-background">
       <Sidebar
         active={active}
-        onChange={setActive}
+        onChange={(screen) => {
+          // Clear context filter when navigating via sidebar
+          g.setContextFilter(null);
+          setActive(screen);
+        }}
         expanded={sidebarExpanded}
         onToggleExpand={() => setSidebarExpanded(!sidebarExpanded)}
       />
@@ -91,7 +96,15 @@ const IndexInner = () => {
       >
         <Topbar active={active} onChange={setActive} />
         <main className="p-7">
-          <View key={active} />
+          {isSkuDetail ? (
+            <ContentAuditSkuDetailView
+              skuId={g.contextFilter!.params.skuId}
+              competitor={g.contextFilter!.params.competitor}
+              onBack={() => g.setContextFilter(null)}
+            />
+          ) : (
+            <View key={active} />
+          )}
         </main>
       </div>
       <AIBar />
