@@ -1,15 +1,23 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useGuardrails, PermissionState } from "@/contexts/GuardrailContext";
-import { Shield, AlertTriangle } from "lucide-react";
+import React, { useState, useCallback } from "react";
+import {
+  useGuardrails, PermissionState,
+  HardStopRule, StrategicLock, MetricCondition,
+  ActionPrimitive, CampaignScope, LockTrigger,
+  formatCondition, ACTION_PRIMITIVES, SCOPE_LABELS,
+  METRIC_LABELS,
+} from "@/contexts/GuardrailContext";
+import { Shield, X, ChevronRight, Pencil, AlertTriangle } from "lucide-react";
 import ScreenTabs from "@/components/ScreenTabs";
+import ConditionBuilder from "@/components/ConditionBuilder";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+import { useToast } from "@/hooks/use-toast";
 
+// ─── Analytics mock data ───
 const triggerHistory = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
   triggers: Math.floor(Math.random() * 5),
 }));
-
 const blockAllowData = [
   { type: "Defense", blocked: 3, allowed: 12 },
   { type: "Opportunity", blocked: 1, allowed: 18 },
@@ -20,7 +28,15 @@ const blockAllowData = [
 
 const insightTypes = ["Defense", "Opportunity", "Bid optimisation", "Daypart adjustment", "Budget shift"];
 const campaignTypes = ["Brand Search", "Performance Max", "Non-Brand", "Retargeting", "Festival"];
-const scopeOptions = ["All", "Brand", "Performance", "Custom"] as const;
+
+// ─── Mock campaign list for "custom" scope ───
+const MOCK_CAMPAIGNS = [
+  { id: "creatine-retargeting", name: "Creatine Retargeting" },
+  { id: "whey-protein-sponsored", name: "Whey Protein — Sponsored" },
+  { id: "brand-search-main", name: "Brand Search — Main" },
+  { id: "perf-max-protein", name: "Performance Max — Protein" },
+  { id: "festival-diwali", name: "Diwali Campaign" },
+];
 
 const SavedIndicator: React.FC<{ show: boolean }> = ({ show }) => {
   if (!show) return null;
@@ -36,13 +52,545 @@ const useSaveFlash = () => {
   return { saved, flash };
 };
 
+// ─── Action primitive toggles ───
+const ActionToggles: React.FC<{
+  selected: ActionPrimitive[];
+  onChange: (actions: ActionPrimitive[]) => void;
+}> = ({ selected, onChange }) => {
+  const allKeys = ACTION_PRIMITIVES.flatMap(g => g.actions.map(a => a.key));
+  const allSelected = allKeys.every(k => selected.includes(k));
+
+  const toggle = (key: ActionPrimitive) => {
+    if (selected.includes(key)) {
+      onChange(selected.filter(k => k !== key));
+    } else {
+      onChange([...selected, key]);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <label className="flex items-center gap-2 cursor-pointer text-xs">
+        <input
+          type="checkbox"
+          checked={allSelected}
+          onChange={() => onChange(allSelected ? [] : allKeys)}
+          className="accent-primary"
+        />
+        <span className="text-foreground font-medium">Block all</span>
+      </label>
+      {ACTION_PRIMITIVES.map(group => (
+        <div key={group.group}>
+          <p className="text-[9px] uppercase tracking-wider text-muted-foreground mb-1">{group.group}</p>
+          <div className="flex flex-wrap gap-2">
+            {group.actions.map(a => (
+              <label key={a.key} className="flex items-center gap-1.5 cursor-pointer text-xs">
+                <input
+                  type="checkbox"
+                  checked={selected.includes(a.key)}
+                  onChange={() => toggle(a.key)}
+                  className="accent-primary"
+                />
+                <span className="text-foreground">{a.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ─── Scope selector ───
+const ScopeSelector: React.FC<{
+  value: CampaignScope;
+  campaignIds: string[];
+  onChange: (scope: CampaignScope, ids: string[]) => void;
+}> = ({ value, campaignIds, onChange }) => {
+  const allScopes = Object.keys(SCOPE_LABELS) as CampaignScope[];
+  return (
+    <div className="space-y-2">
+      <select
+        className="px-2 py-1.5 rounded-lg border text-xs text-foreground"
+        style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+        value={value}
+        onChange={(e) => onChange(e.target.value as CampaignScope, value === "custom" ? campaignIds : [])}
+      >
+        {allScopes.map(s => (
+          <option key={s} value={s}>{SCOPE_LABELS[s]}</option>
+        ))}
+      </select>
+      {value === "custom" && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {MOCK_CAMPAIGNS.map(c => (
+            <label key={c.id} className="flex items-center gap-1.5 text-[11px] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={campaignIds.includes(c.id)}
+                onChange={() => {
+                  const ids = campaignIds.includes(c.id)
+                    ? campaignIds.filter(id => id !== c.id)
+                    : [...campaignIds, c.id];
+                  onChange("custom", ids);
+                }}
+                className="accent-primary"
+              />
+              <span className="text-foreground">{c.name}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Compact blocked actions chips ───
+const BlockedActionsChips: React.FC<{ actions: ActionPrimitive[] }> = ({ actions }) => {
+  const groupColors: Record<string, string> = {
+    "Campaign state": "rgba(79,127,255,0.15)",
+    Budget: "rgba(245,166,35,0.15)",
+    Bid: "rgba(167,139,250,0.15)",
+    Keywords: "rgba(46,207,142,0.15)",
+    Products: "rgba(255,92,92,0.15)",
+  };
+  const groupTextColors: Record<string, string> = {
+    "Campaign state": "#4F7FFF",
+    Budget: "#F5A623",
+    Bid: "#A78BFA",
+    Keywords: "#2ECF8E",
+    Products: "#FF5C5C",
+  };
+  return (
+    <div className="flex flex-wrap gap-1">
+      {ACTION_PRIMITIVES.flatMap(g =>
+        g.actions.filter(a => actions.includes(a.key)).map(a => (
+          <span
+            key={a.key}
+            className="px-1.5 py-0.5 rounded text-[9px] font-medium"
+            style={{ backgroundColor: groupColors[g.group], color: groupTextColors[g.group] }}
+          >
+            {a.label}
+          </span>
+        ))
+      )}
+    </div>
+  );
+};
+
+// ─── Format timestamp helper ───
+function formatTimestamp(ts: number | null): string {
+  if (!ts) return "—";
+  const diff = Date.now() - ts;
+  if (diff < 60000) return "Just now";
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+  return new Date(ts).toLocaleDateString("en-IN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+// ─── Hard Stop Edit Panel ───
+const HardStopEditPanel: React.FC<{
+  rule: HardStopRule;
+  onSave: (r: HardStopRule) => void;
+  onClose: () => void;
+}> = ({ rule, onSave, onClose }) => {
+  const [draft, setDraft] = useState<HardStopRule>({ ...rule });
+  const [step, setStep] = useState(1);
+
+  const canSave = draft.name.trim().length > 0 && draft.blocked_actions.length > 0 && (draft.condition !== null);
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/40" />
+      <div
+        className="relative w-full max-w-lg bg-surface-1 border-l border-subtle h-full overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-surface-1 border-b border-subtle p-4 flex items-center justify-between z-10">
+          <h3 className="text-sm font-medium text-foreground">Edit Hard Stop</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
+        </div>
+
+        <div className="p-5 space-y-6">
+          {/* Steps indicator */}
+          <div className="flex gap-2 text-[10px]">
+            {["Name & Scope", "Condition", "Blocked Actions", "Review"].map((label, i) => (
+              <button
+                key={i}
+                onClick={() => setStep(i + 1)}
+                className={`px-3 py-1 rounded-full border transition-all ${step === i + 1
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-subtle text-muted-foreground"
+                }`}
+              >
+                {i + 1}. {label}
+              </button>
+            ))}
+          </div>
+
+          {step === 1 && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Name</label>
+                <input
+                  className="w-full mt-1 px-3 py-2 rounded-lg border text-xs text-foreground"
+                  style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                  maxLength={60}
+                  value={draft.name}
+                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                />
+                <p className="text-[9px] text-muted-foreground mt-1">{draft.name.length}/60</p>
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Scope</label>
+                <ScopeSelector
+                  value={draft.scope}
+                  campaignIds={draft.campaign_ids || []}
+                  onChange={(scope, ids) => setDraft({ ...draft, scope, campaign_ids: ids })}
+                />
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-4">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Trigger condition</label>
+              {draft.condition && (
+                <ConditionBuilder
+                  value={draft.condition}
+                  onChange={(c) => setDraft({ ...draft, condition: c })}
+                />
+              )}
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                When this condition is met, block these actions:
+              </label>
+              <ActionToggles
+                selected={draft.blocked_actions}
+                onChange={(actions) => setDraft({ ...draft, blocked_actions: actions })}
+              />
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-4">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Review</label>
+              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-xs text-foreground leading-relaxed">
+                {draft.condition ? (
+                  <>
+                    When <span className="font-medium text-primary">{formatCondition(draft.condition)}</span>,
+                    block <span className="font-medium">{draft.blocked_actions.length} action(s)</span> on{" "}
+                    <span className="font-medium">{SCOPE_LABELS[draft.scope]}</span> campaigns.
+                  </>
+                ) : "No condition set."}
+              </div>
+              <BlockedActionsChips actions={draft.blocked_actions} />
+            </div>
+          )}
+        </div>
+
+        <div className="sticky bottom-0 bg-surface-1 border-t border-subtle p-4 flex items-center justify-between">
+          <div className="flex gap-2">
+            {step > 1 && (
+              <button onClick={() => setStep(step - 1)} className="px-3 py-1.5 rounded-lg text-xs border border-subtle text-muted-foreground hover:text-foreground">
+                Back
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            {step < 4 ? (
+              <button onClick={() => setStep(step + 1)} className="px-4 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground">
+                Next <ChevronRight size={12} className="inline" />
+              </button>
+            ) : (
+              <button
+                onClick={() => { if (canSave) onSave(draft); }}
+                disabled={!canSave}
+                className="px-4 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground disabled:opacity-40"
+              >
+                Save
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Strategic Lock Edit Panel ───
+const LockEditPanel: React.FC<{
+  lock: StrategicLock;
+  onSave: (l: StrategicLock) => void;
+  onClose: () => void;
+}> = ({ lock, onSave, onClose }) => {
+  const [draft, setDraft] = useState<StrategicLock>({ ...lock });
+  const [step, setStep] = useState(1);
+
+  const canSave = draft.name.trim().length > 0 && draft.locked_actions.length > 0;
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/40" />
+      <div
+        className="relative w-full max-w-lg bg-surface-1 border-l border-subtle h-full overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-surface-1 border-b border-subtle p-4 flex items-center justify-between z-10">
+          <h3 className="text-sm font-medium text-foreground">Edit Strategic Lock</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
+        </div>
+
+        <div className="p-5 space-y-6">
+          <div className="flex gap-2 text-[10px]">
+            {["Name & Scope", "Actions", "Trigger", "Review"].map((label, i) => (
+              <button
+                key={i}
+                onClick={() => setStep(i + 1)}
+                className={`px-3 py-1 rounded-full border transition-all ${step === i + 1
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-subtle text-muted-foreground"
+                }`}
+              >
+                {i + 1}. {label}
+              </button>
+            ))}
+          </div>
+
+          {step === 1 && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Name</label>
+                <input
+                  className="w-full mt-1 px-3 py-2 rounded-lg border text-xs text-foreground"
+                  style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                  maxLength={60}
+                  value={draft.name}
+                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Reason (optional)</label>
+                <input
+                  className="w-full mt-1 px-3 py-2 rounded-lg border text-xs text-foreground"
+                  style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                  maxLength={120}
+                  value={draft.reason}
+                  onChange={(e) => setDraft({ ...draft, reason: e.target.value })}
+                  placeholder="e.g. Hold for creative refresh"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Scope</label>
+                <ScopeSelector
+                  value={draft.campaign_scope}
+                  campaignIds={draft.campaign_ids}
+                  onChange={(scope, ids) => setDraft({ ...draft, campaign_scope: scope, campaign_ids: ids })}
+                />
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-4">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Locked actions</label>
+              <ActionToggles
+                selected={draft.locked_actions}
+                onChange={(actions) => setDraft({ ...draft, locked_actions: actions })}
+              />
+              <div className="mt-4 pt-4 border-t border-subtle">
+                <label className="flex items-center gap-2 cursor-pointer text-xs">
+                  <input
+                    type="checkbox"
+                    checked={draft.allow_manual_override}
+                    onChange={() => setDraft({ ...draft, allow_manual_override: !draft.allow_manual_override })}
+                    className="accent-primary"
+                  />
+                  <span className="text-foreground">Allow team members to perform these actions manually (only automation is blocked)</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Trigger type</label>
+              <div className="grid grid-cols-3 gap-3">
+                {(["manual", "scheduled", "conditional"] as const).map(t => (
+                  <button
+                    key={t}
+                    onClick={() => {
+                      if (t === "manual") setDraft({ ...draft, trigger: { type: "manual" } });
+                      else if (t === "scheduled") setDraft({ ...draft, trigger: { type: "scheduled", start_date: new Date().toISOString().split("T")[0], end_date: new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0], repeat_annually: false } });
+                      else setDraft({ ...draft, trigger: { type: "conditional", activate_condition: { metric: "availability_pct", operator: "less_than", value: 20, consecutive_days: 1 }, release_type: "condition_clears", release_hours: null } });
+                    }}
+                    className="p-3 rounded-xl border-2 text-left transition-all"
+                    style={{
+                      borderColor: draft.trigger.type === t ? "hsl(var(--primary))" : "rgba(255,255,255,0.07)",
+                      backgroundColor: draft.trigger.type === t ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
+                    }}
+                  >
+                    <p className="text-xs font-medium text-foreground capitalize">{t}</p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">
+                      {t === "manual" && "Always active, enable/disable manually"}
+                      {t === "scheduled" && "Active during date range"}
+                      {t === "conditional" && "Activated by metric condition"}
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              {draft.trigger.type === "scheduled" && (
+                <div className="space-y-3 mt-4">
+                  <div className="flex gap-3">
+                    <div>
+                      <label className="text-[9px] text-muted-foreground uppercase tracking-wider">Start</label>
+                      <input
+                        type="date"
+                        className="w-full mt-1 px-2 py-1.5 rounded-lg border text-xs text-foreground"
+                        style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                        value={draft.trigger.start_date}
+                        onChange={(e) => setDraft({ ...draft, trigger: { ...draft.trigger as any, start_date: e.target.value } })}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] text-muted-foreground uppercase tracking-wider">End</label>
+                      <input
+                        type="date"
+                        className="w-full mt-1 px-2 py-1.5 rounded-lg border text-xs text-foreground"
+                        style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                        value={draft.trigger.end_date}
+                        onChange={(e) => setDraft({ ...draft, trigger: { ...draft.trigger as any, end_date: e.target.value } })}
+                      />
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 text-xs cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={(draft.trigger as any).repeat_annually}
+                      onChange={() => setDraft({ ...draft, trigger: { ...draft.trigger as any, repeat_annually: !(draft.trigger as any).repeat_annually } })}
+                      className="accent-primary"
+                    />
+                    <span className="text-foreground">Repeat annually</span>
+                  </label>
+                </div>
+              )}
+
+              {draft.trigger.type === "conditional" && (
+                <div className="space-y-4 mt-4">
+                  <div>
+                    <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Activation condition</label>
+                    <ConditionBuilder
+                      value={(draft.trigger as any).activate_condition}
+                      onChange={(c) => setDraft({ ...draft, trigger: { ...draft.trigger as any, activate_condition: c } })}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Release when</label>
+                    <div className="space-y-2">
+                      {([
+                        { value: "condition_clears", label: "When condition clears" },
+                        { value: "manual", label: "Manually" },
+                        { value: "after_hours", label: "After N hours" },
+                      ] as const).map(opt => (
+                        <label key={opt.value} className="flex items-center gap-2 text-xs cursor-pointer">
+                          <input
+                            type="radio"
+                            name="release_type"
+                            checked={(draft.trigger as any).release_type === opt.value}
+                            onChange={() => setDraft({ ...draft, trigger: { ...draft.trigger as any, release_type: opt.value, release_hours: opt.value === "after_hours" ? 24 : null } })}
+                            className="accent-primary"
+                          />
+                          <span className="text-foreground">{opt.label}</span>
+                        </label>
+                      ))}
+                      {(draft.trigger as any).release_type === "after_hours" && (
+                        <div className="flex items-center gap-2 ml-6">
+                          <input
+                            type="number"
+                            min={1}
+                            max={720}
+                            className="w-16 px-2 py-1 rounded-lg border text-xs text-foreground font-mono"
+                            style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                            value={(draft.trigger as any).release_hours || 24}
+                            onChange={(e) => setDraft({ ...draft, trigger: { ...draft.trigger as any, release_hours: parseInt(e.target.value) || 24 } })}
+                          />
+                          <span className="text-muted-foreground text-xs">hours</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-4">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Review</label>
+              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-xs text-foreground leading-relaxed space-y-2">
+                <p><span className="font-medium">{draft.name}</span>{draft.reason ? ` — ${draft.reason}` : ""}</p>
+                <p>
+                  Lock <span className="font-medium">{draft.locked_actions.length} action(s)</span> on{" "}
+                  <span className="font-medium">{SCOPE_LABELS[draft.campaign_scope]}</span> campaigns.
+                </p>
+                <p>
+                  Trigger: <span className="font-medium capitalize">{draft.trigger.type}</span>
+                  {draft.trigger.type === "scheduled" && ` (${draft.trigger.start_date} → ${draft.trigger.end_date})`}
+                  {draft.trigger.type === "conditional" && ` — ${formatCondition(draft.trigger.activate_condition)}`}
+                </p>
+                <p>Manual override: <span className="font-medium">{draft.allow_manual_override ? "Yes" : "No"}</span></p>
+              </div>
+              <BlockedActionsChips actions={draft.locked_actions} />
+            </div>
+          )}
+        </div>
+
+        <div className="sticky bottom-0 bg-surface-1 border-t border-subtle p-4 flex items-center justify-between">
+          <div>
+            {step > 1 && (
+              <button onClick={() => setStep(step - 1)} className="px-3 py-1.5 rounded-lg text-xs border border-subtle text-muted-foreground hover:text-foreground">
+                Back
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            {step < 4 ? (
+              <button onClick={() => setStep(step + 1)} className="px-4 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground">
+                Next <ChevronRight size={12} className="inline" />
+              </button>
+            ) : (
+              <button
+                onClick={() => { if (canSave) onSave(draft); }}
+                disabled={!canSave}
+                className="px-4 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground disabled:opacity-40"
+              >
+                Save
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Main View ───
 const GuardrailsView: React.FC = () => {
   const g = useGuardrails();
+  const { toast } = useToast();
   const cardA = useSaveFlash();
   const cardB = useSaveFlash();
   const cardC = useSaveFlash();
   const cardD = useSaveFlash();
   const cardE = useSaveFlash();
+
+  const [editingHardStop, setEditingHardStop] = useState<HardStopRule | null>(null);
+  const [editingLock, setEditingLock] = useState<StrategicLock | null>(null);
+  const [confirmKill, setConfirmKill] = useState(false);
 
   const cyclePermission = (current: PermissionState): PermissionState => {
     if (current === "allow") return "review";
@@ -80,7 +628,7 @@ const GuardrailsView: React.FC = () => {
             <h2 className="text-sm font-medium text-foreground">Hard Stops — Tier 1</h2>
             <SavedIndicator show={cardA.saved} />
           </div>
-          <p className="text-[11px] text-muted-foreground mb-4">Block ALL automated actions when triggered</p>
+          <p className="text-[11px] text-muted-foreground mb-4">Block specified automated actions when triggered</p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -88,6 +636,7 @@ const GuardrailsView: React.FC = () => {
                   <th className="text-left py-2 font-normal">Rule name</th>
                   <th className="text-left py-2 font-normal">Trigger condition</th>
                   <th className="text-left py-2 font-normal">Scope</th>
+                  <th className="text-left py-2 font-normal">Blocked actions</th>
                   <th className="text-center py-2 font-normal">Status</th>
                   <th className="text-right py-2 font-normal">Last triggered</th>
                   <th className="text-right py-2 font-normal"></th>
@@ -96,31 +645,26 @@ const GuardrailsView: React.FC = () => {
               <tbody>
                 {g.hardStops.map((rule) => (
                   <tr key={rule.id} className="border-b border-subtle/50">
-                    <td className="py-3 text-foreground font-medium">{rule.name}</td>
-                    <td className="py-3">
-                      {rule.id === "hs4" ? (
-                        <span className="text-muted-foreground italic">manual trigger</span>
-                      ) : (
-                        <input
-                          className="px-2 py-1 rounded-md text-xs text-foreground border"
-                          style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
-                          value={rule.condition}
-                          onChange={(e) => { g.updateHardStop(rule.id, { condition: e.target.value }); cardA.flash(); }}
-                        />
-                      )}
+                    <td className="py-3 text-foreground font-medium max-w-[140px]">{rule.name}</td>
+                    <td className="py-3 max-w-[240px]">
+                      {rule.is_emergency ? (
+                        <span className="text-muted-foreground italic text-[10px]">Manual trigger only</span>
+                      ) : rule.condition ? (
+                        <span className="text-[10px] text-foreground font-mono leading-snug">
+                          {formatCondition(rule.condition)}
+                        </span>
+                      ) : "—"}
                     </td>
                     <td className="py-3">
-                      <select
-                        className="px-2 py-1 rounded-md text-xs text-foreground border"
-                        style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
-                        value={rule.scope}
-                        onChange={(e) => { g.updateHardStop(rule.id, { scope: e.target.value as any }); cardA.flash(); }}
-                      >
-                        {scopeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-muted/20 text-muted-foreground">
+                        {SCOPE_LABELS[rule.scope]}
+                      </span>
+                    </td>
+                    <td className="py-3 max-w-[200px]">
+                      {!rule.is_emergency && <BlockedActionsChips actions={rule.blocked_actions} />}
                     </td>
                     <td className="py-3 text-center">
-                      {rule.id === "hs4" ? null : (
+                      {!rule.is_emergency && (
                         <button
                           onClick={() => { g.updateHardStop(rule.id, { enabled: !rule.enabled }); cardA.flash(); }}
                           className="w-10 h-5 rounded-full relative transition-colors"
@@ -132,16 +676,23 @@ const GuardrailsView: React.FC = () => {
                       )}
                     </td>
                     <td className="py-3 text-right text-muted-foreground font-mono text-[10px]">
-                      {rule.lastTriggered || "—"}
+                      {formatTimestamp(rule.last_triggered_at)}
                     </td>
                     <td className="py-3 text-right">
-                      {rule.id === "hs4" && (
+                      {rule.is_emergency ? (
                         <button
-                          onClick={() => { g.updateHardStop("hs4", { enabled: true, lastTriggered: "Just now" }); cardA.flash(); }}
+                          onClick={() => setConfirmKill(true)}
                           className="px-3 py-1.5 rounded-lg text-[10px] font-medium text-white"
                           style={{ backgroundColor: "#FF5C5C" }}
                         >
                           ⚠ Trigger now
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setEditingHardStop(rule)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <Pencil size={13} />
                         </button>
                       )}
                     </td>
@@ -153,6 +704,42 @@ const GuardrailsView: React.FC = () => {
         </div>
       </div>
 
+      {/* Emergency kill switch confirm dialog */}
+      {confirmKill && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setConfirmKill(false)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative bg-surface-1 border border-subtle rounded-xl p-6 max-w-sm mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle size={20} className="text-destructive" />
+              <h3 className="text-sm font-medium text-foreground">Emergency Kill Switch</h3>
+            </div>
+            <p className="text-xs text-muted-foreground mb-5">
+              This will pause ALL campaigns immediately. Are you sure?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmKill(false)}
+                className="px-4 py-1.5 rounded-lg text-xs border border-subtle text-muted-foreground hover:text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  g.updateHardStop("hs4", { enabled: true, last_triggered_at: Date.now() });
+                  setConfirmKill(false);
+                  cardA.flash();
+                  toast({ title: "Emergency kill switch triggered", description: "All campaigns paused." });
+                }}
+                className="px-4 py-1.5 rounded-lg text-xs font-medium text-white"
+                style={{ backgroundColor: "#FF5C5C" }}
+              >
+                Confirm — Pause all
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Card B — Strategic Locks */}
       <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden" style={{ borderLeft: "3px solid #F5A623" }}>
         <div className="p-5">
@@ -161,53 +748,67 @@ const GuardrailsView: React.FC = () => {
             <SavedIndicator show={cardB.saved} />
           </div>
           <p className="text-[11px] text-muted-foreground mb-4">Override automated insights for specific campaigns</p>
-          <div className="space-y-3">
-            {g.strategicLocks.map((lock) => (
-              <div key={lock.id} className="p-4 rounded-xl bg-surface-2 border border-subtle flex items-center gap-4 flex-wrap">
-                <span className="text-xs text-foreground font-medium min-w-[140px]">{lock.name}</span>
-                <div className="flex-1 min-w-[200px]">
-                  <label className="text-[9px] text-muted-foreground uppercase tracking-wider">Campaigns</label>
-                  <input
-                    className="w-full mt-1 px-2 py-1 rounded-md text-xs text-foreground border"
-                    style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
-                    value={lock.campaigns.join(", ")}
-                    onChange={(e) => { g.updateStrategicLock(lock.id, { campaigns: e.target.value.split(", ") }); cardB.flash(); }}
-                  />
-                </div>
-                <div className="min-w-[200px]">
-                  <label className="text-[9px] text-muted-foreground uppercase tracking-wider">Date range</label>
-                  <div className="flex gap-1 mt-1">
-                    <input type="date" className="px-2 py-1 rounded-md text-[10px] text-foreground border"
-                      style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
-                      value={lock.dateRange.from}
-                      onChange={(e) => { g.updateStrategicLock(lock.id, { dateRange: { ...lock.dateRange, from: e.target.value } }); cardB.flash(); }} />
-                    <input type="date" className="px-2 py-1 rounded-md text-[10px] text-foreground border"
-                      style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
-                      value={lock.dateRange.to}
-                      onChange={(e) => { g.updateStrategicLock(lock.id, { dateRange: { ...lock.dateRange, to: e.target.value } }); cardB.flash(); }} />
-                  </div>
-                </div>
-                {lock.budgetFloor !== undefined && (
-                  <div className="min-w-[100px]">
-                    <label className="text-[9px] text-muted-foreground uppercase tracking-wider">Floor</label>
-                    <input
-                      className="w-full mt-1 px-2 py-1 rounded-md text-xs text-foreground border"
-                      style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
-                      value={lock.budgetFloor}
-                      onChange={(e) => { g.updateStrategicLock(lock.id, { budgetFloor: e.target.value }); cardB.flash(); }}
-                    />
-                  </div>
-                )}
-                <button
-                  onClick={() => { g.updateStrategicLock(lock.id, { enabled: !lock.enabled }); cardB.flash(); }}
-                  className="w-10 h-5 rounded-full relative transition-colors flex-shrink-0"
-                  style={{ backgroundColor: lock.enabled ? "hsl(228,90%,64%)" : "hsl(225,10%,30%)" }}
-                >
-                  <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
-                    style={{ left: lock.enabled ? "22px" : "2px" }} />
-                </button>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">Lock name</th>
+                  <th className="text-left py-2 font-normal">Scope</th>
+                  <th className="text-left py-2 font-normal">Locked actions</th>
+                  <th className="text-left py-2 font-normal">Trigger</th>
+                  <th className="text-center py-2 font-normal">Override</th>
+                  <th className="text-center py-2 font-normal">Status</th>
+                  <th className="text-right py-2 font-normal"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {g.strategicLocks.map((lock) => (
+                  <tr key={lock.id} className="border-b border-subtle/50">
+                    <td className="py-3 text-foreground font-medium max-w-[140px]">
+                      <div>{lock.name}</div>
+                      {lock.reason && <div className="text-[9px] text-muted-foreground mt-0.5">{lock.reason}</div>}
+                    </td>
+                    <td className="py-3">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-muted/20 text-muted-foreground">
+                        {SCOPE_LABELS[lock.campaign_scope]}
+                      </span>
+                    </td>
+                    <td className="py-3 max-w-[200px]">
+                      <BlockedActionsChips actions={lock.locked_actions} />
+                    </td>
+                    <td className="py-3 text-[10px]">
+                      {lock.trigger.type === "manual" && <span className="text-muted-foreground">Manual</span>}
+                      {lock.trigger.type === "scheduled" && (
+                        <span className="text-foreground font-mono">{lock.trigger.start_date} → {lock.trigger.end_date}</span>
+                      )}
+                      {lock.trigger.type === "conditional" && (
+                        <span className="text-foreground font-mono text-[9px]">{formatCondition(lock.trigger.activate_condition)}</span>
+                      )}
+                    </td>
+                    <td className="py-3 text-center">
+                      <span className={`text-[9px] font-medium ${lock.allow_manual_override ? "text-sw-green" : "text-muted-foreground"}`}>
+                        {lock.allow_manual_override ? "Yes" : "No"}
+                      </span>
+                    </td>
+                    <td className="py-3 text-center">
+                      <button
+                        onClick={() => { g.updateStrategicLock(lock.id, { enabled: !lock.enabled }); cardB.flash(); }}
+                        className="w-10 h-5 rounded-full relative transition-colors"
+                        style={{ backgroundColor: lock.enabled ? "hsl(228,90%,64%)" : "hsl(225,10%,30%)" }}
+                      >
+                        <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
+                          style={{ left: lock.enabled ? "22px" : "2px" }} />
+                      </button>
+                    </td>
+                    <td className="py-3 text-right">
+                      <button onClick={() => setEditingLock(lock)} className="text-muted-foreground hover:text-foreground">
+                        <Pencil size={13} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -279,8 +880,8 @@ const GuardrailsView: React.FC = () => {
                 onClick={() => { g.setConflictMode(opt.mode); cardD.flash(); }}
                 className="p-4 rounded-xl border-2 text-left transition-all"
                 style={{
-                  borderColor: g.conflictMode === opt.mode ? "#A78BFA" : "rgba(255,255,255,0.07)",
-                  backgroundColor: g.conflictMode === opt.mode ? "rgba(167,139,250,0.08)" : "hsl(230,22%,8%)",
+                  borderColor: g.conflictMode === opt.mode ? "hsl(var(--primary))" : "rgba(255,255,255,0.07)",
+                  backgroundColor: g.conflictMode === opt.mode ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
                 }}
               >
                 <p className="text-xs font-medium text-foreground mb-1">{opt.title}</p>
@@ -293,7 +894,7 @@ const GuardrailsView: React.FC = () => {
               <span className="text-[11px] text-muted-foreground">Est. resolution time:</span>
               <input
                 className="px-2 py-1 rounded-md text-xs text-foreground border w-28"
-                style={{ background: "#1C1F27", borderColor: "rgba(255,255,255,0.1)" }}
+                style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
                 value={g.estResolutionTime}
                 onChange={(e) => { g.setEstResolutionTime(e.target.value); cardD.flash(); }}
               />
@@ -311,7 +912,6 @@ const GuardrailsView: React.FC = () => {
           </div>
           <p className="text-[11px] text-muted-foreground mb-4">Prevent runaway automation</p>
           <div className="space-y-5">
-            {/* Bid slider */}
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-foreground">Max bid change per action</span>
@@ -321,7 +921,6 @@ const GuardrailsView: React.FC = () => {
                 onChange={(e) => { g.updateVelocityLimits({ maxBidChangePct: +e.target.value }); cardE.flash(); }}
                 className="w-full accent-primary" />
             </div>
-            {/* Budget slider */}
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-foreground">Max budget change per action</span>
@@ -331,7 +930,6 @@ const GuardrailsView: React.FC = () => {
                 onChange={(e) => { g.updateVelocityLimits({ maxBudgetChangePct: +e.target.value }); cardE.flash(); }}
                 className="w-full accent-primary" />
             </div>
-            {/* Steppers */}
             <div className="flex items-center justify-between">
               <span className="text-xs text-foreground">Max actions per campaign per day</span>
               <div className="flex items-center gap-2">
@@ -410,6 +1008,22 @@ const GuardrailsView: React.FC = () => {
             </div>
           </PanelCard>
         </div>
+      )}
+
+      {/* Slide-over panels */}
+      {editingHardStop && (
+        <HardStopEditPanel
+          rule={editingHardStop}
+          onSave={(r) => { g.updateHardStop(r.id, r); setEditingHardStop(null); cardA.flash(); }}
+          onClose={() => setEditingHardStop(null)}
+        />
+      )}
+      {editingLock && (
+        <LockEditPanel
+          lock={editingLock}
+          onSave={(l) => { g.updateStrategicLock(l.id, l); setEditingLock(null); cardB.flash(); }}
+          onClose={() => setEditingLock(null)}
+        />
       )}
     </div>
   );
