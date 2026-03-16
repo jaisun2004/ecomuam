@@ -465,6 +465,7 @@ const CampaignView: React.FC = () => {
         </div>
       )}
 
+      {tab === "overview" ? (<>
       {/* Insert 1 — Conflict callout banner */}
       {g.hasActiveTier1() && (
         <div id="campaign-conflict-banner" className="rounded-xl border p-4" style={{
