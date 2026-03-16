@@ -267,6 +267,80 @@ const DiscoveryView: React.FC = () => {
           ))}
         </div>
       </PanelCard>
+
+      {/* SoS summary strip */}
+      <div className="grid grid-cols-4 gap-4">
+        <div className="rounded-xl border border-subtle bg-surface-1 p-4">
+          <p className="text-[10px] text-muted-foreground">Your SoS This Week</p>
+          <p className="font-mono text-lg font-bold text-foreground mt-1">{sosData.yourSos}%</p>
+          <p className="text-[9px] text-sw-green mt-0.5">▲ {sosData.sosChange}% vs last wk</p>
+          <button onClick={() => setTab("analytics")} className="text-[10px] mt-1 inline-block" style={{ color: "#4F7FFF" }}>→ See full analytics</button>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-4">
+          <p className="text-[10px] text-muted-foreground">SoS Change WoW</p>
+          <p className="font-mono text-lg font-bold text-sw-green mt-1">+{sosData.sosChange}%</p>
+          <button onClick={() => setTab("analytics")} className="text-[10px] mt-1 inline-block" style={{ color: "#4F7FFF" }}>→ See full analytics</button>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-4">
+          <p className="text-[10px] text-muted-foreground">Top Gaining Competitor</p>
+          <p className="font-mono text-sm font-bold text-sw-red mt-1">{sosData.topGainer}</p>
+          <p className="text-[9px] text-muted-foreground mt-0.5">Gained +{sosData.topGainerGain}% SoS</p>
+          <button onClick={() => setTab("analytics")} className="text-[10px] mt-1 inline-block" style={{ color: "#4F7FFF" }}>→ See full analytics</button>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-4">
+          <p className="text-[10px] text-muted-foreground">Category SoS Leader</p>
+          <p className="font-mono text-sm font-bold text-foreground mt-1">{sosData.leader}: {sosData.leaderSos}%</p>
+          <button onClick={() => setTab("analytics")} className="text-[10px] mt-1 inline-block" style={{ color: "#4F7FFF" }}>→ See full analytics</button>
+        </div>
+      </div>
+
+      {/* Brand keyword poaching */}
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden" style={{ borderLeft: "3px solid #FF5C5C" }}>
+        <div className="p-4 border-b border-subtle">
+          <h3 className="text-sm font-medium text-foreground">Brand keyword poaching</h3>
+        </div>
+        {poachingIncidents.length === 0 ? (
+          <div className="p-6 text-center text-xs text-muted-foreground">No poaching detected in last 7 days ✓</div>
+        ) : (
+          <div className="divide-y divide-subtle/50">
+            {poachingIncidents.map((p, i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-3">
+                <span className="font-mono text-[11px] text-foreground flex-1">{p.keyword}</span>
+                <span className="text-[10px] text-muted-foreground">{p.competitor}</span>
+                <div className="flex gap-1">
+                  {p.platforms.map(pl => (
+                    <span key={pl} className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground">{pl}</span>
+                  ))}
+                </div>
+                <span className="text-[9px] text-muted-foreground">{p.firstDetected}</span>
+                <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${p.severity === "High" ? "bg-sw-red/15 text-sw-red" : p.severity === "Medium" ? "bg-sw-amber/15 text-sw-amber" : "bg-surface-3 text-muted-foreground"}`}>{p.severity}</span>
+                <button onClick={() => g.navigateWithContext("campaigns", "defense-insight", { type: "defense", params: { keyword: p.keyword, competitor: p.competitor } })} className="px-2 py-1 rounded-lg text-[10px] font-medium text-white flex-shrink-0" style={{ backgroundColor: "#A78BFA" }}>
+                  Defend →
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Retailer visibility issues */}
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden" style={{ borderLeft: "3px solid #F5A623" }}>
+        <div className="p-4 border-b border-subtle">
+          <h3 className="text-sm font-medium text-foreground">Retailer visibility issues</h3>
+        </div>
+        <div className="divide-y divide-subtle/50">
+          {retailerIssues.map((r, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3">
+              <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground flex-shrink-0">{r.platform}</span>
+              <span className="text-[12px] text-foreground flex-1">{r.desc}</span>
+              <span className="text-[10px] text-muted-foreground">{r.keywords} keywords</span>
+              <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "sos-retailer", params: { platform: r.platform } })} className="text-[10px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                Fix visibility →
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
       </>) : (
         <div className="space-y-5">
           <PanelCard title="Search Volume Trend — 30 Days" badge="All Categories" badgeColor="accent" delay={0}>
@@ -296,6 +370,101 @@ const DiscoveryView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-primary opacity-50" /> Current</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> Forecast</span>
             </div>
+          </PanelCard>
+
+          {/* SoS over time */}
+          <PanelCard title="Share of Search Over Time — 30 Days" badge="Multi-brand" badgeColor="accent" delay={0.2}>
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              {["All", "Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"].map(p => (
+                <button key={p} onClick={() => setSosPlatformFilter(p)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${sosPlatformFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
+                  {p}
+                </button>
+              ))}
+            </div>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={sosOverTime}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
+                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="MuscleBlaze" />
+                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="ON" />
+                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="MyProtein" />
+                <Line type="monotone" dataKey="categoryAvg" stroke="#555A6E" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> MuscleBlaze</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> ON</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Category Avg</span>
+            </div>
+          </PanelCard>
+
+          {/* SoS by retailer heatmap */}
+          <PanelCard title="SoS by Retailer — Weekly" badge="Heatmap" badgeColor="green" delay={0.3}>
+            <div className="overflow-x-auto">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] text-muted-foreground w-24 flex-shrink-0" />
+                  {Array.from({ length: 8 }, (_, i) => (
+                    <span key={i} className="text-[8px] font-mono text-muted-foreground w-10 text-center flex-shrink-0">W{i + 1}</span>
+                  ))}
+                </div>
+                {sosRetailerHeatmap.map(row => (
+                  <div key={row.retailer} className="flex items-center gap-1">
+                    <span className="text-[10px] text-foreground w-24 flex-shrink-0">{row.retailer}</span>
+                    {row.weeks.map((val, wi) => (
+                      <div key={wi} className="w-10 h-6 rounded-sm flex items-center justify-center flex-shrink-0" style={{
+                        backgroundColor: val >= 30 ? "rgba(46,207,142,0.5)" : val >= 20 ? "rgba(245,166,35,0.4)" : "rgba(255,92,92,0.4)"
+                      }}>
+                        <span className="font-mono text-[8px] text-foreground">{val}%</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </PanelCard>
+
+          {/* Poaching history */}
+          <PanelCard title="Brand Keyword Poaching History" badge="Sortable" badgeColor="red" delay={0.4}>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">Keyword</th>
+                  <th className="text-left py-2 font-normal">Competitor</th>
+                  <th className="text-left py-2 font-normal">Platform</th>
+                  <th className="text-right py-2 font-normal">Duration</th>
+                  <th className="text-right py-2 font-normal">Impact</th>
+                  <th className="text-center py-2 font-normal">Status</th>
+                  <th className="text-right py-2 font-normal">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {poachingHistory.map((p, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 font-mono text-foreground">{p.keyword}</td>
+                    <td className="py-2.5 text-foreground">{p.competitor}</td>
+                    <td className="py-2.5"><span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground">{p.platform}</span></td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{p.duration}d</td>
+                    <td className="py-2.5 text-right font-mono text-sw-red">{p.impact}</td>
+                    <td className="py-2.5 text-center">
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${p.status === "Active" ? "bg-sw-red/15 text-sw-red" : "bg-sw-green/15 text-sw-green"}`}>{p.status}</span>
+                    </td>
+                    <td className="py-2.5 text-right">
+                      {p.status === "Active" ? (
+                        <button onClick={() => g.navigateWithContext("campaigns", "defense-insight", { type: "defense", params: { keyword: p.keyword } })} className="text-[10px] font-medium" style={{ color: "#4F7FFF" }}>Defense active</button>
+                      ) : (
+                        <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">Resolved</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </PanelCard>
         </div>
       )}
