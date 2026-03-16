@@ -299,6 +299,149 @@ const MarketShareView: React.FC = () => {
             </div>
           </PanelCard>
 
+          {/* Dark Store Map */}
+          <PanelCard title="Dark Store Network — Pincode Level" badge={`${filteredStores.length} stores`} badgeColor="cyan" delay={0.35}>
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
+              {(["All", "Blinkit", "Zepto", "Swiggy Instamart"] as const).map(p => (
+                <button key={p} onClick={() => { setStoreFilter(p); setSelectedStore(null); }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    storeFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                  }`}>
+                  {p !== "All" && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColorMap[p] }} />}
+                  {p}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-5 gap-4">
+              {/* Map column */}
+              <div className="col-span-3 relative">
+                <svg viewBox="100 80 220 360" className="w-full" style={{ height: 420 }}>
+                  {/* India outline */}
+                  <path
+                    d="M165,95 L195,88 L220,100 L250,110 L270,130 L285,155 L298,185 L305,220 L298,250 L290,280 L275,305 L260,325 L245,345 L230,365 L220,385 L210,400 L195,415 L182,410 L175,395 L180,370 L170,345 L160,320 L150,300 L140,270 L125,245 L115,220 L120,195 L130,170 L145,140 L155,115 Z"
+                    fill="hsl(var(--surface-2))"
+                    stroke="hsl(var(--border))"
+                    strokeWidth="0.5"
+                    opacity={0.5}
+                  />
+                  {/* Store dots */}
+                  {filteredStores.map(store => {
+                    const isSelected = selectedStore?.id === store.id;
+                    const color = platformColorMap[store.platform];
+                    return (
+                      <g key={store.id} onClick={() => setSelectedStore(isSelected ? null : store)} className="cursor-pointer">
+                        {/* Pulse ring for selected */}
+                        {isSelected && (
+                          <circle cx={store.lng} cy={store.lat} r="8" fill="none" stroke={color} strokeWidth="1" opacity={0.4}>
+                            <animate attributeName="r" from="5" to="12" dur="1.2s" repeatCount="indefinite" />
+                            <animate attributeName="opacity" from="0.6" to="0" dur="1.2s" repeatCount="indefinite" />
+                          </circle>
+                        )}
+                        <circle
+                          cx={store.lng} cy={store.lat}
+                          r={isSelected ? 5 : 3.5}
+                          fill={color}
+                          stroke={isSelected ? "#fff" : "none"}
+                          strokeWidth={isSelected ? 1 : 0}
+                          opacity={isSelected ? 1 : 0.85}
+                          className="transition-all duration-200"
+                        >
+                          <title>{store.name} · {store.pincode}</title>
+                        </circle>
+                      </g>
+                    );
+                  })}
+                </svg>
+                {/* Map legend */}
+                <div className="flex items-center justify-center gap-4 mt-2">
+                  {Object.entries(platformColorMap).map(([name, color]) => (
+                    <span key={name} className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* KPI panel */}
+              <div className="col-span-2">
+                {selectedStore ? (
+                  <div className="rounded-xl border border-subtle bg-surface-2 p-4 space-y-3 animate-fade-slide-in">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: platformColorMap[selectedStore.platform] }} />
+                          <span className="font-mono text-[9px] text-muted-foreground">{selectedStore.platform}</span>
+                        </div>
+                        <h4 className="text-sm font-medium text-foreground leading-tight">{selectedStore.name}</h4>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                          <MapPin size={9} /> {selectedStore.city} · {selectedStore.pincode}
+                        </p>
+                      </div>
+                      <button onClick={() => setSelectedStore(null)} className="p-1 rounded hover:bg-surface-3 text-muted-foreground">
+                        <X size={12} />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { label: "Market Share", value: `${selectedStore.marketShare}%`, good: selectedStore.marketShare >= 25 },
+                        { label: "Availability", value: `${selectedStore.availability}%`, good: selectedStore.availability >= 90 },
+                        { label: "Avg Delivery", value: `${selectedStore.avgDeliveryMin} min`, good: selectedStore.avgDeliveryMin <= 15 },
+                        { label: "Orders/Day", value: `${selectedStore.ordersPerDay}`, good: selectedStore.ordersPerDay >= 80 },
+                        { label: "Revenue", value: selectedStore.revenue, good: true },
+                        { label: "Slot Share", value: `${selectedStore.slotShare}%`, good: selectedStore.slotShare >= 30 },
+                        { label: "OOS Rate", value: `${selectedStore.oosRate}%`, good: selectedStore.oosRate <= 10 },
+                        { label: "Competitors", value: `${selectedStore.competitorPresence}`, good: selectedStore.competitorPresence <= 3 },
+                      ].map(kpi => (
+                        <div key={kpi.label} className="p-2.5 rounded-lg bg-surface-1 border border-subtle">
+                          <p className="text-[9px] text-muted-foreground">{kpi.label}</p>
+                          <p className={`font-mono text-sm font-bold mt-0.5 ${kpi.good ? "text-sw-green" : "text-sw-red"}`}>{kpi.value}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-2 border-t border-subtle">
+                      <p className="text-[9px] text-muted-foreground">Top SKU</p>
+                      <p className="text-[11px] text-foreground font-medium mt-0.5">{selectedStore.topSku}</p>
+                    </div>
+
+                    <button
+                      onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "dark-store", params: { store: selectedStore.name, pincode: selectedStore.pincode, platform: selectedStore.platform } })}
+                      className="w-full mt-1 px-3 py-2 rounded-lg text-[10px] font-medium text-center transition-all hover:opacity-80"
+                      style={{ backgroundColor: "rgba(167,139,250,0.15)", color: "#A78BFA" }}>
+                      Boost this location →
+                    </button>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-subtle bg-surface-2 p-6 flex flex-col items-center justify-center text-center" style={{ minHeight: 300 }}>
+                    <MapPin size={24} className="text-muted-foreground mb-2" />
+                    <p className="text-xs text-muted-foreground">Click a dark store on the map</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">to view pincode-level KPIs</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* City summary strip */}
+            <div className="mt-4 pt-3 border-t border-subtle">
+              <div className="flex items-center gap-3 flex-wrap">
+                {Array.from(new Set(filteredStores.map(s => s.city))).map(city => {
+                  const cityStores = filteredStores.filter(s => s.city === city);
+                  const avgShare = Math.round(cityStores.reduce((a, s) => a + s.marketShare, 0) / cityStores.length);
+                  return (
+                    <span key={city} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                      <span className={`w-1.5 h-1.5 rounded-full ${avgShare >= 30 ? "bg-sw-green" : avgShare >= 20 ? "bg-sw-amber" : "bg-sw-red"}`} />
+                      {city} <span className="font-mono text-foreground">{avgShare}%</span>
+                      <span className="text-muted-foreground">({cityStores.length})</span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </PanelCard>
+
           {/* Quick commerce metrics */}
           <PanelCard title="Quick Commerce Performance" badge="Dark store & Q-commerce" badgeColor="amber" delay={0.4}>
             <p className="text-[10px] text-muted-foreground mb-3">Metrics specific to dark store and q-commerce platforms</p>
