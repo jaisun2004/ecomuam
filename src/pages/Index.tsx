@@ -16,6 +16,8 @@ import FestivalCampaignsView from "@/views/FestivalCampaignsView";
 import BudgetOptimiserView from "@/views/BudgetOptimiserView";
 import OfflineAdsView from "@/views/OfflineAdsView";
 import GuardrailsView from "@/views/GuardrailsView";
+import MarketShareView from "@/views/MarketShareView";
+import ContentAuditView from "@/views/ContentAuditView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
@@ -32,6 +34,8 @@ const views: Record<string, React.FC> = {
   budget: BudgetOptimiserView,
   offline: OfflineAdsView,
   guardrails: GuardrailsView,
+  marketshare: MarketShareView,
+  contentaudit: ContentAuditView,
 };
 
 const IndexInner = () => {

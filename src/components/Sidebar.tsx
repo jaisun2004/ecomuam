@@ -35,6 +35,13 @@ const navSections = [
     ],
   },
   {
+    label: "INTELLIGENCE",
+    items: [
+      { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
+      { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
+    ],
+  },
+  {
     label: "REPORTS",
     items: [
       { id: "reports", icon: BarChart2, label: "Reports", notify: false },
