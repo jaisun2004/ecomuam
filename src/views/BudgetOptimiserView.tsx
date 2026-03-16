@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
-import { ArrowRight, Zap, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowRight, Zap, TrendingUp, TrendingDown, ChevronDown, ChevronUp } from "lucide-react";
+import { useGuardrails } from "@/contexts/GuardrailContext";
 
 /* Same-platform reallocation */
 const samePlatformShifts = [
