@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
-import { Megaphone } from "lucide-react";
+import { Megaphone, ArrowRight } from "lucide-react";
+import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 
 const searchTrendData = Array.from({ length: 30 }, (_, i) => ({
