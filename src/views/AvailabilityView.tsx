@@ -358,6 +358,67 @@ const AvailabilityView: React.FC = () => {
           ))}
         </div>
       </PanelCard>
+      </>) : (
+        /* Analytics tab */
+        <div className="space-y-5">
+          <PanelCard title="Availability Score — 30 Days" badge="Trend" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={availScoreTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <ReferenceLine y={20} stroke="hsl(0,76%,57%)" strokeDasharray="5 5" label={{ value: "20% threshold", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
+                <Line type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Availability %" />
+              </LineChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          <PanelCard title="SKU Availability Heatmap" badge="30 Days" badgeColor="red" delay={0.1}>
+            <div className="overflow-x-auto">
+              <div className="flex flex-col gap-1">
+                {skuHeatmapData.map((row) => (
+                  <div key={row.sku} className="flex items-center gap-1">
+                    <span className="text-[10px] text-foreground w-20 flex-shrink-0">{row.sku}</span>
+                    <div className="flex gap-px">
+                      {row.days.map((val, di) => (
+                        <div key={di} className="w-3 h-3 rounded-sm" style={{
+                          backgroundColor: val >= 80 ? "rgba(46,207,142,0.7)" : val >= 50 ? "rgba(245,166,35,0.5)" : val >= 20 ? "rgba(255,92,92,0.4)" : "rgba(255,92,92,0.7)"
+                        }} title={`Day ${di + 1}: ${val}%`} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 mt-3 text-[9px] text-muted-foreground">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(46,207,142,0.7)" }} /> ≥80%</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(245,166,35,0.5)" }} /> 50-79%</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(255,92,92,0.4)" }} /> 20-49%</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(255,92,92,0.7)" }} /> &lt;20%</span>
+              </div>
+            </div>
+          </PanelCard>
+
+          <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+            <h3 className="text-sm font-medium text-foreground mb-1">Stockout Impact Estimate</h3>
+            <p className="text-[11px] text-muted-foreground mb-3">Estimated revenue lost to out-of-stock days in the last 30 days</p>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+                <p className="font-mono text-2xl font-bold text-sw-red">₹8.4L</p>
+                <p className="text-[10px] text-muted-foreground mt-1">Total Lost Revenue</p>
+              </div>
+              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+                <p className="font-mono text-2xl font-bold text-sw-amber">33</p>
+                <p className="text-[10px] text-muted-foreground mt-1">Total OOS Days</p>
+              </div>
+              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+                <p className="font-mono text-2xl font-bold text-foreground">₹25K</p>
+                <p className="text-[10px] text-muted-foreground mt-1">Avg Daily Loss</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
