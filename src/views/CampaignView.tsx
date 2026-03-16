@@ -478,6 +478,8 @@ const CampaignView: React.FC = () => {
               g.contextFilter.type === "search-listing" ? `Search Listing · ${g.contextFilter.params.sku || ""}` :
               g.contextFilter.type === "competitor-content" ? `Competitor content · ${g.contextFilter.params.competitor || ""}` :
               g.contextFilter.type === "subcategory" ? `Subcategory · ${g.contextFilter.params.subcategory || ""}` :
+              g.contextFilter.type === "shelf-gap" ? `Shelf gap · ${g.contextFilter.params.keyword || ""} on ${g.contextFilter.params.platform || ""}` :
+              g.contextFilter.type === "shelf-coverage" ? `Shelf coverage · ${g.contextFilter.params.category || ""}` :
               g.contextFilter.type}
           </span>
           <button onClick={() => g.setContextFilter(null)} className="text-[10px] font-medium flex items-center gap-0.5" style={{ color: "#8B8FA8" }}>
@@ -513,6 +515,38 @@ const CampaignView: React.FC = () => {
           <button onClick={() => { showUndoToast("Bid increase applied"); g.setContextFilter(null); }} className="mt-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
             Increase bids on these keywords
           </button>
+        </div>
+      )}
+
+      {/* Contextual card for shelf-gap */}
+      {g.contextFilter?.type === "shelf-gap" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Shelf gap detected</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            No listing for '{g.contextFilter.params.keyword}' on {g.contextFilter.params.platform}. Recommend creating a sponsored campaign to capture this uncovered search volume.
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] flex gap-0.5">{confidencePips(4)}</span>
+            <button onClick={() => { showUndoToast("Campaign created"); g.setContextFilter(null); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+              Create campaign
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Contextual card for shelf-coverage */}
+      {g.contextFilter?.type === "shelf-coverage" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Shelf coverage gaps — {g.contextFilter.params.category}</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Multiple keyword × platform gaps detected. Recommend creating sponsored campaigns to fill uncovered positions.
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] flex gap-0.5">{confidencePips(3)}</span>
+            <button onClick={() => { showUndoToast("Campaigns queued"); g.setContextFilter(null); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+              Fill gaps
+            </button>
+          </div>
         </div>
       )}
 

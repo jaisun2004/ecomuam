@@ -60,36 +60,6 @@ const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: stri
   ],
 };
 
-const forecastsByCategory: Record<string, { sku: string; delta: string; color: string; weeks: number[] }[]> = {
-  "All Categories": [
-    { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
-    { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
-    { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
-    { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
-  ],
-  Protein: [
-    { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
-    { sku: "Whey 500g Vanilla", delta: "+12%", color: "bg-sw-green", weeks: [50, 54, 58, 62] },
-    { sku: "Whey Isolate 1kg", delta: "+24%", color: "bg-sw-cyan", weeks: [35, 42, 50, 60] },
-  ],
-  Creatine: [
-    { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
-    { sku: "Creatine HCL 120caps", delta: "+15%", color: "bg-sw-green", weeks: [30, 35, 40, 48] },
-  ],
-  "Pre-Workout": [
-    { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
-    { sku: "Pre-Workout Berry", delta: "+22%", color: "bg-sw-purple", weeks: [45, 50, 58, 65] },
-  ],
-  BCAA: [
-    { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
-    { sku: "EAA Lemon", delta: "+28%", color: "bg-sw-green", weeks: [30, 38, 48, 58] },
-  ],
-  Vitamins: [
-    { sku: "Multi-Vit 60ct", delta: "+5%", color: "bg-sw-amber", weeks: [60, 62, 63, 65] },
-    { sku: "Ashwagandha 120caps", delta: "+38%", color: "bg-sw-green", weeks: [25, 35, 48, 62] },
-  ],
-};
-
 const opportunities = [
   { emoji: "⚡", title: "Creatine Gummies", desc: "61% search growth, <3 sellers on Blinkit, 0 Q-commerce competitors in category", tags: ["BLINKIT GAP", "HIGH IMPACT"], gradient: "from-sw-cyan/20 to-sw-cyan/5" },
   { emoji: "👩", title: "Women's Protein", desc: "44K monthly searches, only 2 SKUs in portfolio targeting this segment explicitly", tags: ["CONTENT GAP", "HIGH IMPACT"], gradient: "from-sw-purple/20 to-sw-purple/5" },
@@ -133,6 +103,50 @@ const poachingHistory = [
   { keyword: "shelfwise protein", competitor: "ON", platform: "Flipkart", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
+const shelfCoverageData: Record<string, {
+  kw: string;
+  Amazon: "sponsored" | "organic" | "none";
+  Flipkart: "sponsored" | "organic" | "none";
+  Blinkit: "sponsored" | "organic" | "none";
+  Zepto: "sponsored" | "organic" | "none";
+  Instamart: "sponsored" | "organic" | "none";
+}[]> = {
+  "All Categories": [
+    { kw: "pre workout citrus", Amazon: "organic", Flipkart: "none", Blinkit: "sponsored", Zepto: "none", Instamart: "none" },
+    { kw: "women protein shake", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "creatine gummies", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "sponsored", Instamart: "none" },
+    { kw: "whey isolate zero sugar", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "organic" },
+    { kw: "electrolyte sachets", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "vegan protein bar", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "gym supplement combo", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  Protein: [
+    { kw: "women protein shake", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "vegan protein bar", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "whey isolate zero sugar", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "organic" },
+    { kw: "whey protein 2kg value pack", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "organic", Zepto: "none", Instamart: "none" },
+  ],
+  Creatine: [
+    { kw: "creatine gummies", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "sponsored", Instamart: "none" },
+    { kw: "creatine for women", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "creatine hcl", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  "Pre-Workout": [
+    { kw: "pre workout citrus", Amazon: "organic", Flipkart: "none", Blinkit: "sponsored", Zepto: "none", Instamart: "none" },
+    { kw: "pre workout caffeine free", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "pre workout pump formula", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  BCAA: [
+    { kw: "bcaa intra workout", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "eaa supplement", Amazon: "organic", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  Vitamins: [
+    { kw: "electrolyte sachets", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "ashwagandha ksm 66", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "organic", Instamart: "none" },
+    { kw: "daily multivitamin men", Amazon: "sponsored", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+};
+
 const DiscoveryView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
@@ -143,7 +157,23 @@ const DiscoveryView: React.FC = () => {
   const trendingKws = (trendingKwsByCategory[selectedCategory] || trendingKwsByCategory["All Categories"])
     .filter(k => selectedPlatform === "All Platforms" || k.platform === selectedPlatform);
 
-  const forecasts = forecastsByCategory[selectedCategory] || forecastsByCategory["All Categories"];
+  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"] as const;
+  const visiblePlatforms = selectedPlatform === "All Platforms"
+    ? allPlatforms
+    : allPlatforms.filter(p => p === selectedPlatform);
+
+  const coverageRows = shelfCoverageData[selectedCategory] ?? shelfCoverageData["All Categories"];
+
+  const coverageStatusConfig = {
+    sponsored: { color: "#2ECF8E", label: "Sponsored", bg: "rgba(46,207,142,0.15)" },
+    organic: { color: "#F5A623", label: "Organic only", bg: "rgba(245,166,35,0.12)" },
+    none: { color: "#FF5C5C", label: "Not listed", bg: "rgba(255,92,92,0.10)" },
+  } as const;
+
+  const missingCount = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p] === "none").length, 0);
+  const sponsoredCount = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p] === "sponsored").length, 0);
+  const totalApplicable = coverageRows.length * visiblePlatforms.length;
+  const coveragePct = totalApplicable > 0 ? Math.round((sponsoredCount / totalApplicable) * 100) : 0;
 
   const [tab, setTab] = useState("overview");
 
@@ -155,7 +185,7 @@ const DiscoveryView: React.FC = () => {
         <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Across 6 platforms" accentColor="bg-sw-cyan" delay={0} />
         <KPICard title="Category Opportunities" value="9" delta="▲ High demand, low comp." deltaType="positive" sub="Ready to capture" accentColor="bg-sw-purple" delay={0.05} />
         <KPICard title="New Search Intents" value="23" delta="▲ Detected this month" deltaType="positive" sub="AI-detected from query logs" accentColor="bg-sw-green" delay={0.1} />
-        <KPICard title="Forecast Accuracy" value="91%" delta="▲ 4% vs last quarter" deltaType="positive" sub="SKU-level 4-week forecast" accentColor="bg-sw-amber" delay={0.15} />
+        <KPICard title="Shelf coverage" value={`${coveragePct}%`} delta="▲ 3% vs last week" deltaType="positive" sub="Keywords with paid placement" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -212,35 +242,79 @@ const DiscoveryView: React.FC = () => {
           </table>
         </PanelCard>
 
-        <PanelCard title="📈 4-Week Demand Forecast" badge={`${selectedCategory} · 91% accuracy`} badgeColor="green" delay={0.25}>
-          <div className="flex items-center gap-1 mb-3 flex-wrap">
-            {categoryFilter.map(c => (
-              <button key={c} onClick={() => setSelectedCategory(c)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedCategory === c ? "bg-sw-green/20 text-sw-green" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                {c}
-              </button>
-            ))}
-          </div>
-          <div className="space-y-5">
-            {forecasts.map((f) => (
-              <div key={f.sku}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-foreground">{f.sku}</span>
-                  <span className={`font-mono text-[11px] ${f.delta.startsWith("+") ? "text-sw-green" : "text-sw-amber"}`}>{f.delta}</span>
-                </div>
-                <div className="flex items-end gap-1 h-8">
-                  {f.weeks.map((w, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                      <div className={`w-full ${f.color} rounded-sm`} style={{ height: `${w * 0.32}px`, opacity: 0.3 + (i * 0.23) }} />
-                      <span className="text-[8px] text-muted-foreground font-mono">W{i + 1}</span>
-                    </div>
+        <PanelCard title="Keyword shelf coverage" badge={`${selectedCategory} · ${selectedPlatform}`} badgeColor="accent" delay={0.25}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-separate" style={{ borderSpacing: "0 2px" }}>
+              <thead>
+                <tr>
+                  <th className="text-left py-2 pr-3 font-normal text-muted-foreground text-[10px] w-40">Keyword</th>
+                  {visiblePlatforms.map(p => (
+                    <th key={p} className="text-center py-2 font-normal text-[9px] text-muted-foreground w-16">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: platformColors[p] ?? "#888" }} />
+                        <span>{p}</span>
+                      </div>
+                    </th>
                   ))}
-                </div>
-              </div>
+                </tr>
+              </thead>
+              <tbody>
+                {coverageRows.map((row, i) => (
+                  <tr key={row.kw} className={i % 2 === 0 ? "bg-surface-2/40" : ""}>
+                    <td className="py-2 pr-3 font-mono text-[10px] text-foreground truncate max-w-[140px]" title={row.kw}>{row.kw}</td>
+                    {visiblePlatforms.map(p => {
+                      const status = row[p];
+                      const cfg = coverageStatusConfig[status];
+                      return (
+                        <td key={p} className="py-2 text-center">
+                          <div className="flex justify-center">
+                            {status === "none" ? (
+                              <button
+                                title={`${row.kw} on ${p}: Not listed — create campaign`}
+                                onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "shelf-gap", params: { keyword: row.kw, platform: p } })}
+                                className="w-5 h-5 rounded-full flex items-center justify-center transition-all hover:scale-125 cursor-pointer"
+                                style={{ backgroundColor: cfg.bg, border: `1px solid ${cfg.color}33` }}>
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
+                              </button>
+                            ) : (
+                              <div
+                                title={`${row.kw} on ${p}: ${cfg.label}`}
+                                className="w-5 h-5 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: cfg.bg, border: `1px solid ${cfg.color}33` }}>
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Legend */}
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-subtle">
+            {Object.entries(coverageStatusConfig).map(([key, cfg]) => (
+              <span key={key} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: cfg.color }} />
+                {cfg.label}
+              </span>
             ))}
           </div>
+          {/* Summary row */}
+          {missingCount > 0 && (
+            <div className="mt-3 pt-3 border-t border-subtle flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground">
+                <span className="text-sw-red font-mono font-medium">{missingCount}</span>{" "}keyword × platform gaps with no listing
+              </span>
+              <button
+                onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "shelf-coverage", params: { category: selectedCategory, platform: selectedPlatform } })}
+                className="text-[10px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                Fix in Campaign Manager →
+              </button>
+            </div>
+          )}
         </PanelCard>
       </div>
 
