@@ -1,9 +1,34 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
-import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle } from "lucide-react";
+import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle, ArrowRight } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+
+/* SoV trend data */
+const sovTrend = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  you: Math.round(30 + Math.random() * 10),
+  muscleBlaze: Math.round(35 + Math.random() * 12),
+  on: Math.round(15 + Math.random() * 8),
+  asItIs: Math.round(8 + Math.random() * 6),
+}));
+
+/* 7x24 heatmap */
+const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const heatmapGrid = daysOfWeek.map(day =>
+  Array.from({ length: 24 }, (_, h) => Math.round(Math.random() * 100))
+);
+
+/* Top contested keywords */
+const contestedKeywords = [
+  { keyword: "whey protein 1kg", yourPos: "#3", topComp: "MuscleBlaze", compBidIndex: "1.4x", overlap: 28, yourShare: "28%", action: "Raise bid" },
+  { keyword: "protein powder", yourPos: "#5", topComp: "MuscleBlaze", compBidIndex: "1.6x", overlap: 30, yourShare: "18%", action: "Add to defence" },
+  { keyword: "creatine monohydrate", yourPos: "#4", topComp: "AS-IT-IS", compBidIndex: "1.2x", overlap: 22, yourShare: "19%", action: "Monitor" },
+  { keyword: "pre workout", yourPos: "#2", topComp: "BigMuscles", compBidIndex: "0.9x", overlap: 18, yourShare: "33%", action: "Monitor" },
+  { keyword: "bcaa supplement", yourPos: "#6", topComp: "MuscleBlaze", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
+];
 
 const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
