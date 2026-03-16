@@ -516,6 +516,38 @@ const CampaignView: React.FC = () => {
         </div>
       )}
 
+      {/* Contextual card for shelf-gap */}
+      {g.contextFilter?.type === "shelf-gap" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Shelf gap detected</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            No listing for '{g.contextFilter.params.keyword}' on {g.contextFilter.params.platform}. Recommend creating a sponsored campaign to capture this uncovered search volume.
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] flex gap-0.5">{confidencePips(4)}</span>
+            <button onClick={() => { showUndoToast("Campaign created"); g.setContextFilter(null); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+              Create campaign
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Contextual card for shelf-coverage */}
+      {g.contextFilter?.type === "shelf-coverage" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Shelf coverage gaps — {g.contextFilter.params.category}</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Multiple keyword × platform gaps detected. Recommend creating sponsored campaigns to fill uncovered positions.
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] flex gap-0.5">{confidencePips(3)}</span>
+            <button onClick={() => { showUndoToast("Campaigns queued"); g.setContextFilter(null); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+              Fill gaps
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Contextual card for competitor-content */}
       {g.contextFilter?.type === "competitor-content" && (
         <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>

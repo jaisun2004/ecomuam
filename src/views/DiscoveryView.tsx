@@ -60,36 +60,6 @@ const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: stri
   ],
 };
 
-const forecastsByCategory: Record<string, { sku: string; delta: string; color: string; weeks: number[] }[]> = {
-  "All Categories": [
-    { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
-    { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
-    { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
-    { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
-  ],
-  Protein: [
-    { sku: "Whey 1kg Chocolate", delta: "+18%", color: "bg-primary", weeks: [60, 65, 72, 80] },
-    { sku: "Whey 500g Vanilla", delta: "+12%", color: "bg-sw-green", weeks: [50, 54, 58, 62] },
-    { sku: "Whey Isolate 1kg", delta: "+24%", color: "bg-sw-cyan", weeks: [35, 42, 50, 60] },
-  ],
-  Creatine: [
-    { sku: "Creatine Monohydrate", delta: "-8%", color: "bg-sw-amber", weeks: [75, 72, 68, 65] },
-    { sku: "Creatine HCL 120caps", delta: "+15%", color: "bg-sw-green", weeks: [30, 35, 40, 48] },
-  ],
-  "Pre-Workout": [
-    { sku: "Pre-Workout Citrus", delta: "+47%", color: "bg-sw-cyan", weeks: [40, 55, 70, 90] },
-    { sku: "Pre-Workout Berry", delta: "+22%", color: "bg-sw-purple", weeks: [45, 50, 58, 65] },
-  ],
-  BCAA: [
-    { sku: "BCAA Tropical", delta: "+12%", color: "bg-sw-purple", weeks: [55, 58, 62, 66] },
-    { sku: "EAA Lemon", delta: "+28%", color: "bg-sw-green", weeks: [30, 38, 48, 58] },
-  ],
-  Vitamins: [
-    { sku: "Multi-Vit 60ct", delta: "+5%", color: "bg-sw-amber", weeks: [60, 62, 63, 65] },
-    { sku: "Ashwagandha 120caps", delta: "+38%", color: "bg-sw-green", weeks: [25, 35, 48, 62] },
-  ],
-};
-
 const opportunities = [
   { emoji: "⚡", title: "Creatine Gummies", desc: "61% search growth, <3 sellers on Blinkit, 0 Q-commerce competitors in category", tags: ["BLINKIT GAP", "HIGH IMPACT"], gradient: "from-sw-cyan/20 to-sw-cyan/5" },
   { emoji: "👩", title: "Women's Protein", desc: "44K monthly searches, only 2 SKUs in portfolio targeting this segment explicitly", tags: ["CONTENT GAP", "HIGH IMPACT"], gradient: "from-sw-purple/20 to-sw-purple/5" },
