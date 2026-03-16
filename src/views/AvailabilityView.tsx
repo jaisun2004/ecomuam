@@ -254,12 +254,18 @@ const AvailabilityView: React.FC = () => {
               </div>
               <p className="text-[10px] text-muted-foreground">Only {a.coverage}% coverage ({a.unlisted}/{a.totalDarkstores} stores unlisted)</p>
               <div className="flex items-center gap-2 mt-2">
-                <button onClick={() => setAdPauseStates(p => ({ ...p, [i]: true }))}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    adPauseStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
-                  }`}>
-                  {adPauseStates[i] ? "✓ Campaign Geo-Restricted" : "Pause Ads in Unlisted Areas"}
-                </button>
+                {dedupActive ? (
+                  <span className="font-mono text-[9px] px-2 py-0.5 rounded" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
+                    Campaign action in progress — Campaign Manager
+                  </span>
+                ) : (
+                  <button onClick={() => setAdPauseStates(p => ({ ...p, [i]: true }))}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      adPauseStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
+                    }`}>
+                    {adPauseStates[i] ? "✓ Campaign Geo-Restricted" : "Pause Ads in Unlisted Areas"}
+                  </button>
+                )}
               </div>
             </div>
           ))}

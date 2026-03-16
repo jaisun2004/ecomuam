@@ -193,6 +193,37 @@ const BudgetOptimiserView: React.FC = () => {
           ))}
         </div>
       </PanelCard>
+
+      {/* Guardrail Status Widget */}
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+        <button onClick={() => setGuardrailOpen(!guardrailOpen)} className="w-full p-4 flex items-center justify-between hover:bg-surface-2 transition-colors">
+          <h3 className="text-sm font-medium text-foreground">Active guardrails</h3>
+          {guardrailOpen ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
+        </button>
+        {guardrailOpen && (
+          <div className="px-4 pb-4">
+            <div className="space-y-2">
+              {guardrailStatuses.map((gs) => (
+                <div key={gs.type} className="flex items-center justify-between py-2 border-b border-subtle/50 last:border-b-0">
+                  <span className="text-xs text-foreground">{gs.type}</span>
+                  <div className="flex items-center gap-2">
+                    {gs.tier1 ? (
+                      <span className="flex items-center gap-1 font-mono text-[9px]" style={{ color: "#FF5C5C" }}>🔴 Tier 1 active</span>
+                    ) : gs.tier2 ? (
+                      <span className="flex items-center gap-1 font-mono text-[9px]" style={{ color: "#F5A623" }}>🟡 Tier 2 active</span>
+                    ) : (
+                      <span className="flex items-center gap-1 font-mono text-[9px]" style={{ color: "#2ECF8E" }}>🟢 Clear</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => g.navigateTo("guardrails")} className="text-[11px] font-medium mt-3 inline-block" style={{ color: "#4F7FFF" }}>
+              Edit guardrails →
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

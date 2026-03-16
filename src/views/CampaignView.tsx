@@ -384,9 +384,176 @@ const CampaignView: React.FC = () => {
   const toggleKeyword = (k: string) => setExpandedKeywords(p => ({ ...p, [k]: !p[k] }));
   const toggleCity = (k: string) => setExpandedCities(p => ({ ...p, [k]: !p[k] }));
 
+  const g = useGuardrails();
+  const [selectedDigest, setSelectedDigest] = useState<Record<number, boolean>>({});
+  const [dismissedDigest, setDismissedDigest] = useState<Record<number, boolean>>({});
+  const [undoToast, setUndoToast] = useState<string | null>(null);
+
+  const digestActions = [
+    { id: 0, campaign: "Whey Protein — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
+    { id: 1, campaign: "Q-Commerce Launch Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
+    { id: 2, campaign: "Creatine Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹1.2L Rev", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 3, campaign: "BCAA Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
+    { id: 4, campaign: "Pre-Workout New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
+  ];
+
+  const visibleDigest = digestActions.filter(d => !dismissedDigest[d.id]);
+  const selectedCount = Object.values(selectedDigest).filter(Boolean).length;
+  const pendingCount = visibleDigest.filter(d => !d.blocked && !d.ownedBy).length;
+
+  const tierColor = (tier: number) => {
+    if (tier === 1) return "#FF5C5C";
+    if (tier === 2) return "#F5A623";
+    return "#2ECF8E";
+  };
+
+  const tierBg = (tier: number) => {
+    if (tier === 1) return "rgba(255,92,92,0.12)";
+    if (tier === 2) return "rgba(245,166,35,0.12)";
+    return "rgba(46,207,142,0.12)";
+  };
+
+  const confidencePips = (level: number) => {
+    const colors = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "#555A6E";
+    return Array.from({ length: 5 }, (_, i) => (
+      <span key={i} style={{ color: i < level ? colors : "#333" }}>●</span>
+    ));
+  };
+
+  const showUndoToast = (msg: string) => {
+    setUndoToast(msg);
+    setTimeout(() => setUndoToast(null), 5000);
+  };
+
   return (
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
+
+      {/* Undo toast */}
+      {undoToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl border bg-surface-1 border-subtle shadow-lg flex items-center gap-3"
+          style={{ boxShadow: "0 8px 30px rgba(0,0,0,0.4)" }}>
+          <span className="text-xs text-foreground">{undoToast}</span>
+          <button onClick={() => setUndoToast(null)} className="text-xs font-medium" style={{ color: "#A78BFA" }}>Undo</button>
+        </div>
+      )}
+
+      {/* Insert 1 — Conflict callout banner */}
+      {g.hasActiveTier1() && (
+        <div id="campaign-conflict-banner" className="rounded-xl border p-4" style={{
+          borderLeft: "3px solid #F5A623",
+          backgroundColor: "rgba(245,166,35,0.10)",
+          borderColor: "rgba(245,166,35,0.25)",
+        }}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+                <AlertTriangle size={14} style={{ color: "#F5A623" }} />
+                Tier 1 conflict active — 2 insights blocked
+              </h3>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Creatine Retargeting, Pre-Workout New Users · Est. auto-clearance: {g.estResolutionTime}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#F5A623" }}>
+                Override manually
+              </button>
+              <button onClick={() => g.navigateTo("guardrails")} className="text-[11px] font-medium" style={{ color: "#4F7FFF" }}>
+                View guardrail →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Insert 2 — Today's Action Digest */}
+      <div id="campaign-digest" className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="p-4 flex items-center justify-between border-b border-subtle">
+          <h3 className="text-sm font-medium text-foreground">Today's actions</h3>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(167,139,250,0.15)", color: "#A78BFA" }}>
+              {pendingCount} pending
+            </span>
+            <button
+              onClick={() => { showUndoToast("All safe actions approved"); }}
+              className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}
+            >
+              Approve all safe
+            </button>
+          </div>
+        </div>
+
+        {/* Batch approve bar */}
+        {selectedCount > 0 && (
+          <div className="px-4 py-2 border-b border-subtle flex items-center gap-3" style={{ backgroundColor: "rgba(167,139,250,0.05)" }}>
+            <span className="text-xs text-foreground">{selectedCount} actions selected</span>
+            <button onClick={() => setSelectedDigest({})} className="text-[11px] border rounded-lg px-2 py-1" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>Clear</button>
+            <button onClick={() => { setSelectedDigest({}); showUndoToast(`${selectedCount} actions applied`); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+              Apply selected
+            </button>
+          </div>
+        )}
+
+        {/* Insight rows */}
+        <div className="divide-y divide-subtle/50">
+          {visibleDigest.map((d) => (
+            <div key={d.id} className={`flex items-center gap-3 px-4 py-3 ${d.blocked ? "opacity-[0.45]" : ""}`}
+              style={{ borderLeft: `3px solid ${tierColor(d.tier)}` }}>
+              {!d.blocked && !d.ownedBy && (
+                <input type="checkbox" checked={!!selectedDigest[d.id]}
+                  onChange={() => setSelectedDigest(p => ({ ...p, [d.id]: !p[d.id] }))}
+                  className="w-3.5 h-3.5 rounded accent-primary flex-shrink-0" />
+              )}
+              {(d.blocked || d.ownedBy) && <div className="w-3.5" />}
+              <d.icon size={14} className="text-muted-foreground flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-foreground truncate">{d.campaign}</span>
+                  <span className="text-[11px] text-muted-foreground">· {d.insight}</span>
+                </div>
+                {d.blocked && <p className="text-[10px] text-muted-foreground mt-0.5">Blocked by Tier 1: Availability threshold</p>}
+              </div>
+              <span className="font-mono text-[9px] uppercase tracking-wider px-2 py-0.5 rounded" style={{ backgroundColor: tierBg(d.tier), color: tierColor(d.tier), letterSpacing: "0.08em" }}>
+                {d.tierLabel}
+              </span>
+              <span className="text-[10px] flex gap-0.5 flex-shrink-0">{confidencePips(d.confidence)}</span>
+              <span className="font-mono text-[11px] text-foreground flex-shrink-0">{d.metric}</span>
+
+              {d.ownedBy ? (
+                <button onClick={() => g.navigateTo("budget")}
+                  className="font-mono text-[9px] px-2 py-1 rounded flex-shrink-0 cursor-pointer"
+                  style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
+                  Handled in {d.ownedBy}
+                </button>
+              ) : d.blocked ? (
+                <button disabled className="px-2 py-1 rounded-lg text-[10px] font-medium flex-shrink-0" style={{ backgroundColor: "rgba(85,90,110,0.12)", color: "#555A6E" }}>
+                  Queued
+                </button>
+              ) : d.confidence <= 2 ? (
+                <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                  Review first
+                </button>
+              ) : (
+                <>
+                  <button onClick={() => { setDismissedDigest(p => ({ ...p, [d.id]: true })); showUndoToast(`${d.insight} applied`); }}
+                    className="px-2 py-1.5 rounded-lg text-[10px] font-medium text-white flex-shrink-0" style={{ backgroundColor: "#A78BFA" }}>
+                    Apply
+                  </button>
+                  <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                    Review
+                  </button>
+                </>
+              )}
+              {!d.blocked && (
+                <button onClick={() => setDismissedDigest(p => ({ ...p, [d.id]: true }))} className="text-[10px] flex-shrink-0" style={{ color: "#555A6E" }}>
+                  Dismiss
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
