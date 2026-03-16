@@ -1,7 +1,22 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { Megaphone } from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+
+const searchTrendData = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  volume: Math.round(40000 + Math.random() * 20000),
+}));
+
+const demandForecast = [
+  { category: "Protein", current: 85, forecast: 102 },
+  { category: "Creatine", current: 42, forecast: 38 },
+  { category: "Pre-Workout", current: 55, forecast: 78 },
+  { category: "BCAA", current: 30, forecast: 35 },
+  { category: "Vitamins", current: 48, forecast: 62 },
+];
 
 const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
