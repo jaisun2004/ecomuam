@@ -1,277 +1,200 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { Gauge, ArrowRight, Shield, AlertTriangle, Swords, TrendingUp, DollarSign, Clock, CheckCircle2 } from "lucide-react";
-import ScreenTabs from "@/components/ScreenTabs";
-import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+import { Gauge, ArrowRight, CheckCircle2, Shield, Zap, AlertTriangle, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const getGreeting = () => {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
-};
-
-const formatDate = () => {
-  return new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
-};
-
-const feedItems = [
-  { id: 1, time: "09:42 AM", screen: "Availability", screenColor: "hsl(var(--sw-red))", desc: "Stock < 20% detected for Creatine on Flipkart — Tier 1 hard stop fired", tier: "T1", tierColor: "#FF5C5C", tierBg: "rgba(255,92,92,0.12)", actionable: false, handled: true },
-  { id: 2, time: "09:38 AM", screen: "Campaign Manager", screenColor: "hsl(var(--primary))", desc: "Defense bid increase queued for Whey Protein — Sponsored", tier: "T1", tierColor: "#FF5C5C", tierBg: "rgba(255,92,92,0.12)", actionable: false, handled: false },
-  { id: 3, time: "09:15 AM", screen: "Competitor Hub", screenColor: "hsl(var(--sw-amber))", desc: "MuscleBlaze increased spend +45% MoM — defense action recommended", tier: "T2", tierColor: "#F5A623", tierBg: "rgba(245,166,35,0.12)", actionable: true, handled: false },
-  { id: 4, time: "08:52 AM", screen: "Budget Optimiser", screenColor: "hsl(var(--sw-purple))", desc: "Budget reallocation opportunity: shift ₹50K from Creatine to Whey", tier: "T3", tierColor: "#2ECF8E", tierBg: "rgba(46,207,142,0.12)", actionable: true, handled: false },
-  { id: 5, time: "08:30 AM", screen: "Campaign Manager", screenColor: "hsl(var(--primary))", desc: "Daypart budget shift for Q-Commerce Launch Push — +18% conversion projected", tier: "T3", tierColor: "#2ECF8E", tierBg: "rgba(46,207,142,0.12)", actionable: true, handled: false },
-  { id: 6, time: "08:10 AM", screen: "Pricing", screenColor: "hsl(var(--sw-cyan))", desc: "MuscleBlaze undercut Creatine 250g by 14% on Amazon", tier: "Blocked", tierColor: "#555A6E", tierBg: "rgba(85,90,110,0.12)", actionable: false, handled: false },
+const urgentIssues = [
+  { id: 1, tier: "T1" as const, desc: "Availability below 20% — 4 campaigns paused", source: "Availability", sourceId: "availability", target: "avail-dedup-banner" },
+  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Brand Search campaign", source: "Campaign Manager", sourceId: "campaigns", target: "campaign-conflict-banner" },
+  { id: 3, tier: "T2" as const, desc: "Competitor bidding on 12 brand keywords", source: "Competitor Hub", sourceId: "competitors", target: "defense-insight" },
+  { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift ₹50K", source: "Budget Optimiser", sourceId: "budget" },
+  { id: 5, tier: "T3" as const, desc: "Daypart budget shift projected +18% conversion", source: "Campaign Manager", sourceId: "campaigns", target: "campaign-digest" },
 ];
 
 const approvalItems = [
-  { id: 1, campaign: "BCAA Brand Awareness", insight: "Bid optimisation", confidence: 3, metric: "+0.8x ROAS", screen: "campaigns" },
-  { id: 2, campaign: "Pre-Workout New Users", insight: "Keyword expansion", confidence: 2, metric: "+12K Imp", screen: "campaigns" },
+  { id: 1, icon: "🔍", campaign: "BCAA Brand Awareness", desc: "Raise bid +20% on 6 keywords", confidence: 3 },
+  { id: 2, icon: "📈", campaign: "Pre-Workout New Users", desc: "Expand keyword targeting — 8 new terms", confidence: 2 },
+  { id: 3, icon: "💰", campaign: "Brand Search", desc: "Budget shift ₹15K to evening slots", confidence: 2 },
 ];
 
-const screenStatuses = [
-  { name: "Campaign Manager", id: "campaigns", status: "2 issues", dot: "#FF5C5C" },
-  { name: "Availability", id: "availability", status: "Tier 1 active", dot: "#FF5C5C" },
+const systemRows = [
+  { name: "Campaign Manager", id: "campaigns", status: "Active issue", dot: "#FF5C5C" },
+  { name: "Availability", id: "availability", status: "Active issue", dot: "#FF5C5C" },
   { name: "Pricing", id: "pricing", status: "Clear", dot: "#2ECF8E" },
-  { name: "Competitor Ads Hub", id: "competitors", status: "1 issue", dot: "#F5A623" },
+  { name: "Competitor Ads Hub", id: "competitors", status: "Warning", dot: "#F5A623" },
   { name: "Budget Optimiser", id: "budget", status: "Clear", dot: "#2ECF8E" },
   { name: "Festival Campaigns", id: "festival", status: "Clear", dot: "#2ECF8E" },
+  { name: "Rule Engine", id: "guardrails", status: "Clear", dot: "#2ECF8E", extra: "Last run: 4 min ago" },
+  { name: "Guardrails", id: "guardrails", status: "Warning", dot: "#F5A623", extra: "2 active locks" },
 ];
 
-const quickStats = [
-  { label: "Active Campaigns", value: "12", ring: "hsl(var(--sw-purple))", delta: null },
-  { label: "Avg ROAS Today", value: "4.2x", ring: "hsl(var(--sw-green))", delta: "+0.3x vs yesterday" },
-  { label: "Total Spend Today", value: "₹1.8L", ring: "hsl(var(--sw-amber))", delta: null },
-  { label: "Pending Actions", value: "5", ring: "hsl(var(--sw-amber))", delta: null },
-];
-
-// Analytics mock data
-const actionTrend = Array.from({ length: 30 }, (_, i) => ({
-  day: `Mar ${i + 1}`,
-  applied: Math.floor(Math.random() * 8 + 2),
-  blocked: Math.floor(Math.random() * 3),
-  dismissed: Math.floor(Math.random() * 4),
-}));
-
-const screenActivity = [
-  { name: "Campaign Mgr", actions: 42 },
-  { name: "Availability", actions: 18 },
-  { name: "Competitor Hub", actions: 24 },
-  { name: "Budget Opt", actions: 15 },
-  { name: "Pricing", actions: 9 },
-  { name: "Festival", actions: 6 },
-];
+const tierStyle = (tier: string) => {
+  if (tier === "T1") return { bg: "rgba(255,92,92,0.12)", color: "#FF5C5C" };
+  if (tier === "T2") return { bg: "rgba(245,166,35,0.12)", color: "#F5A623" };
+  return { bg: "rgba(46,207,142,0.12)", color: "#2ECF8E" };
+};
 
 const CentralCockpitView: React.FC = () => {
   const g = useGuardrails();
-  const [tab, setTab] = useState("overview");
-  const [feedActions, setFeedActions] = useState<Record<number, boolean>>({});
+  const { toast } = useToast();
+  const [now, setNow] = useState(new Date());
+  const [approvedIds, setApprovedIds] = useState<Set<number>>(new Set());
 
-  const hasIssues = g.hasActiveTier1();
-  const tier1Count = g.hardStops.filter(r => r.enabled && r.lastTriggered).length;
-  const tier2Count = g.strategicLocks.filter(l => l.enabled).length;
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const hasIssues = urgentIssues.length > 0;
+  const visibleApprovals = approvalItems.filter(a => !approvedIds.has(a.id));
+
+  const handleApprove = (id: number) => {
+    setApprovedIds(prev => new Set(prev).add(id));
+    const item = approvalItems.find(a => a.id === id);
+    toast({
+      title: "Action approved",
+      description: `${item?.campaign} — ${item?.desc}`,
+      action: <button onClick={() => setApprovedIds(prev => { const s = new Set(prev); s.delete(id); return s; })} className="text-xs font-medium" style={{ color: "#A78BFA" }}>Undo</button>,
+      duration: 5000,
+    });
+  };
 
   const confidencePips = (level: number) => {
-    const colors = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "#555A6E";
+    const c = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "#555A6E";
     return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} style={{ color: i < level ? colors : "#333" }}>●</span>
+      <span key={i} style={{ color: i < level ? c : "#333" }}>●</span>
     ));
   };
 
+  const dateStr = now.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const timeStr = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-5 pb-20 max-w-4xl">
       {/* Header */}
-      <div>
+      <div className="flex items-center justify-between">
         <h1 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
           <Gauge size={20} className="text-primary" /> Central Cockpit
         </h1>
-        <p className="text-xs text-muted-foreground mt-1">
-          {formatDate()} · {getGreeting()} · {tier1Count > 0 ? `${tier1Count} Tier 1 stops active · ` : ""}{approvalItems.length + 3} actions need your approval
-        </p>
+        <div className="text-right">
+          <p className="text-xs text-foreground font-mono">{dateStr} · {timeStr}</p>
+          <p className="text-[10px] text-muted-foreground">Updated 4 min ago</p>
+        </div>
       </div>
 
-      <ScreenTabs activeTab={tab} onTabChange={setTab} />
-
-      {tab === "overview" ? (
-        <div className="grid grid-cols-12 gap-5">
-          {/* Left column — 65% */}
-          <div className="col-span-8 space-y-5">
-            {/* Live Feed */}
-            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-              <div className="p-4 flex items-center justify-between border-b border-subtle">
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
-                  Live feed
-                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: hasIssues ? "#FF5C5C" : "#2ECF8E" }} />
-                </h3>
-              </div>
-              <div className="divide-y divide-subtle/50">
-                {feedItems.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3 px-4 py-3" style={{ borderLeft: `3px solid ${item.tierColor}` }}>
-                    <span className="font-mono text-[10px] text-muted-foreground flex-shrink-0 w-16">{item.time}</span>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(79,127,255,0.1)", color: item.screenColor }}>
-                      {item.screen}
-                    </span>
-                    <span className="text-[12px] text-foreground flex-1 min-w-0 truncate">{item.desc}</span>
-                    <span className="font-mono text-[9px] uppercase px-2 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: item.tierBg, color: item.tierColor, letterSpacing: "0.08em" }}>
-                      {item.tier}
-                    </span>
-                    {item.handled ? (
-                      <span className="font-mono text-[9px] px-2 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
-                        Handled
-                      </span>
-                    ) : item.actionable ? (
-                      <button
-                        onClick={() => setFeedActions(p => ({ ...p, [item.id]: true }))}
-                        className="px-2 py-1 rounded-lg text-[10px] font-medium flex-shrink-0"
-                        style={feedActions[item.id] ? { backgroundColor: "rgba(46,207,142,0.12)", color: "#2ECF8E" } : { backgroundColor: "rgba(167,139,250,0.15)", color: "#A78BFA" }}
-                      >
-                        {feedActions[item.id] ? "✓ Done" : "Act"}
-                      </button>
-                    ) : null}
-                    <button onClick={() => g.navigateTo(item.screen === "Campaign Manager" ? "campaigns" : item.screen === "Availability" ? "availability" : item.screen === "Competitor Hub" ? "competitors" : item.screen === "Budget Optimiser" ? "budget" : "pricing")}
-                      className="text-muted-foreground hover:text-foreground flex-shrink-0">
-                      <ArrowRight size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="px-4 py-2 border-t border-subtle">
-                <span className="text-[9px] text-muted-foreground font-mono">Last refreshed: just now</span>
-              </div>
+      {/* Card 1 — Urgent */}
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="p-4 flex items-center justify-between border-b border-subtle">
+          <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{
+              backgroundColor: hasIssues ? "#FF5C5C" : "#2ECF8E",
+              ...(hasIssues ? { animation: "pulse 2s infinite" } : {})
+            }} />
+            Urgent
+          </h3>
+          <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{
+            backgroundColor: hasIssues ? "rgba(255,92,92,0.12)" : "rgba(46,207,142,0.12)",
+            color: hasIssues ? "#FF5C5C" : "#2ECF8E"
+          }}>
+            {urgentIssues.length}
+          </span>
+        </div>
+        {urgentIssues.length === 0 ? (
+          <div className="p-8 text-center">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <span className="w-2 h-2 rounded-full bg-sw-green" />
+              <span className="text-xs">All clear — no active issues</span>
             </div>
-
-            {/* Pending Approvals */}
-            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-              <div className="p-4 flex items-center justify-between border-b border-subtle">
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
-                  Needs your approval
-                  <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(167,139,250,0.15)", color: "#A78BFA" }}>
-                    {approvalItems.length}
+            <p className="text-[10px] text-muted-foreground mt-1">Last checked: just now</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-subtle/50">
+            {urgentIssues.slice(0, 5).map(issue => {
+              const ts = tierStyle(issue.tier);
+              return (
+                <div key={issue.id} className="flex items-center gap-3 px-4 py-3">
+                  <span className="font-mono text-[9px] uppercase tracking-wider px-2 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: ts.bg, color: ts.color }}>
+                    {issue.tier}
                   </span>
-                </h3>
-                <button className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
-                  Approve all safe
+                  <span className="text-[12px] text-foreground flex-1">{issue.desc}</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(79,127,255,0.1)", color: "#8B8FA8" }}>
+                    {issue.source}
+                  </span>
+                  <button onClick={() => g.navigateTo(issue.sourceId, issue.target)} className="text-[11px] font-medium flex items-center gap-1 flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                    → View
+                  </button>
+                </div>
+              );
+            })}
+            {urgentIssues.length > 5 && (
+              <div className="px-4 py-2">
+                <button className="text-[11px] font-medium" style={{ color: "#4F7FFF" }}>View all {urgentIssues.length} issues →</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Card 2 — Pending approval */}
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="p-4 flex items-center justify-between border-b border-subtle">
+          <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+            Pending approval
+          </h3>
+          <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{
+            backgroundColor: "rgba(167,139,250,0.15)", color: "#A78BFA"
+          }}>
+            {visibleApprovals.length}
+          </span>
+        </div>
+        {visibleApprovals.length === 0 ? (
+          <div className="p-8 text-center">
+            <CheckCircle2 size={20} className="text-muted-foreground mx-auto mb-2" />
+            <p className="text-xs text-muted-foreground">Nothing pending — all insights are auto-approved or awaiting triggers</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-subtle/50">
+            {visibleApprovals.slice(0, 5).map(item => (
+              <div key={item.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="text-sm flex-shrink-0">{item.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-medium text-foreground">{item.campaign}</span>
+                  <span className="text-[11px] text-muted-foreground ml-1">— {item.desc}</span>
+                </div>
+                <span className="text-[10px] flex gap-0.5 flex-shrink-0">{confidencePips(item.confidence)}</span>
+                <button onClick={() => handleApprove(item.id)} className="px-2.5 py-1 rounded-lg text-[10px] font-medium text-white flex-shrink-0" style={{ backgroundColor: "#A78BFA" }}>
+                  Approve
+                </button>
+                <button onClick={() => g.navigateTo("campaigns")} className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                  Review
                 </button>
               </div>
-              {approvalItems.length === 0 ? (
-                <div className="p-8 text-center">
-                  <CheckCircle2 size={24} className="text-muted-foreground mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground">All clear — no pending approvals</p>
-                </div>
-              ) : (
-                <div className="divide-y divide-subtle/50">
-                  {approvalItems.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3 px-4 py-3">
-                      <div className="flex-1">
-                        <span className="text-xs font-medium text-foreground">{item.campaign}</span>
-                        <span className="text-[11px] text-muted-foreground ml-2">· {item.insight}</span>
-                      </div>
-                      <span className="text-[10px] flex gap-0.5 flex-shrink-0">{confidencePips(item.confidence)}</span>
-                      <span className="font-mono text-[11px] text-foreground flex-shrink-0">{item.metric}</span>
-                      <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
-                        Review
-                      </button>
-                      <button onClick={() => g.navigateTo(item.screen)} className="text-muted-foreground hover:text-foreground flex-shrink-0">
-                        <ArrowRight size={12} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            ))}
           </div>
+        )}
+      </div>
 
-          {/* Right column — 35% */}
-          <div className="col-span-4 space-y-5">
-            {/* System Status */}
-            <div className="rounded-xl border border-subtle bg-surface-1 p-4">
-              <h3 className="text-sm font-medium text-foreground mb-3">System status</h3>
-              <div className="space-y-2">
-                {screenStatuses.map((s) => (
-                  <div key={s.name} className="flex items-center justify-between py-1.5">
-                    <span className="text-xs text-foreground">{s.name}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: s.dot }} />
-                      <span className="text-[10px] font-mono text-muted-foreground">{s.status}</span>
-                      <button onClick={() => g.navigateTo(s.id)} className="text-muted-foreground hover:text-foreground">
-                        <ArrowRight size={10} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+      {/* Card 3 — System health */}
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="p-4 border-b border-subtle">
+          <h3 className="text-sm font-medium text-foreground">System health</h3>
+        </div>
+        <div className="divide-y divide-subtle/50">
+          {systemRows.map((row, i) => (
+            <div key={`${row.name}-${i}`} className="flex items-center justify-between px-4 py-2.5">
+              <span className="text-xs text-foreground">{row.name}</span>
+              <div className="flex items-center gap-3">
+                {row.extra && <span className="text-[9px] font-mono text-muted-foreground">{row.extra}</span>}
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: row.dot }} />
+                <span className="text-[10px] font-mono text-muted-foreground w-20">{row.status}</span>
+                <button onClick={() => g.navigateTo(row.id)} className="text-muted-foreground hover:text-foreground flex-shrink-0">
+                  <ArrowRight size={12} />
+                </button>
               </div>
             </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              {quickStats.map((s) => (
-                <div key={s.label} className="rounded-xl border border-subtle bg-surface-1 p-3">
-                  <p className="text-[10px] text-muted-foreground">{s.label}</p>
-                  <p className="font-mono text-lg font-bold text-foreground mt-1">{s.value}</p>
-                  {s.delta && <p className="text-[9px] text-sw-green mt-0.5">{s.delta}</p>}
-                </div>
-              ))}
-            </div>
-
-            {/* Guardrail Health */}
-            <div className="rounded-xl border border-subtle bg-surface-1 p-4">
-              <h3 className="text-sm font-medium text-foreground mb-3">Guardrail health</h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-foreground">Tier 1 rules active</span>
-                  <span className="font-mono text-xs" style={{ color: tier1Count > 0 ? "#FF5C5C" : "#2ECF8E" }}>{tier1Count}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-foreground">Tier 2 locks active</span>
-                  <span className="font-mono text-xs" style={{ color: tier2Count > 0 ? "#F5A623" : "#2ECF8E" }}>{tier2Count}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-foreground">Velocity limits</span>
-                  <span className="font-mono text-xs text-sw-green">OK</span>
-                </div>
-              </div>
-              <button onClick={() => g.navigateTo("guardrails")} className="text-[11px] font-medium mt-3 inline-block" style={{ color: "#4F7FFF" }}>
-                Edit guardrails →
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
-      ) : (
-        /* Analytics tab */
-        <div className="space-y-5">
-          <PanelCard title="Action Volume — 30 Days" badge="Applied vs Blocked" badgeColor="accent" delay={0}>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={actionTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
-                <Bar dataKey="applied" fill="hsl(160,70%,48%)" radius={[4, 4, 0, 0]} name="Applied" />
-                <Bar dataKey="blocked" fill="hsl(0,76%,57%)" radius={[4, 4, 0, 0]} name="Blocked" opacity={0.7} />
-                <Bar dataKey="dismissed" fill="hsl(225,10%,30%)" radius={[4, 4, 0, 0]} name="Dismissed" opacity={0.5} />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> Applied</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-red" /> Blocked</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Dismissed</span>
-            </div>
-          </PanelCard>
-
-          <PanelCard title="Actions by Screen" badge="Last 30 days" badgeColor="purple" delay={0.1}>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={screenActivity} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={false} vertical={true} />
-                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} width={100} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
-                <Bar dataKey="actions" fill="hsl(228,90%,64%)" radius={[0, 4, 4, 0]} name="Actions" />
-              </BarChart>
-            </ResponsiveContainer>
-          </PanelCard>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -360,65 +360,148 @@ const AvailabilityView: React.FC = () => {
       </PanelCard>
       </>) : (
         /* Analytics tab */
-        <div className="space-y-5">
-          <PanelCard title="Availability Score — 30 Days" badge="Trend" badgeColor="accent" delay={0}>
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={availScoreTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
-                <ReferenceLine y={20} stroke="hsl(0,76%,57%)" strokeDasharray="5 5" label={{ value: "20% threshold", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
-                <Line type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Availability %" />
-              </LineChart>
-            </ResponsiveContainer>
-          </PanelCard>
+        <AvailabilityAnalytics g={g} />
+      )}
+    </div>
+  );
+};
 
-          <PanelCard title="SKU Availability Heatmap" badge="30 Days" badgeColor="red" delay={0.1}>
-            <div className="overflow-x-auto">
-              <div className="flex flex-col gap-1">
-                {skuHeatmapData.map((row) => (
-                  <div key={row.sku} className="flex items-center gap-1">
-                    <span className="text-[10px] text-foreground w-20 flex-shrink-0">{row.sku}</span>
-                    <div className="flex gap-px">
-                      {row.days.map((val, di) => (
-                        <div key={di} className="w-3 h-3 rounded-sm" style={{
-                          backgroundColor: val >= 80 ? "rgba(46,207,142,0.7)" : val >= 50 ? "rgba(245,166,35,0.5)" : val >= 20 ? "rgba(255,92,92,0.4)" : "rgba(255,92,92,0.7)"
-                        }} title={`Day ${di + 1}: ${val}%`} />
-                      ))}
-                    </div>
-                  </div>
+// Extracted analytics component with enhanced heatmap
+const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> = ({ g }) => {
+  const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
+
+  const skuNames = ["Whey 1kg", "Whey 500g", "Creatine", "BCAA", "Pre-Workout", "Multi-Vit"];
+  const heatmapData = skuNames.map(sku => ({
+    sku,
+    days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
+  }));
+
+  const cellColor = (val: number) => {
+    if (val <= 20) return "rgba(255,92,92,0.7)";
+    if (val <= 50) return "rgba(245,166,35,0.5)";
+    return "rgba(46,207,142,0.5)";
+  };
+
+  const affectedCampaigns = ["Whey Protein — Sponsored", "Q-Commerce Launch Push"];
+  const tier2Locks = ["Manual pause — Creatine Retargeting"];
+
+  return (
+    <div className="space-y-5">
+      {/* Enhanced heatmap */}
+      <PanelCard title="Availability by SKU Over Time" badge="30 Days" badgeColor="red" delay={0}>
+        <div className="relative">
+          <div className="overflow-x-auto">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground w-20 flex-shrink-0" />
+                {Array.from({ length: 30 }, (_, i) => (
+                  <span key={i} className="text-[7px] font-mono text-muted-foreground w-4 text-center flex-shrink-0">{i + 1}</span>
                 ))}
               </div>
-              <div className="flex items-center gap-3 mt-3 text-[9px] text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(46,207,142,0.7)" }} /> ≥80%</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(245,166,35,0.5)" }} /> 50-79%</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(255,92,92,0.4)" }} /> 20-49%</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(255,92,92,0.7)" }} /> &lt;20%</span>
-              </div>
+              {heatmapData.map((row) => (
+                <div key={row.sku} className="flex items-center gap-1">
+                  <span className="text-[10px] text-foreground w-20 flex-shrink-0">{row.sku}</span>
+                  <div className="flex gap-px">
+                    {row.days.map((val, di) => (
+                      <div
+                        key={di}
+                        className={`w-4 h-4 rounded-sm ${val <= 50 ? "cursor-pointer hover:ring-1 hover:ring-primary" : ""}`}
+                        style={{ backgroundColor: cellColor(val) }}
+                        title={`${row.sku} · Mar ${di + 1} · ${val}%`}
+                        onClick={() => {
+                          if (val <= 50) setSelectedCell({ sku: row.sku, day: di + 1, value: val });
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          </PanelCard>
-
-          <div className="rounded-xl border border-subtle bg-surface-1 p-5">
-            <h3 className="text-sm font-medium text-foreground mb-1">Stockout Impact Estimate</h3>
-            <p className="text-[11px] text-muted-foreground mb-3">Estimated revenue lost to out-of-stock days in the last 30 days</p>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-                <p className="font-mono text-2xl font-bold text-sw-red">₹8.4L</p>
-                <p className="text-[10px] text-muted-foreground mt-1">Total Lost Revenue</p>
-              </div>
-              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-                <p className="font-mono text-2xl font-bold text-sw-amber">33</p>
-                <p className="text-[10px] text-muted-foreground mt-1">Total OOS Days</p>
-              </div>
-              <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-                <p className="font-mono text-2xl font-bold text-foreground">₹25K</p>
-                <p className="text-[10px] text-muted-foreground mt-1">Avg Daily Loss</p>
-              </div>
+            <div className="flex items-center gap-3 mt-3 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(255,92,92,0.7)" }} /> 0-20%</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(245,166,35,0.5)" }} /> 20-50%</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(46,207,142,0.5)" }} /> 50-100%</span>
+              <span className="text-[9px] text-muted-foreground ml-2">Click red/amber cells for actions</span>
             </div>
           </div>
+
+          {/* Slide-over panel */}
+          {selectedCell && (
+            <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-10 overflow-hidden">
+              <div className="p-4 border-b border-subtle flex items-center justify-between">
+                <h4 className="text-sm font-medium text-foreground">Action for {selectedCell.sku} — Mar {selectedCell.day}</h4>
+                <button onClick={() => setSelectedCell(null)} className="text-muted-foreground hover:text-foreground">✕</button>
+              </div>
+              <div className="p-4 space-y-3">
+                <div>
+                  <p className="text-[10px] text-muted-foreground">Availability</p>
+                  <p className="font-mono text-lg font-bold" style={{ color: selectedCell.value <= 20 ? "#FF5C5C" : "#F5A623" }}>{selectedCell.value}%</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">Affected Campaigns</p>
+                  {affectedCampaigns.map(c => (
+                    <p key={c} className="text-xs text-foreground">• {c}</p>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">Active Tier 2 Locks</p>
+                  {tier2Locks.map(l => (
+                    <p key={l} className="text-xs text-sw-amber">• {l}</p>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">Recommended Action</p>
+                  <p className="text-xs text-foreground">Pause campaigns in low-stock areas or reduce bids to conserve budget.</p>
+                </div>
+                <button
+                  onClick={() => {
+                    g.navigateWithContext("campaigns", "campaign-digest", {
+                      type: "availability",
+                      params: { sku: selectedCell.sku }
+                    });
+                    setSelectedCell(null);
+                  }}
+                  className="w-full px-3 py-2 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#4F7FFF" }}>
+                  View in Campaign Manager →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </PanelCard>
+
+      {/* Existing analytics content */}
+      <PanelCard title="Availability Score — 30 Days" badge="Trend" badgeColor="accent" delay={0.1}>
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={availScoreTrend}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+            <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+            <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
+            <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+            <ReferenceLine y={20} stroke="hsl(0,76%,57%)" strokeDasharray="5 5" label={{ value: "20% threshold", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
+            <Line type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Availability %" />
+          </LineChart>
+        </ResponsiveContainer>
+      </PanelCard>
+
+      <div className="rounded-xl border border-subtle bg-surface-1 p-5">
+        <h3 className="text-sm font-medium text-foreground mb-1">Stockout Impact Estimate</h3>
+        <p className="text-[11px] text-muted-foreground mb-3">Estimated revenue lost to out-of-stock days in the last 30 days</p>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+            <p className="font-mono text-2xl font-bold text-sw-red">₹8.4L</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Total Lost Revenue</p>
+          </div>
+          <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+            <p className="font-mono text-2xl font-bold text-sw-amber">33</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Total OOS Days</p>
+          </div>
+          <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
+            <p className="font-mono text-2xl font-bold text-foreground">₹25K</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Avg Daily Loss</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

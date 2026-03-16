@@ -466,6 +466,69 @@ const CampaignView: React.FC = () => {
       )}
 
       {tab === "overview" ? (<>
+
+      {/* Context filter chip bar */}
+      {g.contextFilter && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/5 border border-primary/20">
+          <span className="text-[11px] text-foreground">
+            Filtered: {g.contextFilter.type === "availability" ? `Availability · ${g.contextFilter.params.sku || ""}` :
+              g.contextFilter.type === "sos-retailer" ? `${g.contextFilter.params.platform} campaigns` :
+              g.contextFilter.type === "defense" ? `Defense · ${g.contextFilter.params.keyword || ""}` :
+              g.contextFilter.type === "content-audit" ? `Content Audit · ${g.contextFilter.params.sku || ""}` :
+              g.contextFilter.type === "search-listing" ? `Search Listing · ${g.contextFilter.params.sku || ""}` :
+              g.contextFilter.type === "competitor-content" ? `Competitor content · ${g.contextFilter.params.competitor || ""}` :
+              g.contextFilter.type === "subcategory" ? `Subcategory · ${g.contextFilter.params.subcategory || ""}` :
+              g.contextFilter.type}
+          </span>
+          <button onClick={() => g.setContextFilter(null)} className="text-[10px] font-medium flex items-center gap-0.5" style={{ color: "#8B8FA8" }}>
+            <X size={10} /> Clear filter
+          </button>
+        </div>
+      )}
+
+      {/* Contextual insight card for content-audit */}
+      {g.contextFilter?.type === "content-audit" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Content action — {g.contextFilter.params.sku}</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Content score {g.contextFilter.params.score}/100. Weak: {g.contextFilter.params.issues?.replace(/,/g, ", ")}. 
+            Recommended: increase bids on this SKU to defend visibility while content is being fixed.
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] flex gap-0.5">{confidencePips(4)}</span>
+            <button onClick={() => { showUndoToast("Bid boost applied"); g.setContextFilter(null); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+              Apply bid boost
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Contextual card for search-listing */}
+      {g.contextFilter?.type === "search-listing" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Keyword visibility low for {g.contextFilter.params.sku}</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Keywords: {g.contextFilter.params.keywords?.replace(/,/g, ", ")}
+          </p>
+          <button onClick={() => { showUndoToast("Bid increase applied"); g.setContextFilter(null); }} className="mt-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+            Increase bids on these keywords
+          </button>
+        </div>
+      )}
+
+      {/* Contextual card for competitor-content */}
+      {g.contextFilter?.type === "competitor-content" && (
+        <div className="rounded-xl border p-4" style={{ borderLeft: "3px solid #4F7FFF", backgroundColor: "rgba(79,127,255,0.06)", borderColor: "rgba(79,127,255,0.2)" }}>
+          <h4 className="text-sm font-medium text-foreground">Competitor {g.contextFilter.params.competitor} updated content</h4>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Defensive bid response recommended for affected keywords.
+          </p>
+          <button onClick={() => { showUndoToast("Defensive bid response applied"); g.setContextFilter(null); }} className="mt-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+            Defensive bid response
+          </button>
+        </div>
+      )}
+
       {/* Insert 1 — Conflict callout banner */}
       {g.hasActiveTier1() && (
         <div id="campaign-conflict-banner" className="rounded-xl border p-4" style={{

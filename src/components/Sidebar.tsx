@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -32,6 +32,13 @@ const navSections = [
     items: [
       { id: "budget", icon: Zap, label: "Budget Optimiser", notify: false },
       { id: "offline", icon: Tv, label: "Offline Ads", notify: false },
+    ],
+  },
+  {
+    label: "INTELLIGENCE",
+    items: [
+      { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
+      { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
     ],
   },
   {
