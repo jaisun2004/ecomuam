@@ -3,7 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import AIBar from "@/components/AIBar";
-import ShelfView from "@/views/ShelfView";
+import CentralCockpitView from "@/views/CentralCockpitView";
 import CampaignView from "@/views/CampaignView";
 import DiscoveryView from "@/views/DiscoveryView";
 import ReportsView from "@/views/ReportsView";
@@ -19,7 +19,7 @@ import GuardrailsView from "@/views/GuardrailsView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
-  shelf: ShelfView,
+  cockpit: CentralCockpitView,
   campaigns: CampaignView,
   discovery: DiscoveryView,
   reports: ReportsView,
@@ -35,7 +35,7 @@ const views: Record<string, React.FC> = {
 };
 
 const IndexInner = () => {
-  const [active, setActive] = useState("shelf");
+  const [active, setActive] = useState("cockpit");
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [scrollTarget, setScrollTarget] = useState<string | null>(null);
   const g = useGuardrails();
@@ -45,12 +45,21 @@ const IndexInner = () => {
     if (target) {
       setScrollTarget(target);
       setTimeout(() => {
-        const el = document.getElementById(target);
+        // Try by ID first
+        let el = document.getElementById(target);
+        // Try by data-insight-type attribute
+        if (!el && target === "defense-insight") {
+          el = document.querySelector('[data-insight-type="defense"]') as HTMLElement;
+        }
+        // Fallback targets
+        if (!el && target === "campaign-conflict-banner") {
+          el = document.getElementById("campaign-digest");
+        }
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
           el.style.boxShadow = "0 0 0 2px #4F7FFF";
           el.style.transition = "box-shadow 1s";
-          setTimeout(() => { el.style.boxShadow = "none"; }, 1000);
+          setTimeout(() => { el!.style.boxShadow = "none"; }, 1000);
         }
         setScrollTarget(null);
       }, 300);
@@ -61,7 +70,7 @@ const IndexInner = () => {
     g.setNavigateTo(handleNavigate);
   }, [handleNavigate]);
 
-  const View = views[active] || ShelfView;
+  const View = views[active] || CentralCockpitView;
   const sidebarWidth = sidebarExpanded ? 220 : 68;
 
   return (

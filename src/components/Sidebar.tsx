@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
 
 const navSections = [
   {
     label: "PLANNING",
     items: [
-      { id: "shelf", icon: LayoutGrid, label: "Digital Shelf", notify: false },
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
       { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
     ],
@@ -50,6 +51,54 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleExpand }) => {
+  const renderItem = (item: typeof cockpitItem, isCockpit = false) => {
+    const Icon = item.icon;
+    const isActive = active === item.id;
+
+    if (expanded) {
+      return (
+        <button
+          key={item.id}
+          onClick={() => onChange(item.id)}
+          className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 flex-shrink-0 text-left ${
+            isActive
+              ? "bg-primary/15 text-primary"
+              : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+          }`}
+        >
+          <Icon size={16} className="flex-shrink-0" />
+          <span className={`text-[12px] font-medium truncate ${isCockpit && !isActive ? "text-foreground/80" : ""}`}>{item.label}</span>
+          {item.notify && (
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
+          )}
+        </button>
+      );
+    }
+
+    return (
+      <Tooltip key={item.id}>
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => onChange(item.id)}
+            className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
+              isActive
+                ? "bg-primary/20 text-primary accent-glow"
+                : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+            }`}
+          >
+            <Icon size={18} />
+            {item.notify && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive" />
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
+          {item.label}
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
+
   return (
     <div
       className={`fixed left-0 top-0 bottom-0 bg-background border-r border-subtle flex flex-col py-4 z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
@@ -60,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
       <div className={`flex items-center mb-4 flex-shrink-0 ${expanded ? "px-4 justify-between" : "justify-center"}`}>
         <div
           className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center accent-glow cursor-pointer flex-shrink-0"
-          onClick={() => onChange("shelf")}
+          onClick={() => onChange("cockpit")}
         >
           <span className="font-display font-bold text-primary-foreground text-sm">SW</span>
         </div>
@@ -81,6 +130,10 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
       {/* Navigation */}
       <div className={`flex-1 flex flex-col gap-0.5 ${expanded ? "px-3" : "items-center"}`}>
+        {/* Central Cockpit — standalone top-level item */}
+        {renderItem(cockpitItem, true)}
+        <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
+
         {navSections.map((section, si) => (
           <React.Fragment key={section.label}>
             {si > 0 && (
@@ -106,53 +159,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             )}
 
             {/* Items */}
-            {section.items.map((item) => {
-              const Icon = item.icon;
-              const isActive = active === item.id;
-
-              if (expanded) {
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => onChange(item.id)}
-                    className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 flex-shrink-0 text-left ${
-                      isActive
-                        ? "bg-primary/15 text-primary"
-                        : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
-                    }`}
-                  >
-                    <Icon size={16} className="flex-shrink-0" />
-                    <span className="text-[12px] font-medium truncate">{item.label}</span>
-                    {item.notify && (
-                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
-                    )}
-                  </button>
-                );
-              }
-
-              return (
-                <Tooltip key={item.id}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => onChange(item.id)}
-                      className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
-                        isActive
-                          ? "bg-primary/20 text-primary accent-glow"
-                          : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
-                      }`}
-                    >
-                      <Icon size={18} />
-                      {item.notify && (
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive" />
-                      )}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
-                    {item.label}
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
+            {section.items.map((item) => renderItem(item))}
           </React.Fragment>
         ))}
       </div>
