@@ -938,6 +938,57 @@ const CampaignView: React.FC = () => {
           </div>
         </div>
       </div>
+      </>) : (
+        /* Analytics tab */
+        <div className="space-y-5">
+          <PanelCard title="Spend vs ROAS — 30 Day Trend" badge="Dual Axis" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={spendRoasTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis yAxisId="spend" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="roas" orientation="right" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹K)" />
+                <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-amber opacity-50" /> Spend</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> ROAS</span>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Action History Log" badge="Last 30 days" badgeColor="purple" delay={0.1}>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">Timestamp</th>
+                  <th className="text-left py-2 font-normal">Action</th>
+                  <th className="text-left py-2 font-normal">Campaign</th>
+                  <th className="text-right py-2 font-normal">ROAS Before</th>
+                  <th className="text-right py-2 font-normal">ROAS After</th>
+                  <th className="text-right py-2 font-normal">Trigger</th>
+                </tr>
+              </thead>
+              <tbody>
+                {actionHistory.map((a, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 font-mono text-muted-foreground">{a.time}</td>
+                    <td className="py-2.5 text-foreground">{a.action}</td>
+                    <td className="py-2.5 text-foreground">{a.campaign}</td>
+                    <td className="py-2.5 text-right font-mono text-muted-foreground">{a.roasBefore}</td>
+                    <td className="py-2.5 text-right font-mono text-sw-green">{a.roasAfter}</td>
+                    <td className="py-2.5 text-right">
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${a.trigger === "Auto" ? "bg-sw-purple-dim text-sw-purple" : "bg-surface-3 text-muted-foreground"}`}>{a.trigger}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };
