@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
+import ScreenTabs from "@/components/ScreenTabs";
 import { Tv, CheckCircle2, TrendingUp, MapPin, Megaphone } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+
+const channelPerformance = [
+  { channel: "Gym Partnerships", roi: 3.2, reach: 240 },
+  { channel: "Metro/Transit", roi: 2.8, reach: 1800 },
+  { channel: "Influencer Events", roi: 4.1, reach: 200 },
+  { channel: "Podcast Sponsorships", roi: 5.2, reach: 800 },
+];
 
 const onlineHealthSummary = {
   overallROAS: "4.2x",
