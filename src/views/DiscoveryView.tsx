@@ -103,6 +103,50 @@ const poachingHistory = [
   { keyword: "shelfwise protein", competitor: "ON", platform: "Flipkart", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
+const shelfCoverageData: Record<string, {
+  kw: string;
+  Amazon: "sponsored" | "organic" | "none";
+  Flipkart: "sponsored" | "organic" | "none";
+  Blinkit: "sponsored" | "organic" | "none";
+  Zepto: "sponsored" | "organic" | "none";
+  Instamart: "sponsored" | "organic" | "none";
+}[]> = {
+  "All Categories": [
+    { kw: "pre workout citrus", Amazon: "organic", Flipkart: "none", Blinkit: "sponsored", Zepto: "none", Instamart: "none" },
+    { kw: "women protein shake", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "creatine gummies", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "sponsored", Instamart: "none" },
+    { kw: "whey isolate zero sugar", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "organic" },
+    { kw: "electrolyte sachets", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "vegan protein bar", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "gym supplement combo", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  Protein: [
+    { kw: "women protein shake", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "vegan protein bar", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "whey isolate zero sugar", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "organic" },
+    { kw: "whey protein 2kg value pack", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "organic", Zepto: "none", Instamart: "none" },
+  ],
+  Creatine: [
+    { kw: "creatine gummies", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "sponsored", Instamart: "none" },
+    { kw: "creatine for women", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "creatine hcl", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  "Pre-Workout": [
+    { kw: "pre workout citrus", Amazon: "organic", Flipkart: "none", Blinkit: "sponsored", Zepto: "none", Instamart: "none" },
+    { kw: "pre workout caffeine free", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "pre workout pump formula", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  BCAA: [
+    { kw: "bcaa intra workout", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "eaa supplement", Amazon: "organic", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+  Vitamins: [
+    { kw: "electrolyte sachets", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "ashwagandha ksm 66", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "organic", Instamart: "none" },
+    { kw: "daily multivitamin men", Amazon: "sponsored", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+  ],
+};
+
 const DiscoveryView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
@@ -113,7 +157,23 @@ const DiscoveryView: React.FC = () => {
   const trendingKws = (trendingKwsByCategory[selectedCategory] || trendingKwsByCategory["All Categories"])
     .filter(k => selectedPlatform === "All Platforms" || k.platform === selectedPlatform);
 
-  const forecasts = forecastsByCategory[selectedCategory] || forecastsByCategory["All Categories"];
+  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"] as const;
+  const visiblePlatforms = selectedPlatform === "All Platforms"
+    ? allPlatforms
+    : allPlatforms.filter(p => p === selectedPlatform);
+
+  const coverageRows = shelfCoverageData[selectedCategory] ?? shelfCoverageData["All Categories"];
+
+  const coverageStatusConfig = {
+    sponsored: { color: "#2ECF8E", label: "Sponsored", bg: "rgba(46,207,142,0.15)" },
+    organic: { color: "#F5A623", label: "Organic only", bg: "rgba(245,166,35,0.12)" },
+    none: { color: "#FF5C5C", label: "Not listed", bg: "rgba(255,92,92,0.10)" },
+  } as const;
+
+  const missingCount = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p] === "none").length, 0);
+  const sponsoredCount = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p] === "sponsored").length, 0);
+  const totalApplicable = coverageRows.length * visiblePlatforms.length;
+  const coveragePct = totalApplicable > 0 ? Math.round((sponsoredCount / totalApplicable) * 100) : 0;
 
   const [tab, setTab] = useState("overview");
 
