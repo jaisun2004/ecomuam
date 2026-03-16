@@ -50,8 +50,12 @@ const ReportsView: React.FC = () => {
   const plRows = plRowsByTime[timeRange];
   const kpis = kpisByTime[timeRange];
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} tab1Label="Summary" tab2Label="Raw Data" />
+      {tab === "overview" ? (<>
       {/* Time range toggle */}
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground mr-2">Time Range:</span>
