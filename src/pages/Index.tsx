@@ -99,12 +99,14 @@ const IndexInner = () => {
   );
 };
 
-const Index = () => (
-  <TooltipProvider>
-    <GuardrailProvider>
-      <IndexInner />
-    </GuardrailProvider>
-  </TooltipProvider>
-);
+const Index = () => {
+  return (
+    <TooltipProvider>
+      <GuardrailProvider>
+        <IndexInner />
+      </GuardrailProvider>
+    </TooltipProvider>
+  );
+};
 
 export default Index;
