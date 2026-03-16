@@ -105,8 +105,12 @@ const DiscoveryView: React.FC = () => {
 
   const forecasts = forecastsByCategory[selectedCategory] || forecastsByCategory["All Categories"];
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Across 6 platforms" accentColor="bg-sw-cyan" delay={0} />
         <KPICard title="Category Opportunities" value="9" delta="▲ High demand, low comp." deltaType="positive" sub="Ready to capture" accentColor="bg-sw-purple" delay={0.05} />
