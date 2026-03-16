@@ -112,8 +112,11 @@ const AvailabilityView: React.FC = () => {
   const g = useGuardrails();
   const dedupActive = g.hasActiveAvailabilityStop();
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {/* Deduplication banner */}
       {dedupActive && (
         <div id="avail-dedup-banner" className="rounded-xl p-4 flex items-start gap-3" style={{
