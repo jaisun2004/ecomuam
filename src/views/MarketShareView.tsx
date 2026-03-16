@@ -122,6 +122,13 @@ const MarketShareView: React.FC = () => {
   const [tab, setTab] = useState("overview");
   const g = useGuardrails();
   const [platformFilter, setPlatformFilter] = useState("All");
+  const [selectedStore, setSelectedStore] = useState<DarkStore | null>(null);
+  const [storeFilter, setStoreFilter] = useState<"All" | "Blinkit" | "Zepto" | "Swiggy Instamart">("All");
+
+  const filteredStores = useMemo(() =>
+    storeFilter === "All" ? darkStores : darkStores.filter(s => s.platform === storeFilter),
+    [storeFilter]
+  );
 
   return (
     <div className="space-y-6 pb-20">
