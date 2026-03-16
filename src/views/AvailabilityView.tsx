@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import ScreenTabs from "@/components/ScreenTabs";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ReferenceLine } from "recharts";
 import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
+const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  score: Math.round(55 + Math.random() * 30),
+}));
+
+const skuHeatmapData = ["Whey 1kg", "Whey 500g", "Creatine", "BCAA", "Pre-Workout", "Multi-Vit"].map(sku => ({
+  sku,
+  days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
+}));
 const oosTimeline = [
   { day: "Mar 1", oos: 4 }, { day: "Mar 5", oos: 6 }, { day: "Mar 10", oos: 3 },
   { day: "Mar 15", oos: 8 }, { day: "Mar 20", oos: 5 }, { day: "Mar 25", oos: 11 }, { day: "Mar 30", oos: 14 },
