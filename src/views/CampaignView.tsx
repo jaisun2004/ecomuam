@@ -523,10 +523,10 @@ const CampaignView: React.FC = () => {
           </div>
         )}
 
-        {/* Insight rows */}
+      {/* Insight rows */}
         <div className="divide-y divide-subtle/50">
           {visibleDigest.map((d) => (
-            <div key={d.id} className={`flex items-center gap-3 px-4 py-3 ${d.blocked ? "opacity-[0.45]" : ""}`}
+            <div key={d.id} data-insight-type={d.insight.includes("Defense") ? "defense" : d.insight.includes("Budget") ? "budget" : "other"} data-status={d.blocked ? "blocked" : d.ownedBy ? "handled" : "active"} className={`flex items-center gap-3 px-4 py-3 ${d.blocked ? "opacity-[0.45]" : ""}`}
               style={{ borderLeft: `3px solid ${tierColor(d.tier)}` }}>
               {!d.blocked && !d.ownedBy && (
                 <input type="checkbox" checked={!!selectedDigest[d.id]}
