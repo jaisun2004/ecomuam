@@ -185,7 +185,7 @@ const DiscoveryView: React.FC = () => {
         <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Across 6 platforms" accentColor="bg-sw-cyan" delay={0} />
         <KPICard title="Category Opportunities" value="9" delta="▲ High demand, low comp." deltaType="positive" sub="Ready to capture" accentColor="bg-sw-purple" delay={0.05} />
         <KPICard title="New Search Intents" value="23" delta="▲ Detected this month" deltaType="positive" sub="AI-detected from query logs" accentColor="bg-sw-green" delay={0.1} />
-        <KPICard title="Forecast Accuracy" value="91%" delta="▲ 4% vs last quarter" deltaType="positive" sub="SKU-level 4-week forecast" accentColor="bg-sw-amber" delay={0.15} />
+        <KPICard title="Shelf coverage" value={`${coveragePct}%`} delta="▲ 3% vs last week" deltaType="positive" sub="Keywords with paid placement" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
