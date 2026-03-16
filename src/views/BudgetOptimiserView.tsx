@@ -1,9 +1,24 @@
 import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import ScreenTabs from "@/components/ScreenTabs";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
 import { ArrowRight, Zap, TrendingUp, TrendingDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+
+const budgetUtilData = [
+  { name: "Whey Protein", ratio: 82, color: "hsl(160,70%,48%)" },
+  { name: "Q-Commerce", ratio: 91, color: "hsl(38,92%,50%)" },
+  { name: "Creatine RT", ratio: 98, color: "hsl(0,76%,57%)" },
+  { name: "BCAA Brand", ratio: 67, color: "hsl(160,70%,48%)" },
+  { name: "Pre-Workout", ratio: 88, color: "hsl(38,92%,50%)" },
+];
+
+const wastedSpendData = [
+  { name: "Efficient (>3x ROAS)", value: 65, color: "hsl(160,70%,48%)" },
+  { name: "Moderate (2-3x)", value: 22, color: "hsl(38,92%,50%)" },
+  { name: "Wasted (<2x)", value: 13, color: "hsl(0,76%,57%)" },
+];
 
 /* Same-platform reallocation */
 const samePlatformShifts = [
