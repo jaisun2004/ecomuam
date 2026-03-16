@@ -125,8 +125,13 @@ const CompetitorAdsView: React.FC = () => {
   const defenseBlocked = g.hasDefenseBlocked();
   const defenseActive = g.hasDefenseActive();
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+
+      {tab === "overview" ? (<>
       {/* Conflict alert banner — only when defense is BLOCKED */}
       {defenseBlocked && (
         <div className="rounded-xl p-4" style={{
@@ -148,6 +153,36 @@ const CompetitorAdsView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Competitive summary bar */}
+      <div className="grid grid-cols-4 gap-3">
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Share of Voice</p>
+          <div className="flex items-center gap-1 h-3 rounded-full overflow-hidden">
+            <div className="h-full rounded-l-full" style={{ width: "34%", backgroundColor: "hsl(var(--sw-purple))" }} />
+            <div className="h-full rounded-r-full" style={{ width: "66%", backgroundColor: "hsl(var(--sw-red))", opacity: 0.5 }} />
+          </div>
+          <p className="text-[10px] font-mono text-foreground mt-1">You 34% · Rivals 66%</p>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Competitor Spend Index</p>
+          <p className="font-mono text-sm font-bold text-foreground">Rival A: ~1.4x</p>
+          <p className="text-[9px] text-sw-red flex items-center gap-0.5"><TrendingUp size={9} /> spending more</p>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Keyword Overlap Score</p>
+          <p className="font-mono text-sm font-bold text-sw-red">68% overlap</p>
+          <p className="text-[9px] text-muted-foreground">&gt;60% = high competition</p>
+        </div>
+        <div className="rounded-xl border border-subtle bg-surface-1 p-3">
+          <p className="text-[10px] text-muted-foreground mb-1">Brand Defence Status</p>
+          <p className="font-mono text-sm font-bold" style={{ color: defenseActive ? "#2ECF8E" : defenseBlocked ? "#F5A623" : "#2ECF8E" }}>
+            {defenseActive ? "Active" : defenseBlocked ? "Queued" : "Clear"}
+          </p>
+          <button onClick={() => g.navigateTo("campaigns", "defense-insight")} className="text-[9px]" style={{ color: "#4F7FFF" }}>View in Campaign Manager →</button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Real-time sponsored rank tracking" accentColor="bg-sw-red" delay={0} />
         <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Competitors out of budget today" accentColor="bg-sw-green" delay={0.05} />
