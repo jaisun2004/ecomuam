@@ -242,35 +242,79 @@ const DiscoveryView: React.FC = () => {
           </table>
         </PanelCard>
 
-        <PanelCard title="📈 4-Week Demand Forecast" badge={`${selectedCategory} · 91% accuracy`} badgeColor="green" delay={0.25}>
-          <div className="flex items-center gap-1 mb-3 flex-wrap">
-            {categoryFilter.map(c => (
-              <button key={c} onClick={() => setSelectedCategory(c)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedCategory === c ? "bg-sw-green/20 text-sw-green" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                {c}
-              </button>
-            ))}
-          </div>
-          <div className="space-y-5">
-            {forecasts.map((f) => (
-              <div key={f.sku}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-foreground">{f.sku}</span>
-                  <span className={`font-mono text-[11px] ${f.delta.startsWith("+") ? "text-sw-green" : "text-sw-amber"}`}>{f.delta}</span>
-                </div>
-                <div className="flex items-end gap-1 h-8">
-                  {f.weeks.map((w, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                      <div className={`w-full ${f.color} rounded-sm`} style={{ height: `${w * 0.32}px`, opacity: 0.3 + (i * 0.23) }} />
-                      <span className="text-[8px] text-muted-foreground font-mono">W{i + 1}</span>
-                    </div>
+        <PanelCard title="Keyword shelf coverage" badge={`${selectedCategory} · ${selectedPlatform}`} badgeColor="accent" delay={0.25}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-separate" style={{ borderSpacing: "0 2px" }}>
+              <thead>
+                <tr>
+                  <th className="text-left py-2 pr-3 font-normal text-muted-foreground text-[10px] w-40">Keyword</th>
+                  {visiblePlatforms.map(p => (
+                    <th key={p} className="text-center py-2 font-normal text-[9px] text-muted-foreground w-16">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: platformColors[p] ?? "#888" }} />
+                        <span>{p}</span>
+                      </div>
+                    </th>
                   ))}
-                </div>
-              </div>
+                </tr>
+              </thead>
+              <tbody>
+                {coverageRows.map((row, i) => (
+                  <tr key={row.kw} className={i % 2 === 0 ? "bg-surface-2/40" : ""}>
+                    <td className="py-2 pr-3 font-mono text-[10px] text-foreground truncate max-w-[140px]" title={row.kw}>{row.kw}</td>
+                    {visiblePlatforms.map(p => {
+                      const status = row[p];
+                      const cfg = coverageStatusConfig[status];
+                      return (
+                        <td key={p} className="py-2 text-center">
+                          <div className="flex justify-center">
+                            {status === "none" ? (
+                              <button
+                                title={`${row.kw} on ${p}: Not listed — create campaign`}
+                                onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "shelf-gap", params: { keyword: row.kw, platform: p } })}
+                                className="w-5 h-5 rounded-full flex items-center justify-center transition-all hover:scale-125 cursor-pointer"
+                                style={{ backgroundColor: cfg.bg, border: `1px solid ${cfg.color}33` }}>
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
+                              </button>
+                            ) : (
+                              <div
+                                title={`${row.kw} on ${p}: ${cfg.label}`}
+                                className="w-5 h-5 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: cfg.bg, border: `1px solid ${cfg.color}33` }}>
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Legend */}
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-subtle">
+            {Object.entries(coverageStatusConfig).map(([key, cfg]) => (
+              <span key={key} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: cfg.color }} />
+                {cfg.label}
+              </span>
             ))}
           </div>
+          {/* Summary row */}
+          {missingCount > 0 && (
+            <div className="mt-3 pt-3 border-t border-subtle flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground">
+                <span className="text-sw-red font-mono font-medium">{missingCount}</span>{" "}keyword × platform gaps with no listing
+              </span>
+              <button
+                onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "shelf-coverage", params: { category: selectedCategory, platform: selectedPlatform } })}
+                className="text-[10px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                Fix in Campaign Manager →
+              </button>
+            </div>
+          )}
         </PanelCard>
       </div>
 
