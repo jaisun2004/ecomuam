@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navSections = [
