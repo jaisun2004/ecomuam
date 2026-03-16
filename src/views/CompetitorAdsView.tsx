@@ -3,6 +3,7 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
 import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle } from "lucide-react";
+import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
