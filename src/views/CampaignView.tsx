@@ -454,6 +454,8 @@ const CampaignView: React.FC = () => {
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
 
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+
       {/* Undo toast */}
       {undoToast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl border bg-surface-1 border-subtle shadow-lg flex items-center gap-3"
