@@ -1,6 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useGuardrails, PermissionState } from "@/contexts/GuardrailContext";
 import { Shield, AlertTriangle } from "lucide-react";
+import ScreenTabs from "@/components/ScreenTabs";
+import PanelCard from "@/components/sw/PanelCard";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+
+const triggerHistory = Array.from({ length: 30 }, (_, i) => ({
+  day: `Mar ${i + 1}`,
+  triggers: Math.floor(Math.random() * 5),
+}));
+
+const blockAllowData = [
+  { type: "Defense", blocked: 3, allowed: 12 },
+  { type: "Opportunity", blocked: 1, allowed: 18 },
+  { type: "Bid optimisation", blocked: 2, allowed: 22 },
+  { type: "Daypart", blocked: 0, allowed: 8 },
+  { type: "Budget shift", blocked: 4, allowed: 6 },
+];
 
 const insightTypes = ["Defense", "Opportunity", "Bid optimisation", "Daypart adjustment", "Budget shift"];
 const campaignTypes = ["Brand Search", "Performance Max", "Non-Brand", "Retargeting", "Festival"];
