@@ -1,60 +1,88 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { Gauge, ArrowRight, CheckCircle2, Shield, Zap, AlertTriangle, X } from "lucide-react";
+import { Gauge, RefreshCw, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// ─── Mock data ───
 const urgentIssues = [
   { id: 1, tier: "T1" as const, desc: "Availability below 20% — 4 campaigns paused", source: "Availability", sourceId: "availability", target: "avail-dedup-banner" },
-  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Brand Search campaign", source: "Campaign Manager", sourceId: "campaigns", target: "campaign-conflict-banner" },
+  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
   { id: 3, tier: "T2" as const, desc: "Competitor bidding on 12 brand keywords", source: "Competitor Hub", sourceId: "competitors", target: "defense-insight" },
-  { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift ₹50K", source: "Budget Optimiser", sourceId: "budget" },
-  { id: 5, tier: "T3" as const, desc: "Daypart budget shift projected +18% conversion", source: "Campaign Manager", sourceId: "campaigns", target: "campaign-digest" },
+  { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift ₹50K", source: "Budget Opt.", sourceId: "budget", confidence: 4 },
+  { id: 5, tier: "T3" as const, desc: "Daypart budget shift projected +18% conversion", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-digest", confidence: 4 },
+  { id: 6, tier: "T3" as const, desc: "New keyword opportunities detected — 8 terms", source: "Discovery", sourceId: "discovery", confidence: 3 },
 ];
 
-const approvalItems = [
-  { id: 1, icon: "🔍", campaign: "BCAA Brand Awareness", desc: "Raise bid +20% on 6 keywords", confidence: 3 },
-  { id: 2, icon: "📈", campaign: "Pre-Workout New Users", desc: "Expand keyword targeting — 8 new terms", confidence: 2 },
-  { id: 3, icon: "💰", campaign: "Brand Search", desc: "Budget shift ₹15K to evening slots", confidence: 2 },
+const potentialFlags = [
+  { id: 1, desc: "Availability at 28% — threshold fires at 20%", source: "Availability", sourceId: "availability" },
+  { id: 2, desc: "Competitor activity up 40% WoW on brand keywords", source: "Competitor Hub", sourceId: "competitors" },
+  { id: 3, desc: "Seasonal lock activates in 2 days", source: "Guardrails", sourceId: "guardrails" },
+  { id: 4, desc: "ROAS declining 3 consecutive days — not yet below floor", source: "Campaign Mgr", sourceId: "campaigns" },
+  { id: 5, desc: "Rule Engine fired but velocity limit blocked action", source: "Guardrails", sourceId: "guardrails" },
 ];
 
 const systemRows = [
-  { name: "Campaign Manager", id: "campaigns", status: "Active issue", dot: "#FF5C5C" },
-  { name: "Availability", id: "availability", status: "Active issue", dot: "#FF5C5C" },
+  { name: "Campaign Manager", id: "campaigns", status: "Active", dot: "#FF5C5C" },
+  { name: "Availability", id: "availability", status: "Active", dot: "#FF5C5C" },
   { name: "Pricing", id: "pricing", status: "Clear", dot: "#2ECF8E" },
   { name: "Competitor Ads Hub", id: "competitors", status: "Warning", dot: "#F5A623" },
   { name: "Budget Optimiser", id: "budget", status: "Clear", dot: "#2ECF8E" },
   { name: "Festival Campaigns", id: "festival", status: "Clear", dot: "#2ECF8E" },
-  { name: "Rule Engine", id: "guardrails", status: "Clear", dot: "#2ECF8E", extra: "Last run: 4 min ago" },
-  { name: "Guardrails", id: "guardrails", status: "Warning", dot: "#F5A623", extra: "2 active locks" },
+  { name: "Rule Engine", id: "guardrails", status: "Clear", dot: "#2ECF8E" },
+  { name: "Guardrails", id: "guardrails", status: "Warning", dot: "#F5A623" },
 ];
 
-const tierStyle = (tier: string) => {
-  if (tier === "T1") return { bg: "rgba(255,92,92,0.12)", color: "#FF5C5C" };
-  if (tier === "T2") return { bg: "rgba(245,166,35,0.12)", color: "#F5A623" };
-  return { bg: "rgba(46,207,142,0.12)", color: "#2ECF8E" };
+const tierBorder = (tier: string) => {
+  if (tier === "T1") return "#FF5C5C";
+  if (tier === "T2") return "#F5A623";
+  if (tier === "pending") return "#4F7FFF";
+  return "#2ECF8E";
 };
 
 const CentralCockpitView: React.FC = () => {
   const g = useGuardrails();
   const { toast } = useToast();
-  const [now, setNow] = useState(new Date());
   const [approvedIds, setApprovedIds] = useState<Set<number>>(new Set());
+  const [healthOpen, setHealthOpen] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 60000);
-    return () => clearInterval(interval);
-  }, []);
-
+  // Determine state
   const hasIssues = urgentIssues.length > 0;
-  const visibleApprovals = approvalItems.filter(a => !approvedIds.has(a.id));
+  const hasPendingApprovals = urgentIssues.some(i => i.confidence && i.confidence >= 3 && !approvedIds.has(i.id));
+  const hasUrgentOrPending = hasIssues || hasPendingApprovals;
+
+  // Build unified list: T1 → T2 → pending approvals (blue) → T3
+  const visibleItems = urgentIssues
+    .filter(i => !approvedIds.has(i.id))
+    .sort((a, b) => {
+      const tierOrder = { T1: 0, T2: 1, T3: 3 };
+      const aOrder = a.confidence && a.confidence >= 3 ? 2 : tierOrder[a.tier];
+      const bOrder = b.confidence && b.confidence >= 3 ? 2 : tierOrder[b.tier];
+      return aOrder - bOrder;
+    })
+    .slice(0, 8);
+
+  // Batch approve: ≥2 approvable T3 high-confidence items
+  const approvableItems = urgentIssues.filter(i => i.tier === "T3" && i.confidence && i.confidence >= 4 && !approvedIds.has(i.id));
+  const showBatchApprove = approvableItems.length >= 2;
 
   const handleApprove = (id: number) => {
     setApprovedIds(prev => new Set(prev).add(id));
-    const item = approvalItems.find(a => a.id === id);
+    const item = urgentIssues.find(a => a.id === id);
     toast({
       title: "Action approved",
-      description: `${item?.campaign} — ${item?.desc}`,
+      description: item?.desc || "",
       action: <button onClick={() => setApprovedIds(prev => { const s = new Set(prev); s.delete(id); return s; })} className="text-xs font-medium" style={{ color: "#A78BFA" }}>Undo</button>,
+      duration: 5000,
+    });
+  };
+
+  const handleBatchApprove = () => {
+    const ids = approvableItems.map(i => i.id);
+    setApprovedIds(prev => { const s = new Set(prev); ids.forEach(id => s.add(id)); return s; });
+    toast({
+      title: `${ids.length} actions approved`,
+      description: "All high-confidence actions applied",
+      action: <button onClick={() => setApprovedIds(prev => { const s = new Set(prev); ids.forEach(id => s.delete(id)); return s; })} className="text-xs font-medium" style={{ color: "#A78BFA" }}>Undo all</button>,
       duration: 5000,
     });
   };
@@ -66,134 +94,131 @@ const CentralCockpitView: React.FC = () => {
     ));
   };
 
-  const dateStr = now.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const timeStr = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+  const clearCount = systemRows.filter(r => r.dot === "#2ECF8E").length;
 
   return (
-    <div className="space-y-5 pb-20 max-w-4xl">
+    <div className="space-y-5 pb-20 max-w-3xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
           <Gauge size={20} className="text-primary" /> Central Cockpit
         </h1>
-        <div className="text-right">
-          <p className="text-xs text-foreground font-mono">{dateStr} · {timeStr}</p>
-          <p className="text-[10px] text-muted-foreground">Updated 4 min ago</p>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <span className="text-[11px]">Updated 4 min ago</span>
+          <RefreshCw size={13} className="cursor-pointer hover:text-foreground transition-colors" />
         </div>
       </div>
 
-      {/* Card 1 — Urgent */}
-      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-        <div className="p-4 flex items-center justify-between border-b border-subtle">
-          <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full" style={{
-              backgroundColor: hasIssues ? "#FF5C5C" : "#2ECF8E",
-              ...(hasIssues ? { animation: "pulse 2s infinite" } : {})
-            }} />
-            Urgent
-          </h3>
-          <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{
-            backgroundColor: hasIssues ? "rgba(255,92,92,0.12)" : "rgba(46,207,142,0.12)",
-            color: hasIssues ? "#FF5C5C" : "#2ECF8E"
-          }}>
-            {urgentIssues.length}
-          </span>
+      {!hasUrgentOrPending ? (
+        /* ─── ALL CLEAR STATE ─── */
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="w-3 h-3 rounded-full mb-4" style={{ backgroundColor: "#2ECF8E" }} />
+          <p className="text-base font-medium" style={{ color: "#E8EAF0" }}>All clear</p>
+          <p className="text-[13px] mt-1" style={{ color: "#555A6E" }}>No issues · No pending approvals</p>
+          <p className="text-[11px] mt-1" style={{ color: "#555A6E" }}>Last checked {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
         </div>
-        {urgentIssues.length === 0 ? (
-          <div className="p-8 text-center">
-            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-sw-green" />
-              <span className="text-xs">All clear — no active issues</span>
+      ) : (
+        /* ─── ISSUES PRESENT STATE ─── */
+        <div className="space-y-0">
+          {/* Batch approve bar */}
+          {showBatchApprove && (
+            <div className="mb-3">
+              <button onClick={handleBatchApprove} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+                Approve all safe ({approvableItems.length} actions)
+              </button>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1">Last checked: just now</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-subtle/50">
-            {urgentIssues.slice(0, 5).map(issue => {
-              const ts = tierStyle(issue.tier);
+          )}
+
+          {/* Unified ranked list */}
+          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
+            {visibleItems.map(item => {
+              const isApprovable = item.confidence && item.confidence >= 3;
+              const borderColor = isApprovable ? "#4F7FFF" : tierBorder(item.tier);
               return (
-                <div key={issue.id} className="flex items-center gap-3 px-4 py-3">
-                  <span className="font-mono text-[9px] uppercase tracking-wider px-2 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: ts.bg, color: ts.color }}>
-                    {issue.tier}
+                <div key={item.id} className="flex items-center gap-3 px-4" style={{ height: 48, borderLeft: `3px solid ${borderColor}` }}>
+                  <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded flex-shrink-0" style={{
+                    backgroundColor: `${borderColor}15`,
+                    color: borderColor,
+                  }}>
+                    {item.tier}
                   </span>
-                  <span className="text-[12px] text-foreground flex-1">{issue.desc}</span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(79,127,255,0.1)", color: "#8B8FA8" }}>
-                    {issue.source}
+                  <span className="text-[13px] flex-1 truncate" style={{ color: "#E8EAF0" }}>{item.desc}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ color: "#555A6E" }}>
+                    {item.source}
                   </span>
-                  <button onClick={() => g.navigateTo(issue.sourceId, issue.target)} className="text-[11px] font-medium flex items-center gap-1 flex-shrink-0" style={{ color: "#4F7FFF" }}>
-                    → View
-                  </button>
+                  {isApprovable ? (
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-[10px] flex gap-0.5">{confidencePips(item.confidence!)}</span>
+                      <button onClick={() => handleApprove(item.id)} className="px-2 py-1 rounded-lg text-[10px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+                        Approve
+                      </button>
+                      <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="px-2 py-1 rounded-lg text-[10px] font-medium border" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                        Review
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="text-[11px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                      Act →
+                    </button>
+                  )}
                 </div>
               );
             })}
-            {urgentIssues.length > 5 && (
-              <div className="px-4 py-2">
-                <button className="text-[11px] font-medium" style={{ color: "#4F7FFF" }}>View all {urgentIssues.length} issues →</button>
-              </div>
-            )}
           </div>
-        )}
-      </div>
 
-      {/* Card 2 — Pending approval */}
-      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-        <div className="p-4 flex items-center justify-between border-b border-subtle">
-          <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
-            Pending approval
-          </h3>
-          <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{
-            backgroundColor: "rgba(167,139,250,0.15)", color: "#A78BFA"
-          }}>
-            {visibleApprovals.length}
-          </span>
+          {urgentIssues.length > 8 && (
+            <p className="text-[11px] font-medium mt-2" style={{ color: "#4F7FFF" }}>{urgentIssues.length - 8} more items →</p>
+          )}
         </div>
-        {visibleApprovals.length === 0 ? (
-          <div className="p-8 text-center">
-            <CheckCircle2 size={20} className="text-muted-foreground mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">Nothing pending — all insights are auto-approved or awaiting triggers</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-subtle/50">
-            {visibleApprovals.slice(0, 5).map(item => (
-              <div key={item.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="text-sm flex-shrink-0">{item.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <span className="text-xs font-medium text-foreground">{item.campaign}</span>
-                  <span className="text-[11px] text-muted-foreground ml-1">— {item.desc}</span>
-                </div>
-                <span className="text-[10px] flex gap-0.5 flex-shrink-0">{confidencePips(item.confidence)}</span>
-                <button onClick={() => handleApprove(item.id)} className="px-2.5 py-1 rounded-lg text-[10px] font-medium text-white flex-shrink-0" style={{ backgroundColor: "#A78BFA" }}>
-                  Approve
-                </button>
-                <button onClick={() => g.navigateTo("campaigns")} className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
-                  Review
+      )}
+
+      {/* ─── POTENTIAL FLAGS (WATCHING) ─── */}
+      {potentialFlags.length > 0 && (
+        <div className="mt-6">
+          <p className="font-mono text-[10px] uppercase tracking-wider mb-1" style={{ color: "#555A6E" }}>Watching</p>
+          <p className="text-[12px] mb-3" style={{ color: "#555A6E" }}>Not urgent — leading indicators to monitor</p>
+          <div className="space-y-0 rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
+            {potentialFlags.slice(0, 5).map(flag => (
+              <div key={flag.id} className="flex items-center gap-3 px-4" style={{ height: 44, borderLeft: "3px solid #4F7FFF" }}>
+                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(79,127,255,0.1)", color: "#4F7FFF" }}>
+                  Watch
+                </span>
+                <span className="text-[13px] flex-1 truncate" style={{ color: "#8B8FA8" }}>{flag.desc}</span>
+                <span className="text-[10px] font-mono flex-shrink-0" style={{ color: "#555A6E" }}>{flag.source}</span>
+                <button onClick={() => g.navigateTo(flag.sourceId)} className="text-[11px] flex-shrink-0" style={{ color: "#555A6E" }}>
+                  → View
                 </button>
               </div>
             ))}
           </div>
-        )}
-      </div>
+          {potentialFlags.length > 5 && (
+            <p className="text-[11px] font-medium mt-2" style={{ color: "#4F7FFF" }}>View all signals →</p>
+          )}
+        </div>
+      )}
 
-      {/* Card 3 — System health */}
-      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-        <div className="p-4 border-b border-subtle">
-          <h3 className="text-sm font-medium text-foreground">System health</h3>
-        </div>
-        <div className="divide-y divide-subtle/50">
-          {systemRows.map((row, i) => (
-            <div key={`${row.name}-${i}`} className="flex items-center justify-between px-4 py-2.5">
-              <span className="text-xs text-foreground">{row.name}</span>
-              <div className="flex items-center gap-3">
-                {row.extra && <span className="text-[9px] font-mono text-muted-foreground">{row.extra}</span>}
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: row.dot }} />
-                <span className="text-[10px] font-mono text-muted-foreground w-20">{row.status}</span>
-                <button onClick={() => g.navigateTo(row.id)} className="text-muted-foreground hover:text-foreground flex-shrink-0">
-                  <ArrowRight size={12} />
-                </button>
+      {/* ─── SYSTEM HEALTH (COLLAPSED) ─── */}
+      <div className="mt-4">
+        <button onClick={() => setHealthOpen(!healthOpen)} className="flex items-center gap-1.5 text-[12px]" style={{ color: "#555A6E" }}>
+          {clearCount}/{systemRows.length} screens clear
+          {healthOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+        </button>
+        {healthOpen && (
+          <div className="mt-2 rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
+            {systemRows.map((row, i) => (
+              <div key={`${row.name}-${i}`} className="flex items-center justify-between px-4 py-2.5">
+                <span className="text-xs" style={{ color: "#E8EAF0" }}>{row.name}</span>
+                <div className="flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: row.dot }} />
+                  <span className="text-[10px] font-mono w-16" style={{ color: "#555A6E" }}>{row.status}</span>
+                  <button onClick={() => g.navigateTo(row.id)} className="flex-shrink-0" style={{ color: "#555A6E" }}>
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

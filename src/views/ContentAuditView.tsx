@@ -1,27 +1,131 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
-import { ChevronDown, ChevronRight, Copy, Check } from "lucide-react";
+import { ChevronDown, ChevronRight, Copy, Check, X } from "lucide-react";
 
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
-const skuData = [
-  { sku: "Whey 1kg Chocolate", thumb: "🥤", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon" },
-  { sku: "Whey 500g Vanilla", thumb: "🥤", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart" },
-  { sku: "Creatine 250g", thumb: "💊", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon" },
-  { sku: "Pre-Workout Citrus", thumb: "⚡", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit" },
-  { sku: "BCAA Tropical", thumb: "🏋️", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto" },
-  { sku: "Multi-Vit 60ct", thumb: "💊", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Instamart" },
+export const skuData = [
+  { id: "sku-001", sku: "Whey 1kg Chocolate", thumb: "🥤", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon", category: "Protein" },
+  { id: "sku-002", sku: "Whey 500g Vanilla", thumb: "🥤", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart", category: "Protein" },
+  { id: "sku-003", sku: "Creatine 250g", thumb: "💊", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon", category: "Supplements" },
+  { id: "sku-004", sku: "Pre-Workout Citrus", thumb: "⚡", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Pre-Workout" },
+  { id: "sku-005", sku: "BCAA Tropical", thumb: "🏋️", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Amino Acids" },
+  { id: "sku-006", sku: "Multi-Vit 60ct", thumb: "💊", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Swiggy Instamart", category: "Vitamins" },
 ];
 
-const getOverall = (s: typeof skuData[0]) => s.title + s.heroImage + s.searchListing + s.pageContent + s.competitorAggression;
+export const competitorScores: Record<string, Record<string, { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }>> = {
+  "MuscleBlaze": {
+    "sku-001": { title: 18, heroImage: 17, searchListing: 15, pageContent: 16, competitorAggression: 12 },
+    "sku-002": { title: 16, heroImage: 14, searchListing: 12, pageContent: 15, competitorAggression: 14 },
+    "sku-003": { title: 12, heroImage: 14, searchListing: 10, pageContent: 12, competitorAggression: 16 },
+    "sku-004": { title: 15, heroImage: 16, searchListing: 13, pageContent: 14, competitorAggression: 11 },
+    "sku-005": { title: 17, heroImage: 15, searchListing: 14, pageContent: 16, competitorAggression: 10 },
+    "sku-006": { title: 14, heroImage: 13, searchListing: 11, pageContent: 13, competitorAggression: 13 },
+  },
+  "Optimum Nutrition": {
+    "sku-001": { title: 19, heroImage: 19, searchListing: 17, pageContent: 18, competitorAggression: 10 },
+    "sku-002": { title: 18, heroImage: 17, searchListing: 14, pageContent: 17, competitorAggression: 12 },
+    "sku-003": { title: 14, heroImage: 16, searchListing: 12, pageContent: 14, competitorAggression: 14 },
+    "sku-004": { title: 16, heroImage: 18, searchListing: 15, pageContent: 15, competitorAggression: 9 },
+    "sku-005": { title: 18, heroImage: 16, searchListing: 15, pageContent: 17, competitorAggression: 8 },
+    "sku-006": { title: 15, heroImage: 14, searchListing: 12, pageContent: 14, competitorAggression: 11 },
+  },
+};
+
+const competitors = Object.keys(competitorScores);
+
+export const getOverall = (s: typeof skuData[0]) => s.title + s.heroImage + s.searchListing + s.pageContent + s.competitorAggression;
+const getCompOverall = (c: { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }) =>
+  c.title + c.heroImage + c.searchListing + c.pageContent + c.competitorAggression;
 const scoreColor = (score: number) => score >= 80 ? "#2ECF8E" : score >= 60 ? "#F5A623" : "#FF5C5C";
-const scoreLabel = (score: number) => score >= 80 ? "Strong" : score >= 60 ? "Needs work" : "Critical";
 const dimColor = (score: number) => score >= 16 ? "#2ECF8E" : score >= 12 ? "#F5A623" : "#FF5C5C";
 
+// Mock sparkline data
+const sparklineData: Record<string, number[]> = {
+  "sku-001": [74, 75, 76, 77, 77, 76, 77],
+  "sku-002": [68, 67, 66, 66, 65, 66, 66],
+  "sku-003": [52, 51, 50, 51, 51, 50, 51],
+  "sku-004": [70, 69, 69, 70, 70, 69, 69],
+  "sku-005": [83, 82, 82, 82, 83, 82, 82],
+  "sku-006": [57, 56, 56, 55, 56, 56, 56],
+};
+
+const Sparkline: React.FC<{ data: number[]; width?: number; height?: number }> = ({ data, width = 60, height = 24 }) => {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const trend = data[data.length - 1] - data[0];
+  const color = trend > 0 ? "#2ECF8E" : trend < 0 ? "#FF5C5C" : "#555A6E";
+  const points = data.map((v, i) => `${(i / (data.length - 1)) * width},${height - ((v - min) / range) * height}`).join(" ");
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+      <polyline points={points} fill="none" stroke={color} strokeWidth="1.5" />
+    </svg>
+  );
+};
+
+// Dropdown component
+const FilterDropdown: React.FC<{
+  label: string;
+  value: string;
+  options: { label: string; value: string }[];
+  onChange: (v: string) => void;
+}> = ({ label, value, options, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const selected = options.find(o => o.value === value);
+  return (
+    <div className="relative" style={{ minWidth: 160 }}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[12px] text-left"
+        style={{
+          backgroundColor: "#1C1F27",
+          border: "1px solid rgba(255,255,255,0.1)",
+          color: "#E8EAF0",
+        }}
+      >
+        <span className="truncate">{selected?.label || label}</span>
+        <ChevronDown size={12} style={{ color: "#555A6E" }} />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div
+            className="absolute top-full left-0 mt-1 w-full z-50 overflow-y-auto"
+            style={{
+              backgroundColor: "#1C1F27",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 8,
+              maxHeight: 240,
+            }}
+          >
+            {options.map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => { onChange(opt.value); setOpen(false); }}
+                className="w-full text-left px-3 py-2 text-[12px] transition-colors"
+                style={{
+                  color: opt.value === value ? "#E8EAF0" : "#8B8FA8",
+                  backgroundColor: opt.value === value ? "#242833" : "transparent",
+                }}
+                onMouseEnter={(e) => { (e.target as HTMLElement).style.backgroundColor = "#242833"; }}
+                onMouseLeave={(e) => { (e.target as HTMLElement).style.backgroundColor = opt.value === value ? "#242833" : "transparent"; }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// Title issues etc for Analytics tab
 const titleIssues: Record<string, { issues: string[]; suggested: string }> = {
   "Creatine 250g": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Creatine Monohydrate 250g Unflavoured | Micronized | 83 Servings | Lab Tested" },
   "Multi-Vit 60ct": { issues: ["Missing keywords", "No brand name"], suggested: "ShelfWise Multi-Vitamin 60 Tablets | 23 Essential Vitamins & Minerals | Daily Health" },
@@ -47,30 +151,54 @@ const competitorAggression = [
 
 const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket: `${i * 10}-${(i + 1) * 10}`, count }));
 
+type SortKey = "score" | "title" | "heroImage" | "searchListing" | "pageContent" | "competitorAggression" | "lastUpdated";
+
 const ContentAuditView: React.FC = () => {
   const [tab, setTab] = useState("overview");
   const [platformFilter, setPlatformFilter] = useState("All");
   const [scoreFilter, setScoreFilter] = useState("All");
-  const [sortKey, setSortKey] = useState<"score" | "title" | "heroImage" | "searchListing" | "pageContent" | "competitorAggression">("score");
-  const [sortAsc, setSortAsc] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [compareCompetitor, setCompareCompetitor] = useState("None");
+  const [sortBy, setSortBy] = useState("score_asc");
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [copiedFlags, setCopiedFlags] = useState<Record<string, boolean>>({});
   const g = useGuardrails();
 
-  const filteredSkus = skuData
-    .filter(s => platformFilter === "All" || s.platform === platformFilter)
-    .filter(s => {
-      const overall = getOverall(s);
-      if (scoreFilter === "Critical") return overall < 60;
-      if (scoreFilter === "Needs work") return overall >= 60 && overall < 80;
-      if (scoreFilter === "Strong") return overall >= 80;
-      return true;
-    })
-    .sort((a, b) => {
-      const aVal = sortKey === "score" ? getOverall(a) : a[sortKey];
-      const bVal = sortKey === "score" ? getOverall(b) : b[sortKey];
-      return sortAsc ? aVal - bVal : bVal - aVal;
+  const categories = useMemo(() => ["All", ...Array.from(new Set(skuData.map(s => s.category)))], []);
+
+  const filteredSkus = useMemo(() => {
+    let result = skuData
+      .filter(s => platformFilter === "All" || s.platform === platformFilter)
+      .filter(s => categoryFilter === "All" || s.category === categoryFilter)
+      .filter(s => {
+        const overall = getOverall(s);
+        if (scoreFilter === "Critical") return overall < 60;
+        if (scoreFilter === "NeedsWork") return overall >= 60 && overall < 80;
+        if (scoreFilter === "Strong") return overall >= 80;
+        return true;
+      });
+
+    // Sort
+    const [key, dir] = sortBy.split("_");
+    const asc = dir === "asc";
+    result = [...result].sort((a, b) => {
+      let aVal: number | string, bVal: number | string;
+      switch (key) {
+        case "score": aVal = getOverall(a); bVal = getOverall(b); break;
+        case "title": aVal = a.title; bVal = b.title; break;
+        case "heroImage": aVal = a.heroImage; bVal = b.heroImage; break;
+        case "searchListing": aVal = a.searchListing; bVal = b.searchListing; break;
+        case "pageContent": aVal = a.pageContent; bVal = b.pageContent; break;
+        case "competitorAggression": aVal = a.competitorAggression; bVal = b.competitorAggression; break;
+        case "lastUpdated": aVal = a.lastUpdated; bVal = b.lastUpdated; break;
+        default: aVal = getOverall(a); bVal = getOverall(b);
+      }
+      if (typeof aVal === "string") return asc ? aVal.localeCompare(bVal as string) : (bVal as string).localeCompare(aVal);
+      return asc ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
     });
+
+    return result;
+  }, [platformFilter, scoreFilter, categoryFilter, sortBy]);
 
   const avgScore = Math.round(skuData.reduce((s, d) => s + getOverall(d), 0) / skuData.length);
   const criticalCount = skuData.filter(s => getOverall(s) < 60).length;
@@ -82,11 +210,6 @@ const ContentAuditView: React.FC = () => {
     category: Math.round(12 + Math.random() * 4),
   }));
 
-  const handleSort = (key: typeof sortKey) => {
-    if (sortKey === key) setSortAsc(!sortAsc);
-    else { setSortKey(key); setSortAsc(true); }
-  };
-
   const handleFlag = (sku: string) => {
     const brief = `Content improvement needed for ${sku}. Issues: ${(heroImageIssues[sku] || []).join(", ")}`;
     navigator.clipboard.writeText(brief);
@@ -94,13 +217,30 @@ const ContentAuditView: React.FC = () => {
     setTimeout(() => setCopiedFlags(p => ({ ...p, [sku]: false })), 2000);
   };
 
-  const navigateToFix = (sku: typeof skuData[0]) => {
-    const overall = getOverall(sku);
-    const weakDims = dimensions.filter((_, i) => [sku.title, sku.heroImage, sku.searchListing, sku.pageContent, sku.competitorAggression][i] < 14);
-    g.navigateWithContext("campaigns", "campaign-digest", {
-      type: "content-audit",
-      params: { sku: sku.sku, score: String(overall), issues: weakDims.join(",") }
+  const navigateToSkuDetail = (s: typeof skuData[0]) => {
+    // Use context to navigate to SKU detail — stored as contentaudit_sku view
+    g.navigateWithContext("contentaudit", undefined, {
+      type: "sku-detail",
+      params: { skuId: s.id, competitor: compareCompetitor !== "None" ? compareCompetitor : "" }
     });
+  };
+
+  const isComparing = compareCompetitor !== "None";
+  const compData = isComparing ? competitorScores[compareCompetitor] : null;
+
+  const DimCell: React.FC<{ yours: number; theirs?: number }> = ({ yours, theirs }) => {
+    if (!isComparing || theirs === undefined) {
+      return (
+        <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: dimColor(yours) + "20", color: dimColor(yours) }}>{yours}/20</span>
+      );
+    }
+    const gap = yours - theirs;
+    const gapColor = gap > 0 ? "#2ECF8E" : gap < 0 ? "#FF5C5C" : "#555A6E";
+    return (
+      <span className="font-mono text-[10px]" style={{ color: gapColor }}>
+        {yours} <span style={{ color: "#555A6E" }}>/</span> {theirs}
+      </span>
+    );
   };
 
   return (
@@ -120,19 +260,74 @@ const ContentAuditView: React.FC = () => {
           <KPICard title="Last Full Audit" value="Mar 14" delta="" deltaType="positive" sub="Re-audit all →" accentColor="bg-sw-green" delay={0.15} />
         </div>
 
-        {/* Filters */}
+        {/* Filter bar — dropdowns only */}
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1">
-            {["All", "Blinkit", "Zepto", "Instamart", "Amazon", "Flipkart"].map(p => (
-              <button key={p} onClick={() => setPlatformFilter(p)} className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${platformFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>{p}</button>
-            ))}
-          </div>
-          <div className="flex items-center gap-1">
-            {["All", "Critical", "Needs work", "Strong"].map(f => (
-              <button key={f} onClick={() => setScoreFilter(f)} className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${scoreFilter === f ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>{f === "Critical" ? "Critical <60" : f === "Needs work" ? "Needs work 60-79" : f === "Strong" ? "Strong 80+" : f}</button>
-            ))}
-          </div>
+          <FilterDropdown
+            label="Platform"
+            value={platformFilter}
+            options={[
+              { label: "All platforms", value: "All" },
+              { label: "Blinkit", value: "Blinkit" },
+              { label: "Zepto", value: "Zepto" },
+              { label: "Swiggy Instamart", value: "Swiggy Instamart" },
+              { label: "Amazon", value: "Amazon" },
+              { label: "Flipkart", value: "Flipkart" },
+            ]}
+            onChange={setPlatformFilter}
+          />
+          <FilterDropdown
+            label="Score range"
+            value={scoreFilter}
+            options={[
+              { label: "All scores", value: "All" },
+              { label: "Critical (0–59)", value: "Critical" },
+              { label: "Needs work (60–79)", value: "NeedsWork" },
+              { label: "Strong (80–100)", value: "Strong" },
+            ]}
+            onChange={setScoreFilter}
+          />
+          <FilterDropdown
+            label="Category"
+            value={categoryFilter}
+            options={categories.map(c => ({ label: c === "All" ? "All categories" : c, value: c }))}
+            onChange={setCategoryFilter}
+          />
+          <FilterDropdown
+            label="Compare with competitor"
+            value={compareCompetitor}
+            options={[{ label: "None", value: "None" }, ...competitors.map(c => ({ label: c, value: c }))]}
+            onChange={setCompareCompetitor}
+          />
+          <FilterDropdown
+            label="Sort by"
+            value={sortBy}
+            options={[
+              { label: "Overall score (asc)", value: "score_asc" },
+              { label: "Overall score (desc)", value: "score_desc" },
+              { label: "Title", value: "title_desc" },
+              { label: "Hero image", value: "heroImage_desc" },
+              { label: "Search listing", value: "searchListing_desc" },
+              { label: "Page content", value: "pageContent_desc" },
+              { label: "Competitor aggression", value: "competitorAggression_desc" },
+              { label: "Last updated (newest)", value: "lastUpdated_desc" },
+              { label: "Last updated (oldest)", value: "lastUpdated_asc" },
+            ]}
+            onChange={setSortBy}
+          />
         </div>
+
+        {/* Comparison banner */}
+        {isComparing && (
+          <div className="rounded-lg px-4 py-3 flex items-center justify-between" style={{ backgroundColor: "rgba(79,127,255,0.08)", borderLeft: "3px solid #4F7FFF" }}>
+            <div>
+              <p className="text-[13px] font-medium" style={{ color: "#E8EAF0" }}>Comparing your content scores against {compareCompetitor}</p>
+              <p className="text-[11px]" style={{ color: "#8B8FA8" }}>Comparison columns shown in table. Your score / Their score.</p>
+            </div>
+            <button onClick={() => setCompareCompetitor("None")} className="flex items-center gap-1 text-[11px]" style={{ color: "#4F7FFF" }}>
+              Clear comparison <X size={12} />
+            </button>
+          </div>
+        )}
 
         {/* SKU table */}
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
@@ -141,12 +336,14 @@ const ContentAuditView: React.FC = () => {
               <thead>
                 <tr className="text-muted-foreground border-b border-subtle">
                   <th className="text-left py-2.5 px-3 font-normal">SKU</th>
-                  <th className="text-right py-2.5 px-2 font-normal cursor-pointer hover:text-foreground" onClick={() => handleSort("score")}>Score {sortKey === "score" ? (sortAsc ? "↑" : "↓") : ""}</th>
-                  <th className="text-center py-2.5 px-2 font-normal cursor-pointer hover:text-foreground" onClick={() => handleSort("title")}>Title</th>
-                  <th className="text-center py-2.5 px-2 font-normal cursor-pointer hover:text-foreground" onClick={() => handleSort("heroImage")}>Hero Img</th>
-                  <th className="text-center py-2.5 px-2 font-normal cursor-pointer hover:text-foreground" onClick={() => handleSort("searchListing")}>Search</th>
-                  <th className="text-center py-2.5 px-2 font-normal cursor-pointer hover:text-foreground" onClick={() => handleSort("pageContent")}>Page</th>
-                  <th className="text-center py-2.5 px-2 font-normal cursor-pointer hover:text-foreground" onClick={() => handleSort("competitorAggression")}>Comp.</th>
+                  <th className="text-right py-2.5 px-2 font-normal">Score</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Title</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Hero Img</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Search</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Page</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Comp.</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Trend</th>
+                  <th className="text-right py-2.5 px-2 font-normal">Updated</th>
                   <th className="text-right py-2.5 px-3 font-normal">Action</th>
                 </tr>
               </thead>
@@ -154,6 +351,7 @@ const ContentAuditView: React.FC = () => {
                 {filteredSkus.map((s, i) => {
                   const overall = getOverall(s);
                   const sc = scoreColor(overall);
+                  const comp = compData?.[s.id];
                   return (
                     <tr key={s.sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
                       <td className="py-2.5 px-3 text-foreground flex items-center gap-2">
@@ -168,13 +366,17 @@ const ContentAuditView: React.FC = () => {
                           <span className="font-mono text-[11px] w-8" style={{ color: sc }}>{overall}</span>
                         </div>
                       </td>
-                      {[s.title, s.heroImage, s.searchListing, s.pageContent, s.competitorAggression].map((val, di) => (
-                        <td key={di} className="py-2.5 px-2 text-center">
-                          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: dimColor(val) + "20", color: dimColor(val) }}>{val}/20</span>
-                        </td>
-                      ))}
+                      <td className="py-2.5 px-2 text-center"><DimCell yours={s.title} theirs={comp?.title} /></td>
+                      <td className="py-2.5 px-2 text-center"><DimCell yours={s.heroImage} theirs={comp?.heroImage} /></td>
+                      <td className="py-2.5 px-2 text-center"><DimCell yours={s.searchListing} theirs={comp?.searchListing} /></td>
+                      <td className="py-2.5 px-2 text-center"><DimCell yours={s.pageContent} theirs={comp?.pageContent} /></td>
+                      <td className="py-2.5 px-2 text-center"><DimCell yours={s.competitorAggression} theirs={comp?.competitorAggression} /></td>
+                      <td className="py-2.5 px-2 text-center">
+                        <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
+                      </td>
+                      <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{s.lastUpdated}</td>
                       <td className="py-2.5 px-3 text-right">
-                        <button onClick={() => navigateToFix(s)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${overall < 60 ? "bg-sw-red/20 text-sw-red" : overall < 80 ? "bg-sw-amber/20 text-sw-amber" : "border border-subtle text-muted-foreground"}`}>
+                        <button onClick={() => navigateToSkuDetail(s)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${overall < 60 ? "bg-sw-red/20 text-sw-red" : overall < 80 ? "bg-sw-amber/20 text-sw-amber" : "border border-subtle text-muted-foreground"}`}>
                           {overall < 60 ? "Fix now →" : overall < 80 ? "Improve →" : "View →"}
                         </button>
                       </td>
