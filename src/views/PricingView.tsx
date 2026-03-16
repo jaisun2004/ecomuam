@@ -350,6 +350,66 @@ const PricingView: React.FC = () => {
           </div>
         </PanelCard>
       </div>
+      </>) : (
+        <div className="space-y-5">
+          <PanelCard title="Price Index Trend — 30 Days" badge="You vs Category Avg" badgeColor="accent" delay={0}>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={priceIndexTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0.8, 1.3]} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price Index" />
+                <Line type="monotone" dataKey="categoryAvg" stroke="hsl(225,10%,46%)" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Category Avg" />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-primary" /> You</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Category Avg</span>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Price Elasticity by SKU" badge="Demand Sensitivity" badgeColor="amber" delay={0.1}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={elasticityData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={false} vertical={true} />
+                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 1]} />
+                <YAxis type="category" dataKey="sku" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} width={80} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar dataKey="sensitivity" fill="hsl(38,92%,50%)" radius={[0, 4, 4, 0]} name="Elasticity" />
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-[10px] text-muted-foreground mt-2">Higher values = more sensitive to price changes</p>
+          </PanelCard>
+
+          <PanelCard title="Competitor Price Gap" badge="Action Required" badgeColor="red" delay={0.2}>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">SKU</th>
+                  <th className="text-right py-2 font-normal">Your Price</th>
+                  <th className="text-right py-2 font-normal">Lowest Competitor</th>
+                  <th className="text-right py-2 font-normal">Gap</th>
+                  <th className="text-right py-2 font-normal">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {priceGapTable.map((r, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 text-foreground">{r.sku}</td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{r.yours}</td>
+                    <td className="py-2.5 text-right font-mono text-sw-red">{r.lowest}</td>
+                    <td className="py-2.5 text-right font-mono text-sw-red">{r.gap}</td>
+                    <td className="py-2.5 text-right">
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${r.action === "Match Price" ? "bg-sw-red-dim text-sw-red" : "bg-surface-3 text-muted-foreground"}`}>{r.action}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </PanelCard>
+        </div>
+      )}
     </div>
   );
 };
