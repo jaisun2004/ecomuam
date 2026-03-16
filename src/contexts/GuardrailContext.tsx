@@ -40,6 +40,11 @@ export interface ActionOwnership {
   reason?: string;
 }
 
+export interface ContextFilter {
+  type: string;
+  params: Record<string, string>;
+}
+
 interface GuardrailState {
   hardStops: HardStopRule[];
   strategicLocks: StrategicLock[];
@@ -51,6 +56,10 @@ interface GuardrailState {
   // Navigation
   navigateTo: (screen: string, scrollTarget?: string) => void;
   setNavigateTo: (fn: (screen: string, scrollTarget?: string) => void) => void;
+  // Context filter for Campaign Manager
+  contextFilter: ContextFilter | null;
+  setContextFilter: (filter: ContextFilter | null) => void;
+  navigateWithContext: (screen: string, scrollTarget?: string, context?: ContextFilter) => void;
   // Helpers
   isBlocked: (insightType: string) => boolean;
   getOwner: (insightId: string) => ActionOwnership | undefined;
@@ -87,7 +96,6 @@ insightTypes.forEach(i => {
     defaultPermissions[i][c] = "allow";
   });
 });
-// Set some defaults for demo
 defaultPermissions["Defense"]["Retargeting"] = "review";
 defaultPermissions["Budget shift"]["Festival"] = "block";
 
@@ -127,6 +135,12 @@ export const GuardrailProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [velocityLimits, setVelocityLimits] = useState(defaultVelocity);
   const [actionOwnerships] = useState(defaultOwnerships);
   const [navFn, setNavFn] = useState<(screen: string, scrollTarget?: string) => void>(() => () => {});
+  const [contextFilter, setContextFilter] = useState<ContextFilter | null>(null);
+
+  const navigateWithContext = useCallback((screen: string, scrollTarget?: string, context?: ContextFilter) => {
+    if (context) setContextFilter(context);
+    navFn(screen, scrollTarget);
+  }, [navFn]);
 
   const updateHardStop = useCallback((id: string, updates: Partial<HardStopRule>) => {
     setHardStops(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
@@ -176,6 +190,7 @@ export const GuardrailProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     hardStops, strategicLocks, permissionMatrix, conflictMode, estResolutionTime, velocityLimits, actionOwnerships,
     navigateTo: navFn,
     setNavigateTo: (fn) => setNavFn(() => fn),
+    contextFilter, setContextFilter, navigateWithContext,
     isBlocked, getOwner, isOwnedBy, hasActiveTier1, hasActiveAvailabilityStop, hasDefenseBlocked, hasDefenseActive,
     updateHardStop, updateStrategicLock, updatePermission,
     setConflictMode: setConflictModeState, setEstResolutionTime,
