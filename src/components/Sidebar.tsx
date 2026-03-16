@@ -8,6 +8,7 @@ const navSections = [
     items: [
       { id: "shelf", icon: LayoutGrid, label: "Digital Shelf", notify: false },
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
+      { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
     ],
   },
   {
