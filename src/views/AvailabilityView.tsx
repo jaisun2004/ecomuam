@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
-import { AlertTriangle, Megaphone, MapPin, Store } from "lucide-react";
+import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
+import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const oosTimeline = [
   { day: "Mar 1", oos: 4 }, { day: "Mar 5", oos: 6 }, { day: "Mar 10", oos: 3 },
