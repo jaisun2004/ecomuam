@@ -93,8 +93,12 @@ const BudgetOptimiserView: React.FC = () => {
     { type: "Festival", tier1: false, tier2: false },
   ];
 
+  const [tab, setTab] = useState("overview");
+
   return (
     <div className="space-y-6 pb-20">
+      <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Budget to Reallocate" value="₹3.5L" delta="From underperformers" deltaType="positive" sub="6 reallocation recommendations" accentColor="bg-primary" delay={0} />
         <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" sub="Blended across all platforms" accentColor="bg-sw-green" delay={0.05} />
