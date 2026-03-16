@@ -67,6 +67,16 @@ const BudgetOptimiserView: React.FC = () => {
   const [samePlatformApplied, setSamePlatformApplied] = useState<Record<number, boolean>>({});
   const [crossPlatformApplied, setCrossPlatformApplied] = useState<Record<number, boolean>>({});
   const [applyAll, setApplyAll] = useState(false);
+  const [guardrailOpen, setGuardrailOpen] = useState(true);
+  const g = useGuardrails();
+
+  const guardrailStatuses = [
+    { type: "Brand Search", tier1: false, tier2: false },
+    { type: "Performance Max", tier1: true, tier2: false },
+    { type: "Non-Brand", tier1: false, tier2: true },
+    { type: "Retargeting", tier1: true, tier2: false },
+    { type: "Festival", tier1: false, tier2: false },
+  ];
 
   return (
     <div className="space-y-6 pb-20">
