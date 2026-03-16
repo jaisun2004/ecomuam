@@ -478,6 +478,8 @@ const CampaignView: React.FC = () => {
               g.contextFilter.type === "search-listing" ? `Search Listing · ${g.contextFilter.params.sku || ""}` :
               g.contextFilter.type === "competitor-content" ? `Competitor content · ${g.contextFilter.params.competitor || ""}` :
               g.contextFilter.type === "subcategory" ? `Subcategory · ${g.contextFilter.params.subcategory || ""}` :
+              g.contextFilter.type === "shelf-gap" ? `Shelf gap · ${g.contextFilter.params.keyword || ""} on ${g.contextFilter.params.platform || ""}` :
+              g.contextFilter.type === "shelf-coverage" ? `Shelf coverage · ${g.contextFilter.params.category || ""}` :
               g.contextFilter.type}
           </span>
           <button onClick={() => g.setContextFilter(null)} className="text-[10px] font-medium flex items-center gap-0.5" style={{ color: "#8B8FA8" }}>
