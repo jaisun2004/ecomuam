@@ -99,9 +99,31 @@ const AvailabilityView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [selectedCity, setSelectedCity] = useState(0);
   const [adPauseStates, setAdPauseStates] = useState<Record<number, boolean>>({});
+  const g = useGuardrails();
+  const dedupActive = g.hasActiveAvailabilityStop();
 
   return (
     <div className="space-y-6 pb-20">
+      {/* Deduplication banner */}
+      {dedupActive && (
+        <div id="avail-dedup-banner" className="rounded-xl p-4 flex items-start gap-3" style={{
+          borderLeft: "3px solid #4F7FFF",
+          backgroundColor: "rgba(79,127,255,0.08)",
+          border: "1px solid rgba(79,127,255,0.2)",
+          borderRadius: "8px",
+        }}>
+          <Info size={16} style={{ color: "#4F7FFF", marginTop: 2, flexShrink: 0 }} />
+          <div>
+            <p className="text-[13px] font-medium text-foreground">Campaign action already in progress</p>
+            <p className="text-[12px] mt-0.5" style={{ color: "#8B8FA8" }}>
+              A Tier 1 hard stop has been triggered in Campaign Manager for this availability signal. 2 campaigns are currently paused or flagged.
+            </p>
+            <button onClick={() => g.navigateTo("campaigns", "campaign-conflict-banner")} className="text-[12px] font-medium mt-1.5 inline-block" style={{ color: "#4F7FFF" }}>
+              View active Tier stops in Campaign Manager →
+            </button>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 6 platforms · 48 SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="OOS Events (30d)" value="14" delta="▲ 4 vs last wk" deltaType="negative" sub="₹8.4L estimated revenue lost" accentColor="bg-sw-red" delay={0.05} />
