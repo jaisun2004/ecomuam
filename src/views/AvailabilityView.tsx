@@ -117,7 +117,7 @@ const AvailabilityView: React.FC = () => {
   return (
     <div className="space-y-6 pb-20">
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
-      {/* Deduplication banner */}
+      {tab === "overview" ? (<>
       {dedupActive && (
         <div id="avail-dedup-banner" className="rounded-xl p-4 flex items-start gap-3" style={{
           borderLeft: "3px solid #4F7FFF",
