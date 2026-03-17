@@ -43,6 +43,7 @@ const views: Record<string, React.FC> = {
   taxonomy: TaxonomyConfigView,
   crawling: CrawlingInputsView,
   categoryassortment: CategoryAssortmentView,
+};
 
 const IndexInner = () => {
   const [active, setActive] = useState("cockpit");
