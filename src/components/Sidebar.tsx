@@ -9,7 +9,6 @@ const navSections = [
     label: "PLANNING",
     items: [
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
-      { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
     ],
   },
   {
