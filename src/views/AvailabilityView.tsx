@@ -11,7 +11,7 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
   score: Math.round(55 + Math.random() * 30),
 }));
 
-const skuHeatmapData = ["Whey 1kg", "Whey 500g", "Creatine", "BCAA", "Pre-Workout", "Multi-Vit"].map(sku => ({
+const skuHeatmapData = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"].map(sku => ({
   sku,
   days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
 }));
@@ -22,38 +22,39 @@ const oosTimeline = [
 
 const platformAvailability = [
   { name: "Amazon", overall: 86, color: "#FF9900", skus: [
-    { sku: "Whey 1kg", avail: 97 }, { sku: "Whey 500g", avail: 100 }, { sku: "Creatine", avail: 72 },
-    { sku: "BCAA", avail: 95 }, { sku: "Pre-Workout", avail: 54 }, { sku: "Multi-Vit", avail: 98 },
+    { sku: "Good Day Butter 200g", avail: 97 }, { sku: "Marie Gold 250g", avail: 100 }, { sku: "NutriChoice Digestive", avail: 72 },
+    { sku: "Good Day Choco Chip", avail: 95 }, { sku: "50-50 Maska Chaska", avail: 54 }, { sku: "Milk Bikis 100g", avail: 98 },
   ]},
   { name: "Flipkart", overall: 68, color: "#2F77FF", skus: [
-    { sku: "Whey 1kg", avail: 74 }, { sku: "Whey 500g", avail: 92 }, { sku: "Creatine", avail: 61 },
-    { sku: "BCAA", avail: 88 }, { sku: "Pre-Workout", avail: 12 }, { sku: "Multi-Vit", avail: 78 },
+    { sku: "Good Day Butter 200g", avail: 74 }, { sku: "Marie Gold 250g", avail: 92 }, { sku: "NutriChoice Digestive", avail: 61 },
+    { sku: "Good Day Choco Chip", avail: 88 }, { sku: "50-50 Maska Chaska", avail: 12 }, { sku: "Milk Bikis 100g", avail: 78 },
   ]},
   { name: "Blinkit", overall: 41, color: "#FDDC2B", skus: [
-    { sku: "Whey 1kg", avail: 55 }, { sku: "Whey 500g", avail: 38 }, { sku: "Multi-Vit", avail: 71 },
+    { sku: "Good Day Butter 200g", avail: 55 }, { sku: "Marie Gold 250g", avail: 38 }, { sku: "Milk Bikis 100g", avail: 71 },
   ]},
   { name: "Zepto", overall: 56, color: "#833AB4", skus: [
-    { sku: "Whey 1kg", avail: 93 }, { sku: "Whey 500g", avail: 77 }, { sku: "Multi-Vit", avail: 52 },
+    { sku: "Good Day Butter 200g", avail: 93 }, { sku: "Marie Gold 250g", avail: 77 }, { sku: "Milk Bikis 100g", avail: 52 },
   ]},
   { name: "Instamart", overall: 21, color: "#FC8019", skus: [
-    { sku: "Whey 1kg", avail: 34 }, { sku: "Whey 500g", avail: 9 }, { sku: "Multi-Vit", avail: 41 },
+    { sku: "Good Day Butter 200g", avail: 34 }, { sku: "Marie Gold 250g", avail: 9 }, { sku: "Milk Bikis 100g", avail: 41 },
   ]},
 ];
 
-const revenueImpactData = [
-  { sku: "Pre-Workout 300g", platform: "Flipkart", lostRevenue: "₹2.8L", daysOOS: 12, avgDailyLoss: "₹23K" },
-  { sku: "Whey 500g", platform: "Instamart", lostRevenue: "₹1.9L", daysOOS: 8, avgDailyLoss: "₹24K" },
-  { sku: "Whey 500g", platform: "Blinkit", lostRevenue: "₹1.4L", daysOOS: 6, avgDailyLoss: "₹23K" },
-  { sku: "Multi-Vit 60ct", platform: "Zepto", lostRevenue: "₹0.8L", daysOOS: 4, avgDailyLoss: "₹20K" },
-  { sku: "Creatine 250g", platform: "Flipkart", lostRevenue: "₹0.6L", daysOOS: 3, avgDailyLoss: "₹20K" },
+/* OOS products today */
+const oosProductsToday = [
+  { sku: "50-50 Maska Chaska 120g", platform: "Flipkart", since: "6h ago" },
+  { sku: "Marie Gold 250g", platform: "Instamart", since: "3h ago" },
+  { sku: "Marie Gold 250g", platform: "Blinkit", since: "1h ago" },
+  { sku: "Milk Bikis 100g", platform: "Zepto", since: "4h ago" },
+  { sku: "NutriChoice Digestive", platform: "Flipkart", since: "2h ago" },
 ];
 
 const stockForecast = [
-  { sku: "Pre-Workout 300g", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
-  { sku: "Multi-Vit 60ct", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
-  { sku: "Whey 500g", platform: "Instamart", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
-  { sku: "Creatine 250g", platform: "Flipkart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
-  { sku: "BCAA Tropical", platform: "Amazon", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
+  { sku: "50-50 Maska Chaska 120g", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
+  { sku: "Milk Bikis 100g", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
+  { sku: "Marie Gold 250g", platform: "Instamart", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
+  { sku: "NutriChoice Digestive", platform: "Flipkart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
+  { sku: "Good Day Choco Chip", platform: "Amazon", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
 ];
 
 /* Darkstore listing gaps by city */
@@ -61,32 +62,32 @@ const darkstoreGaps = [
   {
     city: "Delhi NCR", totalDarkstores: 142,
     products: [
-      { sku: "Whey 1kg", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
-      { sku: "Whey 500g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
-      { sku: "Pre-Workout", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
-      { sku: "Creatine", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "BCAA", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
-      { sku: "Multi-Vit", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Good Day Butter 200g", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
+      { sku: "Marie Gold 250g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
+      { sku: "50-50 Maska Chaska", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
+      { sku: "NutriChoice Digestive", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Good Day Choco Chip", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
+      { sku: "Milk Bikis 100g", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Mumbai", totalDarkstores: 98,
     products: [
-      { sku: "Whey 1kg", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
-      { sku: "Whey 500g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
-      { sku: "Pre-Workout", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
-      { sku: "Creatine", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "BCAA", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
-      { sku: "Multi-Vit", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Good Day Butter 200g", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
+      { sku: "50-50 Maska Chaska", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
+      { sku: "NutriChoice Digestive", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Good Day Choco Chip", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
+      { sku: "Milk Bikis 100g", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Bangalore", totalDarkstores: 76,
     products: [
-      { sku: "Whey 1kg", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
-      { sku: "Whey 500g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
-      { sku: "Pre-Workout", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
-      { sku: "Creatine", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
+      { sku: "Good Day Butter 200g", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
+      { sku: "50-50 Maska Chaska", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
+      { sku: "NutriChoice Digestive", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
     ],
   },
 ];
@@ -138,30 +139,36 @@ const AvailabilityView: React.FC = () => {
         </div>
       )}
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 6 platforms · 48 SKUs" accentColor="bg-sw-green" delay={0} />
-        <KPICard title="OOS Events (30d)" value="14" delta="▲ 4 vs last wk" deltaType="negative" sub="₹8.4L estimated revenue lost" accentColor="bg-sw-red" delay={0.05} />
+        <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 5 platforms · 6 SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="OOS Products Today" value={String(oosProductsToday.length)} delta="▲ 2 vs yesterday" deltaType="negative" sub="Products currently out of stock" accentColor="bg-sw-red" delay={0.05} />
         <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Across 3 cities · Q-Commerce" accentColor="bg-sw-amber" delay={0.1} />
         <KPICard title="Ad Budget Wasted" value="₹2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Pause campaigns in unlisted areas" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
-      {/* OOS Timeline + Platform Breakdown */}
+      {/* OOS Products Today + Platform Breakdown */}
       <div className="grid grid-cols-3 gap-4">
-        <PanelCard title="OOS Events Timeline" badge="30 Day Trend" badgeColor="red" className="col-span-2" delay={0.2}>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={oosTimeline}>
-              <defs>
-                <linearGradient id="gOOS" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(0,76%,57%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(0,76%,57%)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="day" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-              <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
-              <Area type="monotone" dataKey="oos" stroke="hsl(0,76%,57%)" fill="url(#gOOS)" strokeWidth={2} name="OOS Events" />
-            </AreaChart>
-          </ResponsiveContainer>
+        <PanelCard title="OOS Products Today" badge={`${oosProductsToday.length} products`} badgeColor="red" className="col-span-2" delay={0.2}>
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-muted-foreground">
+                <th className="text-left py-2 font-normal">Product</th>
+                <th className="text-left py-2 font-normal">Platform</th>
+                <th className="text-right py-2 font-normal">Since</th>
+              </tr>
+            </thead>
+            <tbody>
+              {oosProductsToday.map((item, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-sw-red flex-shrink-0" />
+                    {item.sku}
+                  </td>
+                  <td className="py-2.5 text-muted-foreground">{item.platform}</td>
+                  <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </PanelCard>
 
         <PanelCard title="Platform Availability" badge="All Platforms" badgeColor="accent" delay={0.25}>
@@ -186,7 +193,7 @@ const AvailabilityView: React.FC = () => {
         </PanelCard>
       </div>
 
-      {/* Darkstore Listing Gaps — NEW */}
+      {/* Darkstore Listing Gaps */}
       <PanelCard title="Darkstore Listing Gaps" badge="Q-Commerce Coverage" badgeColor="amber" delay={0.28}>
         <div className="flex items-center gap-2 mb-4">
           {darkstoreGaps.map((c, i) => (
@@ -285,50 +292,25 @@ const AvailabilityView: React.FC = () => {
         </div>
       </PanelCard>
 
-      {/* SKU Breakdown + Revenue Impact */}
-      <div className="grid grid-cols-2 gap-4">
-        <PanelCard title={`SKU Availability — ${platformAvailability[selectedPlatform].name}`} badge="SKU Level" badgeColor="accent" delay={0.35}>
-          <div className="space-y-2">
-            {platformAvailability[selectedPlatform].skus.map((s) => (
-              <div key={s.sku} className="flex items-center gap-3 p-2 bg-surface-2 rounded-xl border border-subtle">
-                <span className="text-xs text-foreground flex-1">{s.sku}</span>
-                <div className="w-32 h-2.5 bg-surface-3 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{
-                    width: `${s.avail}%`,
-                    backgroundColor: s.avail >= 80 ? "hsl(160,70%,48%)" : s.avail >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)"
-                  }} />
-                </div>
-                <span className={`font-mono text-[11px] w-10 text-right ${
-                  s.avail >= 80 ? "text-sw-green" : s.avail >= 50 ? "text-sw-amber" : "text-sw-red"
-                }`}>{s.avail}%</span>
+      {/* SKU Breakdown */}
+      <PanelCard title={`SKU Availability — ${platformAvailability[selectedPlatform].name}`} badge="SKU Level" badgeColor="accent" delay={0.35}>
+        <div className="space-y-2">
+          {platformAvailability[selectedPlatform].skus.map((s) => (
+            <div key={s.sku} className="flex items-center gap-3 p-2 bg-surface-2 rounded-xl border border-subtle">
+              <span className="text-xs text-foreground flex-1">{s.sku}</span>
+              <div className="w-32 h-2.5 bg-surface-3 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{
+                  width: `${s.avail}%`,
+                  backgroundColor: s.avail >= 80 ? "hsl(160,70%,48%)" : s.avail >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)"
+                }} />
               </div>
-            ))}
-          </div>
-        </PanelCard>
-
-        <PanelCard title="Revenue Impact — Stock-outs" badge="₹8.4L lost" badgeColor="red" delay={0.4}>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-muted-foreground">
-                <th className="text-left py-2 font-normal">SKU</th>
-                <th className="text-left py-2 font-normal">Platform</th>
-                <th className="text-right py-2 font-normal">Lost Rev</th>
-                <th className="text-right py-2 font-normal">Days OOS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {revenueImpactData.map((r, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2 text-foreground">{r.sku}</td>
-                  <td className="py-2 text-muted-foreground">{r.platform}</td>
-                  <td className="py-2 text-right font-mono text-sw-red">{r.lostRevenue}</td>
-                  <td className="py-2 text-right font-mono text-foreground">{r.daysOOS}d</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </PanelCard>
-      </div>
+              <span className={`font-mono text-[11px] w-10 text-right ${
+                s.avail >= 80 ? "text-sw-green" : s.avail >= 50 ? "text-sw-amber" : "text-sw-red"
+              }`}>{s.avail}%</span>
+            </div>
+          ))}
+        </div>
+      </PanelCard>
 
       {/* Stock Forecast */}
       <PanelCard title="Stock-out Forecast" badge="AI Prediction" badgeColor="purple" delay={0.45}>
@@ -366,11 +348,10 @@ const AvailabilityView: React.FC = () => {
   );
 };
 
-// Extracted analytics component with enhanced heatmap
 const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> = ({ g }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
-  const skuNames = ["Whey 1kg", "Whey 500g", "Creatine", "BCAA", "Pre-Workout", "Multi-Vit"];
+  const skuNames = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
   const heatmapData = skuNames.map(sku => ({
     sku,
     days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
@@ -382,25 +363,24 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
     return "rgba(46,207,142,0.5)";
   };
 
-  const affectedCampaigns = ["Whey Protein — Sponsored", "Q-Commerce Launch Push"];
-  const tier2Locks = ["Manual pause — Creatine Retargeting"];
+  const affectedCampaigns = ["Good Day — Sponsored", "Q-Commerce Biscuit Push"];
+  const tier2Locks = ["Manual pause — NutriChoice Retargeting"];
 
   return (
     <div className="space-y-5">
-      {/* Enhanced heatmap */}
       <PanelCard title="Availability by SKU Over Time" badge="30 Days" badgeColor="red" delay={0}>
         <div className="relative">
           <div className="overflow-x-auto">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1">
-                <span className="text-[10px] text-muted-foreground w-20 flex-shrink-0" />
+                <span className="text-[10px] text-muted-foreground w-32 flex-shrink-0" />
                 {Array.from({ length: 30 }, (_, i) => (
                   <span key={i} className="text-[7px] font-mono text-muted-foreground w-4 text-center flex-shrink-0">{i + 1}</span>
                 ))}
               </div>
               {heatmapData.map((row) => (
                 <div key={row.sku} className="flex items-center gap-1">
-                  <span className="text-[10px] text-foreground w-20 flex-shrink-0">{row.sku}</span>
+                  <span className="text-[10px] text-foreground w-32 flex-shrink-0 truncate">{row.sku}</span>
                   <div className="flex gap-px">
                     {row.days.map((val, di) => (
                       <div
@@ -425,7 +405,6 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
             </div>
           </div>
 
-          {/* Slide-over panel */}
           {selectedCell && (
             <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-10 overflow-hidden">
               <div className="p-4 border-b border-subtle flex items-center justify-between">
@@ -470,7 +449,6 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
         </div>
       </PanelCard>
 
-      {/* Existing analytics content */}
       <PanelCard title="Availability Score — 30 Days" badge="Trend" badgeColor="accent" delay={0.1}>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={availScoreTrend}>
@@ -485,20 +463,16 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
       </PanelCard>
 
       <div className="rounded-xl border border-subtle bg-surface-1 p-5">
-        <h3 className="text-sm font-medium text-foreground mb-1">Stockout Impact Estimate</h3>
-        <p className="text-[11px] text-muted-foreground mb-3">Estimated revenue lost to out-of-stock days in the last 30 days</p>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-            <p className="font-mono text-2xl font-bold text-sw-red">₹8.4L</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Total Lost Revenue</p>
-          </div>
+        <h3 className="text-sm font-medium text-foreground mb-1">Stockout Summary</h3>
+        <p className="text-[11px] text-muted-foreground mb-3">Out-of-stock impact in the last 30 days</p>
+        <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
             <p className="font-mono text-2xl font-bold text-sw-amber">33</p>
             <p className="text-[10px] text-muted-foreground mt-1">Total OOS Days</p>
           </div>
           <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-            <p className="font-mono text-2xl font-bold text-foreground">₹25K</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Avg Daily Loss</p>
+            <p className="font-mono text-2xl font-bold text-sw-red">{oosProductsToday.length}</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Products OOS Today</p>
           </div>
         </div>
       </div>

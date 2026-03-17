@@ -22,6 +22,7 @@ import ContentAuditSkuDetailView from "@/views/ContentAuditSkuDetailView";
 import TaxonomyConfigView from "@/views/TaxonomyConfigView";
 import CrawlingInputsView from "@/views/CrawlingInputsView";
 import CategoryAssortmentView from "@/views/CategoryAssortmentView";
+import WarRoomView from "@/views/WarRoomView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
@@ -43,6 +44,7 @@ const views: Record<string, React.FC> = {
   taxonomy: TaxonomyConfigView,
   crawling: CrawlingInputsView,
   categoryassortment: CategoryAssortmentView,
+  warroom: WarRoomView,
 };
 
 const IndexInner = () => {

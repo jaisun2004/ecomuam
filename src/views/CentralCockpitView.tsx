@@ -3,14 +3,29 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Gauge, RefreshCw, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// ─── Mock data ───
 const urgentIssues = [
   { id: 1, tier: "T1" as const, desc: "Availability below 20% — 4 campaigns paused", source: "Availability", sourceId: "availability", target: "avail-dedup-banner" },
-  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
+  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Good Day Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
   { id: 3, tier: "T2" as const, desc: "Competitor bidding on 12 brand keywords", source: "Competitor Hub", sourceId: "competitors", target: "defense-insight" },
   { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift ₹50K", source: "Budget Opt.", sourceId: "budget", confidence: 4 },
   { id: 5, tier: "T3" as const, desc: "Daypart budget shift projected +18% conversion", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-digest", confidence: 4 },
   { id: 6, tier: "T3" as const, desc: "New keyword opportunities detected — 8 terms", source: "Discovery", sourceId: "discovery", confidence: 3 },
+];
+
+const kpiData = [
+  { label: "Brand SoV", value: "48%", delta: "+2%", accent: "bg-sw-green" },
+  { label: "Content Score", value: "74/100", delta: "-5%", accent: "bg-sw-amber" },
+  { label: "ROAS", value: "4.2x", delta: "+0.3x", accent: "bg-sw-green" },
+  { label: "Availability", value: "68%", delta: "-4%", accent: "bg-sw-red" },
+];
+
+const engagementData = [
+  { label: "Impressions", value: "1.24M", delta: "+12%" },
+  { label: "Clicks", value: "24.7K", delta: "+8%" },
+  { label: "CTR", value: "2.0%", delta: "-0.1%" },
+  { label: "Orders", value: "842", delta: "+15%" },
+  { label: "AOV", value: "₹875", delta: "-3%" },
+  { label: "Conversion Rate", value: "3.4%", delta: "+0.2%" },
 ];
 
 const potentialFlags = [
@@ -45,12 +60,10 @@ const CentralCockpitView: React.FC = () => {
   const [approvedIds, setApprovedIds] = useState<Set<number>>(new Set());
   const [healthOpen, setHealthOpen] = useState(false);
 
-  // Determine state
   const hasIssues = urgentIssues.length > 0;
   const hasPendingApprovals = urgentIssues.some(i => i.confidence && i.confidence >= 3 && !approvedIds.has(i.id));
   const hasUrgentOrPending = hasIssues || hasPendingApprovals;
 
-  // Build unified list: T1 → T2 → pending approvals (blue) → T3
   const visibleItems = urgentIssues
     .filter(i => !approvedIds.has(i.id))
     .sort((a, b) => {
@@ -61,7 +74,6 @@ const CentralCockpitView: React.FC = () => {
     })
     .slice(0, 8);
 
-  // Batch approve: ≥2 approvable T3 high-confidence items
   const approvableItems = urgentIssues.filter(i => i.tier === "T3" && i.confidence && i.confidence >= 4 && !approvedIds.has(i.id));
   const showBatchApprove = approvableItems.length >= 2;
 
@@ -98,7 +110,6 @@ const CentralCockpitView: React.FC = () => {
 
   return (
     <div className="space-y-5 pb-20 max-w-3xl">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
           <Gauge size={20} className="text-primary" /> Central Cockpit
@@ -110,7 +121,6 @@ const CentralCockpitView: React.FC = () => {
       </div>
 
       {!hasUrgentOrPending ? (
-        /* ─── ALL CLEAR STATE ─── */
         <div className="flex flex-col items-center justify-center py-16">
           <div className="w-3 h-3 rounded-full mb-4" style={{ backgroundColor: "#2ECF8E" }} />
           <p className="text-base font-medium" style={{ color: "#E8EAF0" }}>All clear</p>
@@ -118,9 +128,7 @@ const CentralCockpitView: React.FC = () => {
           <p className="text-[11px] mt-1" style={{ color: "#555A6E" }}>Last checked {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
         </div>
       ) : (
-        /* ─── ISSUES PRESENT STATE ─── */
         <div className="space-y-0">
-          {/* Batch approve bar */}
           {showBatchApprove && (
             <div className="mb-3">
               <button onClick={handleBatchApprove} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
@@ -129,7 +137,6 @@ const CentralCockpitView: React.FC = () => {
             </div>
           )}
 
-          {/* Unified ranked list */}
           <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
             {visibleItems.map(item => {
               const isApprovable = item.confidence && item.confidence >= 3;
@@ -172,7 +179,6 @@ const CentralCockpitView: React.FC = () => {
         </div>
       )}
 
-      {/* ─── POTENTIAL FLAGS (WATCHING) ─── */}
       {potentialFlags.length > 0 && (
         <div className="mt-6">
           <p className="font-mono text-[10px] uppercase tracking-wider mb-1" style={{ color: "#555A6E" }}>Watching</p>
@@ -191,13 +197,9 @@ const CentralCockpitView: React.FC = () => {
               </div>
             ))}
           </div>
-          {potentialFlags.length > 5 && (
-            <p className="text-[11px] font-medium mt-2" style={{ color: "#4F7FFF" }}>View all signals →</p>
-          )}
         </div>
       )}
 
-      {/* ─── SYSTEM HEALTH (COLLAPSED) ─── */}
       <div className="mt-4">
         <button onClick={() => setHealthOpen(!healthOpen)} className="flex items-center gap-1.5 text-[12px]" style={{ color: "#555A6E" }}>
           {clearCount}/{systemRows.length} screens clear

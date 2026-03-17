@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -9,6 +9,7 @@ const navSections = [
     label: "PLANNING",
     items: [
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
+      { id: "warroom", icon: MapPin, label: "War Room", notify: false },
     ],
   },
   {
@@ -115,7 +116,6 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
         expanded ? "w-[220px]" : "w-[68px]"
       }`}
     >
-      {/* Logo + toggle */}
       <div className={`flex items-center mb-4 flex-shrink-0 ${expanded ? "px-4 justify-between" : "justify-center"}`}>
         <div
           className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center accent-glow cursor-pointer flex-shrink-0"
@@ -138,9 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
         </button>
       </div>
 
-      {/* Navigation */}
       <div className={`flex-1 flex flex-col gap-0.5 ${expanded ? "px-3" : "items-center"}`}>
-        {/* Central Cockpit — standalone top-level item */}
         {renderItem(cockpitItem, true)}
         <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
 
@@ -149,8 +147,6 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             {si > 0 && (
               <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
             )}
-
-            {/* Section label */}
             {expanded ? (
               <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase px-2 py-1.5 flex-shrink-0">
                 {section.label}
@@ -167,14 +163,11 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
                 </TooltipContent>
               </Tooltip>
             )}
-
-            {/* Items */}
             {section.items.map((item) => renderItem(item))}
           </React.Fragment>
         ))}
       </div>
 
-      {/* Account */}
       {expanded ? (
         <div className="px-3 pt-2 flex-shrink-0">
           <div className="h-px bg-surface-3 mb-2" />
