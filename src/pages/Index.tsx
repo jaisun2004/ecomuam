@@ -19,6 +19,9 @@ import GuardrailsView from "@/views/GuardrailsView";
 import MarketShareView from "@/views/MarketShareView";
 import ContentAuditView from "@/views/ContentAuditView";
 import ContentAuditSkuDetailView from "@/views/ContentAuditSkuDetailView";
+import TaxonomyConfigView from "@/views/TaxonomyConfigView";
+import CrawlingInputsView from "@/views/CrawlingInputsView";
+import CategoryAssortmentView from "@/views/CategoryAssortmentView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
@@ -37,6 +40,9 @@ const views: Record<string, React.FC> = {
   guardrails: GuardrailsView,
   marketshare: MarketShareView,
   contentaudit: ContentAuditView,
+  taxonomy: TaxonomyConfigView,
+  crawling: CrawlingInputsView,
+  categoryassortment: CategoryAssortmentView,
 };
 
 const IndexInner = () => {

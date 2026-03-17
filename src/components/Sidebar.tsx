@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -9,7 +9,6 @@ const navSections = [
     label: "PLANNING",
     items: [
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
-      { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
     ],
   },
   {
@@ -18,6 +17,9 @@ const navSections = [
       { id: "availability", icon: Package, label: "Availability", notify: false },
       { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
       { id: "competitors", icon: Eye, label: "Competitor Ads Hub", notify: true },
+      { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
+      { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
+      { id: "categoryassortment", icon: LayoutList, label: "Category Assortment", notify: false },
     ],
   },
   {
@@ -35,10 +37,11 @@ const navSections = [
     ],
   },
   {
-    label: "INTELLIGENCE",
+    label: "CONFIGURATIONS",
     items: [
-      { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
-      { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
+      { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
+      { id: "taxonomy", icon: Settings, label: "Taxonomy Config", notify: false },
+      { id: "crawling", icon: Database, label: "Crawling Inputs", notify: false },
     ],
   },
   {
