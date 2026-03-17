@@ -38,10 +38,11 @@ const navSections = [
     ],
   },
   {
-    label: "INTELLIGENCE",
+    label: "CONFIGURATIONS",
     items: [
-      { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
-      { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
+      { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
+      { id: "taxonomy", icon: Settings, label: "Taxonomy Config", notify: false },
+      { id: "crawling", icon: Database, label: "Crawling Inputs", notify: false },
     ],
   },
   {
