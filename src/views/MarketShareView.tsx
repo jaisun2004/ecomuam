@@ -160,20 +160,53 @@ const MarketShareView: React.FC = () => {
         {/* Subcategory movers */}
         <PanelCard title="Subcategories to Watch" badge="WoW change" badgeColor="amber" delay={0.3}>
           <div className="space-y-2">
-            {subcategoryMovers.map(s => (
-              <div key={s.name} className="flex items-center gap-3 p-3 rounded-xl bg-surface-2 border border-subtle">
-                <span className="text-xs text-foreground flex-1">{s.name}</span>
-                <span className="font-mono text-[10px] text-muted-foreground">{s.thisWeek}%</span>
-                <span className="text-[9px] text-muted-foreground">vs {s.lastWeek}%</span>
-                <span className={`font-mono text-[11px] w-12 text-right ${s.change > 0 ? "text-sw-green" : s.change < 0 ? "text-sw-red" : "text-muted-foreground"}`}>
-                  {s.change > 0 ? "+" : ""}{s.change}%
-                </span>
-                <span className="text-[9px] text-muted-foreground">Leader: {s.leader}</span>
-                <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "subcategory", params: { subcategory: s.name } })} className="text-[10px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
-                  View campaigns →
-                </button>
+            {subcategoryMovers.map(s => {
+              const [showDetail, setShowDetail] = React.useState(false);
+              return (
+              <div key={s.name}>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-2 border border-subtle">
+                  <span className="text-xs text-foreground flex-1">{s.name}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground">{s.thisWeek}%</span>
+                  <span className="text-[9px] text-muted-foreground">vs {s.lastWeek}%</span>
+                  <span className={`font-mono text-[11px] w-12 text-right ${s.change > 0 ? "text-sw-green" : s.change < 0 ? "text-sw-red" : "text-muted-foreground"}`}>
+                    {s.change > 0 ? "+" : ""}{s.change}%
+                  </span>
+                  <span className="text-[9px] text-muted-foreground">Leader: {s.leader}</span>
+                  <button onClick={() => setShowDetail(!showDetail)} className="text-[10px] font-medium px-2 py-1 rounded-lg bg-primary/15 text-primary flex-shrink-0">
+                    {showDetail ? "Hide" : "Details"}
+                  </button>
+                  <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "subcategory", params: { subcategory: s.name } })} className="text-[10px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                    View campaigns →
+                  </button>
+                </div>
+                {showDetail && (
+                  <div className="mt-1 ml-4 p-3 rounded-xl bg-surface-1 border border-subtle space-y-2">
+                    <div className="grid grid-cols-4 gap-2">
+                      <div className="p-2 rounded-lg bg-surface-2">
+                        <p className="text-[9px] text-muted-foreground">Availability</p>
+                        <p className="font-mono text-sm text-foreground">{Math.round(65 + Math.random() * 30)}%</p>
+                      </div>
+                      <div className="p-2 rounded-lg bg-surface-2">
+                        <p className="text-[9px] text-muted-foreground">Avg Price Δ</p>
+                        <p className="font-mono text-sm text-sw-red">+{(Math.random() * 8 + 2).toFixed(1)}%</p>
+                      </div>
+                      <div className="p-2 rounded-lg bg-surface-2">
+                        <p className="text-[9px] text-muted-foreground">Discount Pressure</p>
+                        <p className="font-mono text-sm text-sw-amber">{Math.round(10 + Math.random() * 20)}%</p>
+                      </div>
+                      <div className="p-2 rounded-lg bg-surface-2">
+                        <p className="text-[9px] text-muted-foreground">New SKUs</p>
+                        <p className="font-mono text-sm text-foreground">{Math.round(1 + Math.random() * 5)}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "subcategory", params: { subcategory: s.name } })} className="text-[10px] font-medium" style={{ color: "#4F7FFF" }}>
+                      Open in Campaign Manager →
+                    </button>
+                  </div>
+                )}
               </div>
-            ))}
+              );
+            })}
           </div>
         </PanelCard>
       </>) : (
