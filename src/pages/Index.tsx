@@ -25,6 +25,7 @@ import CategoryAssortmentView from "@/views/CategoryAssortmentView";
 import WarRoomView from "@/views/WarRoomView";
 import KeywordAnalysisView from "@/views/KeywordAnalysisView";
 import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
+import CampaignReportsView from "@/views/CampaignReportsView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
