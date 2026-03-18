@@ -62,17 +62,15 @@ type ReportKeyword = {
   impressions: string;
   clicks: string;
   spend: string;
-  revenue: string;
   roas: string;
   roasColor: string;
-  cities?: { city: string; impressions: string; clicks: string; spend: string; revenue: string; roas: string; roasColor: string; products: { code: string; title: string; spend: string; revenue: string; roas: string; roasColor: string }[] }[];
+  cities?: { city: string; impressions: string; clicks: string; spend: string; roas: string; roasColor: string; products: { code: string; title: string; spend: string; roas: string; roasColor: string }[] }[];
 };
 
 type ReportCampaign = {
   name: string;
   status: string;
   spend: string;
-  revenue: string;
   roas: string;
   roasColor: string;
   impressions: string;
@@ -85,7 +83,6 @@ type ReportPlatform = {
   platform: string;
   color: string;
   totalSpend: string;
-  totalRevenue: string;
   blendedRoas: string;
   roasColor: string;
   campaigns: ReportCampaign[];
@@ -93,57 +90,42 @@ type ReportPlatform = {
 
 const reportData: ReportPlatform[] = [
   {
-    platform: "Amazon", color: "#FF9900", totalSpend: "₹7.8L", totalRevenue: "₹39.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
+    platform: "Amazon", color: "#FF9900", totalSpend: "₹7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
       {
-        name: "Whey Protein — Sponsored", status: "LIVE", spend: "₹4.2L", revenue: "₹21.4L", roas: "5.1x", roasColor: "text-sw-green",
+        name: "Good Day Butter — Sponsored", status: "LIVE", spend: "₹4.2L", roas: "5.1x", roasColor: "text-sw-green",
         impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
           {
-            keyword: "whey protein 1kg", impressions: "342K", clicks: "12.8K", spend: "₹1.8L", revenue: "₹11.2L", roas: "6.2x", roasColor: "text-sw-green",
+            keyword: "butter biscuits online", impressions: "342K", clicks: "12.8K", spend: "₹1.8L", roas: "6.2x", roasColor: "text-sw-green",
             cities: [
-              { city: "Delhi NCR", impressions: "98K", clicks: "4.1K", spend: "₹52K", revenue: "₹3.4L", roas: "6.5x", roasColor: "text-sw-green",
+              { city: "Delhi NCR", impressions: "98K", clicks: "4.1K", spend: "₹52K", roas: "6.5x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹32K", revenue: "₹2.1L", roas: "6.6x", roasColor: "text-sw-green" },
-                  { code: "SKU-WH1K-VN", title: "Whey 1kg Vanilla", spend: "₹20K", revenue: "₹1.3L", roas: "6.5x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Good Day Butter 200g", spend: "₹32K", roas: "6.6x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Good Day Butter 100g", spend: "₹20K", roas: "6.5x", roasColor: "text-sw-green" },
                 ]},
-              { city: "Mumbai", impressions: "82K", clicks: "3.2K", spend: "₹44K", revenue: "₹2.8L", roas: "6.4x", roasColor: "text-sw-green",
+              { city: "Mumbai", impressions: "82K", clicks: "3.2K", spend: "₹44K", roas: "6.4x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹28K", revenue: "₹1.8L", roas: "6.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-WH1K-VN", title: "Whey 1kg Vanilla", spend: "₹16K", revenue: "₹1.0L", roas: "6.3x", roasColor: "text-sw-green" },
-                ]},
-              { city: "Bangalore", impressions: "68K", clicks: "2.6K", spend: "₹38K", revenue: "₹2.2L", roas: "5.8x", roasColor: "text-sw-green",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹38K", revenue: "₹2.2L", roas: "5.8x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Good Day Butter 200g", spend: "₹28K", roas: "6.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Good Day Butter 100g", spend: "₹16K", roas: "6.3x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "protein powder", impressions: "498K", clicks: "14.2K", spend: "₹2.1L", revenue: "₹6.5L", roas: "3.1x", roasColor: "text-sw-amber",
-            cities: [
-              { city: "Delhi NCR", impressions: "142K", clicks: "4.8K", spend: "₹68K", revenue: "₹2.1L", roas: "3.1x", roasColor: "text-sw-amber",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹42K", revenue: "₹1.4L", roas: "3.3x", roasColor: "text-sw-amber" },
-                  { code: "SKU-WH500-CH", title: "Whey 500g Chocolate", spend: "₹26K", revenue: "₹0.7L", roas: "2.7x", roasColor: "text-sw-amber" },
-                ]},
-              { city: "Hyderabad", impressions: "88K", clicks: "2.4K", spend: "₹34K", revenue: "₹0.9L", roas: "2.6x", roasColor: "text-sw-amber",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹34K", revenue: "₹0.9L", roas: "2.6x", roasColor: "text-sw-amber" },
-                ]},
-            ],
+            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹2.1L", roas: "3.1x", roasColor: "text-sw-amber",
           },
         ],
       },
       {
-        name: "Creatine — Keyword Target", status: "PAUSED", spend: "₹1.8L", revenue: "₹3.8L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "Marie Gold — Keyword Target", status: "PAUSED", spend: "₹1.8L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "284K", clicks: "8.2K", ctr: "2.9%",
         keywords: [
           {
-            keyword: "creatine monohydrate", impressions: "187K", clicks: "5.4K", spend: "₹1.2L", revenue: "₹1.7L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹1.2L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
-              { city: "Delhi NCR", impressions: "62K", clicks: "1.8K", spend: "₹42K", revenue: "₹58K", roas: "1.4x", roasColor: "text-sw-red",
+              { city: "Delhi NCR", impressions: "62K", clicks: "1.8K", spend: "₹42K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-CR250", title: "Creatine Monohydrate 250g", spend: "₹42K", revenue: "₹58K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 250g", spend: "₹42K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -152,46 +134,42 @@ const reportData: ReportPlatform[] = [
     ],
   },
   {
-    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹3.3L", totalRevenue: "₹12.5L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
+    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
     campaigns: [
       {
-        name: "Q-Commerce Launch Push", status: "LIVE", spend: "₹2.8L", revenue: "₹10.6L", roas: "3.8x", roasColor: "text-sw-amber",
+        name: "Q-Commerce Biscuit Push", status: "LIVE", spend: "₹2.8L", roas: "3.8x", roasColor: "text-sw-amber",
         impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
           {
-            keyword: "whey protein", impressions: "188K", clicks: "7.2K", spend: "₹1.4L", revenue: "₹5.6L", roas: "4.0x", roasColor: "text-sw-green",
+            keyword: "butter biscuits", impressions: "188K", clicks: "7.2K", spend: "₹1.4L", roas: "4.0x", roasColor: "text-sw-green",
             cities: [
-              { city: "Delhi NCR", impressions: "92K", clicks: "3.8K", spend: "₹72K", revenue: "₹3.1L", roas: "4.3x", roasColor: "text-sw-green",
+              { city: "Delhi NCR", impressions: "92K", clicks: "3.8K", spend: "₹72K", roas: "4.3x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹48K", revenue: "₹2.1L", roas: "4.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-WH500-CH", title: "Whey 500g Chocolate", spend: "₹24K", revenue: "₹1.0L", roas: "4.2x", roasColor: "text-sw-green" },
-                ]},
-              { city: "Mumbai", impressions: "68K", clicks: "2.4K", spend: "₹48K", revenue: "₹1.8L", roas: "3.8x", roasColor: "text-sw-amber",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹48K", revenue: "₹1.8L", roas: "3.8x", roasColor: "text-sw-amber" },
+                  { code: "SKU-GD200", title: "Good Day Butter 200g", spend: "₹48K", roas: "4.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-5050", title: "50-50 Maska Chaska 120g", spend: "₹24K", roas: "4.2x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "pre workout", impressions: "124K", clicks: "4.8K", spend: "₹88K", revenue: "₹3.2L", roas: "3.6x", roasColor: "text-sw-amber",
+            keyword: "choco chip cookies", impressions: "124K", clicks: "4.8K", spend: "₹88K", roas: "3.6x", roasColor: "text-sw-amber",
           },
         ],
       },
     ],
   },
   {
-    platform: "Flipkart", color: "#2F77FF", totalSpend: "₹5.2L", totalRevenue: "₹10.9L", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    platform: "Flipkart", color: "#2F77FF", totalSpend: "₹5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
       {
-        name: "Creatine Retargeting", status: "PAUSED", spend: "₹3.0L", revenue: "₹6.3L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "Marie Gold Retargeting", status: "PAUSED", spend: "₹3.0L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "524K", clicks: "12.8K", ctr: "2.4%",
         keywords: [
           {
-            keyword: "creatine supplement", impressions: "284K", clicks: "6.2K", spend: "₹1.8L", revenue: "₹2.5L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits", impressions: "284K", clicks: "6.2K", spend: "₹1.8L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
-              { city: "Delhi NCR", impressions: "82K", clicks: "1.8K", spend: "₹52K", revenue: "₹72K", roas: "1.4x", roasColor: "text-sw-red",
+              { city: "Delhi NCR", impressions: "82K", clicks: "1.8K", spend: "₹52K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-CR250", title: "Creatine Monohydrate 250g", spend: "₹52K", revenue: "₹72K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 250g", spend: "₹52K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
