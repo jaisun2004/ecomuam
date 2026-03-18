@@ -607,36 +607,59 @@ const ContentAuditView: React.FC = () => {
             })()}
           </PanelCard>
 
-          {/* Title quality */}
+          {/* Title quality - with auto-generate toggle */}
           <PanelCard title="Title Quality Detail" badge="Per SKU" badgeColor="amber" delay={0.2}>
-            <div className="space-y-2">
-              {Object.entries(titleIssues).map(([sku, data]) => {
-                const open = expandedSections[`title-${sku}`];
-                return (
-                  <div key={sku} className="border border-subtle rounded-xl overflow-hidden">
-                    <button onClick={() => setExpandedSections(p => ({ ...p, [`title-${sku}`]: !p[`title-${sku}`] }))} className="w-full flex items-center gap-3 p-3 hover:bg-surface-2 transition-colors">
-                      {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                      <span className="text-xs text-foreground font-medium">{sku}</span>
-                      <span className="font-mono text-[10px] text-sw-red">{skuData.find(s => s.sku === sku)?.title || 0}/20</span>
-                      <div className="ml-auto flex items-center gap-1">
-                        {data.issues.map(issue => (
-                          <span key={issue} className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-sw-red/10 text-sw-red">{issue}</span>
-                        ))}
-                      </div>
+            {(() => {
+              const [autoGen, setAutoGen] = React.useState(false);
+              return (
+                <>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] text-muted-foreground">Auto-generate optimised titles</span>
+                    <button onClick={() => setAutoGen(!autoGen)}
+                      className={`relative w-11 h-6 rounded-full transition-colors ${autoGen ? "bg-primary" : "bg-surface-3"}`}>
+                      <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${autoGen ? "translate-x-[22px]" : "translate-x-0.5"}`} />
                     </button>
-                    {open && (
-                      <div className="p-3 border-t border-subtle bg-surface-2/30">
-                        <p className="text-[10px] text-muted-foreground mb-1">Suggested title:</p>
-                        <p className="text-xs text-foreground font-mono bg-surface-3 rounded-lg p-2">{data.suggested}</p>
-                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "content-audit", params: { sku, score: "0", issues: "Title" } })} className="text-[10px] font-medium mt-2 inline-block" style={{ color: "#4F7FFF" }}>
-                          Apply in Campaign Manager →
-                        </button>
-                      </div>
-                    )}
                   </div>
-                );
-              })}
-            </div>
+                  {autoGen && (
+                    <div className="mb-3 p-2 rounded-lg bg-sw-green/10 border border-sw-green/20 text-[10px] text-sw-green">
+                      ✓ Auto-generation enabled. AI will generate optimised titles for all SKUs below score threshold.
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    {Object.entries(titleIssues).map(([sku, data]) => {
+                      const open = expandedSections[`title-${sku}`];
+                      return (
+                        <div key={sku} className="border border-subtle rounded-xl overflow-hidden">
+                          <button onClick={() => setExpandedSections(p => ({ ...p, [`title-${sku}`]: !p[`title-${sku}`] }))} className="w-full flex items-center gap-3 p-3 hover:bg-surface-2 transition-colors">
+                            {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                            <span className="text-xs text-foreground font-medium">{sku}</span>
+                            <span className="font-mono text-[10px] text-sw-red">{skuData.find(s => s.sku === sku)?.title || 0}/20</span>
+                            <div className="ml-auto flex items-center gap-1">
+                              {data.issues.map(issue => (
+                                <span key={issue} className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-sw-red/10 text-sw-red">{issue}</span>
+                              ))}
+                            </div>
+                          </button>
+                          {open && (
+                            <div className="p-3 border-t border-subtle bg-surface-2/30">
+                              <p className="text-[10px] text-muted-foreground mb-1">{autoGen ? "AI-generated title:" : "Suggested title:"}</p>
+                              <p className="text-xs text-foreground font-mono bg-surface-3 rounded-lg p-2">{data.suggested}</p>
+                              {autoGen ? (
+                                <span className="text-[10px] text-sw-green mt-2 inline-block">✓ Will be auto-applied on next content sync</span>
+                              ) : (
+                                <button onClick={() => handleFlag(sku)} className="text-[10px] font-medium mt-2 inline-flex items-center gap-1" style={{ color: "#4F7FFF" }}>
+                                  {copiedFlags[sku] ? <><Check size={10} /> Brief copied!</> : <><Copy size={10} /> Flag for content team →</>}
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })()}
           </PanelCard>
 
           {/* Hero image quality */}
