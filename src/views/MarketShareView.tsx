@@ -72,11 +72,11 @@ const platformShareData = platforms.map(p => ({
 }));
 
 const subcategoryMovers = [
-  { name: "Whey Protein", thisWeek: 28, lastWeek: 24, change: 4, leader: "MuscleBlaze" },
-  { name: "Pre-Workout", thisWeek: 18, lastWeek: 22, change: -4, leader: "Optimum Nutrition" },
-  { name: "Creatine", thisWeek: 31, lastWeek: 29, change: 2, leader: "You" },
-  { name: "BCAA", thisWeek: 15, lastWeek: 14, change: 1, leader: "MyProtein" },
-  { name: "Vitamins", thisWeek: 12, lastWeek: 15, change: -3, leader: "Wellbeing Nutrition" },
+  { name: "Butter Cookies", thisWeek: 28, lastWeek: 24, change: 4, leader: "Sunfeast" },
+  { name: "Glucose Biscuits", thisWeek: 18, lastWeek: 22, change: -4, leader: "Parle" },
+  { name: "Cream Biscuits", thisWeek: 31, lastWeek: 29, change: 2, leader: "You" },
+  { name: "Digestive/Health", thisWeek: 15, lastWeek: 14, change: 1, leader: "McVities" },
+  { name: "Kids Biscuits", thisWeek: 12, lastWeek: 15, change: -3, leader: "Parle" },
 ];
 
 // Analytics data
