@@ -282,11 +282,16 @@ const MarketShareView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} formatter={(value: number) => `${value > 0 ? "+" : ""}${value}% share`} />
                 <Bar dataKey="change" radius={[4, 4, 0, 0]} name="WoW Share Change">
                   {velocityData.map((entry, index) => (
-                    <rect key={index} fill={entry.brand === "You" ? "#A78BFA" : entry.change > 0 ? "#FF5C5C" : "#555A6E"} />
+                    <rect key={index} fill={entry.brand === "You" ? "#60A5FA" : entry.change > 0 ? "#F87171" : entry.change < 0 ? "#34D399" : "#6B7280"} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#60A5FA" }} /> You</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#F87171" }} /> Gaining</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#34D399" }} /> Losing</span>
+            </div>
           </PanelCard>
 
           {/* New entrants */}
