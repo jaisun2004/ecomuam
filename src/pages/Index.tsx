@@ -50,6 +50,7 @@ const views: Record<string, React.FC> = {
   warroom: WarRoomView,
   keywordanalysis: KeywordAnalysisView,
   whitespace: CategoryWhitespaceView,
+  campaignreports: CampaignReportsView,
 };
 
 const IndexInner = () => {
