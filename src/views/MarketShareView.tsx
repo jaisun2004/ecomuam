@@ -60,7 +60,7 @@ const platformColorMap: Record<string, string> = {
 };
 
 const platforms = ["Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"];
-const competitors = ["MuscleBlaze", "Optimum Nutrition", "MyProtein", "GNC", "Wellbeing Nutrition"];
+const competitors = ["Sunfeast", "Parle", "Unibic", "McVities", "ITC"];
 
 const platformShareData = platforms.map(p => ({
   platform: p,
