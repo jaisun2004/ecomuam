@@ -510,22 +510,101 @@ const ContentAuditView: React.FC = () => {
             </div>
           </PanelCard>
 
-          {/* Dimension breakdown radar */}
-          <PanelCard title="Dimension Breakdown" badge="Avg across catalogue" badgeColor="purple" delay={0.1}>
-            <ResponsiveContainer width="100%" height={300}>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} />
-                <PolarRadiusAxis domain={[0, 20]} tick={{ fontSize: 8, fill: "#555A6E" }} />
-                <Radar name="You" dataKey="you" stroke="#A78BFA" fill="#A78BFA" fillOpacity={0.3} strokeWidth={2} />
-                <Radar name="Category Avg" dataKey="category" stroke="#555A6E" fill="transparent" strokeDasharray="5 5" strokeWidth={1} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
-              </RadarChart>
-            </ResponsiveContainer>
-            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Category Avg</span>
-            </div>
+          {/* Competitor content aggression — moved up to second position */}
+          <PanelCard title="Content Change Activity in Your Category" badge="Last 7 days" badgeColor="red" delay={0.1}>
+            <p className="text-[10px] text-muted-foreground mb-3">Tracks how frequently competitors are updating titles, images, and listings.</p>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-subtle">
+                  <th className="text-left py-2 font-normal">Competitor</th>
+                  <th className="text-right py-2 font-normal">Changes</th>
+                  <th className="text-center py-2 font-normal">Level</th>
+                  <th className="text-left py-2 font-normal">What</th>
+                  <th className="text-left py-2 font-normal">Keywords Added</th>
+                  <th className="text-right py-2 font-normal">Impact</th>
+                  <th className="text-right py-2 font-normal">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {competitorAggression.map((c, i) => (
+                  <tr key={c.brand} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 text-foreground font-medium">{c.brand}</td>
+                    <td className="py-2.5 text-right font-mono text-foreground">{c.changes}</td>
+                    <td className="py-2.5 text-center">
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${c.level === "High" ? "bg-sw-red/15 text-sw-red" : c.level === "Medium" ? "bg-sw-amber/15 text-sw-amber" : "bg-surface-3 text-muted-foreground"}`}>{c.level}</span>
+                    </td>
+                    <td className="py-2.5">
+                      <div className="flex gap-1">{c.what.map(w => <span key={w} className="font-mono text-[8px] px-1 py-0.5 rounded bg-surface-3 text-foreground">{w}</span>)}</div>
+                    </td>
+                    <td className="py-2.5">
+                      <div className="flex gap-1">{c.keywords.map(kw => <span key={kw} className="font-mono text-[8px] px-1 py-0.5 rounded bg-sw-red/10 text-sw-red font-bold">{kw}</span>)}</div>
+                    </td>
+                    <td className="py-2.5 text-right font-mono text-sw-red">{c.impact}</td>
+                    <td className="py-2.5 text-right">
+                      <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "competitor-content", params: { competitor: c.brand } })} className="text-[10px] font-medium" style={{ color: "#4F7FFF" }}>Respond →</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </PanelCard>
+
+          {/* Dimension breakdown with brand heatmap toggle */}
+          <PanelCard title="Dimension Breakdown" badge="Avg across catalogue" badgeColor="purple" delay={0.15}>
+            {(() => {
+              const [heatmapBrand, setHeatmapBrand] = React.useState("You");
+              const brandOptions = ["You", ...competitors];
+              const heatmapDims = dimensions;
+              const heatmapSkus = skuData.map(s => s.sku);
+              return (
+                <>
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    <span className="text-[10px] text-muted-foreground">Compare brand:</span>
+                    {brandOptions.map(b => (
+                      <button key={b} onClick={() => setHeatmapBrand(b)}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${heatmapBrand === b ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="text-muted-foreground border-b border-subtle">
+                          <th className="text-left py-2 font-normal">SKU</th>
+                          {heatmapDims.map(d => <th key={d} className="text-center py-2 font-normal text-[9px]">{d}</th>)}
+                          <th className="text-center py-2 font-normal">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {skuData.map((s, i) => {
+                          const dims = heatmapBrand === "You"
+                            ? [s.title, s.heroImage, s.searchListing, s.pageContent, s.competitorAggression]
+                            : (() => { const cd = competitorScores[heatmapBrand]?.[s.id]; return cd ? [cd.title, cd.heroImage, cd.searchListing, cd.pageContent, cd.competitorAggression] : [0, 0, 0, 0, 0]; })();
+                          const total = dims.reduce((a, b) => a + b, 0);
+                          return (
+                            <tr key={s.sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                              <td className="py-2 text-foreground text-[10px] truncate max-w-[120px]">{s.sku}</td>
+                              {dims.map((v, j) => (
+                                <td key={j} className="py-2 text-center">
+                                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded" style={{
+                                    backgroundColor: `${dimColor(v)}15`,
+                                    color: dimColor(v),
+                                  }}>{v}</span>
+                                </td>
+                              ))}
+                              <td className="py-2 text-center">
+                                <span className="font-mono text-[10px] font-bold" style={{ color: scoreColor(total) }}>{total}</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              );
+            })()}
           </PanelCard>
 
           {/* Title quality */}
