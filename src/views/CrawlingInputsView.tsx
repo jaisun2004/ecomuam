@@ -16,7 +16,7 @@ interface TagInputProps {
   showVolume?: boolean;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ label, description, tags, suggestions, onAdd, onRemove, disabled, campaignValues, showCampaignPull, onPullCampaignValues, showVolume }) => {
+const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(({ label, description, tags, suggestions, onAdd, onRemove, disabled, campaignValues, showCampaignPull, onPullCampaignValues, showVolume }, ref) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [showCampValues, setShowCampValues] = useState(false);
