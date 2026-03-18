@@ -181,12 +181,12 @@ const reportData: ReportPlatform[] = [
 
 /* ── Day Parting Data ── */
 const dayPartingSlots = [
-  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push"], budgetPct: 15 },
-  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Whey Protein — Sponsored", "BCAA Brand Awareness", "Pre-Workout New Users"], budgetPct: 25 },
-  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Creatine Retargeting", "BCAA Brand Awareness"], budgetPct: 15 },
-  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push", "Pre-Workout New Users", "BCAA Brand Awareness"], budgetPct: 30 },
-  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push"], budgetPct: 12 },
-  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Creatine Retargeting"], budgetPct: 3 },
+  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Good Day Butter — Sponsored", "Q-Commerce Biscuit Push"], budgetPct: 15 },
+  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Good Day Butter — Sponsored", "Bourbon Brand Awareness", "NutriChoice New Users"], budgetPct: 25 },
+  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
+  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Good Day Butter — Sponsored", "Q-Commerce Biscuit Push", "NutriChoice New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
+  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Good Day Butter — Sponsored", "Q-Commerce Biscuit Push"], budgetPct: 12 },
+  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
 /* ── Campaign Creator Modal ── */
