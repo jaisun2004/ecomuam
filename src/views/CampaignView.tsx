@@ -769,7 +769,7 @@ const CampaignView: React.FC = () => {
                   <span className="text-sm text-foreground font-semibold">{plat.platform}</span>
                   <div className="ml-auto flex items-center gap-4 text-[11px]">
                     <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{plat.totalSpend}</span></span>
-                    <span className="text-muted-foreground">Revenue <span className="font-mono text-foreground">{plat.totalRevenue}</span></span>
+                    <span className={`font-mono font-bold ${plat.roasColor}`}>ROAS {plat.blendedRoas}</span>
                     <span className={`font-mono font-bold ${plat.roasColor}`}>{plat.blendedRoas}</span>
                   </div>
                 </button>
