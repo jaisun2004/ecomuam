@@ -223,28 +223,33 @@ const WarRoomView: React.FC = () => {
         </div>
       </div>
 
-      {/* Chat Prompt */}
-      {showChat && (
-        <PanelCard title="Chat to Strategy Canvas" badge="AI Prompt" badgeColor="accent" delay={0.05}>
-          <div className="space-y-3 max-h-[300px] overflow-y-auto mb-3">
+      {/* Chat to Strategy Dialog */}
+      <Dialog open={showChat} onOpenChange={setShowChat}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <MessageSquare size={16} className="text-primary" /> Chat to Strategy Canvas
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 space-y-3 max-h-[400px] overflow-y-auto py-3">
             {chatMessages.length === 0 && (
               <p className="text-[11px] text-muted-foreground italic">Describe your goal or strategy and I'll generate a strategy canvas for you.</p>
             )}
             {chatMessages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] rounded-xl p-3 text-[11px] whitespace-pre-line ${m.role === "user" ? "bg-primary/15 text-primary" : "bg-surface-2 text-foreground border border-subtle"}`}>
+                <div className={`max-w-[80%] rounded-xl p-3 text-[11px] whitespace-pre-line ${m.role === "user" ? "bg-primary/15 text-primary" : "bg-muted text-foreground border border-border"}`}>
                   {m.text}
                 </div>
               </div>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 pt-2 border-t border-border">
             <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleChatSend()}
-              className="flex-1 bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="e.g. I want to boost Good Day ROAS by 20% in 2 weeks..." />
+              className="flex-1 bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. I want to boost Good Day ROAS by 20% in 2 weeks..." />
             <button onClick={handleChatSend} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm"><Send size={14} /></button>
           </div>
-        </PanelCard>
-      )}
+        </DialogContent>
+      </Dialog>
 
       {/* Rule Engine */}
       {showRuleBuilder && (
