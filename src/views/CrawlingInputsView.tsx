@@ -106,7 +106,8 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(({ label, descr
       )}
     </div>
   );
-};
+});
+TagInput.displayName = "TagInput";
 
 const availableKeywords = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip cookies", "biscuit combo", "health biscuits", "kids biscuits", "premium cookies", "rusk online"];
 const availableProducts = ["SKU-GD200", "SKU-GD100", "SKU-MG250", "SKU-5050", "SKU-NC100", "SKU-MF150", "SKU-TREAT75", "SKU-BOURBON", "SKU-JIM100", "SKU-TIGER250"];
