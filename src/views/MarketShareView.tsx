@@ -101,8 +101,8 @@ const velocityData = ["You", ...competitors.slice(0, 4)].map(brand => ({
 }));
 
 const newEntrants = [
-  { brand: "FitNutra", firstSeen: "Mar 2, 2026", platforms: ["Blinkit", "Zepto"], share: "1.2%", keywords: ["whey protein budget", "protein shake india", "gym supplement"] },
-  { brand: "NutriEdge", firstSeen: "Mar 8, 2026", platforms: ["Amazon"], share: "0.8%", keywords: ["creatine monohydrate", "pre workout energy"] },
+  { brand: "Cremica", firstSeen: "Mar 2, 2026", platforms: ["Blinkit", "Zepto"], share: "1.2%", keywords: ["butter cookies budget", "cream biscuits india", "tea snack"] },
+  { brand: "Karachi Bakery", firstSeen: "Mar 8, 2026", platforms: ["Amazon"], share: "0.8%", keywords: ["premium cookies", "fruit biscuits"] },
 ];
 
 const MarketShareView: React.FC = () => {

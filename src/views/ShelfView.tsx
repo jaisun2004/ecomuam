@@ -266,10 +266,10 @@ const ShelfView: React.FC = () => {
       {/* ── LIVE INTELLIGENCE FEED (pushed to top) ── */}
       <PanelCard title="Live Intelligence Feed" badge="4 need action" badgeColor="red" delay={0.18}>
         <div className="grid grid-cols-2 gap-3">
-          <AlertItem severity="critical" icon="🚨" title="OOS on Instamart" detail="Whey 500g went out of stock in 6 Mumbai pin codes. Est. loss: ₹1.2L/day." meta="2m ago · Instamart" action="Alert Team" actionDone="✓ Team Notified" />
-          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="MuscleBlaze cut Creatine price by ₹100 on Amazon. 14% above market." meta="18m ago · Amazon" action="Review" actionDone="✓ Reviewed" />
-          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Whey Protein 1kg' moved from #7 to #3 on Amazon after content update." meta="1h ago · Amazon" action="View" />
-          <AlertItem severity="info" icon="💡" title="Pre-Workout trending" detail="+47% search volume spike in 'pre workout' on Blinkit. Stock at 12%." meta="3h ago · Blinkit" action="Top-up →" />
+          <AlertItem severity="critical" icon="🚨" title="OOS on Instamart" detail="Marie Gold 250g went out of stock in 6 Mumbai pin codes." meta="2m ago · Instamart" action="Alert Team" actionDone="✓ Team Notified" />
+          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="Sunfeast cut Dark Fantasy price by ₹5 on Amazon. 14% above market." meta="18m ago · Amazon" action="Review" actionDone="✓ Reviewed" />
+          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Good Day Butter 200g' moved from #7 to #3 on Amazon after content update." meta="1h ago · Amazon" action="View" />
+          <AlertItem severity="info" icon="💡" title="Cream biscuits trending" detail="+47% search volume spike in 'cream biscuits' on Blinkit. Stock at 12%." meta="3h ago · Blinkit" action="Top-up →" />
         </div>
       </PanelCard>
 
