@@ -89,10 +89,14 @@ const WarRoomView: React.FC = () => {
   ]);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
 
-  // Chat prompt
+  // Chat prompt — multi-step flow
   const [showChat, setShowChat] = useState(false);
+  type ChatStep = "goal" | "sku-select" | "details" | "generating" | "done";
+  const [chatStep, setChatStep] = useState<ChatStep>("goal");
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "ai"; text: string }[]>([]);
   const [chatInput, setChatInput] = useState("");
+  const [chatSkuSelection, setChatSkuSelection] = useState<string[]>([]);
+  const [chatParsedGoal, setChatParsedGoal] = useState("");
 
   const toggleSku = (id: string) => setSelectedSkus(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
   const prelaunchHasIssues = phases.prelaunch.some(c => c.status === "Content gap" || c.status === "Shelf gap");
@@ -181,22 +185,62 @@ const WarRoomView: React.FC = () => {
     setRules(prev => prev.map(r => r.id !== ruleId ? r : { ...r, actions: r.actions.map((a, i) => i !== idx ? a : { ...a, [field]: value }) }));
   };
 
+  const resetChat = () => {
+    setChatStep("goal");
+    setChatMessages([]);
+    setChatInput("");
+    setChatSkuSelection([]);
+    setChatParsedGoal("");
+  };
+
   const handleChatSend = () => {
     if (!chatInput.trim()) return;
     const userMsg = chatInput.trim();
     setChatMessages(prev => [...prev, { role: "user", text: userMsg }]);
     setChatInput("");
-    // Simulate AI response and go to strategy canvas
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { role: "ai", text: `Based on your input "${userMsg}", here's what I recommend:\n\n• Goal: ${goalType} by +${goalValue}${inputMode === "percentage" ? "%" : ""}\n• Focus SKUs: ${selectedSkus.length > 0 ? skuCatalogue.filter(s => selectedSkus.includes(s.id)).map(s => s.name).join(", ") : "All high-ROAS SKUs"}\n• Phase split: 20% pre-launch fixes, 60% live boost, 20% optimisation\n• Rule engine: ${rules.filter(r => r.enabled).length} active rules applied\n\nGenerating strategy canvas now...` }]);
+
+    if (chatStep === "goal") {
+      setChatParsedGoal(userMsg);
       setTimeout(() => {
-        if (selectedSkus.length === 0) {
-          setSelectedSkus(["sku-gd200", "sku-nc", "sku-treat"]);
-        }
-        handleSetGoal();
-        setShowChat(false);
-      }, 1500);
-    }, 800);
+        setChatMessages(prev => [...prev, { role: "ai", text: `Great! I understand your goal: "${userMsg}".\n\nNow select the SKUs you want to include in this strategy:` }]);
+        setChatStep("sku-select");
+      }, 600);
+    } else if (chatStep === "details") {
+      setTimeout(() => {
+        setChatMessages(prev => [...prev, { role: "ai", text: `Perfect. Generating your strategy canvas now...\n\n• Goal: ${chatParsedGoal}\n• SKUs: ${chatSkuSelection.map(id => skuCatalogue.find(s => s.id === id)?.name).join(", ")}\n• Additional: ${userMsg}\n• Rule engine: ${rules.filter(r => r.enabled).length} active rules applied` }]);
+        setChatStep("generating");
+        setTimeout(() => {
+          setSelectedSkus(chatSkuSelection);
+          setGoalValue("15");
+          setGoalDate("2026-04-30");
+          const generatedPhases = buildCards(chatSkuSelection);
+          setPhases(generatedPhases);
+          setGoalSet(true);
+          setPrelaunchCleared(false);
+          setShowBudgetSplit(false);
+          setChatStep("done");
+          setChatMessages(prev => [...prev, { role: "ai", text: "✅ Strategy canvas generated! Close this dialog to view your phased campaign strategy." }]);
+        }, 1500);
+      }, 600);
+    }
+  };
+
+  const handleChatSkuConfirm = () => {
+    if (chatSkuSelection.length === 0) {
+      toast({ title: "Select at least one SKU" });
+      return;
+    }
+    const names = chatSkuSelection.map(id => skuCatalogue.find(s => s.id === id)?.name).join(", ");
+    setChatMessages(prev => [
+      ...prev,
+      { role: "user", text: `Selected: ${names}` },
+      { role: "ai", text: `Got it — ${chatSkuSelection.length} SKU(s) selected.\n\nAnything else to add? (budget preference, timeline, specific platform focus, etc.) Or just type "go" to generate.` },
+    ]);
+    setChatStep("details");
+  };
+
+  const toggleChatSku = (id: string) => {
+    setChatSkuSelection(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
   };
 
   return (
@@ -209,7 +253,7 @@ const WarRoomView: React.FC = () => {
           <p className="text-xs text-muted-foreground mt-1">Set goals, configure rules, and generate phased campaign strategies.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setShowChat(!showChat)} className="flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg bg-primary/15 text-primary hover:bg-primary/25">
+          <button onClick={() => { resetChat(); setShowChat(true); }} className="flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg bg-primary/15 text-primary hover:bg-primary/25">
             <MessageSquare size={13} /> Chat to Strategy
           </button>
           <button onClick={() => setShowRuleBuilder(!showRuleBuilder)} className={`text-[11px] px-3 py-1.5 rounded-lg ${showRuleBuilder ? "bg-sw-amber/15 text-sw-amber" : "bg-surface-3 text-foreground hover:bg-surface-2"}`}>
@@ -224,16 +268,25 @@ const WarRoomView: React.FC = () => {
       </div>
 
       {/* Chat to Strategy Dialog */}
-      <Dialog open={showChat} onOpenChange={setShowChat}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] flex flex-col">
+      <Dialog open={showChat} onOpenChange={(open) => { setShowChat(open); if (!open && chatStep === "done") { /* keep generated state */ } }}>
+        <DialogContent className="sm:max-w-[640px] max-h-[85vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground">
               <MessageSquare size={16} className="text-primary" /> Chat to Strategy Canvas
+              <span className="ml-auto text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+                {chatStep === "goal" && "Step 1: Define Goal"}
+                {chatStep === "sku-select" && "Step 2: Select SKUs"}
+                {chatStep === "details" && "Step 3: Add Details"}
+                {chatStep === "generating" && "Generating…"}
+                {chatStep === "done" && "Complete ✓"}
+              </span>
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 space-y-3 max-h-[400px] overflow-y-auto py-3">
+
+          {/* Messages */}
+          <div className="flex-1 space-y-3 max-h-[350px] overflow-y-auto py-3">
             {chatMessages.length === 0 && (
-              <p className="text-[11px] text-muted-foreground italic">Describe your goal or strategy and I'll generate a strategy canvas for you.</p>
+              <p className="text-[11px] text-muted-foreground italic">Describe your goal — e.g. "I want to increase ROAS by 20% for Good Day products in 2 weeks"</p>
             )}
             {chatMessages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -242,12 +295,50 @@ const WarRoomView: React.FC = () => {
                 </div>
               </div>
             ))}
+
+            {/* SKU picker inline */}
+            {chatStep === "sku-select" && (
+              <div className="rounded-xl border border-border bg-muted/50 p-3 space-y-2">
+                <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Select SKUs for strategy</p>
+                <div className="grid grid-cols-2 gap-1.5 max-h-[200px] overflow-y-auto">
+                  {skuCatalogue.map(sku => {
+                    const selected = chatSkuSelection.includes(sku.id);
+                    return (
+                      <button key={sku.id} onClick={() => toggleChatSku(sku.id)}
+                        className={`text-left p-2 rounded-lg border text-[11px] transition-all ${selected ? "border-primary bg-primary/10 text-primary" : "border-border bg-background text-foreground hover:bg-muted"}`}>
+                        <p className="font-medium truncate">{sku.name}</p>
+                        <p className="text-[9px] text-muted-foreground mt-0.5">
+                          Content: {sku.contentScore}/100 · Avail: {sku.availability}% · {sku.platform}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button onClick={handleChatSkuConfirm}
+                  className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium mt-2">
+                  Confirm {chatSkuSelection.length} SKU{chatSkuSelection.length !== 1 ? "s" : ""} →
+                </button>
+              </div>
+            )}
           </div>
-          <div className="flex gap-2 pt-2 border-t border-border">
-            <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleChatSend()}
-              className="flex-1 bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. I want to boost Good Day ROAS by 20% in 2 weeks..." />
-            <button onClick={handleChatSend} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm"><Send size={14} /></button>
-          </div>
+
+          {/* Input — hidden during sku-select and generating/done */}
+          {(chatStep === "goal" || chatStep === "details") && (
+            <div className="flex gap-2 pt-2 border-t border-border">
+              <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleChatSend()}
+                className="flex-1 bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder={chatStep === "goal" ? "Describe your goal…" : "Add details or type 'go' to generate…"} />
+              <button onClick={handleChatSend} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm"><Send size={14} /></button>
+            </div>
+          )}
+
+          {chatStep === "done" && (
+            <div className="pt-2 border-t border-border">
+              <button onClick={() => setShowChat(false)} className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium">
+                View Strategy Canvas →
+              </button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
