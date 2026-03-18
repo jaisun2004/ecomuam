@@ -16,7 +16,7 @@ interface TagInputProps {
   showVolume?: boolean;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ label, description, tags, suggestions, onAdd, onRemove, disabled, campaignValues, showCampaignPull, onPullCampaignValues, showVolume }) => {
+const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(({ label, description, tags, suggestions, onAdd, onRemove, disabled, campaignValues, showCampaignPull, onPullCampaignValues, showVolume }, ref) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [showCampValues, setShowCampValues] = useState(false);
@@ -24,7 +24,7 @@ const TagInput: React.FC<TagInputProps> = ({ label, description, tags, suggestio
   const filtered = suggestions.filter(s => !tags.includes(s) && s.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className={`rounded-xl border bg-surface-1 p-4 space-y-3 ${disabled ? "opacity-50 pointer-events-none" : ""} border-border`}>
+    <div ref={ref} className={`rounded-xl border bg-surface-1 p-4 space-y-3 ${disabled ? "opacity-50 pointer-events-none" : ""} border-border`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-foreground">{label}</p>
@@ -106,7 +106,8 @@ const TagInput: React.FC<TagInputProps> = ({ label, description, tags, suggestio
       )}
     </div>
   );
-};
+});
+TagInput.displayName = "TagInput";
 
 const availableKeywords = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip cookies", "biscuit combo", "health biscuits", "kids biscuits", "premium cookies", "rusk online"];
 const availableProducts = ["SKU-GD200", "SKU-GD100", "SKU-MG250", "SKU-5050", "SKU-NC100", "SKU-MF150", "SKU-TREAT75", "SKU-BOURBON", "SKU-JIM100", "SKU-TIGER250"];
