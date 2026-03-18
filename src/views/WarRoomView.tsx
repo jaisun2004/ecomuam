@@ -89,10 +89,14 @@ const WarRoomView: React.FC = () => {
   ]);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
 
-  // Chat prompt
+  // Chat prompt — multi-step flow
   const [showChat, setShowChat] = useState(false);
+  type ChatStep = "goal" | "sku-select" | "details" | "generating" | "done";
+  const [chatStep, setChatStep] = useState<ChatStep>("goal");
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "ai"; text: string }[]>([]);
   const [chatInput, setChatInput] = useState("");
+  const [chatSkuSelection, setChatSkuSelection] = useState<string[]>([]);
+  const [chatParsedGoal, setChatParsedGoal] = useState("");
 
   const toggleSku = (id: string) => setSelectedSkus(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
   const prelaunchHasIssues = phases.prelaunch.some(c => c.status === "Content gap" || c.status === "Shelf gap");
