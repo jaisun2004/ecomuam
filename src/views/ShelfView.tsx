@@ -7,7 +7,7 @@ import { Megaphone, ChevronDown, ChevronRight, MapPin, TrendingUp, TrendingDown,
 
 /* ── mock data ── */
 const heatmapData = {
-  skus: ["Whey 1kg", "Whey 500g", "Creatine", "BCAA", "Pre-Workout", "Multi-Vit"],
+  skus: ["Good Day 200g", "Marie Gold 250g", "Bourbon 150g", "NutriChoice 100g", "50-50 120g", "Milk Bikis 150g"],
   platforms: [
     { name: "Amazon", color: "#FF9900", values: [97, 100, 72, 95, 54, 98] },
     { name: "Flipkart", color: "#2F77FF", values: [74, 92, 61, 88, 12, 78] },
@@ -37,39 +37,39 @@ const platformsList = [
 
 const searchDataByPlatform: Record<string, { kw: string; you: number; comp: number; compName: string; status: string; poaching?: boolean }[]> = {
   Amazon: [
-    { kw: "protein powder", you: 28, comp: 41, compName: "MuscleBlaze", status: "losing" },
-    { kw: "whey protein 1kg", you: 44, comp: 31, compName: "MuscleBlaze", status: "winning" },
-    { kw: "creatine monohydrate", you: 19, comp: 38, compName: "ON", status: "losing", poaching: true },
-    { kw: "pre workout supplement", you: 33, comp: 29, compName: "BigMuscles", status: "winning" },
-    { kw: "bcaa amino acids", you: 21, comp: 44, compName: "MuscleBlaze", status: "losing", poaching: true },
+    { kw: "butter biscuits", you: 28, comp: 41, compName: "Sunfeast", status: "losing" },
+    { kw: "cream biscuits", you: 44, comp: 31, compName: "Sunfeast", status: "winning" },
+    { kw: "glucose biscuits", you: 19, comp: 38, compName: "Parle-G", status: "losing", poaching: true },
+    { kw: "digestive biscuits", you: 33, comp: 29, compName: "McVities", status: "winning" },
+    { kw: "kids biscuits", you: 21, comp: 44, compName: "Parle", status: "losing", poaching: true },
   ],
   Flipkart: [
-    { kw: "protein powder", you: 22, comp: 48, compName: "MuscleBlaze", status: "losing", poaching: true },
-    { kw: "whey protein 1kg", you: 38, comp: 35, compName: "ON", status: "winning" },
-    { kw: "creatine monohydrate", you: 14, comp: 42, compName: "AS-IT-IS", status: "losing" },
-    { kw: "pre workout supplement", you: 29, comp: 33, compName: "BigMuscles", status: "losing" },
-    { kw: "bcaa amino acids", you: 31, comp: 28, compName: "Dymatize", status: "winning" },
+    { kw: "butter biscuits", you: 22, comp: 48, compName: "Sunfeast", status: "losing", poaching: true },
+    { kw: "cream biscuits", you: 38, comp: 35, compName: "Parle", status: "winning" },
+    { kw: "glucose biscuits", you: 14, comp: 42, compName: "Parle-G", status: "losing" },
+    { kw: "digestive biscuits", you: 29, comp: 33, compName: "McVities", status: "losing" },
+    { kw: "kids biscuits", you: 31, comp: 28, compName: "Unibic", status: "winning" },
   ],
   Blinkit: [
-    { kw: "protein powder", you: 35, comp: 30, compName: "MuscleBlaze", status: "winning" },
-    { kw: "whey protein 1kg", you: 41, comp: 22, compName: "ON", status: "winning" },
-    { kw: "creatine monohydrate", you: 8, comp: 51, compName: "AS-IT-IS", status: "losing", poaching: true },
-    { kw: "pre workout supplement", you: 44, comp: 18, compName: "BigMuscles", status: "winning" },
-    { kw: "bcaa amino acids", you: 12, comp: 55, compName: "MuscleBlaze", status: "losing", poaching: true },
+    { kw: "butter biscuits", you: 35, comp: 30, compName: "Sunfeast", status: "winning" },
+    { kw: "cream biscuits", you: 41, comp: 22, compName: "Parle", status: "winning" },
+    { kw: "glucose biscuits", you: 8, comp: 51, compName: "Parle-G", status: "losing", poaching: true },
+    { kw: "digestive biscuits", you: 44, comp: 18, compName: "McVities", status: "winning" },
+    { kw: "kids biscuits", you: 12, comp: 55, compName: "Sunfeast", status: "losing", poaching: true },
   ],
   Zepto: [
-    { kw: "protein powder", you: 31, comp: 33, compName: "MuscleBlaze", status: "losing" },
-    { kw: "whey protein 1kg", you: 39, comp: 28, compName: "ON", status: "winning" },
-    { kw: "creatine monohydrate", you: 22, comp: 35, compName: "BigMuscles", status: "losing" },
-    { kw: "pre workout supplement", you: 27, comp: 40, compName: "ON", status: "losing", poaching: true },
-    { kw: "bcaa amino acids", you: 18, comp: 47, compName: "MuscleBlaze", status: "losing" },
+    { kw: "butter biscuits", you: 31, comp: 33, compName: "Sunfeast", status: "losing" },
+    { kw: "cream biscuits", you: 39, comp: 28, compName: "Parle", status: "winning" },
+    { kw: "glucose biscuits", you: 22, comp: 35, compName: "Parle-G", status: "losing" },
+    { kw: "digestive biscuits", you: 27, comp: 40, compName: "McVities", status: "losing", poaching: true },
+    { kw: "kids biscuits", you: 18, comp: 47, compName: "Sunfeast", status: "losing" },
   ],
   Instamart: [
-    { kw: "protein powder", you: 25, comp: 38, compName: "MuscleBlaze", status: "losing" },
-    { kw: "whey protein 1kg", you: 33, comp: 41, compName: "ON", status: "losing", poaching: true },
-    { kw: "creatine monohydrate", you: 11, comp: 52, compName: "AS-IT-IS", status: "losing" },
-    { kw: "pre workout supplement", you: 40, comp: 22, compName: "BigMuscles", status: "winning" },
-    { kw: "bcaa amino acids", you: 15, comp: 49, compName: "MuscleBlaze", status: "losing", poaching: true },
+    { kw: "butter biscuits", you: 25, comp: 38, compName: "Sunfeast", status: "losing" },
+    { kw: "cream biscuits", you: 33, comp: 41, compName: "Parle", status: "losing", poaching: true },
+    { kw: "glucose biscuits", you: 11, comp: 52, compName: "Parle-G", status: "losing" },
+    { kw: "digestive biscuits", you: 40, comp: 22, compName: "McVities", status: "winning" },
+    { kw: "kids biscuits", you: 15, comp: 49, compName: "Sunfeast", status: "losing", poaching: true },
   ],
 };
 
@@ -119,18 +119,18 @@ const getShareColor = (v: number) => {
 };
 
 const contentSkus = [
-  { emoji: "🥛", name: "Whey Protein 1kg Chocolate", platforms: "Amazon · Flipkart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
-  { emoji: "💊", name: "Creatine Monohydrate 250g", platforms: "Amazon · Flipkart", score: 50, color: "hsl(38,92%,50%)" },
-  { emoji: "⚡", name: "Pre-Workout Citrus 300g", platforms: "Amazon only", score: 20, color: "hsl(0,76%,57%)" },
-  { emoji: "🔤", name: "BCAA 2:1:1 Tropical 450g", platforms: "Amazon · Flipkart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
+  { emoji: "🍪", name: "Good Day Butter 200g", platforms: "Amazon · Flipkart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
+  { emoji: "🍘", name: "50-50 Maska Chaska 120g", platforms: "Amazon · Flipkart", score: 50, color: "hsl(38,92%,50%)" },
+  { emoji: "🥛", name: "Milk Bikis 150g", platforms: "Amazon only", score: 20, color: "hsl(0,76%,57%)" },
+  { emoji: "🍫", name: "Bourbon Cream 150g", platforms: "Amazon · Flipkart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
 ];
 
 const pricingRows = [
-  { sku: "Whey 1kg Choc", yours: "₹2,499", comp: "₹2,699", diff: "-7.4%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Creatine 250g", yours: "₹799", comp: "₹699", diff: "+14.3%", diffType: "red" as const, action: "Match Price" },
-  { sku: "BCAA Tropical", yours: "₹1,299", comp: "₹1,349", diff: "-3.7%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Pre-Workout 300g", yours: "₹1,899", comp: "₹1,599", diff: "+18.8%", diffType: "red" as const, action: "Adjust ↓" },
-  { sku: "Multi-Vit 60ct", yours: "₹649", comp: "₹659", diff: "-1.5%", diffType: "grey" as const, action: "Hold Price" },
+  { sku: "Good Day 200g", yours: "₹40", comp: "₹45", diff: "-11.1%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "Marie Gold 250g", yours: "₹35", comp: "₹30", diff: "+16.7%", diffType: "red" as const, action: "Match Price" },
+  { sku: "Bourbon 150g", yours: "₹30", comp: "₹32", diff: "-6.3%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "NutriChoice 100g", yours: "₹45", comp: "₹38", diff: "+18.4%", diffType: "red" as const, action: "Adjust ↓" },
+  { sku: "Milk Bikis 150g", yours: "₹25", comp: "₹25", diff: "0%", diffType: "grey" as const, action: "Hold Price" },
 ];
 
 const searchPositions = [
@@ -143,23 +143,23 @@ const searchPositions = [
 
 /* SoS retailer-level issues */
 const sosRetailerIssues = [
-  { platform: "Flipkart", issue: "SoS dropped 12% WoW", type: "drop", kw: "protein powder", detail: "Competitor bid aggression detected — MuscleBlaze increased bids by 2.4x on 3 top keywords" },
-  { platform: "Instamart", issue: "0% SoS on 3 keywords", type: "missing", kw: "whey protein, creatine, bcaa", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
-  { platform: "Zepto", issue: "Poaching on pre workout", type: "poaching", kw: "pre workout supplement", detail: "ON bidding on your brand keyword. Capturing 40% of branded searches" },
+  { platform: "Flipkart", issue: "SoS dropped 12% WoW", type: "drop", kw: "butter biscuits", detail: "Competitor bid aggression detected — Sunfeast increased bids by 2.4x on 3 top keywords" },
+  { platform: "Instamart", issue: "0% SoS on 3 keywords", type: "missing", kw: "cream biscuits, glucose biscuits, kids biscuits", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
+  { platform: "Zepto", issue: "Poaching on digestive biscuits", type: "poaching", kw: "digestive biscuits", detail: "McVities bidding on your brand keyword. Capturing 40% of branded searches" },
 ];
 
 const competitorAggression = [
-  { competitor: "MuscleBlaze", platform: "Amazon", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
-  { competitor: "ON", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
-  { competitor: "AS-IT-IS", platform: "Flipkart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
-  { competitor: "BigMuscles", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
+  { competitor: "Sunfeast", platform: "Amazon", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
+  { competitor: "McVities", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
+  { competitor: "Parle", platform: "Flipkart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
+  { competitor: "Unibic", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
 ];
 
 const poachingKeywords = [
-  { keyword: "musclemax whey protein", poacher: "MuscleBlaze", platform: "Amazon", yourSoS: 62, theirSoS: 28, trend: "rising" },
-  { keyword: "musclemax creatine", poacher: "ON", platform: "Flipkart", yourSoS: 45, theirSoS: 38, trend: "rising" },
-  { keyword: "musclemax bcaa", poacher: "MuscleBlaze", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
-  { keyword: "musclemax pre workout", poacher: "BigMuscles", platform: "Amazon", yourSoS: 71, theirSoS: 18, trend: "declining" },
+  { keyword: "britannia good day", poacher: "Sunfeast", platform: "Amazon", yourSoS: 62, theirSoS: 28, trend: "rising" },
+  { keyword: "britannia bourbon", poacher: "Parle", platform: "Flipkart", yourSoS: 45, theirSoS: 38, trend: "rising" },
+  { keyword: "britannia marie gold", poacher: "Sunfeast", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
+  { keyword: "britannia nutrichoice", poacher: "McVities", platform: "Amazon", yourSoS: 71, theirSoS: 18, trend: "declining" },
 ];
 
 const ProgressRing = ({ score, color, size = 48 }: { score: number; color: string; size?: number }) => {
@@ -258,18 +258,18 @@ const ShelfView: React.FC = () => {
       {/* KPI Row */}
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Shelf Health Score" value="76 / 100" delta="▼ 3.2 vs last wk" deltaType="negative" sub="Avg across 6 platforms · 48 SKUs" accentColor="bg-sw-green" delay={0} />
-        <KPICard title="OOS Events (30d)" value="14" delta="▲ 4 vs last wk" deltaType="negative" sub="₹8.4L estimated revenue lost" accentColor="bg-sw-red" delay={0.05} />
-        <KPICard title="Share of Search" value="28%" delta="▲ 1.8% MoM" deltaType="positive" sub="Protein powder category · Amazon" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="OOS Products Today" value="6" delta="▲ 2 vs yesterday" deltaType="negative" sub="Across all platforms" accentColor="bg-sw-red" delay={0.05} />
+        <KPICard title="Share of Search" value="28%" delta="▲ 1.8% MoM" deltaType="positive" sub="Biscuits category · Amazon" accentColor="bg-primary" delay={0.1} />
         <KPICard title="Content Score Avg" value="62%" delta="⚠ 11 SKUs need update" deltaType="warning" sub="Title + Images + A+ content" accentColor="bg-sw-amber" delay={0.15} />
       </div>
 
       {/* ── LIVE INTELLIGENCE FEED (pushed to top) ── */}
       <PanelCard title="Live Intelligence Feed" badge="4 need action" badgeColor="red" delay={0.18}>
         <div className="grid grid-cols-2 gap-3">
-          <AlertItem severity="critical" icon="🚨" title="OOS on Instamart" detail="Whey 500g went out of stock in 6 Mumbai pin codes. Est. loss: ₹1.2L/day." meta="2m ago · Instamart" action="Alert Team" actionDone="✓ Team Notified" />
-          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="MuscleBlaze cut Creatine price by ₹100 on Amazon. 14% above market." meta="18m ago · Amazon" action="Review" actionDone="✓ Reviewed" />
-          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Whey Protein 1kg' moved from #7 to #3 on Amazon after content update." meta="1h ago · Amazon" action="View" />
-          <AlertItem severity="info" icon="💡" title="Pre-Workout trending" detail="+47% search volume spike in 'pre workout' on Blinkit. Stock at 12%." meta="3h ago · Blinkit" action="Top-up →" />
+          <AlertItem severity="critical" icon="🚨" title="OOS on Instamart" detail="Marie Gold 250g went out of stock in 6 Mumbai pin codes." meta="2m ago · Instamart" action="Alert Team" actionDone="✓ Team Notified" />
+          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="Sunfeast cut Dark Fantasy price by ₹5 on Amazon. 14% above market." meta="18m ago · Amazon" action="Review" actionDone="✓ Reviewed" />
+          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Good Day Butter 200g' moved from #7 to #3 on Amazon after content update." meta="1h ago · Amazon" action="View" />
+          <AlertItem severity="info" icon="💡" title="Cream biscuits trending" detail="+47% search volume spike in 'cream biscuits' on Blinkit. Stock at 12%." meta="3h ago · Blinkit" action="Top-up →" />
         </div>
       </PanelCard>
 
