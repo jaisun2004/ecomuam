@@ -555,7 +555,7 @@ const CampaignView: React.FC = () => {
                 Tier 1 conflict active — 2 insights blocked
               </h3>
               <p className="text-[11px] text-muted-foreground mt-1">
-                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Creatine Retargeting, Pre-Workout New Users · Est. auto-clearance: {g.estResolutionTime}
+                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Marie Gold Retargeting, NutriChoice New Users · Est. auto-clearance: {g.estResolutionTime}
               </p>
             </div>
             <div className="flex items-center gap-2">
