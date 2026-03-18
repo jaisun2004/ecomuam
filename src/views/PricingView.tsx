@@ -135,13 +135,13 @@ const contentGapsBySku: Record<string, { label: string; you: number | string; th
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
-  const [selectedSku, setSelectedSku] = useState("Whey Protein 1kg");
+  const [selectedSku, setSelectedSku] = useState("Good Day 200g");
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
 
-  const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Whey Protein 1kg"];
+  const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"];
   const competitorMatrix = competitorMatrixByPlatform[selectedPlatform] || competitorMatrixByPlatform["Amazon"];
-  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Whey Protein 1kg"];
-  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Whey Protein 1kg"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Good Day 200g"];
+  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Good Day 200g"];
 
   const g = useGuardrails();
   const [tab, setTab] = useState("overview");

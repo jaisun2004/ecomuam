@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
-import { Megaphone, ArrowRight } from "lucide-react";
+import { Megaphone, ArrowRight, TrendingUp, ChevronDown, ChevronRight } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 
@@ -36,23 +36,18 @@ const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: stri
   "Cream Biscuits": [
     { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
     { kw: "bourbon cream biscuit", vol: "18.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
-    { kw: "jim jam biscuit online", vol: "12.3K", wow: "+14%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Flipkart" },
   ],
   Glucose: [
     { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Flipkart" },
-    { kw: "tiger biscuit pack", vol: "22.1K", wow: "+18%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
   ],
   Digestive: [
     { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
-    { kw: "nutrichoice digestive", vol: "28.8K", wow: "+35%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Blinkit" },
   ],
   Cookies: [
     { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
-    { kw: "good day cookies", vol: "38.7K", wow: "+14%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
   ],
   "Health & Fibre": [
     { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
-    { kw: "multigrain biscuits", vol: "15.2K", wow: "+42%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
   ],
 };
 
@@ -70,6 +65,16 @@ const poachingIncidents = [
 const retailerIssues = [
   { platform: "Zepto", desc: "SoS on Zepto down 12% WoW for Brand Search terms", keywords: 8 },
   { platform: "Blinkit", desc: "Not appearing in top 10 on Blinkit for 8 category keywords", keywords: 8 },
+];
+
+// Competition rank improvements
+const compRankImprovements = [
+  { product: "Sunfeast Butter Cookies 200g", brand: "Sunfeast", platform: "Amazon", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
+  { product: "Parle-G Gold 200g", brand: "Parle", platform: "Flipkart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
+  { product: "Unibic Butter Cookies 150g", brand: "Unibic", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
+  { product: "McVities Digestive 200g", brand: "McVities", platform: "Amazon", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
+  { product: "Sunfeast Dark Fantasy 75g", brand: "Sunfeast", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
+  { product: "Parle Hide & Seek 100g", brand: "Parle", platform: "Instamart", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
 ];
 
 // SoS analytics data
@@ -93,48 +98,42 @@ const poachingHistory = [
   { keyword: "britannia bourbon", competitor: "ITC", platform: "Flipkart", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
-/* ── Merged keyword + shelf coverage data ── */
+/* ── Merged keyword + shelf coverage data with binary + avg rank ── */
 const shelfCoverageData: Record<string, {
   kw: string;
   vol: string;
   wow: string;
   opp: string;
   oppColor: string;
-  Amazon: "sponsored" | "organic" | "none";
-  Flipkart: "sponsored" | "organic" | "none";
-  Blinkit: "sponsored" | "organic" | "none";
-  Zepto: "sponsored" | "organic" | "none";
-  Instamart: "sponsored" | "organic" | "none";
+  Amazon: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Flipkart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Blinkit: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Zepto: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Instamart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
 }[]> = {
   "All Categories": [
-    { kw: "butter biscuits online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "organic", Flipkart: "none", Blinkit: "sponsored", Zepto: "none", Instamart: "none" },
-    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "sponsored", Instamart: "none" },
-    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "organic" },
-    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "biscuit gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "butter biscuits online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Flipkart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Flipkart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
+    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "biscuit gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Amazon: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Flipkart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   "Cream Biscuits": [
-    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "sponsored", Flipkart: "organic", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "bourbon cream biscuit", vol: "18.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "jim jam biscuit online", vol: "12.3K", wow: "+14%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "organic", Zepto: "none", Instamart: "none" },
+    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Flipkart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Glucose: [
-    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "none", Instamart: "organic" },
-    { kw: "tiger biscuit pack", vol: "22.1K", wow: "+18%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
+    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Flipkart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
   ],
   Digestive: [
-    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "nutrichoice digestive", vol: "28.8K", wow: "+35%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "organic", Instamart: "none" },
+    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Cookies: [
-    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Amazon: "none", Flipkart: "none", Blinkit: "none", Zepto: "sponsored", Instamart: "none" },
-    { kw: "good day cookies", vol: "38.7K", wow: "+14%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "organic", Zepto: "none", Instamart: "none" },
+    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   "Health & Fibre": [
-    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: "organic", Flipkart: "none", Blinkit: "none", Zepto: "none", Instamart: "none" },
-    { kw: "multigrain biscuits", vol: "15.2K", wow: "+42%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: "sponsored", Flipkart: "sponsored", Blinkit: "none", Zepto: "organic", Instamart: "none" },
+    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
 };
 
@@ -143,6 +142,7 @@ const DiscoveryView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
   const g = useGuardrails();
   const [sosPlatformFilter, setSosPlatformFilter] = useState("All");
+  const [showCompRankDetail, setShowCompRankDetail] = useState(false);
 
   const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"] as const;
   const visiblePlatforms = selectedPlatform === "All Platforms"
@@ -151,16 +151,10 @@ const DiscoveryView: React.FC = () => {
 
   const coverageRows = shelfCoverageData[selectedCategory] ?? shelfCoverageData["All Categories"];
 
-  const coverageStatusConfig = {
-    sponsored: { color: "#2ECF8E", label: "Sponsored", bg: "rgba(46,207,142,0.15)" },
-    organic: { color: "#F5A623", label: "Organic only", bg: "rgba(245,166,35,0.12)" },
-    none: { color: "#FF5C5C", label: "Not listed", bg: "rgba(255,92,92,0.10)" },
-  } as const;
-
-  const missingCount = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p] === "none").length, 0);
-  const sponsoredCount = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p] === "sponsored").length, 0);
-  const totalApplicable = coverageRows.length * visiblePlatforms.length;
-  const coveragePct = totalApplicable > 0 ? Math.round((sponsoredCount / totalApplicable) * 100) : 0;
+  // Calculate overall share of shelf on generic keywords
+  const totalSlots = coverageRows.length * visiblePlatforms.length;
+  const presentSlots = coverageRows.reduce((acc, row) => acc + visiblePlatforms.filter(p => row[p].organic || row[p].sponsored).length, 0);
+  const shareOfShelf = totalSlots > 0 ? Math.round((presentSlots / totalSlots) * 100) : 0;
 
   const [tab, setTab] = useState("overview");
 
@@ -170,13 +164,61 @@ const DiscoveryView: React.FC = () => {
       {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Across 6 platforms" accentColor="bg-sw-cyan" delay={0} />
-        <KPICard title="Category Opportunities" value="9" delta="▲ High demand, low comp." deltaType="positive" sub="Ready to capture" accentColor="bg-sw-purple" delay={0.05} />
-        <KPICard title="New Search Intents" value="23" delta="▲ Detected this month" deltaType="positive" sub="AI-detected from query logs" accentColor="bg-sw-green" delay={0.1} />
-        <KPICard title="Shelf coverage" value={`${coveragePct}%`} delta="▲ 3% vs last week" deltaType="positive" sub="Keywords with paid placement" accentColor="bg-sw-green" delay={0.15} />
+        <KPICard title="Competition Rank Improved" value={String(compRankImprovements.length)} delta="▲ WoW rank gains" deltaType="negative" sub="Products that moved up" accentColor="bg-sw-red" delay={0.05} />
+        <KPICard title="New Keywords on Ad Manager" value="23" delta="▲ Detected this month" deltaType="positive" sub="AI-detected from ad platforms" accentColor="bg-sw-green" delay={0.1} />
+        <KPICard title="Overall Share of Shelf" value={`${shareOfShelf}%`} delta="▲ 3% vs last week" deltaType="positive" sub="Presence on generic keywords" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
-      {/* MERGED: Trending Keywords + Shelf Coverage */}
-      <PanelCard title="🔥 Keywords & Shelf Coverage" badge={`${selectedCategory} · ${selectedPlatform}`} badgeColor="accent" delay={0.2}>
+      {/* Competition Products Rank Improvement */}
+      <PanelCard title="📈 Competition Products — Rank Improved WoW" badge={`${compRankImprovements.length} products`} badgeColor="red" delay={0.18}>
+        <p className="text-[10px] text-muted-foreground mb-3">Competition products that improved their rank week-on-week. Click to see full details.</p>
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[11px] text-foreground font-medium">{compRankImprovements.length} competitor products improved rank this week</span>
+          <button onClick={() => setShowCompRankDetail(!showCompRankDetail)}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 transition-all">
+            <TrendingUp size={12} />
+            {showCompRankDetail ? "Hide Details" : "View All Products"}
+          </button>
+        </div>
+        {showCompRankDetail && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-separate" style={{ borderSpacing: "0 2px" }}>
+              <thead>
+                <tr>
+                  <th className="text-left py-2 pr-3 font-normal text-muted-foreground text-[10px]">Product</th>
+                  <th className="text-left py-2 font-normal text-[10px] text-muted-foreground">Brand</th>
+                  <th className="text-left py-2 font-normal text-[10px] text-muted-foreground">Platform</th>
+                  <th className="text-center py-2 font-normal text-[10px] text-muted-foreground" colSpan={2}>Sponsored Rank</th>
+                  <th className="text-center py-2 font-normal text-[10px] text-muted-foreground" colSpan={2}>Organic Rank</th>
+                </tr>
+                <tr>
+                  <th colSpan={3} />
+                  <th className="text-center py-1 font-normal text-[9px] text-muted-foreground">Last Wk</th>
+                  <th className="text-center py-1 font-normal text-[9px] text-muted-foreground">This Wk</th>
+                  <th className="text-center py-1 font-normal text-[9px] text-muted-foreground">Last Wk</th>
+                  <th className="text-center py-1 font-normal text-[9px] text-muted-foreground">This Wk</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compRankImprovements.map((p, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-surface-2/40" : ""}>
+                    <td className="py-2 pr-3 text-[11px] text-foreground">{p.product}</td>
+                    <td className="py-2 text-[10px] text-muted-foreground">{p.brand}</td>
+                    <td className="py-2"><span className="font-mono text-[9px] px-1.5 py-0.5 rounded" style={{ backgroundColor: `${platformColors[p.platform] || "#888"}20`, color: platformColors[p.platform] || "#888" }}>{p.platform}</span></td>
+                    <td className="py-2 text-center font-mono text-[10px] text-muted-foreground">#{p.lastWeekSponsored}</td>
+                    <td className="py-2 text-center font-mono text-[10px] text-sw-green font-bold">#{p.thisWeekSponsored}</td>
+                    <td className="py-2 text-center font-mono text-[10px] text-muted-foreground">#{p.lastWeekOrganic}</td>
+                    <td className="py-2 text-center font-mono text-[10px] text-sw-green font-bold">#{p.thisWeekOrganic}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </PanelCard>
+
+      {/* MERGED: Keywords & Share of Shelf */}
+      <PanelCard title="🔥 Keywords & Share of Shelf" badge={`${selectedCategory} · ${selectedPlatform}`} badgeColor="accent" delay={0.2}>
         {/* Filters */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <div className="flex items-center gap-1 flex-wrap">
@@ -211,17 +253,27 @@ const DiscoveryView: React.FC = () => {
                 <th className="text-right py-2 font-normal text-[10px] text-muted-foreground w-14">△ WoW</th>
                 <th className="text-center py-2 font-normal text-[10px] text-muted-foreground w-16">Opportunity</th>
                 {visiblePlatforms.map(p => (
-                  <th key={p} className="text-center py-2 font-normal text-[9px] text-muted-foreground w-16">
-                    <div className="flex flex-col items-center gap-1">
+                  <th key={p} className="text-center py-2 font-normal text-[9px] text-muted-foreground" colSpan={1}>
+                    <div className="flex flex-col items-center gap-0.5">
                       <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: platformColors[p] ?? "#888" }} />
                       <span>{p}</span>
+                      <span className="text-[7px]">Org / Spon</span>
                     </div>
                   </th>
                 ))}
+                <th className="text-center py-2 font-normal text-[9px] text-muted-foreground">Avg Org Rank</th>
+                <th className="text-center py-2 font-normal text-[9px] text-muted-foreground">Avg Spon Rank</th>
               </tr>
             </thead>
             <tbody>
-              {coverageRows.map((row, i) => (
+              {coverageRows.map((row, i) => {
+                // Compute avg ranks across visible platforms
+                const orgRanks = visiblePlatforms.map(p => row[p].avgOrgRank).filter((r): r is number => r !== null);
+                const sponRanks = visiblePlatforms.map(p => row[p].avgSponRank).filter((r): r is number => r !== null);
+                const avgOrg = orgRanks.length > 0 ? (orgRanks.reduce((a, b) => a + b, 0) / orgRanks.length).toFixed(1) : "—";
+                const avgSpon = sponRanks.length > 0 ? (sponRanks.reduce((a, b) => a + b, 0) / sponRanks.length).toFixed(1) : "—";
+
+                return (
                 <tr key={row.kw} className={i % 2 === 0 ? "bg-surface-2/40" : ""}>
                   <td className="py-2 pr-3 font-mono text-[10px] text-foreground truncate max-w-[140px]" title={row.kw}>{row.kw}</td>
                   <td className="py-2 text-right font-mono text-[10px] text-foreground">{row.vol}</td>
@@ -230,57 +282,34 @@ const DiscoveryView: React.FC = () => {
                     <span className={`font-mono text-[9px] px-2 py-0.5 rounded-full ${row.oppColor}`}>{row.opp}</span>
                   </td>
                   {visiblePlatforms.map(p => {
-                    const status = row[p];
-                    const cfg = coverageStatusConfig[status];
+                    const pd = row[p];
                     return (
                       <td key={p} className="py-2 text-center">
-                        <div className="flex justify-center">
-                          {status === "none" ? (
-                            <button
-                              title={`${row.kw} on ${p}: Not listed — create campaign`}
-                              onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "shelf-gap", params: { keyword: row.kw, platform: p } })}
-                              className="w-5 h-5 rounded-full flex items-center justify-center transition-all hover:scale-125 cursor-pointer"
-                              style={{ backgroundColor: cfg.bg, border: `1px solid ${cfg.color}33` }}>
-                              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
-                            </button>
-                          ) : (
-                            <div
-                              title={`${row.kw} on ${p}: ${cfg.label}`}
-                              className="w-5 h-5 rounded-full flex items-center justify-center"
-                              style={{ backgroundColor: cfg.bg, border: `1px solid ${cfg.color}33` }}>
-                              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
-                            </div>
-                          )}
+                        <div className="flex items-center justify-center gap-1">
+                          <span className={`font-mono text-[9px] ${pd.organic ? "text-sw-green" : "text-sw-red"}`}>{pd.organic ? "Y" : "N"}</span>
+                          <span className="text-[8px] text-muted-foreground">/</span>
+                          <span className={`font-mono text-[9px] ${pd.sponsored ? "text-sw-green" : "text-sw-red"}`}>{pd.sponsored ? "Y" : "N"}</span>
                         </div>
                       </td>
                     );
                   })}
+                  <td className="py-2 text-center font-mono text-[10px] text-foreground">{avgOrg}</td>
+                  <td className="py-2 text-center font-mono text-[10px] text-foreground">{avgSpon}</td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
         {/* Legend */}
         <div className="flex items-center gap-4 mt-3 pt-3 border-t border-subtle">
-          {Object.entries(coverageStatusConfig).map(([key, cfg]) => (
-            <span key={key} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: cfg.color }} />
-              {cfg.label}
-            </span>
-          ))}
+          <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className="font-mono text-sw-green">Y</span> = Present
+          </span>
+          <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className="font-mono text-sw-red">N</span> = Not listed
+          </span>
         </div>
-        {missingCount > 0 && (
-          <div className="mt-3 pt-3 border-t border-subtle flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground">
-              <span className="text-sw-red font-mono font-medium">{missingCount}</span>{" "}keyword × platform gaps with no listing
-            </span>
-            <button
-              onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "shelf-coverage", params: { category: selectedCategory, platform: selectedPlatform } })}
-              className="text-[10px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
-              Fix in Campaign Manager →
-            </button>
-          </div>
-        )}
       </PanelCard>
 
       {/* SoS summary strip */}
@@ -387,7 +416,6 @@ const DiscoveryView: React.FC = () => {
             </div>
           </PanelCard>
 
-          {/* SoS over time */}
           <PanelCard title="Share of Search Over Time — 30 Days" badge="Multi-brand" badgeColor="accent" delay={0.2}>
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               {["All", "Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"].map(p => (
@@ -418,7 +446,6 @@ const DiscoveryView: React.FC = () => {
             </div>
           </PanelCard>
 
-          {/* SoS by retailer heatmap */}
           <PanelCard title="SoS by Retailer — Weekly" badge="Heatmap" badgeColor="green" delay={0.3}>
             <div className="overflow-x-auto">
               <div className="flex flex-col gap-1">
@@ -444,7 +471,6 @@ const DiscoveryView: React.FC = () => {
             </div>
           </PanelCard>
 
-          {/* Poaching history */}
           <PanelCard title="Brand Keyword Poaching History" badge="Sortable" badgeColor="red" delay={0.4}>
             <table className="w-full text-xs">
               <thead>
