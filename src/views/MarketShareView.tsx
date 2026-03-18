@@ -297,7 +297,14 @@ const MarketShareView: React.FC = () => {
           {/* New entrants */}
           <PanelCard title="New Competitors Detected" badge="Last 30 days" badgeColor="red" delay={0.3}>
             <div className="space-y-3">
-              {newEntrants.map(e => (
+              {newEntrants.map(e => {
+                const [showProducts, setShowProducts] = React.useState(false);
+                const productTrend = Array.from({ length: 4 }, (_, w) => ({
+                  week: `W${w + 1}`,
+                  rank: Math.round(20 - w * 3 + Math.random() * 5),
+                  share: +(parseFloat(e.share) * (1 + w * 0.3)).toFixed(1),
+                }));
+                return (
                 <div key={e.brand} className="p-4 rounded-xl bg-surface-2 border border-subtle">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-foreground flex items-center gap-2">
@@ -311,16 +318,40 @@ const MarketShareView: React.FC = () => {
                     ))}
                     <span className="font-mono text-[10px] text-muted-foreground ml-2">Est. share: {e.share}</span>
                   </div>
-                  <div className="flex items-center gap-1 flex-wrap">
+                  <div className="flex items-center gap-1 flex-wrap mb-2">
                     {e.keywords.map(kw => (
                       <span key={kw} className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{kw}</span>
                     ))}
                   </div>
-                  <button onClick={() => g.navigateTo("discovery")} className="text-[10px] font-medium mt-2 inline-block" style={{ color: "#4F7FFF" }}>
-                    Monitor keywords →
+                  <button onClick={() => setShowProducts(!showProducts)} className="text-[10px] font-medium inline-block px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red">
+                    {showProducts ? "Hide Products & Trend" : "View Products & Trend →"}
                   </button>
+                  {showProducts && (
+                    <div className="mt-3 p-3 rounded-lg bg-surface-1 border border-subtle">
+                      <p className="text-[10px] text-muted-foreground mb-2">Product trend over last 4 weeks:</p>
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="text-muted-foreground">
+                            <th className="text-left py-1 font-normal">Week</th>
+                            <th className="text-right py-1 font-normal">Avg Rank</th>
+                            <th className="text-right py-1 font-normal">Est. Share</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {productTrend.map(t => (
+                            <tr key={t.week}>
+                              <td className="py-1 text-foreground">{t.week}</td>
+                              <td className="py-1 text-right font-mono text-foreground">#{t.rank}</td>
+                              <td className="py-1 text-right font-mono text-sw-red">{t.share}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </PanelCard>
 

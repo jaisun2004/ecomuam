@@ -683,43 +683,6 @@ const ContentAuditView: React.FC = () => {
               ))}
             </div>
           </PanelCard>
-
-          {/* Competitor content aggression */}
-          <PanelCard title="Content Change Activity in Your Category" badge="Last 7 days" badgeColor="red" delay={0.4}>
-            <p className="text-[10px] text-muted-foreground mb-3">Tracks how frequently competitors are updating titles, images, and listings.</p>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-muted-foreground border-b border-subtle">
-                  <th className="text-left py-2 font-normal">Competitor</th>
-                  <th className="text-right py-2 font-normal">Changes</th>
-                  <th className="text-center py-2 font-normal">Level</th>
-                  <th className="text-left py-2 font-normal">What</th>
-                  <th className="text-left py-2 font-normal">Keywords</th>
-                  <th className="text-right py-2 font-normal">Impact</th>
-                  <th className="text-right py-2 font-normal">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {competitorAggression.map((c, i) => (
-                  <tr key={c.brand} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                    <td className="py-2.5 text-foreground font-medium">{c.brand}</td>
-                    <td className="py-2.5 text-right font-mono text-foreground">{c.changes}</td>
-                    <td className="py-2.5 text-center">
-                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${c.level === "High" ? "bg-sw-red/15 text-sw-red" : c.level === "Medium" ? "bg-sw-amber/15 text-sw-amber" : "bg-surface-3 text-muted-foreground"}`}>{c.level}</span>
-                    </td>
-                    <td className="py-2.5">
-                      <div className="flex gap-1">{c.what.map(w => <span key={w} className="font-mono text-[8px] px-1 py-0.5 rounded bg-surface-3 text-foreground">{w}</span>)}</div>
-                    </td>
-                    <td className="py-2.5 font-mono text-[10px] text-muted-foreground">{c.keywords.join(", ")}</td>
-                    <td className="py-2.5 text-right font-mono text-sw-red">{c.impact}</td>
-                    <td className="py-2.5 text-right">
-                      <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "competitor-content", params: { competitor: c.brand } })} className="text-[10px] font-medium" style={{ color: "#4F7FFF" }}>Respond →</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </PanelCard>
         </div>
       )}
     </div>

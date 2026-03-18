@@ -154,6 +154,7 @@ const AvailabilityView: React.FC = () => {
                 <th className="text-left py-2 font-normal">Product</th>
                 <th className="text-left py-2 font-normal">Platform</th>
                 <th className="text-right py-2 font-normal">Since</th>
+                <th className="text-right py-2 font-normal">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -165,10 +166,25 @@ const AvailabilityView: React.FC = () => {
                   </td>
                   <td className="py-2.5 text-muted-foreground">{item.platform}</td>
                   <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
+                  <td className="py-2.5 text-right">
+                    <button
+                      onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku } })}
+                      className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
+                      Pause Campaigns →
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className="mt-3 pt-3 border-t border-subtle">
+            <button
+              onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: oosProductsToday.map(o => o.sku).join(",") } })}
+              className="w-full px-3 py-2 rounded-lg text-[11px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center justify-center gap-2">
+              <AlertTriangle size={12} />
+              Bulk Pause All OOS Campaigns ({oosProductsToday.length} products)
+            </button>
+          </div>
         </PanelCard>
 
         <PanelCard title="Platform Availability" badge="All Platforms" badgeColor="accent" delay={0.25}>
@@ -192,6 +208,49 @@ const AvailabilityView: React.FC = () => {
           </div>
         </PanelCard>
       </div>
+
+      {/* SKU Availability — Platform Level View */}
+      <PanelCard title="SKU Availability — Platform View" badge="All SKUs across platforms" badgeColor="accent" delay={0.28}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-muted-foreground border-b border-subtle">
+                <th className="text-left py-2 font-normal">SKU</th>
+                {platformAvailability.map(p => (
+                  <th key={p.name} className="text-center py-2 font-normal">
+                    <span className="flex items-center gap-1 justify-center">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                      {p.name}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"].map((sku, i) => (
+                <tr key={sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                  <td className="py-2.5 text-foreground">{sku}</td>
+                  {platformAvailability.map(p => {
+                    const skuData = p.skus.find(s => s.sku === sku);
+                    const avail = skuData?.avail ?? null;
+                    return (
+                      <td key={p.name} className="py-2.5 text-center">
+                        {avail !== null ? (
+                          <span className={`font-mono text-[10px] ${avail >= 80 ? "text-sw-green" : avail >= 50 ? "text-sw-amber" : "text-sw-red"}`}>
+                            {avail}%
+                          </span>
+                        ) : (
+                          <span className="text-[9px] text-muted-foreground">—</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </PanelCard>
 
       {/* Darkstore Listing Gaps */}
       <PanelCard title="Darkstore Listing Gaps" badge="Q-Commerce Coverage" badgeColor="amber" delay={0.28}>
