@@ -301,7 +301,7 @@ const ContentAuditView: React.FC = () => {
                   <th className="text-center py-2.5 px-2 font-normal">Price Parity</th>
                   <th className="text-center py-2.5 px-2 font-normal">Availability</th>
                   <th className="text-center py-2.5 px-2 font-normal">Trend</th>
-                  <th className="text-right py-2.5 px-2 font-normal">Updated</th>
+                  <th className="text-right py-2.5 px-2 font-normal">Days Since Update</th>
                   <th className="text-right py-2.5 px-3 font-normal">Action</th>
                 </tr>
               </thead>
