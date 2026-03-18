@@ -46,9 +46,12 @@ const buildCards = (selectedSkus: string[]): Record<PhaseId, CampaignCard[]> => 
     }
     live.push({ id: `live-${sku.id}`, name: `Boost — ${sku.name}`, budget: "₹30K", platform: sku.platform, status: (hasContentIssue || hasAvailIssue) ? "Conditional" : "Auto-configured", source: (hasContentIssue || hasAvailIssue) ? "Requires pre-launch clearance" : "Discovery trending", skuId: sku.id, warning: (hasContentIssue || hasAvailIssue) ? `Conditional on pre-launch clearance.` : undefined, alternatives: (hasContentIssue || hasAvailIssue) ? alternatives : undefined });
   });
-  if (selected.length > 0) {
-    optimise.push({ id: "opt-bid", name: "Bid Optimisation — Top SKUs", budget: "₹10K", platform: "Multi-platform", status: "Auto-configured", source: "ROAS optimisation" });
-    optimise.push({ id: "opt-daypart", name: "Daypart Shift — Peak Hours", budget: "₹8K", platform: "Multi-platform", status: "Conditional", source: "Conversion pattern analysis" });
+  // Optimise cards are specific to the campaigns being created
+  selected.forEach(sku => {
+    optimise.push({ id: `opt-bid-${sku.id}`, name: `Bid Optimisation — ${sku.name}`, budget: "₹10K", platform: sku.platform, status: "Auto-configured", source: `ROAS optimisation for ${sku.name} campaign` });
+  });
+  if (selected.length > 1) {
+    optimise.push({ id: "opt-daypart", name: `Daypart Shift — ${selected.map(s => s.name.split(" ")[0]).join(" & ")} Campaigns`, budget: "₹8K", platform: selected.map(s => s.platform).filter((v, i, a) => a.indexOf(v) === i).join(", "), status: "Conditional", source: "Conversion pattern analysis across selected campaigns" });
   }
   return { prelaunch, live, optimise };
 };
