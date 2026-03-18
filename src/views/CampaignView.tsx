@@ -897,9 +897,8 @@ const CampaignView: React.FC = () => {
                   <span className="text-xs text-foreground font-medium truncate">{c.name}</span>
                   <span className="text-[9px] px-1.5 py-0.5 rounded-full font-mono" style={{ backgroundColor: c.platformColor + "22", color: c.platformColor }}>{c.platform}</span>
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-[10px] mb-2">
+                <div className="grid grid-cols-2 gap-2 text-[10px] mb-2">
                   <div><span className="text-muted-foreground">ROAS</span><p className="font-mono text-foreground">{c.roas}</p></div>
-                  <div><span className="text-muted-foreground">Rev</span><p className="font-mono text-foreground">{c.revenue}</p></div>
                   <div><span className="text-muted-foreground">Spend</span><p className="font-mono text-foreground">{c.spend}</p></div>
                 </div>
                 <div className="flex items-center gap-2">
