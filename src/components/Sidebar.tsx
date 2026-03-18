@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -10,6 +10,7 @@ const navSections = [
     items: [
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
       { id: "warroom", icon: MapPin, label: "War Room", notify: false },
+      { id: "whitespace", icon: Lightbulb, label: "Category Whitespace", notify: false },
     ],
   },
   {
@@ -17,6 +18,7 @@ const navSections = [
     items: [
       { id: "availability", icon: Package, label: "Availability", notify: false },
       { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
+      { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
       { id: "competitors", icon: Eye, label: "Competitor Ads Hub", notify: true },
       { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
