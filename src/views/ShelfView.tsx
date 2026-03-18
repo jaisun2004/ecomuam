@@ -143,23 +143,23 @@ const searchPositions = [
 
 /* SoS retailer-level issues */
 const sosRetailerIssues = [
-  { platform: "Flipkart", issue: "SoS dropped 12% WoW", type: "drop", kw: "protein powder", detail: "Competitor bid aggression detected — MuscleBlaze increased bids by 2.4x on 3 top keywords" },
-  { platform: "Instamart", issue: "0% SoS on 3 keywords", type: "missing", kw: "whey protein, creatine, bcaa", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
-  { platform: "Zepto", issue: "Poaching on pre workout", type: "poaching", kw: "pre workout supplement", detail: "ON bidding on your brand keyword. Capturing 40% of branded searches" },
+  { platform: "Flipkart", issue: "SoS dropped 12% WoW", type: "drop", kw: "butter biscuits", detail: "Competitor bid aggression detected — Sunfeast increased bids by 2.4x on 3 top keywords" },
+  { platform: "Instamart", issue: "0% SoS on 3 keywords", type: "missing", kw: "cream biscuits, glucose biscuits, kids biscuits", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
+  { platform: "Zepto", issue: "Poaching on digestive biscuits", type: "poaching", kw: "digestive biscuits", detail: "McVities bidding on your brand keyword. Capturing 40% of branded searches" },
 ];
 
 const competitorAggression = [
-  { competitor: "MuscleBlaze", platform: "Amazon", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
-  { competitor: "ON", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
-  { competitor: "AS-IT-IS", platform: "Flipkart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
-  { competitor: "BigMuscles", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
+  { competitor: "Sunfeast", platform: "Amazon", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
+  { competitor: "McVities", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
+  { competitor: "Parle", platform: "Flipkart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
+  { competitor: "Unibic", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
 ];
 
 const poachingKeywords = [
-  { keyword: "musclemax whey protein", poacher: "MuscleBlaze", platform: "Amazon", yourSoS: 62, theirSoS: 28, trend: "rising" },
-  { keyword: "musclemax creatine", poacher: "ON", platform: "Flipkart", yourSoS: 45, theirSoS: 38, trend: "rising" },
-  { keyword: "musclemax bcaa", poacher: "MuscleBlaze", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
-  { keyword: "musclemax pre workout", poacher: "BigMuscles", platform: "Amazon", yourSoS: 71, theirSoS: 18, trend: "declining" },
+  { keyword: "britannia good day", poacher: "Sunfeast", platform: "Amazon", yourSoS: 62, theirSoS: 28, trend: "rising" },
+  { keyword: "britannia bourbon", poacher: "Parle", platform: "Flipkart", yourSoS: 45, theirSoS: 38, trend: "rising" },
+  { keyword: "britannia marie gold", poacher: "Sunfeast", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
+  { keyword: "britannia nutrichoice", poacher: "McVities", platform: "Amazon", yourSoS: 71, theirSoS: 18, trend: "declining" },
 ];
 
 const ProgressRing = ({ score, color, size = 48 }: { score: number; color: string; size?: number }) => {
