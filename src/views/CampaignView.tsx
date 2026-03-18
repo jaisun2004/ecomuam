@@ -8,21 +8,21 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 
 /* ── existing mock data ── */
 const revenueData = [
-  { day: "Mar 1", revenue: 180, spend: 40 },
-  { day: "Mar 5", revenue: 195, spend: 42 },
-  { day: "Mar 10", revenue: 210, spend: 45 },
-  { day: "Mar 15", revenue: 230, spend: 48 },
-  { day: "Mar 20", revenue: 245, spend: 50 },
-  { day: "Mar 25", revenue: 258, spend: 52 },
-  { day: "Mar 30", revenue: 270, spend: 55 },
+  { day: "Mar 1", spend: 40 },
+  { day: "Mar 5", spend: 42 },
+  { day: "Mar 10", spend: 45 },
+  { day: "Mar 15", spend: 48 },
+  { day: "Mar 20", spend: 50 },
+  { day: "Mar 25", spend: 52 },
+  { day: "Mar 30", spend: 55 },
 ];
 
 const campaigns = [
-  { name: "Whey Protein — Sponsored", platform: "Amazon", platformColor: "#FF9900", roas: "5.1x", revenue: "₹4.2L", spend: "₹82K", status: "LIVE", ai: true },
-  { name: "Q-Commerce Launch Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", revenue: "₹1.9L", spend: "₹50K", status: "LIVE", ai: true },
-  { name: "Creatine Retargeting", platform: "Flipkart", platformColor: "#2F77FF", roas: "2.1x", revenue: "₹63K", spend: "₹30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
-  { name: "BCAA Brand Awareness", platform: "Instagram", platformColor: "#E1306C", roas: "4.4x", revenue: "₹2.2L", spend: "₹50K", status: "LIVE", ai: false },
-  { name: "Pre-Workout New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", revenue: "₹96K", spend: "₹30K", status: "LIVE", ai: true },
+  { name: "Good Day Butter — Sponsored", platform: "Amazon", platformColor: "#FF9900", roas: "5.1x", spend: "₹82K", status: "LIVE", ai: true },
+  { name: "Q-Commerce Biscuit Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹50K", status: "LIVE", ai: true },
+  { name: "Marie Gold Retargeting", platform: "Flipkart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
+  { name: "Bourbon Brand Awareness", platform: "Instagram", platformColor: "#E1306C", roas: "4.4x", spend: "₹50K", status: "LIVE", ai: false },
+  { name: "NutriChoice New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹30K", status: "LIVE", ai: true },
 ];
 
 const platformROAS = [
@@ -42,18 +42,18 @@ const budgetAlloc = [
 ];
 
 const keywords = [
-  { kw: "whey protein 1kg", bid: "₹28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "protein powder", bid: "₹45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
-  { kw: "creatine monohydrate", bid: "₹22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
-  { kw: "bcaa supplement", bid: "₹18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "pre workout energy", bid: "₹35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "gym supplement india", bid: "₹12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "butter biscuits online", bid: "₹28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "cream biscuits", bid: "₹45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
+  { kw: "glucose biscuits bulk", bid: "₹22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "digestive biscuits", bid: "₹18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "choco chip cookies", bid: "₹35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "biscuit combo pack", bid: "₹12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
 ];
 
 const copilotCards = [
-  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹25,000 from Flipkart Creatine (ROAS 2.1x) to Amazon Whey Protein (ROAS 5.1x). Projected incremental revenue: +₹1.04L this week.", confidence: 91, action: "Apply Now" },
-  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Amazon Whey campaign. 'whey protein for women 1kg' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
-  { impact: "MED IMPACT", emoji: "⚡", text: "Pre-Workout trending +47% on Blinkit South Delhi. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
+  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹25,000 from Flipkart Marie Gold (ROAS 2.1x) to Amazon Good Day (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
+  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Amazon Good Day campaign. 'butter biscuits family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
+  { impact: "MED IMPACT", emoji: "⚡", text: "NutriChoice trending +47% on Blinkit South Delhi. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
 ];
 
 /* ── Hierarchical Report Data ── */
