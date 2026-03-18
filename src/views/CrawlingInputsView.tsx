@@ -24,7 +24,7 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(({ label, descr
   const filtered = suggestions.filter(s => !tags.includes(s) && s.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className={`rounded-xl border bg-surface-1 p-4 space-y-3 ${disabled ? "opacity-50 pointer-events-none" : ""} border-border`}>
+    <div ref={ref} className={`rounded-xl border bg-surface-1 p-4 space-y-3 ${disabled ? "opacity-50 pointer-events-none" : ""} border-border`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-foreground">{label}</p>
