@@ -677,12 +677,9 @@ const CampaignView: React.FC = () => {
           }`}>
           <Clock size={14} /> Day Parting
         </button>
-        <button onClick={() => setShowReports(!showReports)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            showReports ? "bg-primary/20 text-primary" : "bg-surface-2 border border-subtle text-foreground hover:bg-surface-3"
-          }`}>
-          <FileText size={14} />
-          {showReports ? "Close Reports" : "Campaign Reports"}
+        <button onClick={() => g.navigateTo("campaignreports")}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all bg-surface-2 border border-subtle text-foreground hover:bg-surface-3">
+          <FileText size={14} /> Campaign Reports
         </button>
       </div>
 

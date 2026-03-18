@@ -21,7 +21,7 @@ const navSections = [
       { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
       { id: "competitors", icon: Eye, label: "Competitor Ads Hub", notify: true },
       { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
-      { id: "contentaudit", icon: FileCheck, label: "Content Audit", notify: false },
+      { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
       { id: "categoryassortment", icon: LayoutList, label: "Category Assortment", notify: false },
     ],
   },
