@@ -9,12 +9,12 @@ import { ChevronDown, ChevronRight, Copy, Check, X } from "lucide-react";
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
 export const skuData = [
-  { id: "sku-001", sku: "Whey 1kg Chocolate", thumb: "🥤", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon", category: "Protein" },
-  { id: "sku-002", sku: "Whey 500g Vanilla", thumb: "🥤", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart", category: "Protein" },
-  { id: "sku-003", sku: "Creatine 250g", thumb: "💊", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon", category: "Supplements" },
-  { id: "sku-004", sku: "Pre-Workout Citrus", thumb: "⚡", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Pre-Workout" },
-  { id: "sku-005", sku: "BCAA Tropical", thumb: "🏋️", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Amino Acids" },
-  { id: "sku-006", sku: "Multi-Vit 60ct", thumb: "💊", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Swiggy Instamart", category: "Vitamins" },
+  { id: "sku-001", sku: "Good Day Butter 200g", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon", category: "Cookies" },
+  { id: "sku-002", sku: "Marie Gold 250g", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart", category: "Glucose" },
+  { id: "sku-003", sku: "50-50 Maska Chaska 120g", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon", category: "Cream" },
+  { id: "sku-004", sku: "NutriChoice Digestive 100g", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health" },
+  { id: "sku-005", sku: "Bourbon Cream 150g", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream" },
+  { id: "sku-006", sku: "Milk Bikis 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Swiggy Instamart", category: "Kids" },
 ];
 
 export const competitorScores: Record<string, Record<string, { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }>> = {
