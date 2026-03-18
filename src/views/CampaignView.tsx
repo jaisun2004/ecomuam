@@ -8,21 +8,21 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 
 /* ── existing mock data ── */
 const revenueData = [
-  { day: "Mar 1", revenue: 180, spend: 40 },
-  { day: "Mar 5", revenue: 195, spend: 42 },
-  { day: "Mar 10", revenue: 210, spend: 45 },
-  { day: "Mar 15", revenue: 230, spend: 48 },
-  { day: "Mar 20", revenue: 245, spend: 50 },
-  { day: "Mar 25", revenue: 258, spend: 52 },
-  { day: "Mar 30", revenue: 270, spend: 55 },
+  { day: "Mar 1", spend: 40 },
+  { day: "Mar 5", spend: 42 },
+  { day: "Mar 10", spend: 45 },
+  { day: "Mar 15", spend: 48 },
+  { day: "Mar 20", spend: 50 },
+  { day: "Mar 25", spend: 52 },
+  { day: "Mar 30", spend: 55 },
 ];
 
 const campaigns = [
-  { name: "Whey Protein — Sponsored", platform: "Amazon", platformColor: "#FF9900", roas: "5.1x", revenue: "₹4.2L", spend: "₹82K", status: "LIVE", ai: true },
-  { name: "Q-Commerce Launch Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", revenue: "₹1.9L", spend: "₹50K", status: "LIVE", ai: true },
-  { name: "Creatine Retargeting", platform: "Flipkart", platformColor: "#2F77FF", roas: "2.1x", revenue: "₹63K", spend: "₹30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
-  { name: "BCAA Brand Awareness", platform: "Instagram", platformColor: "#E1306C", roas: "4.4x", revenue: "₹2.2L", spend: "₹50K", status: "LIVE", ai: false },
-  { name: "Pre-Workout New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", revenue: "₹96K", spend: "₹30K", status: "LIVE", ai: true },
+  { name: "Good Day Butter — Sponsored", platform: "Amazon", platformColor: "#FF9900", roas: "5.1x", spend: "₹82K", status: "LIVE", ai: true },
+  { name: "Q-Commerce Biscuit Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹50K", status: "LIVE", ai: true },
+  { name: "Marie Gold Retargeting", platform: "Flipkart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
+  { name: "Bourbon Brand Awareness", platform: "Instagram", platformColor: "#E1306C", roas: "4.4x", spend: "₹50K", status: "LIVE", ai: false },
+  { name: "NutriChoice New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹30K", status: "LIVE", ai: true },
 ];
 
 const platformROAS = [
@@ -42,18 +42,18 @@ const budgetAlloc = [
 ];
 
 const keywords = [
-  { kw: "whey protein 1kg", bid: "₹28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "protein powder", bid: "₹45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
-  { kw: "creatine monohydrate", bid: "₹22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
-  { kw: "bcaa supplement", bid: "₹18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "pre workout energy", bid: "₹35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "gym supplement india", bid: "₹12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "butter biscuits online", bid: "₹28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "cream biscuits", bid: "₹45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
+  { kw: "glucose biscuits bulk", bid: "₹22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "digestive biscuits", bid: "₹18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "choco chip cookies", bid: "₹35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "biscuit combo pack", bid: "₹12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
 ];
 
 const copilotCards = [
-  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹25,000 from Flipkart Creatine (ROAS 2.1x) to Amazon Whey Protein (ROAS 5.1x). Projected incremental revenue: +₹1.04L this week.", confidence: 91, action: "Apply Now" },
-  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Amazon Whey campaign. 'whey protein for women 1kg' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
-  { impact: "MED IMPACT", emoji: "⚡", text: "Pre-Workout trending +47% on Blinkit South Delhi. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
+  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹25,000 from Flipkart Marie Gold (ROAS 2.1x) to Amazon Good Day (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
+  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Amazon Good Day campaign. 'butter biscuits family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
+  { impact: "MED IMPACT", emoji: "⚡", text: "NutriChoice trending +47% on Blinkit South Delhi. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
 ];
 
 /* ── Hierarchical Report Data ── */
@@ -62,17 +62,15 @@ type ReportKeyword = {
   impressions: string;
   clicks: string;
   spend: string;
-  revenue: string;
   roas: string;
   roasColor: string;
-  cities?: { city: string; impressions: string; clicks: string; spend: string; revenue: string; roas: string; roasColor: string; products: { code: string; title: string; spend: string; revenue: string; roas: string; roasColor: string }[] }[];
+  cities?: { city: string; impressions: string; clicks: string; spend: string; roas: string; roasColor: string; products: { code: string; title: string; spend: string; roas: string; roasColor: string }[] }[];
 };
 
 type ReportCampaign = {
   name: string;
   status: string;
   spend: string;
-  revenue: string;
   roas: string;
   roasColor: string;
   impressions: string;
@@ -85,7 +83,6 @@ type ReportPlatform = {
   platform: string;
   color: string;
   totalSpend: string;
-  totalRevenue: string;
   blendedRoas: string;
   roasColor: string;
   campaigns: ReportCampaign[];
@@ -93,57 +90,42 @@ type ReportPlatform = {
 
 const reportData: ReportPlatform[] = [
   {
-    platform: "Amazon", color: "#FF9900", totalSpend: "₹7.8L", totalRevenue: "₹39.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
+    platform: "Amazon", color: "#FF9900", totalSpend: "₹7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
       {
-        name: "Whey Protein — Sponsored", status: "LIVE", spend: "₹4.2L", revenue: "₹21.4L", roas: "5.1x", roasColor: "text-sw-green",
+        name: "Good Day Butter — Sponsored", status: "LIVE", spend: "₹4.2L", roas: "5.1x", roasColor: "text-sw-green",
         impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
           {
-            keyword: "whey protein 1kg", impressions: "342K", clicks: "12.8K", spend: "₹1.8L", revenue: "₹11.2L", roas: "6.2x", roasColor: "text-sw-green",
+            keyword: "butter biscuits online", impressions: "342K", clicks: "12.8K", spend: "₹1.8L", roas: "6.2x", roasColor: "text-sw-green",
             cities: [
-              { city: "Delhi NCR", impressions: "98K", clicks: "4.1K", spend: "₹52K", revenue: "₹3.4L", roas: "6.5x", roasColor: "text-sw-green",
+              { city: "Delhi NCR", impressions: "98K", clicks: "4.1K", spend: "₹52K", roas: "6.5x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹32K", revenue: "₹2.1L", roas: "6.6x", roasColor: "text-sw-green" },
-                  { code: "SKU-WH1K-VN", title: "Whey 1kg Vanilla", spend: "₹20K", revenue: "₹1.3L", roas: "6.5x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Good Day Butter 200g", spend: "₹32K", roas: "6.6x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Good Day Butter 100g", spend: "₹20K", roas: "6.5x", roasColor: "text-sw-green" },
                 ]},
-              { city: "Mumbai", impressions: "82K", clicks: "3.2K", spend: "₹44K", revenue: "₹2.8L", roas: "6.4x", roasColor: "text-sw-green",
+              { city: "Mumbai", impressions: "82K", clicks: "3.2K", spend: "₹44K", roas: "6.4x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹28K", revenue: "₹1.8L", roas: "6.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-WH1K-VN", title: "Whey 1kg Vanilla", spend: "₹16K", revenue: "₹1.0L", roas: "6.3x", roasColor: "text-sw-green" },
-                ]},
-              { city: "Bangalore", impressions: "68K", clicks: "2.6K", spend: "₹38K", revenue: "₹2.2L", roas: "5.8x", roasColor: "text-sw-green",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹38K", revenue: "₹2.2L", roas: "5.8x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Good Day Butter 200g", spend: "₹28K", roas: "6.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Good Day Butter 100g", spend: "₹16K", roas: "6.3x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "protein powder", impressions: "498K", clicks: "14.2K", spend: "₹2.1L", revenue: "₹6.5L", roas: "3.1x", roasColor: "text-sw-amber",
-            cities: [
-              { city: "Delhi NCR", impressions: "142K", clicks: "4.8K", spend: "₹68K", revenue: "₹2.1L", roas: "3.1x", roasColor: "text-sw-amber",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹42K", revenue: "₹1.4L", roas: "3.3x", roasColor: "text-sw-amber" },
-                  { code: "SKU-WH500-CH", title: "Whey 500g Chocolate", spend: "₹26K", revenue: "₹0.7L", roas: "2.7x", roasColor: "text-sw-amber" },
-                ]},
-              { city: "Hyderabad", impressions: "88K", clicks: "2.4K", spend: "₹34K", revenue: "₹0.9L", roas: "2.6x", roasColor: "text-sw-amber",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹34K", revenue: "₹0.9L", roas: "2.6x", roasColor: "text-sw-amber" },
-                ]},
-            ],
+            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹2.1L", roas: "3.1x", roasColor: "text-sw-amber",
           },
         ],
       },
       {
-        name: "Creatine — Keyword Target", status: "PAUSED", spend: "₹1.8L", revenue: "₹3.8L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "Marie Gold — Keyword Target", status: "PAUSED", spend: "₹1.8L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "284K", clicks: "8.2K", ctr: "2.9%",
         keywords: [
           {
-            keyword: "creatine monohydrate", impressions: "187K", clicks: "5.4K", spend: "₹1.2L", revenue: "₹1.7L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹1.2L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
-              { city: "Delhi NCR", impressions: "62K", clicks: "1.8K", spend: "₹42K", revenue: "₹58K", roas: "1.4x", roasColor: "text-sw-red",
+              { city: "Delhi NCR", impressions: "62K", clicks: "1.8K", spend: "₹42K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-CR250", title: "Creatine Monohydrate 250g", spend: "₹42K", revenue: "₹58K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 250g", spend: "₹42K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -152,46 +134,42 @@ const reportData: ReportPlatform[] = [
     ],
   },
   {
-    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹3.3L", totalRevenue: "₹12.5L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
+    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
     campaigns: [
       {
-        name: "Q-Commerce Launch Push", status: "LIVE", spend: "₹2.8L", revenue: "₹10.6L", roas: "3.8x", roasColor: "text-sw-amber",
+        name: "Q-Commerce Biscuit Push", status: "LIVE", spend: "₹2.8L", roas: "3.8x", roasColor: "text-sw-amber",
         impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
           {
-            keyword: "whey protein", impressions: "188K", clicks: "7.2K", spend: "₹1.4L", revenue: "₹5.6L", roas: "4.0x", roasColor: "text-sw-green",
+            keyword: "butter biscuits", impressions: "188K", clicks: "7.2K", spend: "₹1.4L", roas: "4.0x", roasColor: "text-sw-green",
             cities: [
-              { city: "Delhi NCR", impressions: "92K", clicks: "3.8K", spend: "₹72K", revenue: "₹3.1L", roas: "4.3x", roasColor: "text-sw-green",
+              { city: "Delhi NCR", impressions: "92K", clicks: "3.8K", spend: "₹72K", roas: "4.3x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹48K", revenue: "₹2.1L", roas: "4.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-WH500-CH", title: "Whey 500g Chocolate", spend: "₹24K", revenue: "₹1.0L", roas: "4.2x", roasColor: "text-sw-green" },
-                ]},
-              { city: "Mumbai", impressions: "68K", clicks: "2.4K", spend: "₹48K", revenue: "₹1.8L", roas: "3.8x", roasColor: "text-sw-amber",
-                products: [
-                  { code: "SKU-WH1K-CH", title: "Whey 1kg Chocolate", spend: "₹48K", revenue: "₹1.8L", roas: "3.8x", roasColor: "text-sw-amber" },
+                  { code: "SKU-GD200", title: "Good Day Butter 200g", spend: "₹48K", roas: "4.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-5050", title: "50-50 Maska Chaska 120g", spend: "₹24K", roas: "4.2x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "pre workout", impressions: "124K", clicks: "4.8K", spend: "₹88K", revenue: "₹3.2L", roas: "3.6x", roasColor: "text-sw-amber",
+            keyword: "choco chip cookies", impressions: "124K", clicks: "4.8K", spend: "₹88K", roas: "3.6x", roasColor: "text-sw-amber",
           },
         ],
       },
     ],
   },
   {
-    platform: "Flipkart", color: "#2F77FF", totalSpend: "₹5.2L", totalRevenue: "₹10.9L", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    platform: "Flipkart", color: "#2F77FF", totalSpend: "₹5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
       {
-        name: "Creatine Retargeting", status: "PAUSED", spend: "₹3.0L", revenue: "₹6.3L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "Marie Gold Retargeting", status: "PAUSED", spend: "₹3.0L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "524K", clicks: "12.8K", ctr: "2.4%",
         keywords: [
           {
-            keyword: "creatine supplement", impressions: "284K", clicks: "6.2K", spend: "₹1.8L", revenue: "₹2.5L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits", impressions: "284K", clicks: "6.2K", spend: "₹1.8L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
-              { city: "Delhi NCR", impressions: "82K", clicks: "1.8K", spend: "₹52K", revenue: "₹72K", roas: "1.4x", roasColor: "text-sw-red",
+              { city: "Delhi NCR", impressions: "82K", clicks: "1.8K", spend: "₹52K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-CR250", title: "Creatine Monohydrate 250g", spend: "₹52K", revenue: "₹72K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 250g", spend: "₹52K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -203,12 +181,12 @@ const reportData: ReportPlatform[] = [
 
 /* ── Day Parting Data ── */
 const dayPartingSlots = [
-  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push"], budgetPct: 15 },
-  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Whey Protein — Sponsored", "BCAA Brand Awareness", "Pre-Workout New Users"], budgetPct: 25 },
-  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Creatine Retargeting", "BCAA Brand Awareness"], budgetPct: 15 },
-  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push", "Pre-Workout New Users", "BCAA Brand Awareness"], budgetPct: 30 },
-  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Whey Protein — Sponsored", "Q-Commerce Launch Push"], budgetPct: 12 },
-  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Creatine Retargeting"], budgetPct: 3 },
+  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Good Day Butter — Sponsored", "Q-Commerce Biscuit Push"], budgetPct: 15 },
+  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Good Day Butter — Sponsored", "Bourbon Brand Awareness", "NutriChoice New Users"], budgetPct: 25 },
+  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
+  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Good Day Butter — Sponsored", "Q-Commerce Biscuit Push", "NutriChoice New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
+  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Good Day Butter — Sponsored", "Q-Commerce Biscuit Push"], budgetPct: 12 },
+  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
 /* ── Campaign Creator Modal ── */
@@ -219,15 +197,15 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
   if (!open) return null;
 
   const aiSuggestions = [
-    { name: "Stock Recovery Blitz", signal: "Whey 500g OOS on Instamart — 6 pincodes", roas: "4.8x", budget: "₹15K", duration: "3 days", keywords: ["whey protein", "protein powder"] },
-    { name: "Price Advantage Push", signal: "Creatine 14% cheaper than MuscleBlaze", roas: "5.2x", budget: "₹20K", duration: "7 days", keywords: ["creatine monohydrate", "creatine supplement"] },
-    { name: "Trending Capture", signal: "Pre-workout +47% search on Blinkit", roas: "3.9x", budget: "₹12K", duration: "5 days", keywords: ["pre workout", "pre workout energy"] },
+    { name: "Stock Recovery Blitz", signal: "Marie Gold OOS on Instamart — 6 pincodes", roas: "4.8x", budget: "₹15K", duration: "3 days", keywords: ["butter biscuits", "cream biscuits"] },
+    { name: "Price Advantage Push", signal: "Good Day 14% cheaper than Sunfeast", roas: "5.2x", budget: "₹20K", duration: "7 days", keywords: ["glucose biscuits", "digestive biscuits"] },
+    { name: "Trending Capture", signal: "NutriChoice trending +47% on Blinkit", roas: "3.9x", budget: "₹12K", duration: "5 days", keywords: ["digestive biscuits", "health biscuits"] },
   ];
 
   const historyCampaigns = [
-    { name: "Whey Summer Push 2025", platform: "Amazon", spend: "₹3.2L", roas: "4.9x", duration: "14 days" },
+    { name: "Good Day Summer Push 2025", platform: "Amazon", spend: "₹3.2L", roas: "4.9x", duration: "14 days" },
     { name: "Festive Season Blast", platform: "Flipkart", spend: "₹5.1L", roas: "5.6x", duration: "21 days" },
-    { name: "Q-Commerce Pilot", platform: "Blinkit", spend: "₹1.8L", roas: "3.4x", duration: "7 days" },
+    { name: "Q-Commerce Biscuit Pilot", platform: "Blinkit", spend: "₹1.8L", roas: "3.4x", duration: "7 days" },
   ];
 
   return (
@@ -391,11 +369,11 @@ const CampaignView: React.FC = () => {
   const [undoToast, setUndoToast] = useState<string | null>(null);
 
   const digestActions = [
-    { id: 0, campaign: "Whey Protein — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
-    { id: 1, campaign: "Q-Commerce Launch Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "Creatine Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹1.2L Rev", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
-    { id: 3, campaign: "BCAA Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
-    { id: 4, campaign: "Pre-Workout New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
+    { id: 0, campaign: "Good Day Butter — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
+    { id: 1, campaign: "Q-Commerce Biscuit Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
+    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 3, campaign: "Bourbon Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
+    { id: 4, campaign: "NutriChoice New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
 
   const visibleDigest = digestActions.filter(d => !dismissedDigest[d.id]);
@@ -577,7 +555,7 @@ const CampaignView: React.FC = () => {
                 Tier 1 conflict active — 2 insights blocked
               </h3>
               <p className="text-[11px] text-muted-foreground mt-1">
-                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Creatine Retargeting, Pre-Workout New Users · Est. auto-clearance: {g.estResolutionTime}
+                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Marie Gold Retargeting, NutriChoice New Users · Est. auto-clearance: {g.estResolutionTime}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -684,7 +662,7 @@ const CampaignView: React.FC = () => {
         <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x · 93% of goal" accentColor="bg-sw-green" delay={0.05} />
         <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
-        <KPICard title="Attributed Revenue" value="₹77L" delta="▲ 18% MoM" deltaType="positive" sub="Across all ad-attributed orders" accentColor="bg-sw-cyan" delay={0.15} />
+        <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Across all campaigns" accentColor="bg-sw-cyan" delay={0.15} />
       </div>
 
       {/* Action bar */}
@@ -791,7 +769,7 @@ const CampaignView: React.FC = () => {
                   <span className="text-sm text-foreground font-semibold">{plat.platform}</span>
                   <div className="ml-auto flex items-center gap-4 text-[11px]">
                     <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{plat.totalSpend}</span></span>
-                    <span className="text-muted-foreground">Revenue <span className="font-mono text-foreground">{plat.totalRevenue}</span></span>
+                    <span className={`font-mono font-bold ${plat.roasColor}`}>ROAS {plat.blendedRoas}</span>
                     <span className={`font-mono font-bold ${plat.roasColor}`}>{plat.blendedRoas}</span>
                   </div>
                 </button>
@@ -811,7 +789,7 @@ const CampaignView: React.FC = () => {
                               <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{camp.clicks}</span></span>
                               <span className="text-muted-foreground">CTR <span className="font-mono text-foreground">{camp.ctr}</span></span>
                               <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{camp.spend}</span></span>
-                              <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{camp.revenue}</span></span>
+                              <span className={`font-mono font-bold ${camp.roasColor}`}>ROAS {camp.roas}</span>
                               <span className={`font-mono font-bold ${camp.roasColor}`}>{camp.roas}</span>
                             </div>
                           </button>
@@ -829,7 +807,7 @@ const CampaignView: React.FC = () => {
                                         <span className="text-muted-foreground">Imp <span className="font-mono text-foreground">{kw.impressions}</span></span>
                                         <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{kw.clicks}</span></span>
                                         <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{kw.spend}</span></span>
-                                        <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{kw.revenue}</span></span>
+                                        <span className={`font-mono font-bold ${kw.roasColor}`}>ROAS {kw.roas}</span>
                                         <span className={`font-mono font-bold ${kw.roasColor}`}>{kw.roas}</span>
                                       </div>
                                     </button>
@@ -847,7 +825,7 @@ const CampaignView: React.FC = () => {
                                                   <span className="text-muted-foreground">Imp <span className="font-mono text-foreground">{city.impressions}</span></span>
                                                   <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{city.clicks}</span></span>
                                                   <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{city.spend}</span></span>
-                                                  <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{city.revenue}</span></span>
+                                                  <span className={`font-mono font-bold ${city.roasColor}`}>ROAS {city.roas}</span>
                                                   <span className={`font-mono font-bold ${city.roasColor}`}>{city.roas}</span>
                                                 </div>
                                               </button>
@@ -858,7 +836,7 @@ const CampaignView: React.FC = () => {
                                                       <span className="font-mono text-muted-foreground">{prod.code}</span>
                                                       <span className="text-foreground flex-1">{prod.title}</span>
                                                       <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{prod.spend}</span></span>
-                                                      <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{prod.revenue}</span></span>
+                                                      <span className={`font-mono font-bold ${prod.roasColor}`}>ROAS {prod.roas}</span>
                                                       <span className={`font-mono font-bold ${prod.roasColor}`}>{prod.roas}</span>
                                                     </div>
                                                   ))}
@@ -887,18 +865,13 @@ const CampaignView: React.FC = () => {
 
       {/* Chart + Campaign cards */}
       <div className="grid grid-cols-3 gap-4">
-        <PanelCard title="Revenue vs Ad Spend — 30 Day Trend" badge="ROAS improving" badgeColor="green" className="col-span-2" delay={0.2}>
+        <PanelCard title="Ad Spend — 30 Day Trend" badge="ROAS improving" badgeColor="green" className="col-span-2" delay={0.2}>
           <div className="flex items-center gap-4 mb-3 text-[10px] text-muted-foreground">
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> Revenue</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> Ad Spend</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> Ad Spend (₹K)</span>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={revenueData}>
               <defs>
-                <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(160,70%,48%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(160,70%,48%)" stopOpacity={0} />
-                </linearGradient>
                 <linearGradient id="gSpend" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(228,90%,64%)" stopOpacity={0.2} />
                   <stop offset="95%" stopColor="hsl(228,90%,64%)" stopOpacity={0} />
@@ -908,8 +881,7 @@ const CampaignView: React.FC = () => {
               <XAxis dataKey="day" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
-              <Area type="monotone" dataKey="revenue" stroke="hsl(160,70%,48%)" fill="url(#gRev)" strokeWidth={2} />
-              <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="url(#gSpend)" strokeWidth={2} strokeDasharray="5 5" />
+              <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="url(#gSpend)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>
@@ -925,9 +897,8 @@ const CampaignView: React.FC = () => {
                   <span className="text-xs text-foreground font-medium truncate">{c.name}</span>
                   <span className="text-[9px] px-1.5 py-0.5 rounded-full font-mono" style={{ backgroundColor: c.platformColor + "22", color: c.platformColor }}>{c.platform}</span>
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-[10px] mb-2">
+                <div className="grid grid-cols-2 gap-2 text-[10px] mb-2">
                   <div><span className="text-muted-foreground">ROAS</span><p className="font-mono text-foreground">{c.roas}</p></div>
-                  <div><span className="text-muted-foreground">Rev</span><p className="font-mono text-foreground">{c.revenue}</p></div>
                   <div><span className="text-muted-foreground">Spend</span><p className="font-mono text-foreground">{c.spend}</p></div>
                 </div>
                 <div className="flex items-center gap-2">

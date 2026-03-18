@@ -13,106 +13,82 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const elasticityData = [
-  { sku: "Whey 1kg", sensitivity: 0.82 },
-  { sku: "Creatine", sensitivity: 0.65 },
-  { sku: "Pre-Workout", sensitivity: 0.91 },
-  { sku: "BCAA", sensitivity: 0.48 },
-  { sku: "Multi-Vit", sensitivity: 0.35 },
+  { sku: "Good Day 200g", sensitivity: 0.82 },
+  { sku: "Marie Gold 250g", sensitivity: 0.65 },
+  { sku: "NutriChoice 100g", sensitivity: 0.91 },
+  { sku: "Bourbon 150g", sensitivity: 0.48 },
+  { sku: "50-50 120g", sensitivity: 0.35 },
 ];
 
 const priceGapTable = [
-  { sku: "Creatine 250g", yours: "₹799", lowest: "₹699", gap: "+14.3%", action: "Match Price" },
-  { sku: "Pre-Workout", yours: "₹1,899", lowest: "₹1,599", gap: "+18.8%", action: "Match Price" },
-  { sku: "BCAA Tropical", yours: "₹1,299", lowest: "₹1,199", gap: "+8.3%", action: "Monitor" },
-  { sku: "Multi-Vit", yours: "₹649", lowest: "₹599", gap: "+8.3%", action: "Monitor" },
-  { sku: "Whey 1kg", yours: "₹2,499", lowest: "₹1,899", gap: "+31.6%", action: "Match Price" },
+  { sku: "Marie Gold 250g", yours: "₹35", lowest: "₹30", gap: "+16.7%", action: "Match Price" },
+  { sku: "NutriChoice 100g", yours: "₹45", lowest: "₹40", gap: "+12.5%", action: "Match Price" },
+  { sku: "Bourbon 150g", yours: "₹30", lowest: "₹28", gap: "+7.1%", action: "Monitor" },
+  { sku: "50-50 120g", yours: "₹20", lowest: "₹18", gap: "+11.1%", action: "Monitor" },
+  { sku: "Good Day 200g", yours: "₹40", lowest: "₹35", gap: "+14.3%", action: "Match Price" },
 ];
 
-const skuOptions = ["Whey Protein 1kg", "Creatine 250g", "Pre-Workout 300g", "BCAA Tropical", "Multi-Vit 60ct"];
+const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
 const priceHistoryBySku: Record<string, any[]> = {
-  "Whey Protein 1kg": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 2499,
-    comp1: i >= 12 ? 2199 : 2299,
-    comp2: i >= 18 ? 3299 : 3499,
-    comp3: 1899,
+  "Good Day 200g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32,
   })),
-  "Creatine 250g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 799,
-    comp1: i >= 8 ? 699 : 749,
-    comp2: 849,
-    comp3: 679,
+  "Marie Gold 250g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28,
   })),
-  "Pre-Workout 300g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 1899,
-    comp1: i >= 15 ? 1599 : 1699,
-    comp2: 1799,
-    comp3: 1549,
+  "NutriChoice 100g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38,
   })),
-  "BCAA Tropical": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 1299,
-    comp1: i >= 10 ? 1199 : 1249,
-    comp2: 1399,
-    comp3: 1149,
+  "Bourbon 150g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25,
   })),
-  "Multi-Vit 60ct": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 649,
-    comp1: 599,
-    comp2: 699,
-    comp3: 549,
+  "50-50 120g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15,
   })),
 };
 
 const competitorMatrixByPlatform: Record<string, any[]> = {
   Amazon: [
-    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Dymatize ISO 100", you: false, price: "₹4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+    { brand: "Britannia Good Day 200g", you: true, price: "₹40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Sunfeast Butter 200g", you: false, price: "₹35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Parle-G Gold 200g", you: false, price: "₹25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Unibic Butter 200g", you: false, price: "₹45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
   ],
   Flipkart: [
-    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,549", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,299", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,599", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "38,540", pos: "#2", posColor: "text-sw-amber", sos: "24%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,949", priceColor: "text-sw-green", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "7,210", pos: "#3", posColor: "text-sw-green", sos: "12%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Sunfeast Butter 200g", you: false, price: "₹36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Parle-G Gold 200g", you: false, price: "₹26", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "38,540", pos: "#2", posColor: "text-sw-amber", sos: "24%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
   ],
   Blinkit: [
-    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,599", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,399", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,699", priceColor: "text-sw-amber", rating: "4.4★", ratingColor: "text-sw-green", reviews: "890", pos: "#3", posColor: "text-sw-amber", sos: "15%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+    { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
   ],
   Zepto: [
-    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,649", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,449", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "ON", you: false, price: "₹3,599", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "680", pos: "#2", posColor: "text-sw-amber", sos: "18%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Britannia Good Day 200g", you: true, price: "₹43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
   ],
   Instamart: [
-    { brand: "Your Brand Whey 1kg", you: true, price: "₹2,699", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
-    { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,499", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    { brand: "Britannia Good Day 200g", you: true, price: "₹44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+    { brand: "Sunfeast Butter 200g", you: false, price: "₹39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
   ],
 };
 
 const compNamesBySku: Record<string, string[]> = {
-  "Whey Protein 1kg": ["MuscleBlaze", "ON", "AS-IT-IS"],
-  "Creatine 250g": ["MuscleBlaze", "AS-IT-IS", "BigMuscles"],
-  "Pre-Workout 300g": ["BigMuscles", "ON", "GNC"],
-  "BCAA Tropical": ["ON", "MuscleBlaze", "Dymatize"],
-  "Multi-Vit 60ct": ["HealthKart", "MuscleBlaze", "GNC"],
+  "Good Day 200g": ["Sunfeast", "Parle", "Unibic"],
+  "Marie Gold 250g": ["Sunfeast", "Parle-G", "ITC"],
+  "NutriChoice 100g": ["McVities", "Unibic", "Sunfeast"],
+  "Bourbon 150g": ["Parle", "Sunfeast", "ITC"],
+  "50-50 120g": ["Parle", "Sunfeast", "ITC"],
 };
 
 const priceAlerts = [
-  { sku: "Creatine 250g", competitor: "MuscleBlaze", platform: "Amazon", yourPrice: "₹799", compPrice: "₹699", gap: "+14.3%", impact: "Conversion -22%", severity: "high" },
-  { sku: "Pre-Workout 300g", competitor: "BigMuscles", platform: "Amazon", yourPrice: "₹1,899", compPrice: "₹1,599", gap: "+18.8%", impact: "Conversion -15%", severity: "high" },
-  { sku: "BCAA Tropical", competitor: "ON", platform: "Flipkart", yourPrice: "₹1,299", compPrice: "₹1,199", gap: "+8.3%", impact: "Conversion -6%", severity: "medium" },
-  { sku: "Multi-Vit 60ct", competitor: "HealthKart", platform: "Zepto", yourPrice: "₹649", compPrice: "₹599", gap: "+8.3%", impact: "Conversion -4%", severity: "low" },
+  { sku: "Marie Gold 250g", competitor: "Sunfeast", platform: "Amazon", yourPrice: "₹35", compPrice: "₹30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
+  { sku: "NutriChoice 100g", competitor: "McVities", platform: "Amazon", yourPrice: "₹45", compPrice: "₹40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
+  { sku: "Bourbon 150g", competitor: "Parle", platform: "Flipkart", yourPrice: "₹30", compPrice: "₹28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "50-50 120g", competitor: "Parle", platform: "Zepto", yourPrice: "₹20", compPrice: "₹18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
 ];
 
 const platformPricing = [
@@ -124,31 +100,31 @@ const platformPricing = [
 ];
 
 const contentGapsBySku: Record<string, { label: string; you: number | string; them: number | string; youPct: number; color: string }[]> = {
-  "Whey Protein 1kg": [
+  "Good Day 200g": [
     { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
     { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
     { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
   ],
-  "Creatine 250g": [
+  "Marie Gold 250g": [
     { label: "Title Keywords", you: 4, them: 9, youPct: 44, color: "text-sw-red" },
     { label: "Images Count", you: 5, them: 7, youPct: 71, color: "text-sw-green" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
     { label: "Review Count", you: "1.2K", them: "9.6K", youPct: 12, color: "text-sw-red" },
   ],
-  "Pre-Workout 300g": [
+  "NutriChoice 100g": [
     { label: "Title Keywords", you: 3, them: 8, youPct: 38, color: "text-sw-red" },
     { label: "Images Count", you: 4, them: 7, youPct: 57, color: "text-sw-amber" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
     { label: "Review Count", you: "890", them: "12K", youPct: 7, color: "text-sw-red" },
   ],
-  "BCAA Tropical": [
+  "Bourbon 150g": [
     { label: "Title Keywords", you: 7, them: 9, youPct: 78, color: "text-sw-green" },
     { label: "Images Count", you: 6, them: 6, youPct: 100, color: "text-sw-green" },
     { label: "A+ Content", you: "Yes", them: "Yes", youPct: 100, color: "text-sw-green" },
     { label: "Review Count", you: "3.4K", them: "15K", youPct: 23, color: "text-sw-red" },
   ],
-  "Multi-Vit 60ct": [
+  "50-50 120g": [
     { label: "Title Keywords", you: 5, them: 10, youPct: 50, color: "text-sw-amber" },
     { label: "Images Count", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
     { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
@@ -178,7 +154,7 @@ const PricingView: React.FC = () => {
         <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
         <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Across all platforms" accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Revenue at Risk" value="₹3.8L" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
+        <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
       {/* Competitor Matrix with platform toggle */}

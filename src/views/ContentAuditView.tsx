@@ -9,16 +9,16 @@ import { ChevronDown, ChevronRight, Copy, Check, X } from "lucide-react";
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
 export const skuData = [
-  { id: "sku-001", sku: "Whey 1kg Chocolate", thumb: "🥤", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon", category: "Protein" },
-  { id: "sku-002", sku: "Whey 500g Vanilla", thumb: "🥤", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart", category: "Protein" },
-  { id: "sku-003", sku: "Creatine 250g", thumb: "💊", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon", category: "Supplements" },
-  { id: "sku-004", sku: "Pre-Workout Citrus", thumb: "⚡", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Pre-Workout" },
-  { id: "sku-005", sku: "BCAA Tropical", thumb: "🏋️", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Amino Acids" },
-  { id: "sku-006", sku: "Multi-Vit 60ct", thumb: "💊", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Swiggy Instamart", category: "Vitamins" },
+  { id: "sku-001", sku: "Good Day Butter 200g", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon", category: "Cookies" },
+  { id: "sku-002", sku: "Marie Gold 250g", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart", category: "Glucose" },
+  { id: "sku-003", sku: "50-50 Maska Chaska 120g", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon", category: "Cream" },
+  { id: "sku-004", sku: "NutriChoice Digestive 100g", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health" },
+  { id: "sku-005", sku: "Bourbon Cream 150g", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream" },
+  { id: "sku-006", sku: "Milk Bikis 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Swiggy Instamart", category: "Kids" },
 ];
 
 export const competitorScores: Record<string, Record<string, { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }>> = {
-  "MuscleBlaze": {
+  "Sunfeast": {
     "sku-001": { title: 18, heroImage: 17, searchListing: 15, pageContent: 16, competitorAggression: 12 },
     "sku-002": { title: 16, heroImage: 14, searchListing: 12, pageContent: 15, competitorAggression: 14 },
     "sku-003": { title: 12, heroImage: 14, searchListing: 10, pageContent: 12, competitorAggression: 16 },
@@ -26,7 +26,7 @@ export const competitorScores: Record<string, Record<string, { title: number; he
     "sku-005": { title: 17, heroImage: 15, searchListing: 14, pageContent: 16, competitorAggression: 10 },
     "sku-006": { title: 14, heroImage: 13, searchListing: 11, pageContent: 13, competitorAggression: 13 },
   },
-  "Optimum Nutrition": {
+  "Parle": {
     "sku-001": { title: 19, heroImage: 19, searchListing: 17, pageContent: 18, competitorAggression: 10 },
     "sku-002": { title: 18, heroImage: 17, searchListing: 14, pageContent: 17, competitorAggression: 12 },
     "sku-003": { title: 14, heroImage: 16, searchListing: 12, pageContent: 14, competitorAggression: 14 },
@@ -127,26 +127,26 @@ const FilterDropdown: React.FC<{
 
 // Title issues etc for Analytics tab
 const titleIssues: Record<string, { issues: string[]; suggested: string }> = {
-  "Creatine 250g": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Creatine Monohydrate 250g Unflavoured | Micronized | 83 Servings | Lab Tested" },
-  "Multi-Vit 60ct": { issues: ["Missing keywords", "No brand name"], suggested: "ShelfWise Multi-Vitamin 60 Tablets | 23 Essential Vitamins & Minerals | Daily Health" },
-  "Whey 500g Vanilla": { issues: ["No size/variant"], suggested: "Whey Protein Isolate 500g Vanilla | 25g Protein/Serving | Zero Sugar | Lab Certified" },
+  "50-50 Maska Chaska 120g": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Britannia 50-50 Maska Chaska 120g | Salted Butter Biscuits | Crunchy Snack | Family Pack" },
+  "Milk Bikis 150g": { issues: ["Missing keywords", "No brand name"], suggested: "Britannia Milk Bikis 150g | Milk Cream Biscuits | Kids Favourite | Rich in Calcium" },
+  "Marie Gold 250g": { issues: ["No size/variant"], suggested: "Britannia Marie Gold 250g | Lite Biscuits | 0% Trans Fat | Fibre Rich | Tea-time Snack" },
 };
 
 const heroImageIssues: Record<string, string[]> = {
-  "Creatine 250g": ["Low resolution", "No product focus", "No size callout visible"],
-  "Multi-Vit 60ct": ["Busy background", "No size callout visible"],
-  "Pre-Workout Citrus": ["No product focus"],
+  "50-50 Maska Chaska 120g": ["Low resolution", "No product focus", "No size callout visible"],
+  "Milk Bikis 150g": ["Busy background", "No size callout visible"],
+  "NutriChoice Digestive 100g": ["No product focus"],
 };
 
 const searchKeywords: Record<string, { kw: string; rank: number }[]> = {
-  "Creatine 250g": [{ kw: "creatine monohydrate", rank: 14 }, { kw: "creatine supplement", rank: 22 }, { kw: "creatine powder", rank: 8 }, { kw: "gym creatine", rank: 18 }, { kw: "creatine india", rank: 11 }],
-  "Whey 500g Vanilla": [{ kw: "whey protein 500g", rank: 6 }, { kw: "protein powder vanilla", rank: 12 }, { kw: "whey isolate", rank: 15 }],
+  "50-50 Maska Chaska 120g": [{ kw: "salted biscuits", rank: 14 }, { kw: "butter biscuits", rank: 22 }, { kw: "cream biscuits", rank: 8 }, { kw: "maska chaska", rank: 18 }, { kw: "50-50 biscuit", rank: 11 }],
+  "Marie Gold 250g": [{ kw: "marie biscuit", rank: 6 }, { kw: "glucose biscuits", rank: 12 }, { kw: "tea time biscuit", rank: 15 }],
 };
 
 const competitorAggression = [
-  { brand: "MuscleBlaze", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["whey protein", "creatine"], impact: "-2 rank" },
-  { brand: "Optimum Nutrition", changes: 9, level: "Medium", what: ["Listings"], keywords: ["protein powder"], impact: "-1 rank" },
-  { brand: "MyProtein", changes: 4, level: "Low", what: ["Titles"], keywords: ["bcaa supplement"], impact: "None" },
+  { brand: "Sunfeast", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter biscuits", "cream biscuits"], impact: "-2 rank" },
+  { brand: "Parle", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
+  { brand: "ITC", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive biscuits"], impact: "None" },
 ];
 
 const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket: `${i * 10}-${(i + 1) * 10}`, count }));
