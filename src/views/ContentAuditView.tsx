@@ -343,7 +343,7 @@ const ContentAuditView: React.FC = () => {
                       <td className="py-2.5 px-2 text-center">
                         <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
                       </td>
-                      <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{s.lastUpdated}</td>
+                      <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{Math.round((Date.now() - new Date(`2026-${s.lastUpdated.replace("Mar ", "03-")}`).getTime()) / (1000 * 60 * 60 * 24))}d ago</td>
                       <td className="py-2.5 px-3 text-right">
                         <button onClick={() => navigateToSkuDetail(s)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${overall < 60 ? "bg-sw-red/20 text-sw-red" : overall < 80 ? "bg-sw-amber/20 text-sw-amber" : "border border-subtle text-muted-foreground"}`}>
                           {overall < 60 ? "Fix now →" : overall < 80 ? "Improve →" : "View →"}
