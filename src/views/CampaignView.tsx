@@ -197,15 +197,15 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
   if (!open) return null;
 
   const aiSuggestions = [
-    { name: "Stock Recovery Blitz", signal: "Whey 500g OOS on Instamart — 6 pincodes", roas: "4.8x", budget: "₹15K", duration: "3 days", keywords: ["whey protein", "protein powder"] },
-    { name: "Price Advantage Push", signal: "Creatine 14% cheaper than MuscleBlaze", roas: "5.2x", budget: "₹20K", duration: "7 days", keywords: ["creatine monohydrate", "creatine supplement"] },
-    { name: "Trending Capture", signal: "Pre-workout +47% search on Blinkit", roas: "3.9x", budget: "₹12K", duration: "5 days", keywords: ["pre workout", "pre workout energy"] },
+    { name: "Stock Recovery Blitz", signal: "Marie Gold OOS on Instamart — 6 pincodes", roas: "4.8x", budget: "₹15K", duration: "3 days", keywords: ["butter biscuits", "cream biscuits"] },
+    { name: "Price Advantage Push", signal: "Good Day 14% cheaper than Sunfeast", roas: "5.2x", budget: "₹20K", duration: "7 days", keywords: ["glucose biscuits", "digestive biscuits"] },
+    { name: "Trending Capture", signal: "NutriChoice trending +47% on Blinkit", roas: "3.9x", budget: "₹12K", duration: "5 days", keywords: ["digestive biscuits", "health biscuits"] },
   ];
 
   const historyCampaigns = [
-    { name: "Whey Summer Push 2025", platform: "Amazon", spend: "₹3.2L", roas: "4.9x", duration: "14 days" },
+    { name: "Good Day Summer Push 2025", platform: "Amazon", spend: "₹3.2L", roas: "4.9x", duration: "14 days" },
     { name: "Festive Season Blast", platform: "Flipkart", spend: "₹5.1L", roas: "5.6x", duration: "21 days" },
-    { name: "Q-Commerce Pilot", platform: "Blinkit", spend: "₹1.8L", roas: "3.4x", duration: "7 days" },
+    { name: "Q-Commerce Biscuit Pilot", platform: "Blinkit", spend: "₹1.8L", roas: "3.4x", duration: "7 days" },
   ];
 
   return (
