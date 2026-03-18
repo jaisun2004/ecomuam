@@ -7,7 +7,7 @@ import { Megaphone, ChevronDown, ChevronRight, MapPin, TrendingUp, TrendingDown,
 
 /* ── mock data ── */
 const heatmapData = {
-  skus: ["Whey 1kg", "Whey 500g", "Creatine", "BCAA", "Pre-Workout", "Multi-Vit"],
+  skus: ["Good Day 200g", "Marie Gold 250g", "Bourbon 150g", "NutriChoice 100g", "50-50 120g", "Milk Bikis 150g"],
   platforms: [
     { name: "Amazon", color: "#FF9900", values: [97, 100, 72, 95, 54, 98] },
     { name: "Flipkart", color: "#2F77FF", values: [74, 92, 61, 88, 12, 78] },
