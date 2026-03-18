@@ -369,11 +369,11 @@ const CampaignView: React.FC = () => {
   const [undoToast, setUndoToast] = useState<string | null>(null);
 
   const digestActions = [
-    { id: 0, campaign: "Whey Protein — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
-    { id: 1, campaign: "Q-Commerce Launch Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "Creatine Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹1.2L Rev", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
-    { id: 3, campaign: "BCAA Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
-    { id: 4, campaign: "Pre-Workout New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
+    { id: 0, campaign: "Good Day Butter — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
+    { id: 1, campaign: "Q-Commerce Biscuit Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
+    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 3, campaign: "Bourbon Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
+    { id: 4, campaign: "NutriChoice New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
 
   const visibleDigest = digestActions.filter(d => !dismissedDigest[d.id]);
