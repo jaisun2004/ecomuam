@@ -825,7 +825,7 @@ const CampaignView: React.FC = () => {
                                                   <span className="text-muted-foreground">Imp <span className="font-mono text-foreground">{city.impressions}</span></span>
                                                   <span className="text-muted-foreground">Clicks <span className="font-mono text-foreground">{city.clicks}</span></span>
                                                   <span className="text-muted-foreground">Spend <span className="font-mono text-foreground">{city.spend}</span></span>
-                                                  <span className="text-muted-foreground">Rev <span className="font-mono text-foreground">{city.revenue}</span></span>
+                                                  <span className={`font-mono font-bold ${city.roasColor}`}>ROAS {city.roas}</span>
                                                   <span className={`font-mono font-bold ${city.roasColor}`}>{city.roas}</span>
                                                 </div>
                                               </button>
