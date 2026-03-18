@@ -33,40 +33,20 @@ const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
 const priceHistoryBySku: Record<string, any[]> = {
-  "Whey Protein 1kg": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 2499,
-    comp1: i >= 12 ? 2199 : 2299,
-    comp2: i >= 18 ? 3299 : 3499,
-    comp3: 1899,
+  "Good Day 200g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32,
   })),
-  "Creatine 250g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 799,
-    comp1: i >= 8 ? 699 : 749,
-    comp2: 849,
-    comp3: 679,
+  "Marie Gold 250g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28,
   })),
-  "Pre-Workout 300g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 1899,
-    comp1: i >= 15 ? 1599 : 1699,
-    comp2: 1799,
-    comp3: 1549,
+  "NutriChoice 100g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38,
   })),
-  "BCAA Tropical": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 1299,
-    comp1: i >= 10 ? 1199 : 1249,
-    comp2: 1399,
-    comp3: 1149,
+  "Bourbon 150g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25,
   })),
-  "Multi-Vit 60ct": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`,
-    yours: 649,
-    comp1: 599,
-    comp2: 699,
-    comp3: 549,
+  "50-50 120g": Array.from({ length: 30 }, (_, i) => ({
+    day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15,
   })),
 };
 
