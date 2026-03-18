@@ -2,17 +2,18 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PanelCard from "@/components/sw/PanelCard";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Line, ComposedChart, Cell, ZAxis } from "recharts";
+import { X } from "lucide-react";
 
-/* ── Sub-category health data ── */
+/* ── Sub-category health data — Biscuits ── */
 const healthData = [
-  { sub: "Whey Protein", skuCount: 142, brandCount: 28, avgDiscount: 18, availability: 92, vfm: 74 },
-  { sub: "Creatine", skuCount: 58, brandCount: 14, avgDiscount: 12, availability: 88, vfm: 81 },
-  { sub: "Pre-Workout", skuCount: 45, brandCount: 11, avgDiscount: 22, availability: 76, vfm: 62 },
-  { sub: "BCAA", skuCount: 37, brandCount: 9, avgDiscount: 25, availability: 68, vfm: 55 },
-  { sub: "Mass Gainer", skuCount: 64, brandCount: 16, avgDiscount: 30, availability: 71, vfm: 48 },
-  { sub: "Protein Bars", skuCount: 89, brandCount: 22, avgDiscount: 15, availability: 94, vfm: 79 },
-  { sub: "Vitamins", skuCount: 112, brandCount: 31, avgDiscount: 10, availability: 96, vfm: 85 },
-  { sub: "Plant Protein", skuCount: 33, brandCount: 8, avgDiscount: 20, availability: 62, vfm: 58 },
+  { sub: "Butter Cookies", skuCount: 128, brandCount: 22, avgDiscount: 14, availability: 94 },
+  { sub: "Glucose", skuCount: 96, brandCount: 18, avgDiscount: 18, availability: 91 },
+  { sub: "Cream Biscuits", skuCount: 72, brandCount: 15, avgDiscount: 22, availability: 82 },
+  { sub: "Digestive / Health", skuCount: 54, brandCount: 12, avgDiscount: 10, availability: 88 },
+  { sub: "Wafers", skuCount: 38, brandCount: 9, avgDiscount: 25, availability: 72 },
+  { sub: "Kids Biscuits", skuCount: 45, brandCount: 11, avgDiscount: 20, availability: 78 },
+  { sub: "Premium Cookies", skuCount: 32, brandCount: 8, avgDiscount: 8, availability: 96 },
+  { sub: "Rusk", skuCount: 28, brandCount: 7, avgDiscount: 15, availability: 68 },
 ];
 
 const ragColor = (val: number, thresholds: [number, number]) => {
@@ -29,30 +30,28 @@ const ragBg = (val: number, thresholds: [number, number]) => {
 /* ── Price band heatmap ── */
 const priceBands = ["Budget", "Mid", "Premium", "Luxury"] as const;
 const priceBandData: Record<string, Record<string, number>> = {
-  "Whey Protein": { Budget: 18, Mid: 52, Premium: 45, Luxury: 12 },
-  Creatine: { Budget: 8, Mid: 24, Premium: 16, Luxury: 0 },
-  "Pre-Workout": { Budget: 5, Mid: 18, Premium: 14, Luxury: 0 },
-  BCAA: { Budget: 4, Mid: 15, Premium: 10, Luxury: 0 },
-  "Mass Gainer": { Budget: 12, Mid: 28, Premium: 14, Luxury: 0 },
-  "Protein Bars": { Budget: 22, Mid: 38, Premium: 18, Luxury: 4 },
-  Vitamins: { Budget: 30, Mid: 42, Premium: 24, Luxury: 8 },
-  "Plant Protein": { Budget: 3, Mid: 12, Premium: 10, Luxury: 0 },
+  "Butter Cookies": { Budget: 22, Mid: 48, Premium: 38, Luxury: 8 },
+  Glucose: { Budget: 35, Mid: 42, Premium: 12, Luxury: 0 },
+  "Cream Biscuits": { Budget: 18, Mid: 32, Premium: 14, Luxury: 0 },
+  "Digestive / Health": { Budget: 5, Mid: 22, Premium: 18, Luxury: 4 },
+  Wafers: { Budget: 8, Mid: 18, Premium: 8, Luxury: 0 },
+  "Kids Biscuits": { Budget: 12, Mid: 22, Premium: 6, Luxury: 0 },
+  "Premium Cookies": { Budget: 0, Mid: 8, Premium: 16, Luxury: 6 },
+  Rusk: { Budget: 10, Mid: 14, Premium: 2, Luxury: 0 },
 };
 
-/* ── Brand activity scatter ── */
+/* ── Brand activity scatter — Biscuits ── */
 const brandActivityData = [
-  { brand: "MuscleBlaze", skuCount: 45, activity: 88 },
-  { brand: "Optimum Nutrition", skuCount: 32, activity: 75 },
-  { brand: "MyProtein", skuCount: 28, activity: 82 },
-  { brand: "HealthKart", skuCount: 52, activity: 40 },
-  { brand: "Avvatar", skuCount: 18, activity: 90 },
-  { brand: "AS-IT-IS", skuCount: 38, activity: 35 },
-  { brand: "GNC", skuCount: 22, activity: 55 },
-  { brand: "Nakpro", skuCount: 15, activity: 70 },
-  { brand: "Bigmuscles", skuCount: 30, activity: 25 },
-  { brand: "Oziva", skuCount: 12, activity: 85 },
-  { brand: "Wellcore", skuCount: 8, activity: 92 },
-  { brand: "Fast&Up", skuCount: 14, activity: 78 },
+  { brand: "Britannia", skuCount: 52, activity: 88, adSpend: "₹12.4L", roas: "4.8x", availability: 94, contentScore: 82 },
+  { brand: "Parle", skuCount: 68, activity: 45, adSpend: "₹8.2L", roas: "3.2x", availability: 91, contentScore: 68 },
+  { brand: "Sunfeast", skuCount: 42, activity: 82, adSpend: "₹10.1L", roas: "4.2x", availability: 88, contentScore: 76 },
+  { brand: "Unibic", skuCount: 18, activity: 90, adSpend: "₹5.6L", roas: "5.1x", availability: 86, contentScore: 84 },
+  { brand: "McVities", skuCount: 14, activity: 72, adSpend: "₹4.2L", roas: "3.8x", availability: 82, contentScore: 79 },
+  { brand: "Anmol", skuCount: 38, activity: 25, adSpend: "₹2.1L", roas: "2.4x", availability: 72, contentScore: 52 },
+  { brand: "Priyagold", skuCount: 45, activity: 30, adSpend: "₹3.0L", roas: "2.8x", availability: 78, contentScore: 58 },
+  { brand: "Cremica", skuCount: 12, activity: 85, adSpend: "₹3.8L", roas: "4.5x", availability: 90, contentScore: 81 },
+  { brand: "Karachi Bakery", skuCount: 8, activity: 78, adSpend: "₹2.2L", roas: "5.4x", availability: 62, contentScore: 88 },
+  { brand: "Mrs. Fields", skuCount: 6, activity: 92, adSpend: "₹1.8L", roas: "5.8x", availability: 58, contentScore: 90 },
 ];
 
 const getBrandQuadrant = (skuCount: number, activity: number) => {
@@ -69,7 +68,7 @@ const quadrantColors: Record<string, string> = {
   neutral: "hsl(var(--muted-foreground))",
 };
 
-/* ── Discount stress data ── */
+/* ── Discount stress ── */
 const discountStressData = healthData.map(h => ({
   sub: h.sub,
   sponsoredDiscount: Math.round(h.avgDiscount * 1.4),
@@ -77,17 +76,16 @@ const discountStressData = healthData.map(h => ({
   availability: h.availability,
 }));
 
-/* ── Opportunity matrix ── */
+/* ── Opportunity matrix (no VFM — use ad participation vs growth potential) ── */
 const opportunityData = healthData.map(h => ({
   sub: h.sub,
-  vfm: h.vfm,
+  growthPotential: Math.round(40 + Math.random() * 50),
   adParticipation: Math.round(30 + Math.random() * 60),
   skuCount: h.skuCount,
 }));
 
-/* ── Component ── */
 const CategoryAssortmentView: React.FC = () => {
-  const [selectedSub, setSelectedSub] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<typeof brandActivityData[0] | null>(null);
 
   const tooltipStyle = {
     contentStyle: { backgroundColor: "hsl(var(--surface-2))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 11 },
@@ -95,11 +93,13 @@ const CategoryAssortmentView: React.FC = () => {
     itemStyle: { color: "hsl(var(--muted-foreground))" },
   };
 
+  const yourBrand = brandActivityData.find(b => b.brand === "Britannia")!;
+
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div>
         <h1 className="text-xl font-display font-bold text-foreground">Category Assortment</h1>
-        <p className="text-xs text-muted-foreground mt-1">Assortment health, white space, and opportunity signals across sub-categories</p>
+        <p className="text-xs text-muted-foreground mt-1">Assortment health, white space, and opportunity signals across biscuit sub-categories</p>
       </div>
 
       {/* Visual 1 — Category Health Scorecard */}
@@ -113,20 +113,12 @@ const CategoryAssortmentView: React.FC = () => {
                 <th className="text-center py-2 px-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Brands</th>
                 <th className="text-center py-2 px-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Avg discount %</th>
                 <th className="text-center py-2 px-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Availability</th>
-                <th className="text-center py-2 px-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">VFM index</th>
                 <th className="text-center py-2 px-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Flags</th>
               </tr>
             </thead>
             <tbody>
               {healthData.map((row, i) => {
-                const flags = [
-                  row.skuCount < 40 ? 1 : 0,
-                  row.brandCount < 10 ? 1 : 0,
-                  row.avgDiscount > 20 ? 1 : 0,
-                  row.availability < 75 ? 1 : 0,
-                  row.vfm < 60 ? 1 : 0,
-                ].reduce((a, b) => a + b, 0);
-
+                const flags = [row.skuCount < 40 ? 1 : 0, row.brandCount < 10 ? 1 : 0, row.avgDiscount > 20 ? 1 : 0, row.availability < 75 ? 1 : 0].reduce((a, b) => a + b, 0);
                 return (
                   <tr key={row.sub} className={`border-b border-border/50 ${i % 2 === 0 ? "bg-surface-2/30" : ""}`}>
                     <td className="py-2.5 pr-4 font-medium text-foreground">{row.sub}</td>
@@ -134,15 +126,10 @@ const CategoryAssortmentView: React.FC = () => {
                     <td className={`py-2.5 px-3 text-center font-mono ${ragColor(row.brandCount, [10, 15])} ${ragBg(row.brandCount, [10, 15])} rounded`}>{row.brandCount}</td>
                     <td className={`py-2.5 px-3 text-center font-mono ${row.avgDiscount <= 15 ? "text-green-400 bg-green-400/10" : row.avgDiscount <= 22 ? "text-amber-400 bg-amber-400/10" : "text-red-400 bg-red-400/10"} rounded`}>{row.avgDiscount}%</td>
                     <td className={`py-2.5 px-3 text-center font-mono ${ragColor(row.availability, [75, 85])} ${ragBg(row.availability, [75, 85])} rounded`}>{row.availability}%</td>
-                    <td className={`py-2.5 px-3 text-center font-mono ${ragColor(row.vfm, [60, 75])} ${ragBg(row.vfm, [60, 75])} rounded`}>{row.vfm}</td>
                     <td className="py-2.5 px-3 text-center">
-                      {flags >= 3 ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-400/15 text-red-400 border border-red-400/20">Priority</span>
-                      ) : flags >= 1 ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-400/15 text-amber-400 border border-amber-400/20">Watch</span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-400/15 text-green-400 border border-green-400/20">Healthy</span>
-                      )}
+                      {flags >= 3 ? <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-400/15 text-red-400 border border-red-400/20">Priority</span>
+                        : flags >= 1 ? <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-400/15 text-amber-400 border border-amber-400/20">Watch</span>
+                        : <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-400/15 text-green-400 border border-green-400/20">Healthy</span>}
                     </td>
                   </tr>
                 );
@@ -153,16 +140,14 @@ const CategoryAssortmentView: React.FC = () => {
       </PanelCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Visual 2 — Price Band Coverage */}
+        {/* Price Band Coverage */}
         <PanelCard title="Price band coverage" badge="White space" badgeColor="accent" delay={0.1}>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left py-2 pr-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Sub-category</th>
-                  {priceBands.map(b => (
-                    <th key={b} className="text-center py-2 px-2 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{b}</th>
-                  ))}
+                  {priceBands.map(b => <th key={b} className="text-center py-2 px-2 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{b}</th>)}
                 </tr>
               </thead>
               <tbody>
@@ -173,13 +158,8 @@ const CategoryAssortmentView: React.FC = () => {
                       const count = bands[b] ?? 0;
                       return (
                         <td key={b} className="py-2.5 px-2 text-center">
-                          {count === 0 ? (
-                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-dashed border-red-400/30 bg-red-400/5 text-[10px] text-red-400 font-mono">—</span>
-                          ) : (
-                            <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono text-[11px] ${
-                              count >= 20 ? "bg-green-400/10 text-green-400" : count >= 10 ? "bg-amber-400/10 text-amber-400" : "bg-surface-3 text-muted-foreground"
-                            }`}>{count}</span>
-                          )}
+                          {count === 0 ? <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-dashed border-red-400/30 bg-red-400/5 text-[10px] text-red-400 font-mono">—</span>
+                            : <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono text-[11px] ${count >= 20 ? "bg-green-400/10 text-green-400" : count >= 10 ? "bg-amber-400/10 text-amber-400" : "bg-surface-3 text-muted-foreground"}`}>{count}</span>}
                         </td>
                       );
                     })}
@@ -189,21 +169,21 @@ const CategoryAssortmentView: React.FC = () => {
             </table>
           </div>
           <p className="text-[10px] text-muted-foreground mt-3 pt-3 border-t border-border">
-            <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded border border-dashed border-red-400/30 bg-red-400/5 inline-block" /> Empty cells = white space — recruit sellers for these price points</span>
+            <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded border border-dashed border-red-400/30 bg-red-400/5 inline-block" /> Empty = white space opportunity</span>
           </p>
         </PanelCard>
 
-        {/* Visual 3 — Brand Activity vs Shelf Space */}
-        <PanelCard title="Brand activity vs shelf space" badge="Quadrant" badgeColor="accent" delay={0.15}>
+        {/* Brand Activity vs Shelf Space — clickable */}
+        <PanelCard title="Brand activity vs shelf space" badge="Click dots for details" badgeColor="accent" delay={0.15}>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="skuCount" name="SKU count" type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "SKU count →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis dataKey="activity" name="Activity" type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Activity ↑", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} formatter={(val: number, name: string) => [val, name === "skuCount" ? "SKUs" : "Activity"]} labelFormatter={(_, payload) => payload?.[0]?.payload?.brand ?? ""} />
-              <Scatter data={brandActivityData}>
+              <Scatter data={brandActivityData} onClick={(data: any) => setSelectedBrand(data)}>
                 {brandActivityData.map((entry, i) => (
-                  <Cell key={i} fill={quadrantColors[getBrandQuadrant(entry.skuCount, entry.activity)]} fillOpacity={0.85} r={6} />
+                  <Cell key={i} fill={quadrantColors[getBrandQuadrant(entry.skuCount, entry.activity)]} fillOpacity={0.85} r={entry.brand === "Britannia" ? 9 : 6} stroke={entry.brand === "Britannia" ? "hsl(var(--primary))" : "none"} strokeWidth={entry.brand === "Britannia" ? 2 : 0} cursor="pointer" />
                 ))}
               </Scatter>
             </ScatterChart>
@@ -215,7 +195,49 @@ const CategoryAssortmentView: React.FC = () => {
           </div>
         </PanelCard>
 
-        {/* Visual 4 — Discount Stress vs Availability */}
+        {/* Brand detail overlay */}
+        {selectedBrand && (
+          <div className="lg:col-span-2">
+            <PanelCard title={`${selectedBrand.brand} vs You (Britannia)`} badge="Comparison" badgeColor="accent" delay={0.05}>
+              <button onClick={() => setSelectedBrand(null)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"><X size={14} /></button>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-2 pr-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Metric</th>
+                      <th className="text-center py-2 px-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{selectedBrand.brand}</th>
+                      <th className="text-center py-2 px-4 text-[10px] font-mono text-primary uppercase tracking-widest">Britannia (You)</th>
+                      <th className="text-center py-2 px-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Delta</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { label: "SKU Count", them: selectedBrand.skuCount, you: yourBrand.skuCount },
+                      { label: "Activity Score", them: selectedBrand.activity, you: yourBrand.activity },
+                      { label: "Ad Spend", them: selectedBrand.adSpend, you: yourBrand.adSpend, isStr: true },
+                      { label: "ROAS", them: selectedBrand.roas, you: yourBrand.roas, isStr: true },
+                      { label: "Availability %", them: selectedBrand.availability, you: yourBrand.availability },
+                      { label: "Content Score", them: selectedBrand.contentScore, you: yourBrand.contentScore },
+                    ].map((row, i) => {
+                      const delta = row.isStr ? "—" : (row.you as number) - (row.them as number);
+                      const deltaColor = typeof delta === "number" ? (delta > 0 ? "text-sw-green" : delta < 0 ? "text-sw-red" : "text-muted-foreground") : "text-muted-foreground";
+                      return (
+                        <tr key={row.label} className={`border-b border-border/50 ${i % 2 === 0 ? "bg-surface-2/30" : ""}`}>
+                          <td className="py-2 pr-4 font-medium text-foreground">{row.label}</td>
+                          <td className="py-2 px-4 text-center font-mono text-foreground">{row.them}</td>
+                          <td className="py-2 px-4 text-center font-mono text-primary font-bold">{row.you}</td>
+                          <td className={`py-2 px-4 text-center font-mono ${deltaColor}`}>{typeof delta === "number" ? `${delta > 0 ? "+" : ""}${delta}` : delta}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </PanelCard>
+          </div>
+        )}
+
+        {/* Discount Stress vs Availability */}
         <PanelCard title="Discount stress vs availability" badge="Margin risk" badgeColor="accent" delay={0.2}>
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={discountStressData} margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
@@ -231,28 +253,28 @@ const CategoryAssortmentView: React.FC = () => {
           </ResponsiveContainer>
         </PanelCard>
 
-        {/* Visual 5 — Opportunity Priority Matrix */}
+        {/* Opportunity Priority Matrix — no VFM */}
         <PanelCard title="Opportunity priority matrix" badge="Growth" badgeColor="accent" delay={0.25}>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis dataKey="vfm" name="VFM Index" type="number" domain={[40, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "VFM Index →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+              <XAxis dataKey="growthPotential" name="Growth Potential" type="number" domain={[30, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Growth Potential →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis dataKey="adParticipation" name="Ad participation %" type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Ad participation ↑", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <ZAxis dataKey="skuCount" range={[40, 400]} name="SKU count" />
               <Tooltip {...tooltipStyle} formatter={(val: number, name: string) => [val, name]} labelFormatter={(_, payload) => payload?.[0]?.payload?.sub ?? ""} />
               <Scatter data={opportunityData}>
                 {opportunityData.map((entry, i) => {
-                  const isHighVfmLowAd = entry.vfm >= 70 && entry.adParticipation < 50;
-                  const isLowVfmHighAd = entry.vfm < 60 && entry.adParticipation >= 60;
-                  const color = isHighVfmLowAd ? "hsl(var(--primary))" : isLowVfmHighAd ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))";
+                  const isHighGrowthLowAd = entry.growthPotential >= 70 && entry.adParticipation < 50;
+                  const isLowGrowthHighAd = entry.growthPotential < 50 && entry.adParticipation >= 60;
+                  const color = isHighGrowthLowAd ? "hsl(var(--primary))" : isLowGrowthHighAd ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))";
                   return <Cell key={i} fill={color} fillOpacity={0.8} />;
                 })}
               </Scatter>
             </ScatterChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-3 mt-2 pt-2 border-t border-border">
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-primary" />High VFM, low ads — ad adoption opp.</span>
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-destructive" />High ads, low VFM — curation needed</span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-primary" />High growth, low ads — ad adoption opp.</span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-destructive" />High ads, low growth — curation needed</span>
           </div>
         </PanelCard>
       </div>
