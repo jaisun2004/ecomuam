@@ -239,7 +239,7 @@ const ContentAuditView: React.FC = () => {
   return (
     <div className="space-y-6 pb-20">
       <div>
-        <h1 className="font-display text-xl font-bold text-foreground">Content Audit</h1>
+        <h1 className="font-display text-xl font-bold text-foreground">Content Quality Score</h1>
         <p className="text-xs text-muted-foreground mt-1">Content quality scores across your SKU catalogue.</p>
       </div>
 
