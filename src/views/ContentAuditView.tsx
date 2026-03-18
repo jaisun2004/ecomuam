@@ -485,7 +485,7 @@ const ContentAuditView: React.FC = () => {
         </PanelCard>
       </>) : (
         <div className="space-y-5">
-          {/* Score distribution */}
+          {/* Score distribution — improved colors */}
           <PanelCard title="Score Distribution" badge="All SKUs" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={scoreBuckets}>
@@ -494,13 +494,20 @@ const ContentAuditView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]} name="SKUs">
-                  {scoreBuckets.map((entry, index) => {
+                  {scoreBuckets.map((_, index) => {
                     const mid = index * 10 + 5;
-                    return <rect key={index} fill={mid < 60 ? "#FF5C5C" : mid < 80 ? "#F5A623" : "#2ECF8E"} />;
+                    const fill = mid < 30 ? "#EF4444" : mid < 60 ? "#F97316" : mid < 80 ? "#EAB308" : "#22C55E";
+                    return <rect key={index} fill={fill} />;
                   })}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            <div className="flex items-center gap-3 mt-2 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#EF4444" }} /> 0-29 Critical</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#F97316" }} /> 30-59 Poor</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#EAB308" }} /> 60-79 Fair</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#22C55E" }} /> 80+ Strong</span>
+            </div>
           </PanelCard>
 
           {/* Dimension breakdown radar */}
