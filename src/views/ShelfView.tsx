@@ -119,18 +119,18 @@ const getShareColor = (v: number) => {
 };
 
 const contentSkus = [
-  { emoji: "🥛", name: "Whey Protein 1kg Chocolate", platforms: "Amazon · Flipkart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
-  { emoji: "💊", name: "Creatine Monohydrate 250g", platforms: "Amazon · Flipkart", score: 50, color: "hsl(38,92%,50%)" },
-  { emoji: "⚡", name: "Pre-Workout Citrus 300g", platforms: "Amazon only", score: 20, color: "hsl(0,76%,57%)" },
-  { emoji: "🔤", name: "BCAA 2:1:1 Tropical 450g", platforms: "Amazon · Flipkart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
+  { emoji: "🍪", name: "Good Day Butter 200g", platforms: "Amazon · Flipkart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
+  { emoji: "🍘", name: "50-50 Maska Chaska 120g", platforms: "Amazon · Flipkart", score: 50, color: "hsl(38,92%,50%)" },
+  { emoji: "🥛", name: "Milk Bikis 150g", platforms: "Amazon only", score: 20, color: "hsl(0,76%,57%)" },
+  { emoji: "🍫", name: "Bourbon Cream 150g", platforms: "Amazon · Flipkart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
 ];
 
 const pricingRows = [
-  { sku: "Whey 1kg Choc", yours: "₹2,499", comp: "₹2,699", diff: "-7.4%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Creatine 250g", yours: "₹799", comp: "₹699", diff: "+14.3%", diffType: "red" as const, action: "Match Price" },
-  { sku: "BCAA Tropical", yours: "₹1,299", comp: "₹1,349", diff: "-3.7%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Pre-Workout 300g", yours: "₹1,899", comp: "₹1,599", diff: "+18.8%", diffType: "red" as const, action: "Adjust ↓" },
-  { sku: "Multi-Vit 60ct", yours: "₹649", comp: "₹659", diff: "-1.5%", diffType: "grey" as const, action: "Hold Price" },
+  { sku: "Good Day 200g", yours: "₹40", comp: "₹45", diff: "-11.1%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "Marie Gold 250g", yours: "₹35", comp: "₹30", diff: "+16.7%", diffType: "red" as const, action: "Match Price" },
+  { sku: "Bourbon 150g", yours: "₹30", comp: "₹32", diff: "-6.3%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "NutriChoice 100g", yours: "₹45", comp: "₹38", diff: "+18.4%", diffType: "red" as const, action: "Adjust ↓" },
+  { sku: "Milk Bikis 150g", yours: "₹25", comp: "₹25", diff: "0%", diffType: "grey" as const, action: "Hold Price" },
 ];
 
 const searchPositions = [
