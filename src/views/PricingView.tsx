@@ -13,22 +13,22 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const elasticityData = [
-  { sku: "Whey 1kg", sensitivity: 0.82 },
-  { sku: "Creatine", sensitivity: 0.65 },
-  { sku: "Pre-Workout", sensitivity: 0.91 },
-  { sku: "BCAA", sensitivity: 0.48 },
-  { sku: "Multi-Vit", sensitivity: 0.35 },
+  { sku: "Good Day 200g", sensitivity: 0.82 },
+  { sku: "Marie Gold 250g", sensitivity: 0.65 },
+  { sku: "NutriChoice 100g", sensitivity: 0.91 },
+  { sku: "Bourbon 150g", sensitivity: 0.48 },
+  { sku: "50-50 120g", sensitivity: 0.35 },
 ];
 
 const priceGapTable = [
-  { sku: "Creatine 250g", yours: "₹799", lowest: "₹699", gap: "+14.3%", action: "Match Price" },
-  { sku: "Pre-Workout", yours: "₹1,899", lowest: "₹1,599", gap: "+18.8%", action: "Match Price" },
-  { sku: "BCAA Tropical", yours: "₹1,299", lowest: "₹1,199", gap: "+8.3%", action: "Monitor" },
-  { sku: "Multi-Vit", yours: "₹649", lowest: "₹599", gap: "+8.3%", action: "Monitor" },
-  { sku: "Whey 1kg", yours: "₹2,499", lowest: "₹1,899", gap: "+31.6%", action: "Match Price" },
+  { sku: "Marie Gold 250g", yours: "₹35", lowest: "₹30", gap: "+16.7%", action: "Match Price" },
+  { sku: "NutriChoice 100g", yours: "₹45", lowest: "₹40", gap: "+12.5%", action: "Match Price" },
+  { sku: "Bourbon 150g", yours: "₹30", lowest: "₹28", gap: "+7.1%", action: "Monitor" },
+  { sku: "50-50 120g", yours: "₹20", lowest: "₹18", gap: "+11.1%", action: "Monitor" },
+  { sku: "Good Day 200g", yours: "₹40", lowest: "₹35", gap: "+14.3%", action: "Match Price" },
 ];
 
-const skuOptions = ["Whey Protein 1kg", "Creatine 250g", "Pre-Workout 300g", "BCAA Tropical", "Multi-Vit 60ct"];
+const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
