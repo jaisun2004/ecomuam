@@ -865,18 +865,13 @@ const CampaignView: React.FC = () => {
 
       {/* Chart + Campaign cards */}
       <div className="grid grid-cols-3 gap-4">
-        <PanelCard title="Revenue vs Ad Spend — 30 Day Trend" badge="ROAS improving" badgeColor="green" className="col-span-2" delay={0.2}>
+        <PanelCard title="Ad Spend — 30 Day Trend" badge="ROAS improving" badgeColor="green" className="col-span-2" delay={0.2}>
           <div className="flex items-center gap-4 mb-3 text-[10px] text-muted-foreground">
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> Revenue</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> Ad Spend</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> Ad Spend (₹K)</span>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={revenueData}>
               <defs>
-                <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(160,70%,48%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(160,70%,48%)" stopOpacity={0} />
-                </linearGradient>
                 <linearGradient id="gSpend" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(228,90%,64%)" stopOpacity={0.2} />
                   <stop offset="95%" stopColor="hsl(228,90%,64%)" stopOpacity={0} />
@@ -886,8 +881,7 @@ const CampaignView: React.FC = () => {
               <XAxis dataKey="day" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
-              <Area type="monotone" dataKey="revenue" stroke="hsl(160,70%,48%)" fill="url(#gRev)" strokeWidth={2} />
-              <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="url(#gSpend)" strokeWidth={2} strokeDasharray="5 5" />
+              <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="url(#gSpend)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>
