@@ -345,7 +345,19 @@ const ScenarioCard = ({ s, onSelect, selected }: { s: Scenario; onSelect: () => 
   </div>
 );
 
-/* ─── Execution plan (Gear 3) ─── */
+/* ─── Scenario Selector (stateful wrapper) ─── */
+const ScenarioSelector = ({ scenarios, onSelect }: { scenarios: Scenario[]; onSelect: (s: Scenario) => void }) => {
+  const [selected, setSelected] = useState<string | null>(null);
+  return (
+    <div className="space-y-3 mt-2">
+      {scenarios.map(s => (
+        <ScenarioCard key={s.id} s={s} selected={selected === s.id} onSelect={() => { setSelected(s.id); onSelect(s); }} />
+      ))}
+    </div>
+  );
+};
+
+
 const ExecutionPlan = ({ scenario, userGoal, userSkus, confidence }: { scenario: Scenario; userGoal: string; userSkus: string; confidence: number }) => {
   const [checklist, setChecklist] = useState<boolean[]>([false, false, false, false, false]);
   const toggleCheck = (i: number) => setChecklist(prev => { const n = [...prev]; n[i] = !n[i]; return n; });
