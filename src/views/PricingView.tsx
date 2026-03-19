@@ -104,38 +104,6 @@ const priceAdvantageData = [
   { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹34", competitor: "Sunfeast", platform: "Flipkart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹2.80", estRoas: "4.6x" },
   { sku: "50-50 120g", yourPrice: "₹20", compPrice: "₹24", competitor: "Parle", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹1.90", estRoas: "6.1x" },
 ];
-  "Good Day 200g": [
-    { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
-    { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
-  ],
-  "Marie Gold 250g": [
-    { label: "Title Keywords", you: 4, them: 9, youPct: 44, color: "text-sw-red" },
-    { label: "Images Count", you: 5, them: 7, youPct: 71, color: "text-sw-green" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "1.2K", them: "9.6K", youPct: 12, color: "text-sw-red" },
-  ],
-  "NutriChoice 100g": [
-    { label: "Title Keywords", you: 3, them: 8, youPct: 38, color: "text-sw-red" },
-    { label: "Images Count", you: 4, them: 7, youPct: 57, color: "text-sw-amber" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "890", them: "12K", youPct: 7, color: "text-sw-red" },
-  ],
-  "Bourbon 150g": [
-    { label: "Title Keywords", you: 7, them: 9, youPct: 78, color: "text-sw-green" },
-    { label: "Images Count", you: 6, them: 6, youPct: 100, color: "text-sw-green" },
-    { label: "A+ Content", you: "Yes", them: "Yes", youPct: 100, color: "text-sw-green" },
-    { label: "Review Count", you: "3.4K", them: "15K", youPct: 23, color: "text-sw-red" },
-  ],
-  "50-50 120g": [
-    { label: "Title Keywords", you: 5, them: 10, youPct: 50, color: "text-sw-amber" },
-    { label: "Images Count", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "620", them: "8K", youPct: 8, color: "text-sw-red" },
-  ],
-};
-
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
