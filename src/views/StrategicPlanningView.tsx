@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Send, CheckCircle2, AlertTriangle, XCircle, Check, X, Sparkles, Eye, Zap, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useGuardrails } from "@/contexts/GuardrailContext";
 
 /* ─── Developer toggles ─── */
 const sellerPortalConnected = true;
