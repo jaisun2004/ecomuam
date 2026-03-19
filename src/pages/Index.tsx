@@ -22,6 +22,7 @@ import TaxonomyConfigView from "@/views/TaxonomyConfigView";
 import CrawlingInputsView from "@/views/CrawlingInputsView";
 import CategoryAssortmentView from "@/views/CategoryAssortmentView";
 import StrategicPlanningView from "@/views/StrategicPlanningView";
+import ApprovalFlowView from "@/views/ApprovalFlowView";
 import KeywordAnalysisView from "@/views/KeywordAnalysisView";
 import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
 import CampaignReportsView from "@/views/CampaignReportsView";
