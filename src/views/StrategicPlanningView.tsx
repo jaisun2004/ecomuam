@@ -438,7 +438,7 @@ const StrategicPlanningView: React.FC = () => {
     setGear("gear1");
     const obs = initialObservations[0];
     setObservations(prev => prev.map(o => o.id === obs.id ? { ...o, rendered: true } : o));
-    setCurrentObsIndex(0);
+    currentObsIndexRef.current = 0;
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
