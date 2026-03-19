@@ -139,6 +139,7 @@ const priceAdvantageData = [
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
+  const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [selectedSku, setSelectedSku] = useState("Good Day 200g");
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
 
