@@ -22,7 +22,7 @@ import ContentAuditSkuDetailView from "@/views/ContentAuditSkuDetailView";
 import TaxonomyConfigView from "@/views/TaxonomyConfigView";
 import CrawlingInputsView from "@/views/CrawlingInputsView";
 import CategoryAssortmentView from "@/views/CategoryAssortmentView";
-import WarRoomView from "@/views/WarRoomView";
+import StrategicPlanningView from "@/views/StrategicPlanningView";
 import KeywordAnalysisView from "@/views/KeywordAnalysisView";
 import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
 import CampaignReportsView from "@/views/CampaignReportsView";
