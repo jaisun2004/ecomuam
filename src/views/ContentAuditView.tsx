@@ -4,7 +4,7 @@ import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
-import { ChevronDown, ChevronRight, Copy, Check, X, AlertTriangle, ArrowRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Copy, Check, X, AlertTriangle, ArrowRight, Download, Loader2 } from "lucide-react";
 
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
