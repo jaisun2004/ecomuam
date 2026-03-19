@@ -99,7 +99,11 @@ const platformPricing = [
   { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0 },
 ];
 
-const contentGapsBySku: Record<string, { label: string; you: number | string; them: number | string; youPct: number; color: string }[]> = {
+const priceAdvantageData = [
+  { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹45", competitor: "Unibic", platform: "Amazon", gap: "−12.5%", keywords: ["unibic butter cookies", "unibic biscuits", "premium butter cookies"], estCpc: "₹3.20", estRoas: "5.2x" },
+  { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹34", competitor: "Sunfeast", platform: "Flipkart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹2.80", estRoas: "4.6x" },
+  { sku: "50-50 120g", yourPrice: "₹20", compPrice: "₹24", competitor: "Parle", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹1.90", estRoas: "6.1x" },
+];
   "Good Day 200g": [
     { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
     { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
