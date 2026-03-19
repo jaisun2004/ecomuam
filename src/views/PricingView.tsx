@@ -99,49 +99,22 @@ const platformPricing = [
   { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0 },
 ];
 
-const contentGapsBySku: Record<string, { label: string; you: number | string; them: number | string; youPct: number; color: string }[]> = {
-  "Good Day 200g": [
-    { label: "Title Keywords", you: 6, them: 11, youPct: 55, color: "text-sw-amber" },
-    { label: "Images Count", you: 7, them: 6, youPct: 58, color: "text-sw-green" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "2.8K", them: "18K", youPct: 15, color: "text-sw-red" },
-  ],
-  "Marie Gold 250g": [
-    { label: "Title Keywords", you: 4, them: 9, youPct: 44, color: "text-sw-red" },
-    { label: "Images Count", you: 5, them: 7, youPct: 71, color: "text-sw-green" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "1.2K", them: "9.6K", youPct: 12, color: "text-sw-red" },
-  ],
-  "NutriChoice 100g": [
-    { label: "Title Keywords", you: 3, them: 8, youPct: 38, color: "text-sw-red" },
-    { label: "Images Count", you: 4, them: 7, youPct: 57, color: "text-sw-amber" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "890", them: "12K", youPct: 7, color: "text-sw-red" },
-  ],
-  "Bourbon 150g": [
-    { label: "Title Keywords", you: 7, them: 9, youPct: 78, color: "text-sw-green" },
-    { label: "Images Count", you: 6, them: 6, youPct: 100, color: "text-sw-green" },
-    { label: "A+ Content", you: "Yes", them: "Yes", youPct: 100, color: "text-sw-green" },
-    { label: "Review Count", you: "3.4K", them: "15K", youPct: 23, color: "text-sw-red" },
-  ],
-  "50-50 120g": [
-    { label: "Title Keywords", you: 5, them: 10, youPct: 50, color: "text-sw-amber" },
-    { label: "Images Count", you: 5, them: 8, youPct: 63, color: "text-sw-amber" },
-    { label: "A+ Content", you: "No", them: "Yes", youPct: 10, color: "text-sw-red" },
-    { label: "Review Count", you: "620", them: "8K", youPct: 8, color: "text-sw-red" },
-  ],
-};
-
+const priceAdvantageData = [
+  { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹45", competitor: "Unibic", platform: "Amazon", gap: "−12.5%", keywords: ["unibic butter cookies", "unibic biscuits", "premium butter cookies"], estCpc: "₹3.20", estRoas: "5.2x" },
+  { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹34", competitor: "Sunfeast", platform: "Flipkart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹2.80", estRoas: "4.6x" },
+  { sku: "50-50 120g", yourPrice: "₹20", compPrice: "₹24", competitor: "Parle", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹1.90", estRoas: "6.1x" },
+];
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
+  const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [selectedSku, setSelectedSku] = useState("Good Day 200g");
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
 
   const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"];
   const competitorMatrix = competitorMatrixByPlatform[selectedPlatform] || competitorMatrixByPlatform["Amazon"];
   const compNames = compNamesBySku[selectedSku] || compNamesBySku["Good Day 200g"];
-  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Good Day 200g"];
+  
 
   const g = useGuardrails();
   const [tab, setTab] = useState("overview");
@@ -299,27 +272,34 @@ const PricingView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <PanelCard title={`Content Gap vs Top Competitor`} badge={selectedSku} badgeColor="amber" delay={0.45}>
-          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-            {skuOptions.map(s => (
-              <button key={s} onClick={() => setSelectedSku(s)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedSku === s ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                {s}
-              </button>
-            ))}
-          </div>
-          <div className="space-y-4">
-            {contentGaps.map((g) => (
-              <div key={g.label}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-foreground">{g.label}</span>
-                  <span className={`font-mono text-[10px] ${g.color}`}>You {g.you} / Them {g.them}</span>
+        <PanelCard title="Price Advantage — Keyword Attack" badge="Lower-Priced SKUs" badgeColor="green" delay={0.45}>
+          <p className="text-[10px] text-muted-foreground mb-3">SKUs where you're priced lower than a like-for-like competitor. Target their branded keywords with campaigns.</p>
+          <div className="space-y-2">
+            {priceAdvantageData.map((item, i) => (
+              <div key={i} className="p-3 rounded-xl border border-sw-green/20 bg-sw-green-dim/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs text-foreground font-medium">{item.sku}</span>
+                  <span className="font-mono text-[10px] text-sw-green px-1.5 py-0.5 rounded-full bg-sw-green-dim">{item.gap} cheaper</span>
                 </div>
-                <div className="h-2.5 bg-surface-3 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-primary rounded-l-full" style={{ width: `${g.youPct}%` }} />
-                  <div className="h-full bg-sw-red/40 rounded-r-full" style={{ width: `${100 - g.youPct}%` }} />
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] text-muted-foreground">You <span className="font-mono text-foreground">{item.yourPrice}</span> vs {item.competitor} <span className="font-mono text-sw-red">{item.compPrice}</span> on {item.platform}</span>
+                </div>
+                <div className="mb-2">
+                  <span className="text-[10px] text-muted-foreground">Target keywords: </span>
+                  <span className="text-[10px] text-foreground">{item.keywords.map((kw, ki) => (
+                    <span key={ki} className="inline-block font-mono text-[9px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground mr-1 mb-1">{kw}</span>
+                  ))}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setKeywordCampaignStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      keywordCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Megaphone size={10} />
+                    {keywordCampaignStates[i] ? "✓ Campaign Triggered" : "Attack Their Keywords"}
+                  </button>
+                  <span className="text-[9px] text-muted-foreground">Est. CPC: {item.estCpc} · Est. ROAS: {item.estRoas}</span>
                 </div>
               </div>
             ))}
