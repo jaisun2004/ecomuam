@@ -456,7 +456,7 @@ const StrategicPlanningView: React.FC = () => {
     if (!obs || obs.resolved) return;
 
     setObservations(prev => prev.map(o => o.id === id ? { ...o, resolved: true } : o));
-    const nextIdx = currentObsIndex + 1;
+    const nextIdx = currentObsIndexRef.current + 1;
 
     const getResponse = () => {
       if (action === "know") {
