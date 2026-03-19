@@ -821,12 +821,8 @@ const StrategicPlanningView: React.FC = () => {
           setTimeout(() => {
             setGear2Turn("scenarios");
             addCopilotMsg(
-              "Based on your inputs, here are three scenarios:",
-              <div className="space-y-3 mt-2">
-                {scenarios.map(s => (
-                  <ScenarioCard key={s.id} s={s} onSelect={() => handleScenarioSelect(s)} />
-                ))}
-              </div>,
+              "Based on your inputs, here are three scenarios. Select one to see the full action plan:",
+              <ScenarioSelector scenarios={scenarios} onSelect={handleScenarioSelect} />,
               2000
             );
           }, 2500);
