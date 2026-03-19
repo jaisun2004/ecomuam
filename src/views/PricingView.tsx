@@ -114,7 +114,7 @@ const PricingView: React.FC = () => {
   const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"];
   const competitorMatrix = competitorMatrixByPlatform[selectedPlatform] || competitorMatrixByPlatform["Amazon"];
   const compNames = compNamesBySku[selectedSku] || compNamesBySku["Good Day 200g"];
-  const contentGaps = contentGapsBySku[selectedSku] || contentGapsBySku["Good Day 200g"];
+  
 
   const g = useGuardrails();
   const [tab, setTab] = useState("overview");
