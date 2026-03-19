@@ -488,19 +488,18 @@ const StrategicPlanningView: React.FC = () => {
     const showNext = () => {
       // First 3 observations, then bonus 4th
       if (nextIdx < 3) {
-        setCurrentObsIndex(nextIdx);
+        currentObsIndexRef.current = nextIdx;
         const nextObs = initialObservations[nextIdx];
         setObservations(prev => prev.map(o => o.id === nextObs.id ? { ...o, rendered: true } : o));
         addCopilotMsg(
           nextIdx === 1 ? "Noted. Here's the next observation:" : "And one more:",
           <ObservationCardInline obs={nextObs} />
         );
-      } else if (nextIdx === 3 && !showBonusObs) {
-        // All 3 resolved — show transitional message + bonus obs
-        setShowBonusObs(true);
+      } else if (nextIdx === 3 && !showBonusObsRef.current) {
+        showBonusObsRef.current = true;
         const bonusObs = initialObservations[3];
         setObservations(prev => prev.map(o => o.id === bonusObs.id ? { ...o, rendered: true } : o));
-        setCurrentObsIndex(3);
+        currentObsIndexRef.current = 3;
         addCopilotMsg(
           "I did notice something else before we get into your question.",
           <ObservationCardInline obs={bonusObs} />
