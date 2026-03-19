@@ -13,7 +13,13 @@ type ColdStartPhase = "choice" | "q1" | "q2" | "q3" | "q4" | "done";
 type Gear2Turn = "idle" | "input" | "intent" | "sku" | "insights" | "validation" | "scenarios" | "confirm";
 type ObservationType = "Anomaly" | "Tension" | "Assumption challenge";
 type Message = { role: "user" | "copilot"; content: string; widget?: React.ReactNode };
-type Scenario = { id: string; name: string; desc: string; blinkitSplit: string; zeptoSplit: string; roasRange: string; risk: string };
+type Scenario = {
+  id: string; name: string; desc: string; blinkitSplit: string; zeptoSplit: string; roasRange: string; risk: string;
+  cities: { name: string; blinkitBudget: string; zeptoBudget: string }[];
+  keywords: string[];
+  competitorKeywords: string[];
+  estImpressions: string;
+};
 type Recommendation = { id: string; priority: "P1" | "P2" | "P3"; text: string; reason: string; status: "pending" | "approved" | "dismissed" };
 type InsightTier = "plan-breaking" | "plan-informing";
 type Insight = { id: string; tier: InsightTier; text: string; resolved: boolean; deferred: boolean };
