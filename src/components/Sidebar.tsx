@@ -9,7 +9,7 @@ const navSections = [
     label: "PLANNING",
     items: [
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
-      { id: "warroom", icon: MapPin, label: "War Room", notify: false },
+      { id: "strategicplanning", icon: MapPin, label: "Strategic Planning", notify: false },
       { id: "whitespace", icon: Lightbulb, label: "Category Whitespace", notify: false },
     ],
   },

@@ -47,7 +47,7 @@ const views: Record<string, React.FC> = {
   taxonomy: TaxonomyConfigView,
   crawling: CrawlingInputsView,
   categoryassortment: CategoryAssortmentView,
-  warroom: WarRoomView,
+  strategicplanning: StrategicPlanningView,
   keywordanalysis: KeywordAnalysisView,
   whitespace: CategoryWhitespaceView,
   campaignreports: CampaignReportsView,
