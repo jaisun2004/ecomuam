@@ -701,14 +701,7 @@ const StrategicPlanningView: React.FC = () => {
       case "sku":
         setUserSkus(userMsg);
         setGear2Turn("insights");
-        addCopilotMsg(
-          "Before we validate, here are insights that could affect your plan:",
-          <div className="space-y-3 mt-2">
-            {defaultInsights.map(ins => (
-              <InsightCard key={ins.id} insight={ins} onAction={handleInsightAction} />
-            ))}
-          </div>
-        );
+        addCopilotMsg("Before we validate, here are insights that could affect your plan:");
         break;
       case "confirm":
         if (userMsg.toLowerCase().includes("looks good") || userMsg.toLowerCase().includes("confirm") || userMsg.toLowerCase().includes("proceed") || userMsg.toLowerCase().includes("yes")) {
