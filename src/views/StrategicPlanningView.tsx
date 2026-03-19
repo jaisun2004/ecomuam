@@ -525,6 +525,7 @@ const BrandContextCard = ({ context, building }: { context: BrandContext | null;
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 const StrategicPlanningView: React.FC = () => {
+  const g = useGuardrails();
   const [gear, setGear] = useState<Gear>(hasStrategicHistory ? "gear1" : "cold-start");
   const [coldPhase, setColdPhase] = useState<ColdStartPhase>("choice");
   const [fastTrack, setFastTrack] = useState(false);
