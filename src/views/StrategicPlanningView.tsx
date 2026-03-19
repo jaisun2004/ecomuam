@@ -360,9 +360,9 @@ const StrategicPlanningView: React.FC = () => {
   const [typing, setTyping] = useState(false);
   const [brandContext, setBrandContext] = useState<BrandContext | null>(hasStrategicHistory ? defaultHistoryContext : null);
   const [observations, setObservations] = useState<Observation[]>(initialObservations.map(o => ({ ...o })));
-  const [currentObsIndex, setCurrentObsIndex] = useState(0);
+  const currentObsIndexRef = useRef(0);
   const [gear1Done, setGear1Done] = useState(false);
-  const [showBonusObs, setShowBonusObs] = useState(false);
+  const showBonusObsRef = useRef(false);
   const [insights, setInsights] = useState<Insight[]>(defaultInsights.map(i => ({ ...i })));
   const [confidence, setConfidence] = useState(100);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
@@ -438,7 +438,7 @@ const StrategicPlanningView: React.FC = () => {
     setGear("gear1");
     const obs = initialObservations[0];
     setObservations(prev => prev.map(o => o.id === obs.id ? { ...o, rendered: true } : o));
-    setCurrentObsIndex(0);
+    currentObsIndexRef.current = 0;
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
@@ -456,7 +456,7 @@ const StrategicPlanningView: React.FC = () => {
     if (!obs || obs.resolved) return;
 
     setObservations(prev => prev.map(o => o.id === id ? { ...o, resolved: true } : o));
-    const nextIdx = currentObsIndex + 1;
+    const nextIdx = currentObsIndexRef.current + 1;
 
     const getResponse = () => {
       if (action === "know") {
@@ -488,19 +488,18 @@ const StrategicPlanningView: React.FC = () => {
     const showNext = () => {
       // First 3 observations, then bonus 4th
       if (nextIdx < 3) {
-        setCurrentObsIndex(nextIdx);
+        currentObsIndexRef.current = nextIdx;
         const nextObs = initialObservations[nextIdx];
         setObservations(prev => prev.map(o => o.id === nextObs.id ? { ...o, rendered: true } : o));
         addCopilotMsg(
           nextIdx === 1 ? "Noted. Here's the next observation:" : "And one more:",
           <ObservationCardInline obs={nextObs} />
         );
-      } else if (nextIdx === 3 && !showBonusObs) {
-        // All 3 resolved — show transitional message + bonus obs
-        setShowBonusObs(true);
+      } else if (nextIdx === 3 && !showBonusObsRef.current) {
+        showBonusObsRef.current = true;
         const bonusObs = initialObservations[3];
         setObservations(prev => prev.map(o => o.id === bonusObs.id ? { ...o, rendered: true } : o));
-        setCurrentObsIndex(3);
+        currentObsIndexRef.current = 3;
         addCopilotMsg(
           "I did notice something else before we get into your question.",
           <ObservationCardInline obs={bonusObs} />
