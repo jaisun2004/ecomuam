@@ -848,7 +848,7 @@ const StrategicPlanningView: React.FC = () => {
     setGear2Turn("confirm");
     addUserMsg(`I'll go with Scenario ${s.id}: ${s.name}.`);
     addToReasoning(`Selected Scenario ${s.id}: ${s.name}`);
-    addCopilotMsg("Any adjustments before I build the action plan? Type them or say 'looks good' to proceed.");
+    addCopilotMsg("Review the action plan above. Type 'looks good' to send this plan to the Approval Flow, or suggest adjustments.");
   };
 
   /* ─── Recommendation handling ─── */
