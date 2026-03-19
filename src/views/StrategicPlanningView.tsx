@@ -360,9 +360,9 @@ const StrategicPlanningView: React.FC = () => {
   const [typing, setTyping] = useState(false);
   const [brandContext, setBrandContext] = useState<BrandContext | null>(hasStrategicHistory ? defaultHistoryContext : null);
   const [observations, setObservations] = useState<Observation[]>(initialObservations.map(o => ({ ...o })));
-  const [currentObsIndex, setCurrentObsIndex] = useState(0);
+  const currentObsIndexRef = useRef(0);
   const [gear1Done, setGear1Done] = useState(false);
-  const [showBonusObs, setShowBonusObs] = useState(false);
+  const showBonusObsRef = useRef(false);
   const [insights, setInsights] = useState<Insight[]>(defaultInsights.map(i => ({ ...i })));
   const [confidence, setConfidence] = useState(100);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
