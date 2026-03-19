@@ -299,27 +299,34 @@ const PricingView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <PanelCard title={`Content Gap vs Top Competitor`} badge={selectedSku} badgeColor="amber" delay={0.45}>
-          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-            {skuOptions.map(s => (
-              <button key={s} onClick={() => setSelectedSku(s)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedSku === s ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                {s}
-              </button>
-            ))}
-          </div>
-          <div className="space-y-4">
-            {contentGaps.map((g) => (
-              <div key={g.label}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-foreground">{g.label}</span>
-                  <span className={`font-mono text-[10px] ${g.color}`}>You {g.you} / Them {g.them}</span>
+        <PanelCard title="Price Advantage — Keyword Attack" badge="Lower-Priced SKUs" badgeColor="green" delay={0.45}>
+          <p className="text-[10px] text-muted-foreground mb-3">SKUs where you're priced lower than a like-for-like competitor. Target their branded keywords with campaigns.</p>
+          <div className="space-y-2">
+            {priceAdvantageData.map((item, i) => (
+              <div key={i} className="p-3 rounded-xl border border-sw-green/20 bg-sw-green-dim/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs text-foreground font-medium">{item.sku}</span>
+                  <span className="font-mono text-[10px] text-sw-green px-1.5 py-0.5 rounded-full bg-sw-green-dim">{item.gap} cheaper</span>
                 </div>
-                <div className="h-2.5 bg-surface-3 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-primary rounded-l-full" style={{ width: `${g.youPct}%` }} />
-                  <div className="h-full bg-sw-red/40 rounded-r-full" style={{ width: `${100 - g.youPct}%` }} />
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] text-muted-foreground">You <span className="font-mono text-foreground">{item.yourPrice}</span> vs {item.competitor} <span className="font-mono text-sw-red">{item.compPrice}</span> on {item.platform}</span>
+                </div>
+                <div className="mb-2">
+                  <span className="text-[10px] text-muted-foreground">Target keywords: </span>
+                  <span className="text-[10px] text-foreground">{item.keywords.map((kw, ki) => (
+                    <span key={ki} className="inline-block font-mono text-[9px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground mr-1 mb-1">{kw}</span>
+                  ))}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setKeywordCampaignStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      keywordCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Megaphone size={10} />
+                    {keywordCampaignStates[i] ? "✓ Campaign Triggered" : "Attack Their Keywords"}
+                  </button>
+                  <span className="text-[9px] text-muted-foreground">Est. CPC: {item.estCpc} · Est. ROAS: {item.estRoas}</span>
                 </div>
               </div>
             ))}
