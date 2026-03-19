@@ -13,7 +13,13 @@ type ColdStartPhase = "choice" | "q1" | "q2" | "q3" | "q4" | "done";
 type Gear2Turn = "idle" | "input" | "intent" | "sku" | "insights" | "validation" | "scenarios" | "confirm";
 type ObservationType = "Anomaly" | "Tension" | "Assumption challenge";
 type Message = { role: "user" | "copilot"; content: string; widget?: React.ReactNode };
-type Scenario = { id: string; name: string; desc: string; blinkitSplit: string; zeptoSplit: string; roasRange: string; risk: string };
+type Scenario = {
+  id: string; name: string; desc: string; blinkitSplit: string; zeptoSplit: string; roasRange: string; risk: string;
+  cities: { name: string; blinkitBudget: string; zeptoBudget: string }[];
+  keywords: string[];
+  competitorKeywords: string[];
+  estImpressions: string;
+};
 type Recommendation = { id: string; priority: "P1" | "P2" | "P3"; text: string; reason: string; status: "pending" | "approved" | "dismissed" };
 type InsightTier = "plan-breaking" | "plan-informing";
 type Insight = { id: string; tier: InsightTier; text: string; resolved: boolean; deferred: boolean };
@@ -72,9 +78,45 @@ const defaultInsights: Insight[] = [
 ];
 
 const scenarios: Scenario[] = [
-  { id: "A", name: "Aggressive", desc: "Concentrate spend on Zepto where ROAS is strongest. Maximum growth potential, higher single-platform risk.", blinkitSplit: "₹30L", zeptoSplit: "₹70L", roasRange: "2.8x – 4.2x", risk: "High" },
-  { id: "B", name: "Balanced", desc: "Even split across platforms with proportional SKU allocation. Moderate risk, diversified presence.", blinkitSplit: "₹50L", zeptoSplit: "₹50L", roasRange: "2.5x – 3.5x", risk: "Medium" },
-  { id: "C", name: "Defensive", desc: "Maintain current efficiency on Blinkit, test challenger SKUs on Zepto with ring-fenced budget.", blinkitSplit: "₹55L", zeptoSplit: "₹45L", roasRange: "2.2x – 2.9x", risk: "Low" },
+  {
+    id: "A", name: "Aggressive", risk: "High", roasRange: "2.8x – 4.2x",
+    desc: "Concentrate spend on Zepto where ROAS is strongest. Maximum growth potential, higher single-platform risk.",
+    blinkitSplit: "₹30L", zeptoSplit: "₹70L",
+    cities: [
+      { name: "Delhi NCR", blinkitBudget: "₹10L", zeptoBudget: "₹25L" },
+      { name: "Mumbai", blinkitBudget: "₹10L", zeptoBudget: "₹25L" },
+      { name: "Bengaluru", blinkitBudget: "₹10L", zeptoBudget: "₹20L" },
+    ],
+    keywords: ["butter cookies", "digestive biscuits", "healthy snacks", "tea time biscuits"],
+    competitorKeywords: ["britannia cookies", "mcvities digestive", "parle cookies"],
+    estImpressions: "18L – 24L weekly",
+  },
+  {
+    id: "B", name: "Balanced", risk: "Medium", roasRange: "2.5x – 3.5x",
+    desc: "Even split across platforms with proportional SKU allocation. Moderate risk, diversified presence.",
+    blinkitSplit: "₹50L", zeptoSplit: "₹50L",
+    cities: [
+      { name: "Delhi NCR", blinkitBudget: "₹18L", zeptoBudget: "₹18L" },
+      { name: "Mumbai", blinkitBudget: "₹16L", zeptoBudget: "₹16L" },
+      { name: "Bengaluru", blinkitBudget: "₹16L", zeptoBudget: "₹16L" },
+    ],
+    keywords: ["butter cookies", "digestive biscuits", "healthy snacks"],
+    competitorKeywords: ["britannia cookies", "mcvities digestive"],
+    estImpressions: "14L – 20L weekly",
+  },
+  {
+    id: "C", name: "Defensive", risk: "Low", roasRange: "2.2x – 2.9x",
+    desc: "Maintain current efficiency on Blinkit, test challenger SKUs on Zepto with ring-fenced budget.",
+    blinkitSplit: "₹55L", zeptoSplit: "₹45L",
+    cities: [
+      { name: "Delhi NCR", blinkitBudget: "₹20L", zeptoBudget: "₹15L" },
+      { name: "Mumbai", blinkitBudget: "₹20L", zeptoBudget: "₹15L" },
+      { name: "Bengaluru", blinkitBudget: "₹15L", zeptoBudget: "₹15L" },
+    ],
+    keywords: ["butter cookies", "digestive biscuits"],
+    competitorKeywords: ["britannia cookies"],
+    estImpressions: "10L – 15L weekly",
+  },
 ];
 
 /* ─── Typing indicator ─── */
@@ -167,17 +209,60 @@ const ValidationCards = () => {
 
 /* ─── Scenario card ─── */
 const ScenarioCard = ({ s, onSelect }: { s: Scenario; onSelect: () => void }) => (
-  <div className="bg-surface-2 border border-border-visible rounded-lg p-4 space-y-2">
+  <div className="bg-surface-2 border border-border-visible rounded-lg p-4 space-y-3">
     <div className="flex items-center justify-between">
       <h4 className="text-sm font-semibold text-foreground">Scenario {s.id}: {s.name}</h4>
       <Badge variant={s.risk === "High" ? "destructive" : s.risk === "Medium" ? "secondary" : "outline"} className="text-[10px]">{s.risk} risk</Badge>
     </div>
     <p className="text-xs text-muted-foreground">{s.desc}</p>
-    <div className="flex gap-4 text-xs text-foreground">
+
+    {/* Platform split + ROAS + Impressions */}
+    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground">
       <span>Blinkit: {s.blinkitSplit}</span>
       <span>Zepto: {s.zeptoSplit}</span>
       <span>Projected ROAS: {s.roasRange}</span>
+      <span>Est. Impressions: {s.estImpressions}</span>
     </div>
+
+    {/* City targeting */}
+    <div>
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">City Targeting</p>
+      <div className="overflow-auto rounded border border-border-visible">
+        <table className="w-full text-[11px]">
+          <thead><tr className="bg-surface-3 text-muted-foreground">
+            <th className="px-2 py-1 text-left">City</th>
+            <th className="px-2 py-1 text-right">Blinkit ₹</th>
+            <th className="px-2 py-1 text-right">Zepto ₹</th>
+          </tr></thead>
+          <tbody className="text-foreground">
+            {s.cities.map(c => (
+              <tr key={c.name} className="border-t border-border-visible">
+                <td className="px-2 py-1">{c.name}</td>
+                <td className="px-2 py-1 text-right">{c.blinkitBudget}</td>
+                <td className="px-2 py-1 text-right">{c.zeptoBudget}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Keywords */}
+    <div className="flex flex-wrap gap-3">
+      <div className="flex-1 min-w-[140px]">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Target Keywords</p>
+        <div className="flex flex-wrap gap-1">
+          {s.keywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{k}</span>)}
+        </div>
+      </div>
+      <div className="flex-1 min-w-[140px]">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Competitor Keywords</p>
+        <div className="flex flex-wrap gap-1">
+          {s.competitorKeywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">{k}</span>)}
+        </div>
+      </div>
+    </div>
+
     <button onClick={onSelect} className="mt-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors">
       Select this scenario →
     </button>
@@ -616,14 +701,7 @@ const StrategicPlanningView: React.FC = () => {
       case "sku":
         setUserSkus(userMsg);
         setGear2Turn("insights");
-        addCopilotMsg(
-          "Before we validate, here are insights that could affect your plan:",
-          <div className="space-y-3 mt-2">
-            {defaultInsights.map(ins => (
-              <InsightCard key={ins.id} insight={ins} onAction={handleInsightAction} />
-            ))}
-          </div>
-        );
+        addCopilotMsg("Before we validate, here are insights that could affect your plan:");
         break;
       case "confirm":
         if (userMsg.toLowerCase().includes("looks good") || userMsg.toLowerCase().includes("confirm") || userMsg.toLowerCase().includes("proceed") || userMsg.toLowerCase().includes("yes")) {
@@ -739,6 +817,19 @@ const StrategicPlanningView: React.FC = () => {
                   </div>
                 </div>
               ))}
+              {/* Live insight cards — rendered from state so they update on resolve/defer */}
+              {gear === "gear2" && gear2Turn === "insights" && (
+                <div className="flex justify-start">
+                  <div className="max-w-[75%] space-y-3">
+                    {insights.filter(i => !i.resolved && !i.deferred).map(ins => (
+                      <InsightCard key={ins.id} insight={ins} onAction={handleInsightAction} />
+                    ))}
+                    {insights.every(i => i.resolved || i.deferred) && (
+                      <p className="text-xs text-muted-foreground italic">All insights handled — generating validation…</p>
+                    )}
+                  </div>
+                </div>
+              )}
               {typing && <TypingIndicator />}
               <div ref={chatEndRef} />
             </div>
