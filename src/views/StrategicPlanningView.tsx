@@ -209,17 +209,60 @@ const ValidationCards = () => {
 
 /* ─── Scenario card ─── */
 const ScenarioCard = ({ s, onSelect }: { s: Scenario; onSelect: () => void }) => (
-  <div className="bg-surface-2 border border-border-visible rounded-lg p-4 space-y-2">
+  <div className="bg-surface-2 border border-border-visible rounded-lg p-4 space-y-3">
     <div className="flex items-center justify-between">
       <h4 className="text-sm font-semibold text-foreground">Scenario {s.id}: {s.name}</h4>
       <Badge variant={s.risk === "High" ? "destructive" : s.risk === "Medium" ? "secondary" : "outline"} className="text-[10px]">{s.risk} risk</Badge>
     </div>
     <p className="text-xs text-muted-foreground">{s.desc}</p>
-    <div className="flex gap-4 text-xs text-foreground">
+
+    {/* Platform split + ROAS + Impressions */}
+    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground">
       <span>Blinkit: {s.blinkitSplit}</span>
       <span>Zepto: {s.zeptoSplit}</span>
       <span>Projected ROAS: {s.roasRange}</span>
+      <span>Est. Impressions: {s.estImpressions}</span>
     </div>
+
+    {/* City targeting */}
+    <div>
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">City Targeting</p>
+      <div className="overflow-auto rounded border border-border-visible">
+        <table className="w-full text-[11px]">
+          <thead><tr className="bg-surface-3 text-muted-foreground">
+            <th className="px-2 py-1 text-left">City</th>
+            <th className="px-2 py-1 text-right">Blinkit ₹</th>
+            <th className="px-2 py-1 text-right">Zepto ₹</th>
+          </tr></thead>
+          <tbody className="text-foreground">
+            {s.cities.map(c => (
+              <tr key={c.name} className="border-t border-border-visible">
+                <td className="px-2 py-1">{c.name}</td>
+                <td className="px-2 py-1 text-right">{c.blinkitBudget}</td>
+                <td className="px-2 py-1 text-right">{c.zeptoBudget}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Keywords */}
+    <div className="flex flex-wrap gap-3">
+      <div className="flex-1 min-w-[140px]">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Target Keywords</p>
+        <div className="flex flex-wrap gap-1">
+          {s.keywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{k}</span>)}
+        </div>
+      </div>
+      <div className="flex-1 min-w-[140px]">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Competitor Keywords</p>
+        <div className="flex flex-wrap gap-1">
+          {s.competitorKeywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">{k}</span>)}
+        </div>
+      </div>
+    </div>
+
     <button onClick={onSelect} className="mt-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors">
       Select this scenario →
     </button>
