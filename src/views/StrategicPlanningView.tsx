@@ -798,7 +798,6 @@ const StrategicPlanningView: React.FC = () => {
           addCopilotMsg("Plan submitted to the Approval Flow. Redirecting…");
           setTimeout(() => g.navigateTo?.("approvalflow"), 1500);
         } else {
-        } else {
           addCopilotMsg(`Noted — "${userMsg}". I've adjusted the scenario. Any further changes, or shall we proceed?`);
         }
         break;
