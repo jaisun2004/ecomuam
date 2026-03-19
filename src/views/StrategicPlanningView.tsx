@@ -207,16 +207,127 @@ const ValidationCards = () => {
   );
 };
 
+/* ─── Detailed Action Plan after scenario selection ─── */
+const ActionPlanDetail = ({ s }: { s: Scenario }) => {
+  const campaignBreakdown = [
+    { name: `GDB-BLK-MOR-WD`, sku: "Good Day Butter", platform: "Blinkit", city: "Delhi NCR", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter cookies", bid: s.id === "A" ? "₹12" : s.id === "B" ? "₹10" : "₹8" }, { kw: "tea time biscuits", bid: s.id === "A" ? "₹9" : "₹7" }], budget: s.id === "A" ? "₹1.25L/wk" : s.id === "B" ? "₹1.5L/wk" : "₹1.8L/wk", estRoas: s.id === "A" ? "3.2x" : s.id === "B" ? "2.8x" : "2.4x", estImpr: "1.8L" },
+    { name: `GDB-BLK-EVE-WD`, sku: "Good Day Butter", platform: "Blinkit", city: "Delhi NCR", dayPart: "Evening", dayType: "Weekday", keywords: [{ kw: "butter cookies", bid: s.id === "A" ? "₹14" : "₹11" }, { kw: "evening snacks", bid: "₹11" }], budget: s.id === "A" ? "₹1.5L/wk" : "₹1.2L/wk", estRoas: s.id === "A" ? "3.5x" : "2.9x", estImpr: "2.1L" },
+    { name: `GDB-ZEP-MOR-WD`, sku: "Good Day Butter", platform: "Zepto", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter cookies", bid: "₹10" }, { kw: "britannia cookies", bid: "₹13" }], budget: s.id === "A" ? "₹2.5L/wk" : s.id === "B" ? "₹1.8L/wk" : "₹1.5L/wk", estRoas: s.id === "A" ? "4.0x" : "3.2x", estImpr: "3.2L" },
+    { name: `GDB-ZEP-EVE-WE`, sku: "Good Day Butter", platform: "Zepto", city: "Mumbai", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "sunfeast cookies", bid: "₹16" }, { kw: "parle cookies", bid: "₹14" }], budget: s.id === "A" ? "₹2L/wk" : "₹1.2L/wk", estRoas: s.id === "A" ? "2.8x" : "2.5x", estImpr: "2.0L" },
+    { name: `NCD-BLK-MOR-WD`, sku: "NutriChoice Digestive", platform: "Blinkit", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "digestive biscuits", bid: "₹9" }, { kw: "healthy snacks", bid: "₹7" }], budget: s.id === "A" ? "₹1L/wk" : "₹1.2L/wk", estRoas: "2.9x", estImpr: "1.4L" },
+    { name: `NCD-ZEP-EVE-WE`, sku: "NutriChoice Digestive", platform: "Zepto", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "digestive biscuits", bid: "₹11" }, { kw: "mcvities digestive", bid: "₹12" }], budget: s.id === "A" ? "₹1.75L/wk" : "₹1.3L/wk", estRoas: "3.4x", estImpr: "2.2L" },
+  ];
+
+  return (
+    <div className="space-y-4 mt-3">
+      <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-3">
+        <p className="text-xs font-semibold text-foreground mb-2">Action Plan — Scenario {s.id}: {s.name}</p>
+        <div className="grid grid-cols-4 gap-3 text-[11px]">
+          <div><span className="text-muted-foreground">Campaigns:</span> <span className="text-foreground font-medium">{campaignBreakdown.length}</span></div>
+          <div><span className="text-muted-foreground">SKUs:</span> <span className="text-foreground font-medium">2</span></div>
+          <div><span className="text-muted-foreground">Cities:</span> <span className="text-foreground font-medium">{s.cities.length}</span></div>
+          <div><span className="text-muted-foreground">Est. ROAS:</span> <span className="text-foreground font-medium">{s.roasRange}</span></div>
+        </div>
+      </div>
+
+      {/* City targeting */}
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">City Targeting</p>
+        <div className="overflow-auto rounded border border-border-visible">
+          <table className="w-full text-[11px]">
+            <thead><tr className="bg-surface-3 text-muted-foreground">
+              <th className="px-2 py-1 text-left">City</th>
+              <th className="px-2 py-1 text-right">Blinkit ₹</th>
+              <th className="px-2 py-1 text-right">Zepto ₹</th>
+            </tr></thead>
+            <tbody className="text-foreground">
+              {s.cities.map(c => (
+                <tr key={c.name} className="border-t border-border-visible">
+                  <td className="px-2 py-1">{c.name}</td>
+                  <td className="px-2 py-1 text-right">{c.blinkitBudget}</td>
+                  <td className="px-2 py-1 text-right">{c.zeptoBudget}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Campaign breakdown */}
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Campaign Breakdown</p>
+        <div className="space-y-2">
+          {campaignBreakdown.map((c, i) => (
+            <div key={i} className="bg-surface-2 border border-border-visible rounded-lg p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-foreground">{c.name}</span>
+                <div className="flex gap-1">
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${c.dayPart === "Morning" ? "bg-[hsl(var(--warning))]/15 text-[hsl(var(--warning))]" : "bg-primary/15 text-primary"}`}>{c.dayPart}</span>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${c.dayType === "Weekday" ? "bg-surface-3 text-foreground" : "bg-[hsl(var(--success))]/15 text-[hsl(var(--success))]"}`}>{c.dayType}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-5 gap-1 text-[10px]">
+                <div><span className="text-muted-foreground">SKU:</span> <span className="text-foreground">{c.sku}</span></div>
+                <div><span className="text-muted-foreground">Platform:</span> <span className="text-foreground">{c.platform}</span></div>
+                <div><span className="text-muted-foreground">City:</span> <span className="text-foreground">{c.city}</span></div>
+                <div><span className="text-muted-foreground">ROAS:</span> <span className="text-foreground">{c.estRoas}</span></div>
+                <div><span className="text-muted-foreground">Impr:</span> <span className="text-foreground">{c.estImpr}</span></div>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {c.keywords.map((k, j) => (
+                  <span key={j} className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{k.kw} · {k.bid}</span>
+                ))}
+              </div>
+              <div className="text-[10px] text-muted-foreground">Budget: {c.budget}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Keywords summary */}
+      <div className="flex flex-wrap gap-3">
+        <div className="flex-1 min-w-[140px]">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Target Keywords</p>
+          <div className="flex flex-wrap gap-1">
+            {s.keywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{k}</span>)}
+          </div>
+        </div>
+        <div className="flex-1 min-w-[140px]">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Competitor Keywords</p>
+          <div className="flex flex-wrap gap-1">
+            {s.competitorKeywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">{k}</span>)}
+          </div>
+        </div>
+      </div>
+
+      {/* Estimated totals */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-surface-2 border border-border-visible rounded-lg p-2.5 text-center">
+          <p className="text-[10px] text-muted-foreground">Blinkit</p>
+          <p className="text-sm font-semibold text-foreground">{s.blinkitSplit}</p>
+        </div>
+        <div className="bg-surface-2 border border-border-visible rounded-lg p-2.5 text-center">
+          <p className="text-[10px] text-muted-foreground">Zepto</p>
+          <p className="text-sm font-semibold text-foreground">{s.zeptoSplit}</p>
+        </div>
+        <div className="bg-surface-2 border border-border-visible rounded-lg p-2.5 text-center">
+          <p className="text-[10px] text-muted-foreground">Est. Impressions</p>
+          <p className="text-sm font-semibold text-foreground">{s.estImpressions}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 /* ─── Scenario card ─── */
-const ScenarioCard = ({ s, onSelect }: { s: Scenario; onSelect: () => void }) => (
-  <div className="bg-surface-2 border border-border-visible rounded-lg p-4 space-y-3">
+const ScenarioCard = ({ s, onSelect, selected }: { s: Scenario; onSelect: () => void; selected: boolean }) => (
+  <div className={`bg-surface-2 border rounded-lg p-4 space-y-3 transition-colors ${selected ? "border-primary" : "border-border-visible"}`}>
     <div className="flex items-center justify-between">
       <h4 className="text-sm font-semibold text-foreground">Scenario {s.id}: {s.name}</h4>
       <Badge variant={s.risk === "High" ? "destructive" : s.risk === "Medium" ? "secondary" : "outline"} className="text-[10px]">{s.risk} risk</Badge>
     </div>
     <p className="text-xs text-muted-foreground">{s.desc}</p>
 
-    {/* Platform split + ROAS + Impressions */}
     <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground">
       <span>Blinkit: {s.blinkitSplit}</span>
       <span>Zepto: {s.zeptoSplit}</span>
@@ -224,48 +335,13 @@ const ScenarioCard = ({ s, onSelect }: { s: Scenario; onSelect: () => void }) =>
       <span>Est. Impressions: {s.estImpressions}</span>
     </div>
 
-    {/* City targeting */}
-    <div>
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">City Targeting</p>
-      <div className="overflow-auto rounded border border-border-visible">
-        <table className="w-full text-[11px]">
-          <thead><tr className="bg-surface-3 text-muted-foreground">
-            <th className="px-2 py-1 text-left">City</th>
-            <th className="px-2 py-1 text-right">Blinkit ₹</th>
-            <th className="px-2 py-1 text-right">Zepto ₹</th>
-          </tr></thead>
-          <tbody className="text-foreground">
-            {s.cities.map(c => (
-              <tr key={c.name} className="border-t border-border-visible">
-                <td className="px-2 py-1">{c.name}</td>
-                <td className="px-2 py-1 text-right">{c.blinkitBudget}</td>
-                <td className="px-2 py-1 text-right">{c.zeptoBudget}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    {!selected && (
+      <button onClick={onSelect} className="mt-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors">
+        Select this scenario →
+      </button>
+    )}
 
-    {/* Keywords */}
-    <div className="flex flex-wrap gap-3">
-      <div className="flex-1 min-w-[140px]">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Target Keywords</p>
-        <div className="flex flex-wrap gap-1">
-          {s.keywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{k}</span>)}
-        </div>
-      </div>
-      <div className="flex-1 min-w-[140px]">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Competitor Keywords</p>
-        <div className="flex flex-wrap gap-1">
-          {s.competitorKeywords.map(k => <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">{k}</span>)}
-        </div>
-      </div>
-    </div>
-
-    <button onClick={onSelect} className="mt-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors">
-      Select this scenario →
-    </button>
+    {selected && <ActionPlanDetail s={s} />}
   </div>
 );
 
