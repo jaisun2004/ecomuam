@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
-import AIBar from "@/components/AIBar";
 import CentralCockpitView from "@/views/CentralCockpitView";
 import CampaignView from "@/views/CampaignView";
 import DiscoveryView from "@/views/DiscoveryView";
@@ -86,7 +85,6 @@ const IndexInner = () => {
     g.setNavigateTo(handleNavigate);
   }, [handleNavigate]);
 
-  // Check for SKU detail sub-route in contentaudit
   const isSkuDetail = active === "contentaudit" && g.contextFilter?.type === "sku-detail";
 
   const View = views[active] || CentralCockpitView;
@@ -120,7 +118,6 @@ const IndexInner = () => {
           )}
         </main>
       </div>
-      <AIBar />
     </div>
   );
 };
