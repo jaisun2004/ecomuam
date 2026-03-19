@@ -817,6 +817,19 @@ const StrategicPlanningView: React.FC = () => {
                   </div>
                 </div>
               ))}
+              {/* Live insight cards — rendered from state so they update on resolve/defer */}
+              {gear === "gear2" && gear2Turn === "insights" && (
+                <div className="flex justify-start">
+                  <div className="max-w-[75%] space-y-3">
+                    {insights.filter(i => !i.resolved && !i.deferred).map(ins => (
+                      <InsightCard key={ins.id} insight={ins} onAction={handleInsightAction} />
+                    ))}
+                    {insights.every(i => i.resolved || i.deferred) && (
+                      <p className="text-xs text-muted-foreground italic">All insights handled — generating validation…</p>
+                    )}
+                  </div>
+                </div>
+              )}
               {typing && <TypingIndicator />}
               <div ref={chatEndRef} />
             </div>
