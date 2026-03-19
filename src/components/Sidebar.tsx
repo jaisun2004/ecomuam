@@ -10,6 +10,7 @@ const navSections = [
     items: [
       { id: "discovery", icon: Search, label: "Discovery", notify: false },
       { id: "strategicplanning", icon: MapPin, label: "Strategic Planning", notify: false },
+      { id: "approvalflow", icon: ClipboardCheck, label: "Approval Flow", notify: true },
       { id: "whitespace", icon: Lightbulb, label: "Category Whitespace", notify: false },
     ],
   },

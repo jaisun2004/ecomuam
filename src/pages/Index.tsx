@@ -48,6 +48,7 @@ const views: Record<string, React.FC> = {
   crawling: CrawlingInputsView,
   categoryassortment: CategoryAssortmentView,
   strategicplanning: StrategicPlanningView,
+  approvalflow: ApprovalFlowView,
   keywordanalysis: KeywordAnalysisView,
   whitespace: CategoryWhitespaceView,
   campaignreports: CampaignReportsView,
