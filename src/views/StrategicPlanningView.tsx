@@ -78,9 +78,45 @@ const defaultInsights: Insight[] = [
 ];
 
 const scenarios: Scenario[] = [
-  { id: "A", name: "Aggressive", desc: "Concentrate spend on Zepto where ROAS is strongest. Maximum growth potential, higher single-platform risk.", blinkitSplit: "₹30L", zeptoSplit: "₹70L", roasRange: "2.8x – 4.2x", risk: "High" },
-  { id: "B", name: "Balanced", desc: "Even split across platforms with proportional SKU allocation. Moderate risk, diversified presence.", blinkitSplit: "₹50L", zeptoSplit: "₹50L", roasRange: "2.5x – 3.5x", risk: "Medium" },
-  { id: "C", name: "Defensive", desc: "Maintain current efficiency on Blinkit, test challenger SKUs on Zepto with ring-fenced budget.", blinkitSplit: "₹55L", zeptoSplit: "₹45L", roasRange: "2.2x – 2.9x", risk: "Low" },
+  {
+    id: "A", name: "Aggressive", risk: "High", roasRange: "2.8x – 4.2x",
+    desc: "Concentrate spend on Zepto where ROAS is strongest. Maximum growth potential, higher single-platform risk.",
+    blinkitSplit: "₹30L", zeptoSplit: "₹70L",
+    cities: [
+      { name: "Delhi NCR", blinkitBudget: "₹10L", zeptoBudget: "₹25L" },
+      { name: "Mumbai", blinkitBudget: "₹10L", zeptoBudget: "₹25L" },
+      { name: "Bengaluru", blinkitBudget: "₹10L", zeptoBudget: "₹20L" },
+    ],
+    keywords: ["butter cookies", "digestive biscuits", "healthy snacks", "tea time biscuits"],
+    competitorKeywords: ["britannia cookies", "mcvities digestive", "parle cookies"],
+    estImpressions: "18L – 24L weekly",
+  },
+  {
+    id: "B", name: "Balanced", risk: "Medium", roasRange: "2.5x – 3.5x",
+    desc: "Even split across platforms with proportional SKU allocation. Moderate risk, diversified presence.",
+    blinkitSplit: "₹50L", zeptoSplit: "₹50L",
+    cities: [
+      { name: "Delhi NCR", blinkitBudget: "₹18L", zeptoBudget: "₹18L" },
+      { name: "Mumbai", blinkitBudget: "₹16L", zeptoBudget: "₹16L" },
+      { name: "Bengaluru", blinkitBudget: "₹16L", zeptoBudget: "₹16L" },
+    ],
+    keywords: ["butter cookies", "digestive biscuits", "healthy snacks"],
+    competitorKeywords: ["britannia cookies", "mcvities digestive"],
+    estImpressions: "14L – 20L weekly",
+  },
+  {
+    id: "C", name: "Defensive", risk: "Low", roasRange: "2.2x – 2.9x",
+    desc: "Maintain current efficiency on Blinkit, test challenger SKUs on Zepto with ring-fenced budget.",
+    blinkitSplit: "₹55L", zeptoSplit: "₹45L",
+    cities: [
+      { name: "Delhi NCR", blinkitBudget: "₹20L", zeptoBudget: "₹15L" },
+      { name: "Mumbai", blinkitBudget: "₹20L", zeptoBudget: "₹15L" },
+      { name: "Bengaluru", blinkitBudget: "₹15L", zeptoBudget: "₹15L" },
+    ],
+    keywords: ["butter cookies", "digestive biscuits"],
+    competitorKeywords: ["britannia cookies"],
+    estImpressions: "10L – 15L weekly",
+  },
 ];
 
 /* ─── Typing indicator ─── */
