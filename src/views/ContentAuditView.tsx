@@ -499,8 +499,14 @@ const ContentAuditView: React.FC = () => {
           </div>
         )}
 
-        {/* SKU table — removed Comp and Page columns, added Price Parity and Availability */}
+        {/* Content Quality Scores — SKU Performance Table */}
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+          <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-foreground">SKU Content Performance</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Content scores with impression impact and stakeholder alerts</p>
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
