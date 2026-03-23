@@ -574,6 +574,22 @@ const ContentAuditView: React.FC = () => {
                         <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
                       </td>
                       <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{Math.round((Date.now() - new Date(`2026-${s.lastUpdated.replace("Mar ", "03-")}`).getTime()) / (1000 * 60 * 60 * 24))}d ago</td>
+                      <td className="py-2.5 px-2 text-center">
+                        {overall < 70 && (
+                          <button onClick={() => {
+                            const dims = [];
+                            if (s.title < 14) dims.push("Title");
+                            if (s.heroImage < 14) dims.push("Hero Image");
+                            if (s.searchListing < 12) dims.push("Search Listing");
+                            const aiContent = dims.map(d => `${d}: ${d === "Title" ? (titleIssues[s.sku]?.suggested || "Optimize title with category keywords") : d === "Hero Image" ? "Use high-res product-focused image with size callout" : "Add backend keywords and optimize bullet points"}`).join("\n");
+                            const alertMsg = `Content Alert — ${s.sku}\nScore: ${overall}/100\nIssues: ${dims.join(", ")}\n\nAI Recommendations:\n${aiContent}`;
+                            navigator.clipboard.writeText(alertMsg);
+                            handleFlag(s.sku);
+                          }} className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25 flex items-center gap-0.5 mx-auto">
+                            <AlertTriangle size={8} /> Alert
+                          </button>
+                        )}
+                      </td>
                       <td className="py-2.5 px-3 text-right">
                         <button onClick={() => navigateToSkuDetail(s)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${overall < 60 ? "bg-sw-red/20 text-sw-red" : overall < 80 ? "bg-sw-amber/20 text-sw-amber" : "border border-subtle text-muted-foreground"}`}>
                           {overall < 60 ? "Fix now →" : overall < 80 ? "Improve →" : "View →"}
