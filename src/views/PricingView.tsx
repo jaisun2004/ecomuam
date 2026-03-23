@@ -2,9 +2,141 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot, BarChart, Bar } from "recharts";
-import { Megaphone, TrendingDown, TrendingUp, AlertTriangle } from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
+import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+
+const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
+const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
+const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
+
+const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
+
+const priceHistoryBySku: Record<string, Record<string, any[]>> = {
+  "Good Day 200g": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
+    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
+    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 43, comp1: i >= 15 ? 38 : 41, comp2: 45, comp3: 34 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
+  },
+  "Marie Gold 250g": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
+    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
+    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 41, comp3: 30 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
+  },
+  "NutriChoice 100g": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
+    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
+    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 43, comp2: 51, comp3: 40 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
+  },
+  "Bourbon 150g": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
+    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
+    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
+  },
+  "50-50 120g": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
+    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
+    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 23, comp1: 21, comp2: 25, comp3: 18 })),
+  },
+};
+
+const compNamesBySku: Record<string, string[]> = {
+  "Good Day 200g": ["Sunfeast", "Parle", "Unibic"],
+  "Marie Gold 250g": ["Sunfeast", "Parle-G", "ITC"],
+  "NutriChoice 100g": ["McVities", "Unibic", "Sunfeast"],
+  "Bourbon 150g": ["Parle", "Sunfeast", "ITC"],
+  "50-50 120g": ["Parle", "Sunfeast", "ITC"],
+};
+
+const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
+  "All SKUs": {
+    Amazon: [
+      { brand: "Britannia Good Day 200g", you: true, price: "₹40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Sunfeast Butter 200g", you: false, price: "₹35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Parle-G Gold 200g", you: false, price: "₹25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Unibic Butter 200g", you: false, price: "₹45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    ],
+    Flipkart: [
+      { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Sunfeast Butter 200g", you: false, price: "₹36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    ],
+    Blinkit: [
+      { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    ],
+    Zepto: [
+      { brand: "Britannia Good Day 200g", you: true, price: "₹43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    ],
+    Instamart: [
+      { brand: "Britannia Good Day 200g", you: true, price: "₹44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+      { brand: "Sunfeast Butter 200g", you: false, price: "₹39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    ],
+  },
+};
+
+const priceAlerts = [
+  { sku: "Marie Gold 250g", competitor: "Sunfeast", platform: "Amazon", yourPrice: "₹35", compPrice: "₹30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
+  { sku: "NutriChoice 100g", competitor: "McVities", platform: "Amazon", yourPrice: "₹45", compPrice: "₹40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
+  { sku: "Bourbon 150g", competitor: "Parle", platform: "Flipkart", yourPrice: "₹30", compPrice: "₹28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "50-50 120g", competitor: "Parle", platform: "Zepto", yourPrice: "₹20", compPrice: "₹18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
+];
+
+const platformPricing = [
+  { platform: "Amazon", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1, needsAttention: false },
+  { platform: "Flipkart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
+  { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
+  { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
+  { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
+];
+
+const platformPricingDetail: Record<string, { sku: string; yourPrice: string; compPrice: string; parity: boolean; competitor: string }[]> = {
+  Amazon: [
+    { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹35", parity: false, competitor: "Sunfeast" },
+    { sku: "Marie Gold 250g", yourPrice: "₹35", compPrice: "₹30", parity: false, competitor: "Sunfeast" },
+    { sku: "NutriChoice 100g", yourPrice: "₹45", compPrice: "₹45", parity: true, competitor: "McVities" },
+    { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹32", parity: true, competitor: "Parle" },
+  ],
+  Flipkart: [
+    { sku: "Good Day 200g", yourPrice: "₹42", compPrice: "₹36", parity: false, competitor: "Sunfeast" },
+    { sku: "Marie Gold 250g", yourPrice: "₹36", compPrice: "₹31", parity: false, competitor: "Sunfeast" },
+    { sku: "NutriChoice 100g", yourPrice: "₹46", compPrice: "₹41", parity: false, competitor: "McVities" },
+  ],
+  Blinkit: [
+    { sku: "Good Day 200g", yourPrice: "₹42", compPrice: "₹38", parity: false, competitor: "Sunfeast" },
+    { sku: "Bourbon 150g", yourPrice: "₹32", compPrice: "₹30", parity: false, competitor: "Parle" },
+  ],
+  Zepto: [
+    { sku: "Good Day 200g", yourPrice: "₹43", compPrice: "₹38", parity: false, competitor: "Sunfeast" },
+    { sku: "50-50 120g", yourPrice: "₹22", compPrice: "₹20", parity: false, competitor: "Parle" },
+  ],
+  Instamart: [
+    { sku: "Good Day 200g", yourPrice: "₹44", compPrice: "₹39", parity: false, competitor: "Sunfeast" },
+    { sku: "Marie Gold 250g", yourPrice: "₹38", compPrice: "₹34", parity: false, competitor: "Sunfeast" },
+    { sku: "NutriChoice 100g", yourPrice: "₹48", compPrice: "₹44", parity: false, competitor: "McVities" },
+  ],
+};
+
+const priceAdvantageData = [
+  { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹45", competitor: "Unibic", platform: "Amazon", gap: "−12.5%", keywords: ["unibic butter cookies", "unibic biscuits", "premium butter cookies"], estCpc: "₹3.20", estRoas: "5.2x" },
+  { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹34", competitor: "Sunfeast", platform: "Flipkart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹2.80", estRoas: "4.6x" },
+  { sku: "50-50 120g", yourPrice: "₹20", compPrice: "₹24", competitor: "Parle", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹1.90", estRoas: "6.1x" },
+];
 
 const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
@@ -28,93 +160,38 @@ const priceGapTable = [
   { sku: "Good Day 200g", yours: "₹40", lowest: "₹35", gap: "+14.3%", action: "Match Price" },
 ];
 
-const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
-const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
-const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
-
-const priceHistoryBySku: Record<string, any[]> = {
-  "Good Day 200g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32,
-  })),
-  "Marie Gold 250g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28,
-  })),
-  "NutriChoice 100g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38,
-  })),
-  "Bourbon 150g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25,
-  })),
-  "50-50 120g": Array.from({ length: 30 }, (_, i) => ({
-    day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15,
-  })),
+// Price index trend by SKU for analytics filter
+const priceIndexBySku: Record<string, any[]> = {
+  "All SKUs": priceIndexTrend,
+  ...Object.fromEntries(skuOptions.map(sku => [
+    sku,
+    Array.from({ length: 30 }, (_, i) => ({
+      day: `Mar ${i + 1}`,
+      yours: +(0.95 + Math.random() * 0.15).toFixed(2),
+      categoryAvg: 1.0,
+    })),
+  ])),
 };
 
-const competitorMatrixByPlatform: Record<string, any[]> = {
-  Amazon: [
-    { brand: "Britannia Good Day 200g", you: true, price: "₹40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Sunfeast Butter 200g", you: false, price: "₹35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Parle-G Gold 200g", you: false, price: "₹25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Unibic Butter 200g", you: false, price: "₹45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  ],
-  Flipkart: [
-    { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Sunfeast Butter 200g", you: false, price: "₹36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Parle-G Gold 200g", you: false, price: "₹26", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "38,540", pos: "#2", posColor: "text-sw-amber", sos: "24%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  ],
-  Blinkit: [
-    { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  ],
-  Zepto: [
-    { brand: "Britannia Good Day 200g", you: true, price: "₹43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-    { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  ],
-  Instamart: [
-    { brand: "Britannia Good Day 200g", you: true, price: "₹44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
-    { brand: "Sunfeast Butter 200g", you: false, price: "₹39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  ],
-};
-
-const compNamesBySku: Record<string, string[]> = {
-  "Good Day 200g": ["Sunfeast", "Parle", "Unibic"],
-  "Marie Gold 250g": ["Sunfeast", "Parle-G", "ITC"],
-  "NutriChoice 100g": ["McVities", "Unibic", "Sunfeast"],
-  "Bourbon 150g": ["Parle", "Sunfeast", "ITC"],
-  "50-50 120g": ["Parle", "Sunfeast", "ITC"],
-};
-
-const priceAlerts = [
-  { sku: "Marie Gold 250g", competitor: "Sunfeast", platform: "Amazon", yourPrice: "₹35", compPrice: "₹30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
-  { sku: "NutriChoice 100g", competitor: "McVities", platform: "Amazon", yourPrice: "₹45", compPrice: "₹40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
-  { sku: "Bourbon 150g", competitor: "Parle", platform: "Flipkart", yourPrice: "₹30", compPrice: "₹28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
-  { sku: "50-50 120g", competitor: "Parle", platform: "Zepto", yourPrice: "₹20", compPrice: "₹18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
-];
-
-const platformPricing = [
-  { platform: "Amazon", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1 },
-  { platform: "Flipkart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1 },
-  { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0 },
-  { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0 },
-  { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0 },
-];
-
-const priceAdvantageData = [
-  { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹45", competitor: "Unibic", platform: "Amazon", gap: "−12.5%", keywords: ["unibic butter cookies", "unibic biscuits", "premium butter cookies"], estCpc: "₹3.20", estRoas: "5.2x" },
-  { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹34", competitor: "Sunfeast", platform: "Flipkart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹2.80", estRoas: "4.6x" },
-  { sku: "50-50 120g", yourPrice: "₹20", compPrice: "₹24", competitor: "Parle", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹1.90", estRoas: "6.1x" },
-];
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [selectedSku, setSelectedSku] = useState("Good Day 200g");
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+  const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
+  const [priceHistoryToggle, setPriceHistoryToggle] = useState<"sku" | "platform">("sku");
+  const [priceHistoryPlatform, setPriceHistoryPlatform] = useState("All");
+  const [showNeedAttention, setShowNeedAttention] = useState(false);
+  const [viewThroughPlatform, setViewThroughPlatform] = useState<string | null>(null);
+  const [alertTeamStates, setAlertTeamStates] = useState<Record<string, boolean>>({});
+  const [analyticsSkuFilter, setAnalyticsSkuFilter] = useState("All SKUs");
 
-  const priceHistory = priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"];
-  const competitorMatrix = competitorMatrixByPlatform[selectedPlatform] || competitorMatrixByPlatform["Amazon"];
   const compNames = compNamesBySku[selectedSku] || compNamesBySku["Good Day 200g"];
-  
+  const competitorMatrix = (competitorMatrixByGroup["All SKUs"] || {})[selectedPlatform] || [];
+  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"])["All"];
+
+  const filteredPlatformPricing = showNeedAttention ? platformPricing.filter(p => p.needsAttention) : platformPricing;
 
   const g = useGuardrails();
   const [tab, setTab] = useState("overview");
@@ -130,8 +207,19 @@ const PricingView: React.FC = () => {
         <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
-      {/* Competitor Matrix with platform toggle */}
+      {/* Competitor Matrix with SKU Group + Platform filters + Need Attention button */}
       <PanelCard title="Competitor Intelligence Matrix" badge="Real-time" badgeColor="red" delay={0.2}>
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          <div className="flex items-center gap-1">
+            <span className="text-[10px] text-muted-foreground mr-1">SKU Group:</span>
+            {skuGroupOptions.map(sg => (
+              <button key={sg} onClick={() => setSelectedSkuGroup(sg)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  selectedSkuGroup === sg ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                }`}>{sg}</button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center gap-2 mb-4">
           {platformOptions.map(p => (
             <button key={p} onClick={() => setSelectedPlatform(p)}
@@ -142,6 +230,10 @@ const PricingView: React.FC = () => {
               {p}
             </button>
           ))}
+          <button onClick={() => { setShowNeedAttention(true); setSelectedPlatform("Flipkart"); }}
+            className="ml-auto px-3 py-1.5 rounded-lg text-[10px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center gap-1">
+            <AlertTriangle size={10} /> Need Attention
+          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -217,41 +309,105 @@ const PricingView: React.FC = () => {
 
         <PanelCard title="Platform Price Index" badge="vs Competition" badgeColor="accent" delay={0.35}>
           <div className="space-y-3">
-            {platformPricing.map((p) => (
+            {filteredPlatformPricing.map((p) => (
               <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
                 <div className="flex items-center justify-between mb-2">
                   <span className="flex items-center gap-2 text-xs text-foreground">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
                     {p.platform}
                   </span>
-                  <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
-                    {p.avgIndex.toFixed(2)}x
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
+                      {p.avgIndex.toFixed(2)}x
+                    </span>
+                    <button onClick={() => setViewThroughPlatform(viewThroughPlatform === p.platform ? null : p.platform)}
+                      className="px-2 py-0.5 rounded text-[9px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-0.5">
+                      <Eye size={9} /> View
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 text-[10px]">
                   <span className="text-sw-green">{p.skusBelowComp} below comp</span>
                   <span className="text-muted-foreground">{p.parity} at parity</span>
                   <span className="text-sw-red">{p.skusAboveComp} above comp</span>
                 </div>
+                {/* View through detail */}
+                {viewThroughPlatform === p.platform && platformPricingDetail[p.platform] && (
+                  <div className="mt-3 pt-3 border-t border-subtle">
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="text-muted-foreground">
+                          <th className="text-left py-1 font-normal">SKU</th>
+                          <th className="text-right py-1 font-normal">You</th>
+                          <th className="text-right py-1 font-normal">Comp</th>
+                          <th className="text-center py-1 font-normal">Parity</th>
+                          <th className="text-right py-1 font-normal">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {platformPricingDetail[p.platform].map((row, ri) => (
+                          <tr key={ri}>
+                            <td className="py-1 text-foreground">{row.sku}</td>
+                            <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
+                            <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
+                            <td className="py-1 text-center">
+                              {row.parity ? (
+                                <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
+                              ) : (
+                                <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-red/15 text-sw-red">✗</span>
+                              )}
+                            </td>
+                            <td className="py-1 text-right">
+                              {!row.parity && (
+                                <button
+                                  onClick={() => setAlertTeamStates(pr => ({ ...pr, [`${p.platform}-${ri}`]: true }))}
+                                  className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                                    alertTeamStates[`${p.platform}-${ri}`] ? "bg-sw-green-dim text-sw-green" : "bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25"
+                                  }`}>
+                                  <Bell size={8} />
+                                  {alertTeamStates[`${p.platform}-${ri}`] ? "✓ Alerted" : "Alert Team"}
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </PanelCard>
       </div>
 
-      {/* Price History with SKU toggle + Content Gap with SKU toggle */}
+      {/* Price History with SKU + Platform toggle */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Price History — 30 Days" badge={`${selectedSku} · ${selectedPlatform}`} badgeColor="accent" delay={0.4}>
-          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-            {skuOptions.map(s => (
-              <button key={s} onClick={() => setSelectedSku(s)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedSku === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                {s}
-              </button>
-            ))}
+        <PanelCard title="Price History — 30 Days" badge={`${selectedSku} · ${priceHistoryPlatform === "All" ? "All Platforms" : priceHistoryPlatform}`} badgeColor="accent" delay={0.4}>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] text-muted-foreground">Toggle:</span>
+            <button onClick={() => setPriceHistoryToggle("sku")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "sku" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>SKU</button>
+            <button onClick={() => setPriceHistoryToggle("platform")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "platform" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>Platform</button>
           </div>
+          {priceHistoryToggle === "sku" ? (
+            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+              {skuOptions.map(s => (
+                <button key={s} onClick={() => setSelectedSku(s)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    selectedSku === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                  }`}>{s}</button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+              {["All", ...platformOptions].map(p => (
+                <button key={p} onClick={() => setPriceHistoryPlatform(p)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    priceHistoryPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                  }`}>{p}</button>
+              ))}
+            </div>
+          )}
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={priceHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
@@ -264,12 +420,6 @@ const PricingView: React.FC = () => {
               <Line type="monotone" dataKey="comp3" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[2]} />
             </LineChart>
           </ResponsiveContainer>
-          <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground flex-wrap">
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> You</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-red rounded-full" /> {compNames[0]}</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-amber rounded-full" /> {compNames[1]}</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> {compNames[2]}</span>
-          </div>
         </PanelCard>
 
         <PanelCard title="Price Advantage — Keyword Attack" badge="Lower-Priced SKUs" badgeColor="green" delay={0.45}>
@@ -286,9 +436,9 @@ const PricingView: React.FC = () => {
                 </div>
                 <div className="mb-2">
                   <span className="text-[10px] text-muted-foreground">Target keywords: </span>
-                  <span className="text-[10px] text-foreground">{item.keywords.map((kw, ki) => (
+                  {item.keywords.map((kw, ki) => (
                     <span key={ki} className="inline-block font-mono text-[9px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground mr-1 mb-1">{kw}</span>
-                  ))}</span>
+                  ))}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -309,8 +459,17 @@ const PricingView: React.FC = () => {
       </>) : (
         <div className="space-y-5">
           <PanelCard title="Price Index Trend — 30 Days" badge="You vs Category Avg" badgeColor="accent" delay={0}>
+            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+              <span className="text-[10px] text-muted-foreground mr-1">Filter SKU:</span>
+              {["All SKUs", ...skuOptions].map(s => (
+                <button key={s} onClick={() => setAnalyticsSkuFilter(s)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    analyticsSkuFilter === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                  }`}>{s}</button>
+              ))}
+            </div>
             <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={priceIndexTrend}>
+              <LineChart data={priceIndexBySku[analyticsSkuFilter] || priceIndexTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0.8, 1.3]} />
@@ -319,10 +478,6 @@ const PricingView: React.FC = () => {
                 <Line type="monotone" dataKey="categoryAvg" stroke="hsl(225,10%,46%)" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Category Avg" />
               </LineChart>
             </ResponsiveContainer>
-            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-primary" /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Category Avg</span>
-            </div>
           </PanelCard>
 
           <PanelCard title="Price Elasticity by SKU" badge="Demand Sensitivity" badgeColor="amber" delay={0.1}>
