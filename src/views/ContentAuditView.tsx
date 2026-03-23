@@ -561,6 +561,16 @@ const ContentAuditView: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-2.5 px-2 text-center">
+                        {(() => {
+                          const impChange = overall >= 80 ? Math.round(Math.random() * 8 + 2) : overall >= 60 ? Math.round(Math.random() * 6 - 3) : -Math.round(Math.random() * 12 + 3);
+                          return (
+                            <span className={`font-mono text-[10px] font-bold ${impChange > 0 ? "text-sw-green" : impChange < 0 ? "text-sw-red" : "text-muted-foreground"}`}>
+                              {impChange > 0 ? "+" : ""}{impChange}%
+                            </span>
+                          );
+                        })()}
+                      </td>
+                      <td className="py-2.5 px-2 text-center">
                         <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
                       </td>
                       <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{Math.round((Date.now() - new Date(`2026-${s.lastUpdated.replace("Mar ", "03-")}`).getTime()) / (1000 * 60 * 60 * 24))}d ago</td>
