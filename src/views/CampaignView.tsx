@@ -190,9 +190,15 @@ const dayPartingSlots = [
 ];
 
 /* ── Campaign Creator Modal ── */
+const QCOM_PLATFORMS = ["Blinkit", "Zepto", "Instamart"];
+
 const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [method, setMethod] = useState<null | "ai" | "history" | "manual">(null);
   const [launched, setLaunched] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+  const [granularity, setGranularity] = useState<"sku" | "city_sku" | "city">("sku");
+
+  const isQCom = QCOM_PLATFORMS.includes(selectedPlatform);
 
   if (!open) return null;
 
@@ -206,6 +212,12 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
     { name: "Good Day Summer Push 2025", platform: "Amazon", spend: "₹3.2L", roas: "4.9x", duration: "14 days" },
     { name: "Festive Season Blast", platform: "Flipkart", spend: "₹5.1L", roas: "5.6x", duration: "21 days" },
     { name: "Q-Commerce Biscuit Pilot", platform: "Blinkit", spend: "₹1.8L", roas: "3.4x", duration: "7 days" },
+  ];
+
+  const granularityOptions: { key: "sku" | "city_sku" | "city"; label: string; desc: string }[] = [
+    { key: "sku", label: "SKU-wise", desc: "One campaign per SKU across all cities" },
+    { key: "city_sku", label: "City × SKU", desc: "Separate campaign per city-SKU combo" },
+    { key: "city", label: "City-wise", desc: "One campaign per city, all SKUs grouped" },
   ];
 
   return (
@@ -291,7 +303,11 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
               </div>
               <div>
                 <label className="text-[11px] text-muted-foreground block mb-1">Platform</label>
-                <select className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground">
+                <select
+                  value={selectedPlatform}
+                  onChange={e => { setSelectedPlatform(e.target.value); setGranularity("sku"); }}
+                  className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground"
+                >
                   <option>Amazon</option><option>Flipkart</option><option>Blinkit</option><option>Zepto</option><option>Instamart</option><option>Instagram</option>
                 </select>
               </div>
@@ -314,6 +330,38 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
                 <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="4.0x" />
               </div>
             </div>
+
+            {/* Q-Commerce Granularity Toggle */}
+            {isQCom && (
+              <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Zap size={14} className="text-primary" />
+                  <span className="text-xs font-bold text-foreground">Campaign Granularity</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-mono">Q-Commerce only</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Select how campaigns should be structured for {selectedPlatform}</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {granularityOptions.map(g => (
+                    <button
+                      key={g.key}
+                      onClick={() => setGranularity(g.key)}
+                      className={`p-3 rounded-lg border text-left transition-all ${
+                        granularity === g.key
+                          ? "border-primary bg-primary/10"
+                          : "border-subtle bg-surface-2 hover:border-primary/30"
+                      }`}
+                    >
+                      <span className={`text-xs font-bold block ${granularity === g.key ? "text-primary" : "text-foreground"}`}>{g.label}</span>
+                      <span className="text-[10px] text-muted-foreground">{g.desc}</span>
+                    </button>
+                  ))}
+                </div>
+                {granularity === "city_sku" && (
+                  <p className="text-[10px] text-sw-amber">⚠ City × SKU creates the most campaigns. Best for hyper-local targeting on {selectedPlatform}.</p>
+                )}
+              </div>
+            )}
+
             <div>
               <label className="text-[11px] text-muted-foreground block mb-1">Keywords (comma-separated)</label>
               <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="whey protein, protein powder, gym supplement" />
@@ -330,7 +378,10 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
               <span className="text-2xl">✓</span>
             </div>
             <h3 className="font-display font-bold text-foreground text-lg">Campaign Created!</h3>
-            <p className="text-xs text-muted-foreground mt-1">Your campaign is now live and being optimized by AI</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Your campaign is now live and being optimized by AI
+              {isQCom && <span className="block mt-1 text-primary">Granularity: {granularity === "sku" ? "SKU-wise" : granularity === "city_sku" ? "City × SKU" : "City-wise"}</span>}
+            </p>
             <button onClick={onClose} className="mt-4 px-4 py-2 rounded-lg text-sm bg-surface-3 text-foreground hover:bg-surface-2">Close</button>
           </div>
         )}
