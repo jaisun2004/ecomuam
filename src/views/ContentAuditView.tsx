@@ -518,8 +518,10 @@ const ContentAuditView: React.FC = () => {
                   <th className="text-center py-2.5 px-2 font-normal">Search</th>
                   <th className="text-center py-2.5 px-2 font-normal">Price Parity</th>
                   <th className="text-center py-2.5 px-2 font-normal">Availability</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Imp. Change (14d)</th>
                   <th className="text-center py-2.5 px-2 font-normal">Trend</th>
                   <th className="text-right py-2.5 px-2 font-normal">Days Since Update</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Alert</th>
                   <th className="text-right py-2.5 px-3 font-normal">Action</th>
                 </tr>
               </thead>
