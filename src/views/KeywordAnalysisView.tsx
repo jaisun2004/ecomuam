@@ -4,7 +4,7 @@ import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ComposedChart, Area } from "recharts";
-import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target } from "lucide-react";
+import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target, Shield } from "lucide-react";
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
@@ -62,7 +62,6 @@ const rankTrend = Array.from({ length: 30 }, (_, i) => ({
   glucoseBiscuits: Math.round(12 + Math.sin(i / 6) * 4 + Math.random()),
 }));
 
-// Campaign-level keyword performance data
 const campaignKeywordPerf = [
   { keyword: "butter biscuits", campaign: "Butter Biscuits — SP", platform: "Amazon", spend: "₹42K", clicks: 3200, ctr: "2.8%", roas: "5.2x", rank: 2, action: "Reduce spend — organic rank strong" },
   { keyword: "cream biscuits", campaign: "Cream Range — SP", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "1.9%", roas: "3.1x", rank: 8, action: "Increase bid — off page 1 organically" },
@@ -72,7 +71,6 @@ const campaignKeywordPerf = [
   { keyword: "sugar free biscuits", campaign: "NutriChoice SF — SP", platform: "Amazon", spend: "₹18K", clicks: 800, ctr: "0.9%", roas: "1.4x", rank: 18, action: "Pause — content score too low, fix listing first" },
 ];
 
-// Keyword-to-campaign impact data
 const keywordCampaignImpact = [
   { keyword: "butter biscuits", activeCampaigns: 3, totalSpend: "₹1.2L", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
   { keyword: "cream biscuits", activeCampaigns: 2, totalSpend: "₹68K", avgRoas: "3.1x", organicRank: 8, recommendation: "Increase bid on best-performing campaign, pause the other" },
@@ -81,9 +79,18 @@ const keywordCampaignImpact = [
   { keyword: "kids biscuits", activeCampaigns: 1, totalSpend: "₹22K", avgRoas: "4.2x", organicRank: 3, recommendation: "Reduce spend gradually — organic rank strong at #3" },
 ];
 
+// Keywords losing rank/share
+const losingKeywords = [
+  { keyword: "cream biscuits", yourProduct: "Good Day Butter 200g", lastWeekRank: 5, thisWeekRank: 8, sosLoss: "-4%", compProduct: "Sunfeast Cream Biscuit 200g", compRankChange: "3→2", reason: "Sunfeast increased bids by 40%" },
+  { keyword: "glucose biscuits", yourProduct: "Marie Gold 250g", lastWeekRank: 10, thisWeekRank: 14, sosLoss: "-3%", compProduct: "Parle-G Gold 200g", compRankChange: "2→1", reason: "Parle launched new campaign + listing update" },
+  { keyword: "sugar free biscuits", yourProduct: "NutriChoice Digestive 100g", lastWeekRank: 14, thisWeekRank: 18, sosLoss: "-2%", compProduct: "Unibic Sugar Free 150g", compRankChange: "3→2", reason: "Unibic improved content score to 84/100" },
+  { keyword: "biscuit combo pack", yourProduct: "Good Day Choco Chip", lastWeekRank: 8, thisWeekRank: 11, sosLoss: "-3%", compProduct: "Sunfeast Variety Pack", compRankChange: "4→3", reason: "Sunfeast price cut by 15%" },
+];
+
 const KeywordAnalysisView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
   const [tab, setTab] = useState("overview");
+  const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();
 
   const keywords = keywordDataByPlatform[selectedPlatform] || [];
@@ -92,7 +99,6 @@ const KeywordAnalysisView: React.FC = () => {
   const canReduceCount = keywords.filter(k => k.canReduceSpend).length;
   const avgSoS = keywords.length > 0 ? Math.round(keywords.reduce((a, k) => a + k.shareOfSearch, 0) / keywords.length) : 0;
 
-  // Combined search vol + SoS data for cleaner visual
   const combinedData = keywords.map(k => ({
     keyword: k.keyword.length > 12 ? k.keyword.slice(0, 12) + "…" : k.keyword,
     searchVol: k.searchVolNum,
@@ -105,7 +111,6 @@ const KeywordAnalysisView: React.FC = () => {
 
       {tab === "overview" ? (
         <>
-          {/* KPIs */}
           <div className="grid grid-cols-4 gap-4">
             <KPICard title="Tracked Keywords" value={String(keywords.length)} delta="Across selected platform" deltaType="neutral" sub={selectedPlatform} accentColor="bg-sw-cyan" delay={0} />
             <KPICard title="Page 1 (Organic)" value={`${page1Count}/${keywords.length}`} delta={page1Count === keywords.length ? "All on page 1" : `${keywords.length - page1Count} need improvement`} deltaType={page1Count === keywords.length ? "positive" : "negative"} sub="Organic rank ≤ 10" accentColor="bg-sw-green" delay={0.05} />
@@ -113,7 +118,6 @@ const KeywordAnalysisView: React.FC = () => {
             <KPICard title="Spend Reducible" value={String(canReduceCount)} delta="Organic rank < 3" deltaType="positive" sub="Keywords where ad spend can be cut" accentColor="bg-sw-green" delay={0.15} />
           </div>
 
-          {/* Platform filter */}
           <div className="flex items-center gap-2">
             {platformOptions.map(p => (
               <button key={p} onClick={() => setSelectedPlatform(p)}
@@ -126,7 +130,7 @@ const KeywordAnalysisView: React.FC = () => {
             ))}
           </div>
 
-          {/* Keyword ranking table with sponsored + organic columns */}
+          {/* Keyword ranking table */}
           <PanelCard title={`Keyword Rankings — ${selectedPlatform}`} badge={`${keywords.length} keywords`} badgeColor="accent" delay={0.2}>
             <table className="w-full text-xs">
               <thead>
@@ -145,17 +149,11 @@ const KeywordAnalysisView: React.FC = () => {
                   <tr key={k.keyword} className={`${i % 2 === 0 ? "bg-surface-2/50" : ""} ${k.canReduceSpend ? "border-l-2 border-l-sw-green" : k.organicRank > 10 ? "border-l-2 border-l-sw-red" : ""}`}>
                     <td className="py-2.5 font-mono text-[11px] text-foreground">{k.keyword}</td>
                     <td className="py-2.5 text-center">
-                      <span className={`font-mono font-bold ${k.sponsoredRank <= 3 ? "text-sw-green" : k.sponsoredRank <= 5 ? "text-sw-amber" : "text-sw-red"}`}>
-                        #{k.sponsoredRank}
-                      </span>
+                      <span className={`font-mono font-bold ${k.sponsoredRank <= 3 ? "text-sw-green" : k.sponsoredRank <= 5 ? "text-sw-amber" : "text-sw-red"}`}>#{k.sponsoredRank}</span>
                     </td>
                     <td className="py-2.5 text-center">
-                      <span className={`font-mono font-bold ${k.organicRank <= 3 ? "text-sw-green" : k.organicRank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>
-                        #{k.organicRank}
-                      </span>
-                      {k.canReduceSpend && (
-                        <span className="ml-1 font-mono text-[8px] px-1 py-0.5 rounded bg-sw-green-dim text-sw-green">💰 save</span>
-                      )}
+                      <span className={`font-mono font-bold ${k.organicRank <= 3 ? "text-sw-green" : k.organicRank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{k.organicRank}</span>
+                      {k.canReduceSpend && <span className="ml-1 font-mono text-[8px] px-1 py-0.5 rounded bg-sw-green-dim text-sw-green">💰 save</span>}
                     </td>
                     <td className="py-2.5 text-[11px] text-foreground">{k.topCompetitor}</td>
                     <td className="py-2.5 text-center font-mono text-foreground">#{k.compRank}</td>
@@ -166,19 +164,11 @@ const KeywordAnalysisView: React.FC = () => {
                     </td>
                     <td className="py-2.5 text-right">
                       {k.canReduceSpend ? (
-                        <button
-                          onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-reduce", params: { keyword: k.keyword, platform: selectedPlatform } })}
-                          className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-green/15 text-sw-green">
-                          Reduce spend →
-                        </button>
-                      ) : k.action === "Maintain" || k.action === "Reduce spend" ? (
-                        <span className="text-[10px] font-mono text-sw-green">{k.action}</span>
+                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-reduce", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                          className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-green/15 text-sw-green">Reduce spend →</button>
                       ) : (
-                        <button
-                          onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-boost", params: { keyword: k.keyword, platform: selectedPlatform } })}
-                          className={`text-[10px] font-medium px-2 py-1 rounded-lg ${
-                            k.action === "New campaign needed" ? "bg-sw-red/15 text-sw-red" : "bg-sw-amber/15 text-sw-amber"
-                          }`}>
+                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-boost", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                          className={`text-[10px] font-medium px-2 py-1 rounded-lg ${k.action === "New campaign needed" ? "bg-sw-red/15 text-sw-red" : "bg-sw-amber/15 text-sw-amber"}`}>
                           {k.action} →
                         </button>
                       )}
@@ -195,26 +185,41 @@ const KeywordAnalysisView: React.FC = () => {
             </div>
           </PanelCard>
 
-          {/* Search Volume + SoS combined visual */}
-          <PanelCard title="Search Volume & Share of Search" badge={selectedPlatform} badgeColor="accent" delay={0.25}>
-            <ResponsiveContainer width="100%" height={240}>
-              <ComposedChart data={combinedData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal vertical={false} />
-                <XAxis dataKey="keyword" tick={{ fontSize: 9, fill: "#888" }} axisLine={false} tickLine={false} angle={-15} textAnchor="end" height={45} />
-                <YAxis yAxisId="left" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "Search Vol (K)", angle: -90, position: "insideLeft", fontSize: 9, fill: "#555A6E" }} />
-                <YAxis yAxisId="right" orientation="right" domain={[0, 50]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "SoS %", angle: 90, position: "insideRight", fontSize: 9, fill: "#555A6E" }} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
-                <Bar yAxisId="left" dataKey="searchVol" fill="hsl(228,90%,64%)" opacity={0.4} radius={[4, 4, 0, 0]} name="Search Volume (K)" barSize={28} />
-                <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={2.5} dot={{ r: 4, fill: "#2ECF8E" }} name="Share of Search %" />
-              </ComposedChart>
-            </ResponsiveContainer>
-            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-primary/50" /> Search Volume</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> Share of Search %</span>
+          {/* Keywords Losing Rank & Share — replaces search vol visual */}
+          <PanelCard title="⚠ Keywords Losing Rank & Share" badge={`${losingKeywords.length} keywords`} badgeColor="red" delay={0.25}>
+            <p className="text-[10px] text-muted-foreground mb-3">Keywords where you're losing position and share. Competition products causing the drop are identified.</p>
+            <div className="space-y-2.5">
+              {losingKeywords.map((lk, i) => (
+                <div key={lk.keyword} className="p-3 rounded-xl bg-sw-red/5 border border-sw-red/20">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-mono text-[11px] text-foreground font-medium">"{lk.keyword}"</span>
+                    <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-full bg-sw-red-dim text-sw-red">{lk.sosLoss} SoS</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-[10px] mb-2">
+                    <div>
+                      <p className="text-muted-foreground">Your product: <span className="text-foreground">{lk.yourProduct}</span></p>
+                      <p className="text-muted-foreground">Rank: <span className="font-mono text-sw-red">#{lk.lastWeekRank} → #{lk.thisWeekRank}</span></p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Causing loss: <span className="text-foreground font-medium">{lk.compProduct}</span></p>
+                      <p className="text-muted-foreground">Comp rank: <span className="font-mono text-sw-green">{lk.compRankChange}</span></p>
+                    </div>
+                  </div>
+                  <p className="text-[9px] text-muted-foreground mb-2">Reason: {lk.reason}</p>
+                  <button
+                    onClick={() => setDefendStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      defendStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Shield size={10} />
+                    {defendStates[i] ? "✓ Defense Campaign Launched" : "Defend This Keyword"}
+                  </button>
+                </div>
+              ))}
             </div>
           </PanelCard>
 
-          {/* Poor keywords intervention panel */}
+          {/* Poor keywords */}
           {poorKeywords.length > 0 && (
             <PanelCard title="⚠ Keywords Not on Page 1 — Action Required" badge={`${poorKeywords.length} keywords`} badgeColor="red" delay={0.3}>
               <div className="space-y-2">
@@ -239,29 +244,52 @@ const KeywordAnalysisView: React.FC = () => {
         </>
       ) : (
         <div className="space-y-5">
-          {/* Rank trend over time */}
-          <PanelCard title="Keyword Rank Trend — 30 Days" badge={selectedPlatform} badgeColor="accent" delay={0}>
+          {/* Search Volume & SoS — moved to analytics */}
+          <PanelCard title="Search Volume & Share of Search" badge={selectedPlatform} badgeColor="accent" delay={0}>
+            <div className="flex items-center gap-2 mb-3">
+              {platformOptions.map(p => (
+                <button key={p} onClick={() => setSelectedPlatform(p)}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                    selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
+                  }`}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColors[p] }} />{p}
+                </button>
+              ))}
+              <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-sos-action", params: { platform: selectedPlatform } })}
+                className="ml-auto px-3 py-1 rounded-lg text-[10px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-1">
+                <Target size={10} /> Action on Weak SoS
+              </button>
+            </div>
+            <ResponsiveContainer width="100%" height={240}>
+              <ComposedChart data={combinedData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal vertical={false} />
+                <XAxis dataKey="keyword" tick={{ fontSize: 9, fill: "#888" }} axisLine={false} tickLine={false} angle={-15} textAnchor="end" height={45} />
+                <YAxis yAxisId="left" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "Search Vol (K)", angle: -90, position: "insideLeft", fontSize: 9, fill: "#555A6E" }} />
+                <YAxis yAxisId="right" orientation="right" domain={[0, 50]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "SoS %", angle: 90, position: "insideRight", fontSize: 9, fill: "#555A6E" }} />
+                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <Bar yAxisId="left" dataKey="searchVol" fill="hsl(228,90%,64%)" opacity={0.4} radius={[4, 4, 0, 0]} name="Search Volume (K)" barSize={28} />
+                <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={2.5} dot={{ r: 4, fill: "#2ECF8E" }} name="Share of Search %" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </PanelCard>
+
+          {/* Rank trend */}
+          <PanelCard title="Keyword Rank Trend — 30 Days" badge={selectedPlatform} badgeColor="accent" delay={0.1}>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={rankTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis reversed tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "Rank (lower = better)", angle: -90, position: "insideLeft", fontSize: 9, fill: "#555A6E" }} />
+                <YAxis reversed tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={2} dot={false} name="butter biscuits" />
                 <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={2} dot={false} name="cream biscuits" />
                 <Line type="monotone" dataKey="glucoseBiscuits" stroke="#FF5C5C" strokeWidth={2} dot={false} name="glucose biscuits" />
               </LineChart>
             </ResponsiveContainer>
-            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-green" /> butter biscuits</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-amber" /> cream biscuits</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-red" /> glucose biscuits</span>
-            </div>
           </PanelCard>
 
           {/* Campaign-level keyword performance */}
-          <PanelCard title="Keyword → Campaign Performance" badge="Actionable" badgeColor="green" delay={0.1}>
-            <p className="text-[10px] text-muted-foreground mb-3">Each keyword's active campaign performance — with direct actions</p>
+          <PanelCard title="Keyword → Campaign Performance" badge="Actionable" badgeColor="green" delay={0.15}>
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-muted-foreground border-b border-subtle">
@@ -292,9 +320,8 @@ const KeywordAnalysisView: React.FC = () => {
             </table>
           </PanelCard>
 
-          {/* Keyword-to-campaign impact summary */}
+          {/* Keyword spend efficiency */}
           <PanelCard title="Keyword Spend Efficiency — Campaign Actions" badge="Optimise" badgeColor="purple" delay={0.2}>
-            <p className="text-[10px] text-muted-foreground mb-3">Keywords with organic rank &lt; 3 can have sponsored spend reduced. Poor organic rank needs content or listing improvements before increasing ad spend.</p>
             <div className="space-y-2.5">
               {keywordCampaignImpact.map((k, i) => (
                 <div key={i} className={`p-3 rounded-xl border ${k.organicRank <= 3 ? "bg-sw-green-dim/20 border-sw-green/20" : k.organicRank <= 10 ? "bg-surface-2 border-subtle" : "bg-sw-red/5 border-sw-red/20"}`}>

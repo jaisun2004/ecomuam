@@ -11,13 +11,12 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
   score: Math.round(55 + Math.random() * 30),
 }));
 
-const skuHeatmapData = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"].map(sku => ({
-  sku,
-  days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
-}));
-const oosTimeline = [
-  { day: "Mar 1", oos: 4 }, { day: "Mar 5", oos: 6 }, { day: "Mar 10", oos: 3 },
-  { day: "Mar 15", oos: 8 }, { day: "Mar 20", oos: 5 }, { day: "Mar 25", oos: 11 }, { day: "Mar 30", oos: 14 },
+const oosProductsToday = [
+  { sku: "50-50 Maska Chaska 120g", platform: "Flipkart", since: "6h ago" },
+  { sku: "Marie Gold 250g", platform: "Instamart", since: "3h ago" },
+  { sku: "Marie Gold 250g", platform: "Blinkit", since: "1h ago" },
+  { sku: "Milk Bikis 100g", platform: "Zepto", since: "4h ago" },
+  { sku: "NutriChoice Digestive", platform: "Flipkart", since: "2h ago" },
 ];
 
 const platformAvailability = [
@@ -40,15 +39,6 @@ const platformAvailability = [
   ]},
 ];
 
-/* OOS products today */
-const oosProductsToday = [
-  { sku: "50-50 Maska Chaska 120g", platform: "Flipkart", since: "6h ago" },
-  { sku: "Marie Gold 250g", platform: "Instamart", since: "3h ago" },
-  { sku: "Marie Gold 250g", platform: "Blinkit", since: "1h ago" },
-  { sku: "Milk Bikis 100g", platform: "Zepto", since: "4h ago" },
-  { sku: "NutriChoice Digestive", platform: "Flipkart", since: "2h ago" },
-];
-
 const stockForecast = [
   { sku: "50-50 Maska Chaska 120g", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
   { sku: "Milk Bikis 100g", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
@@ -57,7 +47,6 @@ const stockForecast = [
   { sku: "Good Day Choco Chip", platform: "Amazon", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
 ];
 
-/* Darkstore listing gaps by city */
 const darkstoreGaps = [
   {
     city: "Delhi NCR", totalDarkstores: 142,
@@ -92,28 +81,26 @@ const darkstoreGaps = [
   },
 ];
 
-const adWasteAlerts = darkstoreGaps.flatMap(city =>
-  city.products
-    .filter(p => p.wastingBudget)
-    .map(p => ({
-      city: city.city,
-      sku: p.sku,
-      coverage: p.coverage,
-      unlisted: p.unlisted,
-      totalDarkstores: city.totalDarkstores,
-      wastedSpend: `₹${Math.round(p.unlisted * 0.12)}K/day`,
-    }))
-).slice(0, 6);
+/* Competition availability data */
+const competitionAvailability = [
+  { competitor: "Sunfeast", platform: "Amazon", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Sunfeast Butter 200g", trend: "stable" },
+  { competitor: "Sunfeast", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Sunfeast Cream 150g", trend: "improving" },
+  { competitor: "Parle", platform: "Flipkart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Parle-G Gold 200g", trend: "stable" },
+  { competitor: "Parle", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Parle Krackjack 120g", trend: "declining" },
+  { competitor: "ITC", platform: "Instamart", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Sunfeast Dark Fantasy", trend: "improving" },
+  { competitor: "Unibic", platform: "Amazon", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Unibic Butter 200g", trend: "stable" },
+];
 
 const AvailabilityView: React.FC = () => {
-  const [selectedPlatform, setSelectedPlatform] = useState(0);
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [selectedCity, setSelectedCity] = useState(0);
-  const [adPauseStates, setAdPauseStates] = useState<Record<number, boolean>>({});
+  const [compCampaignStates, setCompCampaignStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();
   const dedupActive = g.hasActiveAvailabilityStop();
 
   const [tab, setTab] = useState("overview");
+
+  const allSkus = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
 
   return (
     <div className="space-y-6 pb-20">
@@ -130,7 +117,7 @@ const AvailabilityView: React.FC = () => {
           <div>
             <p className="text-[13px] font-medium text-foreground">Campaign action already in progress</p>
             <p className="text-[12px] mt-0.5" style={{ color: "#8B8FA8" }}>
-              A Tier 1 hard stop has been triggered in Campaign Manager for this availability signal. 2 campaigns are currently paused or flagged.
+              A Tier 1 hard stop has been triggered in Campaign Manager for this availability signal.
             </p>
             <button onClick={() => g.navigateTo("campaigns", "campaign-conflict-banner")} className="text-[12px] font-medium mt-1.5 inline-block" style={{ color: "#4F7FFF" }}>
               View active Tier stops in Campaign Manager →
@@ -145,72 +132,49 @@ const AvailabilityView: React.FC = () => {
         <KPICard title="Ad Budget Wasted" value="₹2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
-      {/* OOS Products Today + Platform Breakdown */}
-      <div className="grid grid-cols-3 gap-4">
-        <PanelCard title="OOS Products Today" badge={`${oosProductsToday.length} products`} badgeColor="red" className="col-span-2" delay={0.2}>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-muted-foreground">
-                <th className="text-left py-2 font-normal">Product</th>
-                <th className="text-left py-2 font-normal">Platform</th>
-                <th className="text-right py-2 font-normal">Since</th>
-                <th className="text-right py-2 font-normal">Action</th>
+      {/* OOS Products Today */}
+      <PanelCard title="OOS Products Today" badge={`${oosProductsToday.length} products`} badgeColor="red" delay={0.2}>
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-muted-foreground">
+              <th className="text-left py-2 font-normal">Product</th>
+              <th className="text-left py-2 font-normal">Platform</th>
+              <th className="text-right py-2 font-normal">Since</th>
+              <th className="text-right py-2 font-normal">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {oosProductsToday.map((item, i) => (
+              <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                <td className="py-2.5 text-foreground flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-sw-red flex-shrink-0" />
+                  {item.sku}
+                </td>
+                <td className="py-2.5 text-muted-foreground">{item.platform}</td>
+                <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
+                <td className="py-2.5 text-right">
+                  <button
+                    onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku } })}
+                    className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
+                    Pause Campaigns →
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {oosProductsToday.map((item, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-sw-red flex-shrink-0" />
-                    {item.sku}
-                  </td>
-                  <td className="py-2.5 text-muted-foreground">{item.platform}</td>
-                  <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
-                  <td className="py-2.5 text-right">
-                    <button
-                      onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku } })}
-                      className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
-                      Pause Campaigns →
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="mt-3 pt-3 border-t border-subtle">
-            <button
-              onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: oosProductsToday.map(o => o.sku).join(",") } })}
-              className="w-full px-3 py-2 rounded-lg text-[11px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center justify-center gap-2">
-              <AlertTriangle size={12} />
-              Bulk Pause All OOS Campaigns ({oosProductsToday.length} products)
-            </button>
-          </div>
-        </PanelCard>
-
-        <PanelCard title="Platform Availability" badge="All Platforms" badgeColor="accent" delay={0.25}>
-          <div className="space-y-3">
-            {platformAvailability.map((p, i) => (
-              <button key={p.name} onClick={() => setSelectedPlatform(i)}
-                className={`w-full flex items-center gap-2 p-2 rounded-xl transition-all ${selectedPlatform === i ? "bg-primary/10 border border-primary/20" : "hover:bg-surface-2"}`}>
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
-                <span className="text-xs text-foreground flex-1 text-left">{p.name}</span>
-                <div className="w-24 h-2 bg-surface-3 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{
-                    width: `${p.overall}%`,
-                    backgroundColor: p.overall >= 70 ? "hsl(160,70%,48%)" : p.overall >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)"
-                  }} />
-                </div>
-                <span className={`font-mono text-[11px] w-10 text-right ${
-                  p.overall >= 70 ? "text-sw-green" : p.overall >= 50 ? "text-sw-amber" : "text-sw-red"
-                }`}>{p.overall}%</span>
-              </button>
             ))}
-          </div>
-        </PanelCard>
-      </div>
+          </tbody>
+        </table>
+        <div className="mt-3 pt-3 border-t border-subtle">
+          <button
+            onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: oosProductsToday.map(o => o.sku).join(",") } })}
+            className="w-full px-3 py-2 rounded-lg text-[11px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center justify-center gap-2">
+            <AlertTriangle size={12} />
+            Bulk Pause All OOS Campaigns ({oosProductsToday.length} products)
+          </button>
+        </div>
+      </PanelCard>
 
-      {/* SKU Availability — Platform Level View */}
-      <PanelCard title="SKU Availability — Platform View" badge="All SKUs across platforms" badgeColor="accent" delay={0.28}>
+      {/* Merged Own SKU Availability — All Platforms */}
+      <PanelCard title="Own SKU Availability — Platform Matrix" badge="Own Brand Only" badgeColor="accent" delay={0.25}>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -224,17 +188,22 @@ const AvailabilityView: React.FC = () => {
                     </span>
                   </th>
                 ))}
+                <th className="text-center py-2 font-normal">Avg</th>
               </tr>
             </thead>
             <tbody>
-              {["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"].map((sku, i) => (
-                <tr key={sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2.5 text-foreground">{sku}</td>
-                  {platformAvailability.map(p => {
-                    const skuData = p.skus.find(s => s.sku === sku);
-                    const avail = skuData?.avail ?? null;
-                    return (
-                      <td key={p.name} className="py-2.5 text-center">
+              {allSkus.map((sku, i) => {
+                const vals = platformAvailability.map(p => {
+                  const d = p.skus.find(s => s.sku === sku);
+                  return d?.avail ?? null;
+                });
+                const validVals = vals.filter(v => v !== null) as number[];
+                const avg = validVals.length > 0 ? Math.round(validVals.reduce((a, b) => a + b, 0) / validVals.length) : 0;
+                return (
+                  <tr key={sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                    <td className="py-2.5 text-foreground">{sku}</td>
+                    {vals.map((avail, j) => (
+                      <td key={j} className="py-2.5 text-center">
                         {avail !== null ? (
                           <span className={`font-mono text-[10px] ${avail >= 80 ? "text-sw-green" : avail >= 50 ? "text-sw-amber" : "text-sw-red"}`}>
                             {avail}%
@@ -243,10 +212,15 @@ const AvailabilityView: React.FC = () => {
                           <span className="text-[9px] text-muted-foreground">—</span>
                         )}
                       </td>
-                    );
-                  })}
-                </tr>
-              ))}
+                    ))}
+                    <td className="py-2.5 text-center">
+                      <span className={`font-mono text-[10px] font-bold ${avg >= 80 ? "text-sw-green" : avg >= 50 ? "text-sw-amber" : "text-sw-red"}`}>
+                        {avg}%
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -316,59 +290,6 @@ const AvailabilityView: React.FC = () => {
             </tbody>
           </table>
         </div>
-        <div className="mt-3 p-3 rounded-xl bg-sw-red-dim border border-sw-red/20">
-          <p className="text-[11px] text-foreground">⚠ {darkstoreGaps[selectedCity].products.filter(p => p.wastingBudget).length} products have campaigns running in areas where they're not listed on darkstores. Estimated budget waste: ₹{Math.round(darkstoreGaps[selectedCity].products.filter(p => p.wastingBudget).reduce((s, p) => s + p.unlisted * 0.12, 0))}K/day</p>
-        </div>
-      </PanelCard>
-
-      {/* Ad Waste Alerts */}
-      <PanelCard title="Ad Budget Waste — Campaigns in Unlisted Areas" badge={`${adWasteAlerts.length} alerts`} badgeColor="red" delay={0.32}>
-        <p className="text-[10px] text-muted-foreground mb-3">Campaigns running in cities/pincodes where products are not listed on enough darkstores. Pause or geo-restrict these campaigns.</p>
-        <div className="grid grid-cols-2 gap-3">
-          {adWasteAlerts.map((a, i) => (
-            <div key={i} className="p-3 rounded-xl bg-sw-red-dim/30 border border-sw-red/20">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-foreground font-medium">{a.sku} — {a.city}</span>
-                <span className="font-mono text-[9px] text-sw-red">{a.wastedSpend} wasted</span>
-              </div>
-              <p className="text-[10px] text-muted-foreground">Only {a.coverage}% coverage ({a.unlisted}/{a.totalDarkstores} stores unlisted)</p>
-              <div className="flex items-center gap-2 mt-2">
-                {dedupActive ? (
-                  <span className="font-mono text-[9px] px-2 py-0.5 rounded" style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
-                    Campaign action in progress — Campaign Manager
-                  </span>
-                ) : (
-                  <button onClick={() => setAdPauseStates(p => ({ ...p, [i]: true }))}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      adPauseStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
-                    }`}>
-                    {adPauseStates[i] ? "✓ Campaign Geo-Restricted" : "Pause Ads in Unlisted Areas"}
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </PanelCard>
-
-      {/* SKU Breakdown */}
-      <PanelCard title={`SKU Availability — ${platformAvailability[selectedPlatform].name}`} badge="SKU Level" badgeColor="accent" delay={0.35}>
-        <div className="space-y-2">
-          {platformAvailability[selectedPlatform].skus.map((s) => (
-            <div key={s.sku} className="flex items-center gap-3 p-2 bg-surface-2 rounded-xl border border-subtle">
-              <span className="text-xs text-foreground flex-1">{s.sku}</span>
-              <div className="w-32 h-2.5 bg-surface-3 rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{
-                  width: `${s.avail}%`,
-                  backgroundColor: s.avail >= 80 ? "hsl(160,70%,48%)" : s.avail >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)"
-                }} />
-              </div>
-              <span className={`font-mono text-[11px] w-10 text-right ${
-                s.avail >= 80 ? "text-sw-green" : s.avail >= 50 ? "text-sw-amber" : "text-sw-red"
-              }`}>{s.avail}%</span>
-            </div>
-          ))}
-        </div>
       </PanelCard>
 
       {/* Stock Forecast */}
@@ -400,14 +321,13 @@ const AvailabilityView: React.FC = () => {
         </div>
       </PanelCard>
       </>) : (
-        /* Analytics tab */
-        <AvailabilityAnalytics g={g} />
+        <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
       )}
     </div>
   );
 };
 
-const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> = ({ g }) => {
+const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
   const skuNames = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
@@ -424,6 +344,15 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
 
   const affectedCampaigns = ["Good Day — Sponsored", "Q-Commerce Biscuit Push"];
   const tier2Locks = ["Manual pause — NutriChoice Retargeting"];
+
+  const competitionAvailData = [
+    { competitor: "Sunfeast", platform: "Amazon", compAvail: 96, yourAvail: 86, product: "Sunfeast Butter 200g", keywords: ["sunfeast butter cookies", "sunfeast biscuits"], trend: "stable" },
+    { competitor: "Sunfeast", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Sunfeast Cream 150g", keywords: ["sunfeast cream biscuits", "cream cookies"], trend: "improving" },
+    { competitor: "Parle", platform: "Flipkart", compAvail: 92, yourAvail: 68, product: "Parle-G Gold 200g", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
+    { competitor: "Parle", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Parle Krackjack 120g", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
+    { competitor: "ITC", platform: "Instamart", compAvail: 72, yourAvail: 21, product: "Sunfeast Dark Fantasy", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
+    { competitor: "Unibic", platform: "Amazon", compAvail: 84, yourAvail: 86, product: "Unibic Butter 200g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
+  ];
 
   return (
     <div className="space-y-5">
@@ -487,18 +416,8 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
                     <p key={l} className="text-xs text-sw-amber">• {l}</p>
                   ))}
                 </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground mb-1">Recommended Action</p>
-                  <p className="text-xs text-foreground">Pause campaigns in low-stock areas or reduce bids to conserve budget.</p>
-                </div>
                 <button
-                  onClick={() => {
-                    g.navigateWithContext("campaigns", "campaign-digest", {
-                      type: "availability",
-                      params: { sku: selectedCell.sku }
-                    });
-                    setSelectedCell(null);
-                  }}
+                  onClick={() => { g.navigateWithContext("campaigns", "campaign-digest", { type: "availability", params: { sku: selectedCell.sku } }); setSelectedCell(null); }}
                   className="w-full px-3 py-2 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#4F7FFF" }}>
                   View in Campaign Manager →
                 </button>
@@ -521,20 +440,78 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails> }> =
         </ResponsiveContainer>
       </PanelCard>
 
-      <div className="rounded-xl border border-subtle bg-surface-1 p-5">
-        <h3 className="text-sm font-medium text-foreground mb-1">Stockout Summary</h3>
-        <p className="text-[11px] text-muted-foreground mb-3">Out-of-stock impact in the last 30 days</p>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-            <p className="font-mono text-2xl font-bold text-sw-amber">33</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Total OOS Days</p>
-          </div>
-          <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center">
-            <p className="font-mono text-2xl font-bold text-sw-red">{oosProductsToday.length}</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Products OOS Today</p>
-          </div>
+      {/* Competition Availability */}
+      <PanelCard title="Competition Availability vs Yours" badge="Opportunity" badgeColor="green" delay={0.15}>
+        <p className="text-[10px] text-muted-foreground mb-3">Competitors with higher availability — trigger campaigns to target their products when you're available and they're not.</p>
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-muted-foreground border-b border-subtle">
+              <th className="text-left py-2 font-normal">Competitor</th>
+              <th className="text-left py-2 font-normal">Platform</th>
+              <th className="text-center py-2 font-normal">Their Avail.</th>
+              <th className="text-center py-2 font-normal">Your Avail.</th>
+              <th className="text-center py-2 font-normal">Gap</th>
+              <th className="text-left py-2 font-normal">Top Product</th>
+              <th className="text-right py-2 font-normal">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {competitionAvailData.map((c, i) => (
+              <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                <td className="py-2.5 text-foreground font-medium">{c.competitor}</td>
+                <td className="py-2.5 text-muted-foreground">{c.platform}</td>
+                <td className="py-2.5 text-center font-mono text-sw-green">{c.compAvail}%</td>
+                <td className="py-2.5 text-center font-mono" style={{ color: c.yourAvail >= 70 ? "#2ECF8E" : c.yourAvail >= 50 ? "#F5A623" : "#FF5C5C" }}>{c.yourAvail}%</td>
+                <td className="py-2.5 text-center font-mono text-sw-red">{c.compAvail > c.yourAvail ? `+${c.compAvail - c.yourAvail}%` : `${c.compAvail - c.yourAvail}%`}</td>
+                <td className="py-2.5 text-foreground text-[10px]">{c.product}</td>
+                <td className="py-2.5 text-right">
+                  <button
+                    onClick={() => setCompCampaignStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      compCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Megaphone size={10} />
+                    {compCampaignStates[i] ? "✓ Campaign Triggered" : "Target Competition"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </PanelCard>
+
+      {/* Competition OOS — Your Opportunity */}
+      <PanelCard title="Competition OOS — Your Opportunity" badge="Strike now" badgeColor="red" delay={0.2}>
+        <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
+        <div className="space-y-2">
+          {[
+            { competitor: "Sunfeast", product: "Sunfeast Cream 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
+            { competitor: "Parle", product: "Parle-G Gold 200g", platform: "Instamart", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
+            { competitor: "ITC", product: "Sunfeast Dark Fantasy", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+          ].map((item, i) => (
+            <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-foreground font-medium">{item.competitor} — {item.product}</span>
+                <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-red-dim text-sw-red">OOS {item.since}</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">{item.platform} · Est. demand: {item.estDemand}</p>
+              <div className="flex items-center gap-1 mt-1 mb-2">
+                {item.keywords.map(kw => (
+                  <span key={kw} className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground">{kw}</span>
+                ))}
+              </div>
+              <button
+                onClick={() => setCompCampaignStates(p => ({ ...p, [`oos-${i}`]: true }))}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  compCampaignStates[`oos-${i}`] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                }`}>
+                <Megaphone size={10} />
+                {compCampaignStates[`oos-${i}`] ? "✓ Campaign Launched" : "Launch Conquest Campaign"}
+              </button>
+            </div>
+          ))}
         </div>
-      </div>
+      </PanelCard>
     </div>
   );
 };

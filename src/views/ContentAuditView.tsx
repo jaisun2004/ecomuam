@@ -499,8 +499,14 @@ const ContentAuditView: React.FC = () => {
           </div>
         )}
 
-        {/* SKU table — removed Comp and Page columns, added Price Parity and Availability */}
+        {/* Content Quality Scores — SKU Performance Table */}
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+          <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-foreground">SKU Content Performance</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Content scores with impression impact and stakeholder alerts</p>
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -512,8 +518,10 @@ const ContentAuditView: React.FC = () => {
                   <th className="text-center py-2.5 px-2 font-normal">Search</th>
                   <th className="text-center py-2.5 px-2 font-normal">Price Parity</th>
                   <th className="text-center py-2.5 px-2 font-normal">Availability</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Imp. Change (14d)</th>
                   <th className="text-center py-2.5 px-2 font-normal">Trend</th>
                   <th className="text-right py-2.5 px-2 font-normal">Days Since Update</th>
+                  <th className="text-center py-2.5 px-2 font-normal">Alert</th>
                   <th className="text-right py-2.5 px-3 font-normal">Action</th>
                 </tr>
               </thead>
@@ -553,9 +561,35 @@ const ContentAuditView: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-2.5 px-2 text-center">
+                        {(() => {
+                          const impChange = overall >= 80 ? Math.round(Math.random() * 8 + 2) : overall >= 60 ? Math.round(Math.random() * 6 - 3) : -Math.round(Math.random() * 12 + 3);
+                          return (
+                            <span className={`font-mono text-[10px] font-bold ${impChange > 0 ? "text-sw-green" : impChange < 0 ? "text-sw-red" : "text-muted-foreground"}`}>
+                              {impChange > 0 ? "+" : ""}{impChange}%
+                            </span>
+                          );
+                        })()}
+                      </td>
+                      <td className="py-2.5 px-2 text-center">
                         <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
                       </td>
                       <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{Math.round((Date.now() - new Date(`2026-${s.lastUpdated.replace("Mar ", "03-")}`).getTime()) / (1000 * 60 * 60 * 24))}d ago</td>
+                      <td className="py-2.5 px-2 text-center">
+                        {overall < 70 && (
+                          <button onClick={() => {
+                            const dims = [];
+                            if (s.title < 14) dims.push("Title");
+                            if (s.heroImage < 14) dims.push("Hero Image");
+                            if (s.searchListing < 12) dims.push("Search Listing");
+                            const aiContent = dims.map(d => `${d}: ${d === "Title" ? (titleIssues[s.sku]?.suggested || "Optimize title with category keywords") : d === "Hero Image" ? "Use high-res product-focused image with size callout" : "Add backend keywords and optimize bullet points"}`).join("\n");
+                            const alertMsg = `Content Alert — ${s.sku}\nScore: ${overall}/100\nIssues: ${dims.join(", ")}\n\nAI Recommendations:\n${aiContent}`;
+                            navigator.clipboard.writeText(alertMsg);
+                            handleFlag(s.sku);
+                          }} className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25 flex items-center gap-0.5 mx-auto">
+                            <AlertTriangle size={8} /> Alert
+                          </button>
+                        )}
+                      </td>
                       <td className="py-2.5 px-3 text-right">
                         <button onClick={() => navigateToSkuDetail(s)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${overall < 60 ? "bg-sw-red/20 text-sw-red" : overall < 80 ? "bg-sw-amber/20 text-sw-amber" : "border border-subtle text-muted-foreground"}`}>
                           {overall < 60 ? "Fix now →" : overall < 80 ? "Improve →" : "View →"}
