@@ -76,12 +76,12 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
           onClick={() => onChange(item.id)}
           className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 flex-shrink-0 text-left ${
             isActive
-              ? "bg-primary/15 text-primary"
-              : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+              ? "bg-white/20 text-white"
+              : "text-white/60 hover:bg-white/10 hover:text-white"
           }`}
         >
           <Icon size={16} className="flex-shrink-0" />
-          <span className={`text-[12px] font-medium truncate ${isCockpit && !isActive ? "text-foreground/80" : ""}`}>{item.label}</span>
+          <span className={`text-[12px] font-medium truncate ${isCockpit && !isActive ? "text-white/80" : ""}`}>{item.label}</span>
           {item.notify && (
             <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
           )}
