@@ -59,7 +59,7 @@ const Sparkline: React.FC<{ data: number[]; width?: number; height?: number }> =
   const max = Math.max(...data);
   const range = max - min || 1;
   const trend = data[data.length - 1] - data[0];
-  const color = trend > 0 ? "#2ECF8E" : trend < 0 ? "#FF5C5C" : "#555A6E";
+  const color = trend > 0 ? "#2ECF8E" : trend < 0 ? "#FF5C5C" : "hsl(220,10%,46%)";
   const points = data.map((v, i) => `${(i / (data.length - 1)) * width},${height - ((v - min) / range) * height}`).join(" ");
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
@@ -78,20 +78,20 @@ const FilterDropdown: React.FC<{
   const selected = options.find(o => o.value === value);
   return (
     <div className="relative" style={{ minWidth: 160 }}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[12px] text-left" style={{ backgroundColor: "#1C1F27", border: "1px solid rgba(255,255,255,0.1)", color: "hsl(220,20%,15%)" }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[12px] text-left" style={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", color: "hsl(220,20%,15%)" }}>
         <span className="truncate">{selected?.label || label}</span>
         <ChevronDown size={12} style={{ color: "hsl(220,10%,46%)" }} />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 mt-1 w-full z-50 overflow-y-auto" style={{ backgroundColor: "#1C1F27", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, maxHeight: 240 }}>
+          <div className="absolute top-full left-0 mt-1 w-full z-50 overflow-y-auto" style={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, maxHeight: 240 }}>
             {options.map(opt => (
               <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false); }}
                 className="w-full text-left px-3 py-2 text-[12px] transition-colors"
-                style={{ color: opt.value === value ? "#E8EAF0" : "#8B8FA8", backgroundColor: opt.value === value ? "#242833" : "transparent" }}
-                onMouseEnter={(e) => { (e.target as HTMLElement).style.backgroundColor = "#242833"; }}
-                onMouseLeave={(e) => { (e.target as HTMLElement).style.backgroundColor = opt.value === value ? "#242833" : "transparent"; }}>
+                style={{ color: opt.value === value ? "hsl(220,20%,15%)" : "hsl(220,10%,46%)", backgroundColor: opt.value === value ? "hsl(220,14%,96%)" : "transparent" }}
+                onMouseEnter={(e) => { (e.target as HTMLElement).style.backgroundColor = "hsl(220,14%,96%)"; }}
+                onMouseLeave={(e) => { (e.target as HTMLElement).style.backgroundColor = opt.value === value ? "hsl(220,14%,96%)" : "transparent"; }}>
                 {opt.label}
               </button>
             ))}
@@ -440,7 +440,7 @@ const ContentAuditView: React.FC = () => {
       );
     }
     const gap = yours - theirs;
-    const gapColor = gap > 0 ? "#2ECF8E" : gap < 0 ? "#FF5C5C" : "#555A6E";
+    const gapColor = gap > 0 ? "#2ECF8E" : gap < 0 ? "#FF5C5C" : "hsl(220,10%,46%)";
     return (
       <span className="font-mono text-[10px]" style={{ color: gapColor }}>
         {yours} <span style={{ color: "hsl(220,10%,46%)" }}>/</span> {theirs}

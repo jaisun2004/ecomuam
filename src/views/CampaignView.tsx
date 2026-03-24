@@ -444,7 +444,7 @@ const CampaignView: React.FC = () => {
   };
 
   const confidencePips = (level: number) => {
-    const colors = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "#555A6E";
+    const colors = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "hsl(220,10%,46%)";
     return Array.from({ length: 5 }, (_, i) => (
       <span key={i} style={{ color: i < level ? colors : "#333" }}>●</span>
     ));

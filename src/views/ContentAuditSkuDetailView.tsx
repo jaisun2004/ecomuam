@@ -81,7 +81,7 @@ const ScoreRing: React.FC<{ score: number; size?: number; label?: string }> = ({
 const CheckRow: React.FC<{ check: { label: string; pass: boolean; pts: number } }> = ({ check }) => (
   <div className="flex items-center gap-2 py-1.5">
     <span style={{ color: check.pass ? "#2ECF8E" : "#FF5C5C" }}>{check.pass ? "✓" : "✗"}</span>
-    <span className="text-[12px] flex-1" style={{ color: check.pass ? "#8B8FA8" : "#E8EAF0" }}>{check.label}</span>
+    <span className="text-[12px] flex-1" style={{ color: check.pass ? "hsl(220,10%,46%)" : "hsl(220,20%,15%)" }}>{check.label}</span>
     {!check.pass && <span className="text-[10px] font-mono" style={{ color: "hsl(220,10%,46%)" }}>costs {check.pts} pts</span>}
   </div>
 );
@@ -177,7 +177,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
           <h3 className="text-sm font-medium" style={{ color: "hsl(220,20%,15%)" }}>Title quality</h3>
           <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: `${scoreColor(sku.title * 5)}20`, color: scoreColor(sku.title * 5) }}>{sku.title}/20</span>
         </div>
-        <div className="rounded-lg p-3 mb-3" style={{ backgroundColor: "#1C1F27", border: "1px solid rgba(255,255,255,0.1)" }}>
+        <div className="rounded-lg p-3 mb-3" style={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)" }}>
           <p className="text-[12px]" style={{ color: "hsl(220,20%,15%)" }}>{sku.sku} — Premium Grade Supplement</p>
           <p className="text-[10px] mt-1" style={{ color: sku.sku.length >= 60 && sku.sku.length <= 80 ? "#2ECF8E" : "#F5A623" }}>{sku.sku.length} chars</p>
         </div>

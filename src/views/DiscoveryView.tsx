@@ -435,7 +435,7 @@ const DiscoveryView: React.FC = () => {
                 <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Parle" />
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Sunfeast" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="ITC" />
-                <Line type="monotone" dataKey="categoryAvg" stroke="#555A6E" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
+                <Line type="monotone" dataKey="categoryAvg" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">

@@ -430,7 +430,7 @@ const LockEditPanel: React.FC<{
                     className="p-3 rounded-xl border-2 text-left transition-all"
                     style={{
                       borderColor: draft.trigger.type === t ? "hsl(var(--primary))" : "hsl(220,13%,91%)",
-                      backgroundColor: draft.trigger.type === t ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
+                      backgroundColor: draft.trigger.type === t ? "hsl(var(--primary) / 0.08)" : "hsl(0,0%,100%)",
                     }}
                   >
                     <p className="text-xs font-medium text-foreground capitalize">{t}</p>
@@ -881,7 +881,7 @@ const GuardrailsView: React.FC = () => {
                 className="p-4 rounded-xl border-2 text-left transition-all"
                 style={{
                   borderColor: g.conflictMode === opt.mode ? "hsl(var(--primary))" : "hsl(220,13%,91%)",
-                  backgroundColor: g.conflictMode === opt.mode ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
+                  backgroundColor: g.conflictMode === opt.mode ? "hsl(var(--primary) / 0.08)" : "hsl(0,0%,100%)",
                 }}
               >
                 <p className="text-xs font-medium text-foreground mb-1">{opt.title}</p>
