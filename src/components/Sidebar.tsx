@@ -193,8 +193,8 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
               onClick={() => onChange("account")}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 self-center ${
                 active === "account"
-                  ? "bg-primary/20 text-primary"
-                  : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                  ? "bg-white/20 text-white"
+                  : "text-white/60 hover:bg-white/10 hover:text-white"
               }`}
             >
               <User size={18} />
