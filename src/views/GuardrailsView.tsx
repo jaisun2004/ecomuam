@@ -668,7 +668,7 @@ const GuardrailsView: React.FC = () => {
                         <button
                           onClick={() => { g.updateHardStop(rule.id, { enabled: !rule.enabled }); cardA.flash(); }}
                           className="w-10 h-5 rounded-full relative transition-colors"
-                          style={{ backgroundColor: rule.enabled ? "hsl(228,90%,64%)" : "hsl(225,10%,30%)" }}
+                          style={{ backgroundColor: rule.enabled ? "hsl(270,60%,42%)" : "hsl(220,13%,85%)" }}
                         >
                           <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
                             style={{ left: rule.enabled ? "22px" : "2px" }} />
@@ -794,7 +794,7 @@ const GuardrailsView: React.FC = () => {
                       <button
                         onClick={() => { g.updateStrategicLock(lock.id, { enabled: !lock.enabled }); cardB.flash(); }}
                         className="w-10 h-5 rounded-full relative transition-colors"
-                        style={{ backgroundColor: lock.enabled ? "hsl(228,90%,64%)" : "hsl(225,10%,30%)" }}
+                        style={{ backgroundColor: lock.enabled ? "hsl(270,60%,42%)" : "hsl(220,13%,85%)" }}
                       >
                         <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
                           style={{ left: lock.enabled ? "22px" : "2px" }} />
@@ -983,8 +983,8 @@ const GuardrailsView: React.FC = () => {
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={triggerHistory}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="triggers" stroke="hsl(0,76%,57%)" strokeWidth={2} dot={false} name="Triggers" />
               </LineChart>
@@ -996,7 +996,7 @@ const GuardrailsView: React.FC = () => {
               <BarChart data={blockAllowData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
                 <XAxis dataKey="type" tick={{ fontSize: 9, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="allowed" fill="hsl(160,70%,48%)" radius={[4, 4, 0, 0]} name="Allowed" />
                 <Bar dataKey="blocked" fill="hsl(0,76%,57%)" radius={[4, 4, 0, 0]} name="Blocked" opacity={0.7} />
