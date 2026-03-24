@@ -14,8 +14,8 @@ interface ConditionBuilderProps {
 }
 
 const selectStyle: React.CSSProperties = {
-  background: "hsl(230,22%,8%)",
-  borderColor: "rgba(255,255,255,0.12)",
+  background: "hsl(0,0%,100%)",
+  borderColor: "hsl(220,13%,91%)",
 };
 
 const ConditionBuilder: React.FC<ConditionBuilderProps> = ({ value, onChange, compact }) => {
@@ -72,13 +72,13 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({ value, onChange, co
         <button
           onClick={() => onChange({ ...value, consecutive_days: Math.max(1, value.consecutive_days - 1) })}
           className="w-6 h-6 rounded border text-foreground flex items-center justify-center hover:bg-muted/30"
-          style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}
+          style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}
         >−</button>
         <span className="font-mono text-foreground w-5 text-center">{value.consecutive_days}</span>
         <button
           onClick={() => onChange({ ...value, consecutive_days: Math.min(30, value.consecutive_days + 1) })}
           className="w-6 h-6 rounded border text-foreground flex items-center justify-center hover:bg-muted/30"
-          style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}
+          style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}
         >+</button>
       </div>
       <span className="text-muted-foreground">

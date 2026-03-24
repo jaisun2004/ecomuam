@@ -65,7 +65,7 @@ const ScoreRing: React.FC<{ score: number; size?: number; label?: string }> = ({
   return (
     <div className="flex flex-col items-center">
       <svg width={size} height={size}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={4} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="hsl(220,13%,91%)" strokeWidth={4} />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={4}
           strokeDasharray={circ} strokeDashoffset={offset}
           strokeLinecap="round" transform={`rotate(-90 ${size / 2} ${size / 2})`} />
@@ -73,7 +73,7 @@ const ScoreRing: React.FC<{ score: number; size?: number; label?: string }> = ({
           {score}
         </text>
       </svg>
-      {label && <span className="text-[11px] mt-1" style={{ color: "#555A6E" }}>{label}</span>}
+      {label && <span className="text-[11px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>{label}</span>}
     </div>
   );
 };
@@ -82,7 +82,7 @@ const CheckRow: React.FC<{ check: { label: string; pass: boolean; pts: number } 
   <div className="flex items-center gap-2 py-1.5">
     <span style={{ color: check.pass ? "#2ECF8E" : "#FF5C5C" }}>{check.pass ? "✓" : "✗"}</span>
     <span className="text-[12px] flex-1" style={{ color: check.pass ? "#8B8FA8" : "#E8EAF0" }}>{check.label}</span>
-    {!check.pass && <span className="text-[10px] font-mono" style={{ color: "#555A6E" }}>costs {check.pts} pts</span>}
+    {!check.pass && <span className="text-[10px] font-mono" style={{ color: "hsl(220,10%,46%)" }}>costs {check.pts} pts</span>}
   </div>
 );
 
@@ -132,16 +132,16 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
         <div className="flex items-center gap-3">
           <div className="w-[60px] h-[60px] rounded-xl bg-surface-2 flex items-center justify-center text-2xl">{sku.thumb}</div>
           <div>
-            <h1 className="text-xl font-bold" style={{ color: "#E8EAF0" }}>{sku.sku}</h1>
-            <p className="font-mono text-[12px]" style={{ color: "#555A6E" }}>{sku.id}</p>
+            <h1 className="text-xl font-bold" style={{ color: "hsl(220,20%,15%)" }}>{sku.sku}</h1>
+            <p className="font-mono text-[12px]" style={{ color: "hsl(220,10%,46%)" }}>{sku.id}</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <ScoreRing score={overall} />
           {isComparing && compScores && <ScoreRing score={compOverall} size={44} label={`vs ${competitor}`} />}
           <div className="text-right">
-            <p className="text-[10px]" style={{ color: "#555A6E" }}>Last audited: {sku.lastUpdated}</p>
-            <button className="text-[11px] px-2 py-1 rounded-lg border mt-1" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+            <p className="text-[10px]" style={{ color: "hsl(220,10%,46%)" }}>Last audited: {sku.lastUpdated}</p>
+            <button className="text-[11px] px-2 py-1 rounded-lg border mt-1" style={{ borderColor: "hsl(220,13%,91%)", color: "hsl(220,10%,46%)" }}>
               Re-audit this SKU
             </button>
           </div>
@@ -150,7 +150,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
 
       {/* Score trend chart */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4">
-        <h3 className="text-sm font-medium mb-3" style={{ color: "#E8EAF0" }}>Score trend — last 30 days</h3>
+        <h3 className="text-sm font-medium mb-3" style={{ color: "hsl(220,20%,15%)" }}>Score trend — last 30 days</h3>
         <div className="flex items-center gap-2 mb-3">
           {platforms.map(p => (
             <button key={p} onClick={() => setPlatformFilter(p)}
@@ -161,10 +161,10 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
         </div>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal vertical={false} />
-            <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} interval={4} />
-            <YAxis domain={[0, 100]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-            <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal vertical={false} />
+            <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+            <YAxis domain={[0, 100]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+            <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
             <Line type="monotone" dataKey="yours" stroke="#A78BFA" strokeWidth={2} dot={false} name="Your score" />
             {isComparing && <Line type="monotone" dataKey="competitor" stroke="#FF5C5C" strokeWidth={1.5} strokeDasharray="5 5" dot={false} name={competitor} />}
           </LineChart>
@@ -174,27 +174,27 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
       {/* Dimension 1 — Title quality */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4" style={{ borderLeft: "3px solid #4F7FFF" }}>
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="text-sm font-medium" style={{ color: "#E8EAF0" }}>Title quality</h3>
+          <h3 className="text-sm font-medium" style={{ color: "hsl(220,20%,15%)" }}>Title quality</h3>
           <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: `${scoreColor(sku.title * 5)}20`, color: scoreColor(sku.title * 5) }}>{sku.title}/20</span>
         </div>
         <div className="rounded-lg p-3 mb-3" style={{ backgroundColor: "#1C1F27", border: "1px solid rgba(255,255,255,0.1)" }}>
-          <p className="text-[12px]" style={{ color: "#E8EAF0" }}>{sku.sku} — Premium Grade Supplement</p>
+          <p className="text-[12px]" style={{ color: "hsl(220,20%,15%)" }}>{sku.sku} — Premium Grade Supplement</p>
           <p className="text-[10px] mt-1" style={{ color: sku.sku.length >= 60 && sku.sku.length <= 80 ? "#2ECF8E" : "#F5A623" }}>{sku.sku.length} chars</p>
         </div>
         <div className="mb-3">{titleChecks.map((c, i) => <CheckRow key={i} check={c} />)}</div>
         {isComparing && compScores && (
           <div className="rounded-lg p-3 mt-3" style={{ backgroundColor: "rgba(255,92,92,0.05)", border: "1px solid rgba(255,92,92,0.1)" }}>
             <p className="text-[10px] font-medium mb-1" style={{ color: "#FF5C5C" }}>Competitor title ({competitor})</p>
-            <p className="text-[12px]" style={{ color: "#8B8FA8" }}>{competitor} — Premium {sku.sku} Alternative</p>
+            <p className="text-[12px]" style={{ color: "hsl(220,10%,46%)" }}>{competitor} — Premium {sku.sku} Alternative</p>
             <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-full mt-1 inline-block" style={{ backgroundColor: "rgba(245,166,35,0.15)", color: "#F5A623" }}>
               They pass {Math.max(0, compScores.title - sku.title)} more checks
             </span>
           </div>
         )}
         <div className="rounded-lg p-3 mt-3" style={{ border: "1px dashed rgba(255,255,255,0.15)" }}>
-          <p className="text-[10px] font-mono mb-1" style={{ color: "#555A6E" }}>Suggested title</p>
-          <p className="text-[12px]" style={{ color: "#E8EAF0" }}>{sku.sku} | Micronized | Premium Grade | Lab Tested</p>
-          <p className="text-[10px] mt-1" style={{ color: "#555A6E" }}>Why: adds size variant and category keyword</p>
+          <p className="text-[10px] font-mono mb-1" style={{ color: "hsl(220,10%,46%)" }}>Suggested title</p>
+          <p className="text-[12px]" style={{ color: "hsl(220,20%,15%)" }}>{sku.sku} | Micronized | Premium Grade | Lab Tested</p>
+          <p className="text-[10px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>Why: adds size variant and category keyword</p>
         </div>
         <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "content-audit", params: { sku: sku.id, issues: "title" } })}
           className="text-[11px] font-medium mt-3 inline-block" style={{ color: "#4F7FFF" }}>
@@ -205,7 +205,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
       {/* Dimension 2 — Hero image quality */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4" style={{ borderLeft: "3px solid #4F7FFF" }}>
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="text-sm font-medium" style={{ color: "#E8EAF0" }}>Hero image quality</h3>
+          <h3 className="text-sm font-medium" style={{ color: "hsl(220,20%,15%)" }}>Hero image quality</h3>
           <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: `${scoreColor(sku.heroImage * 5)}20`, color: scoreColor(sku.heroImage * 5) }}>{sku.heroImage}/20</span>
         </div>
         <div className="flex items-center gap-4 mb-3">
@@ -225,7 +225,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
       {/* Dimension 3 — Search listing performance */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4" style={{ borderLeft: "3px solid #4F7FFF" }}>
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="text-sm font-medium" style={{ color: "#E8EAF0" }}>Search listing performance</h3>
+          <h3 className="text-sm font-medium" style={{ color: "hsl(220,20%,15%)" }}>Search listing performance</h3>
           <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: `${scoreColor(sku.searchListing * 5)}20`, color: scoreColor(sku.searchListing * 5) }}>{sku.searchListing}/20</span>
         </div>
         <table className="w-full text-xs mb-3">
@@ -243,8 +243,8 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
               <tr key={kw.kw} className="border-b border-subtle/30">
                 <td className="py-2 font-mono text-foreground">{kw.kw}</td>
                 <td className="py-2 text-right font-mono" style={{ color: kw.yourRank <= 10 ? "#2ECF8E" : "#FF5C5C" }}>#{kw.yourRank}</td>
-                {isComparing && <td className="py-2 text-right font-mono" style={{ color: "#8B8FA8" }}>#{kw.compRank}</td>}
-                <td className="py-2 text-right font-mono" style={{ color: "#8B8FA8" }}>{kw.impressionShare}%</td>
+                {isComparing && <td className="py-2 text-right font-mono" style={{ color: "hsl(220,10%,46%)" }}>#{kw.compRank}</td>}
+                <td className="py-2 text-right font-mono" style={{ color: "hsl(220,10%,46%)" }}>{kw.impressionShare}%</td>
                 <td className="py-2 text-right">
                   {kw.issue && <span className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-sw-red/10 text-sw-red">{kw.issue}</span>}
                 </td>
@@ -252,7 +252,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
             ))}
           </tbody>
         </table>
-        <p className="text-[11px] mb-3" style={{ color: "#555A6E" }}>
+        <p className="text-[11px] mb-3" style={{ color: "hsl(220,10%,46%)" }}>
           Appearing in top 10 on {searchKeywordsMock.filter(k => k.yourRank <= 10).length} of {searchKeywordsMock.length} key keywords = {sku.searchListing}/20
         </p>
         <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "search-listing", params: { sku: sku.id, keywords: searchKeywordsMock.map(k => k.kw).join(",") } })}
@@ -264,7 +264,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
       {/* Dimension 4 — Product page content */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4" style={{ borderLeft: "3px solid #4F7FFF" }}>
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="text-sm font-medium" style={{ color: "#E8EAF0" }}>Product page content</h3>
+          <h3 className="text-sm font-medium" style={{ color: "hsl(220,20%,15%)" }}>Product page content</h3>
           <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: `${scoreColor(sku.pageContent * 5)}20`, color: scoreColor(sku.pageContent * 5) }}>{sku.pageContent}/20</span>
         </div>
         <div className="mb-3">{pageChecks.map((c, i) => <CheckRow key={i} check={c} />)}</div>
@@ -283,10 +283,10 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
       {/* Dimension 5 — Competitor content aggression */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4" style={{ borderLeft: "3px solid #F5A623" }}>
         <div className="flex items-center gap-3 mb-1">
-          <h3 className="text-sm font-medium" style={{ color: "#E8EAF0" }}>Competitor content aggression</h3>
+          <h3 className="text-sm font-medium" style={{ color: "hsl(220,20%,15%)" }}>Competitor content aggression</h3>
           <span className="font-mono text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: `${scoreColor(sku.competitorAggression * 5)}20`, color: scoreColor(sku.competitorAggression * 5) }}>{sku.competitorAggression}/20</span>
         </div>
-        <p className="text-[11px] mb-3" style={{ color: "#555A6E" }}>
+        <p className="text-[11px] mb-3" style={{ color: "hsl(220,10%,46%)" }}>
           How actively competitors are updating content in this category. High aggression + low your update frequency = low score.
         </p>
         <span className="font-mono text-[11px] px-2.5 py-1 rounded-full mb-3 inline-block" style={{
@@ -310,16 +310,16 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
             {aggressionData.map(c => (
               <tr key={c.brand} className="border-b border-subtle/30">
                 <td className="py-2 text-foreground font-medium">{c.brand}</td>
-                <td className="py-2 text-right font-mono" style={{ color: "#E8EAF0" }}>{c.changes7d}</td>
-                <td className="py-2 text-right font-mono" style={{ color: "#8B8FA8" }}>{c.changes30d}</td>
+                <td className="py-2 text-right font-mono" style={{ color: "hsl(220,20%,15%)" }}>{c.changes7d}</td>
+                <td className="py-2 text-right font-mono" style={{ color: "hsl(220,10%,46%)" }}>{c.changes30d}</td>
                 <td className="py-2"><div className="flex gap-1">{c.what.map(w => <span key={w} className="font-mono text-[8px] px-1 py-0.5 rounded bg-surface-3 text-foreground">{w}</span>)}</div></td>
-                <td className="py-2 font-mono text-[10px]" style={{ color: "#8B8FA8" }}>{c.keywords.join(", ")}</td>
+                <td className="py-2 font-mono text-[10px]" style={{ color: "hsl(220,10%,46%)" }}>{c.keywords.join(", ")}</td>
                 <td className="py-2 text-right font-mono text-sw-red">{c.impact}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <p className="text-[11px] mt-3" style={{ color: "#555A6E" }}>
+        <p className="text-[11px] mt-3" style={{ color: "hsl(220,10%,46%)" }}>
           Score is {sku.competitorAggression}/20. {sku.competitorAggression < 14 ? "High competitor activity + low your update frequency = points lost here." : "Moderate competitor activity — maintain current pace."}
         </p>
         <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "competitor-content", params: { competitor: aggressionData[0]?.brand || "", sku: sku.id } })}
@@ -330,13 +330,13 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
 
       {/* Bottom — Campaign Manager card */}
       <div className="rounded-xl border border-subtle bg-surface-1 p-4" style={{ borderLeft: "3px solid #4F7FFF" }}>
-        <h3 className="text-sm font-medium mb-2" style={{ color: "#E8EAF0" }}>Recommended Campaign Manager action</h3>
-        <p className="text-[12px] mb-2" style={{ color: "#8B8FA8" }}>
+        <h3 className="text-sm font-medium mb-2" style={{ color: "hsl(220,20%,15%)" }}>Recommended Campaign Manager action</h3>
+        <p className="text-[12px] mb-2" style={{ color: "hsl(220,10%,46%)" }}>
           Content score {overall}/100. Main gaps: {weakDims.slice(0, 2).join(", ") || "none"}.
           Recommended: increase search bids on this SKU to defend visibility while content is being fixed.
         </p>
         <div className="flex items-center gap-1 mb-3">
-          <span className="text-[10px]" style={{ color: "#555A6E" }}>Confidence:</span>
+          <span className="text-[10px]" style={{ color: "hsl(220,10%,46%)" }}>Confidence:</span>
           {Array.from({ length: 5 }, (_, i) => (
             <span key={i} style={{ color: i < 4 ? "#2ECF8E" : "#333" }}>●</span>
           ))}

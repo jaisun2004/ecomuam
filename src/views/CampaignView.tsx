@@ -511,7 +511,7 @@ const CampaignView: React.FC = () => {
               g.contextFilter.type === "shelf-coverage" ? `Shelf coverage · ${g.contextFilter.params.category || ""}` :
               g.contextFilter.type}
           </span>
-          <button onClick={() => g.setContextFilter(null)} className="text-[10px] font-medium flex items-center gap-0.5" style={{ color: "#8B8FA8" }}>
+          <button onClick={() => g.setContextFilter(null)} className="text-[10px] font-medium flex items-center gap-0.5" style={{ color: "hsl(220,10%,46%)" }}>
             <X size={10} /> Clear filter
           </button>
         </div>
@@ -642,7 +642,7 @@ const CampaignView: React.FC = () => {
         {selectedCount > 0 && (
           <div className="px-4 py-2 border-b border-subtle flex items-center gap-3" style={{ backgroundColor: "rgba(167,139,250,0.05)" }}>
             <span className="text-xs text-foreground">{selectedCount} actions selected</span>
-            <button onClick={() => setSelectedDigest({})} className="text-[11px] border rounded-lg px-2 py-1" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>Clear</button>
+            <button onClick={() => setSelectedDigest({})} className="text-[11px] border rounded-lg px-2 py-1" style={{ borderColor: "hsl(220,13%,91%)", color: "hsl(220,10%,46%)" }}>Clear</button>
             <button onClick={() => { setSelectedDigest({}); showUndoToast(`${selectedCount} actions applied`); }} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
               Apply selected
             </button>
@@ -677,15 +677,15 @@ const CampaignView: React.FC = () => {
               {d.ownedBy ? (
                 <button onClick={() => g.navigateTo("budget")}
                   className="font-mono text-[9px] px-2 py-1 rounded flex-shrink-0 cursor-pointer"
-                  style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "#8B8FA8" }}>
+                  style={{ backgroundColor: "rgba(85,90,110,0.15)", color: "hsl(220,10%,46%)" }}>
                   Handled in {d.ownedBy}
                 </button>
               ) : d.blocked ? (
-                <button disabled className="px-2 py-1 rounded-lg text-[10px] font-medium flex-shrink-0" style={{ backgroundColor: "rgba(85,90,110,0.12)", color: "#555A6E" }}>
+                <button disabled className="px-2 py-1 rounded-lg text-[10px] font-medium flex-shrink-0" style={{ backgroundColor: "rgba(85,90,110,0.12)", color: "hsl(220,10%,46%)" }}>
                   Queued
                 </button>
               ) : d.confidence <= 2 ? (
-                <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "hsl(220,13%,91%)", color: "hsl(220,10%,46%)" }}>
                   Review first
                 </button>
               ) : (
@@ -694,13 +694,13 @@ const CampaignView: React.FC = () => {
                     className="px-2 py-1.5 rounded-lg text-[10px] font-medium text-white flex-shrink-0" style={{ backgroundColor: "#A78BFA" }}>
                     Apply
                   </button>
-                  <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                  <button className="px-2 py-1 rounded-lg text-[10px] font-medium border flex-shrink-0" style={{ borderColor: "hsl(220,13%,91%)", color: "hsl(220,10%,46%)" }}>
                     Review
                   </button>
                 </>
               )}
               {!d.blocked && (
-                <button onClick={() => setDismissedDigest(p => ({ ...p, [d.id]: true }))} className="text-[10px] flex-shrink-0" style={{ color: "#555A6E" }}>
+                <button onClick={() => setDismissedDigest(p => ({ ...p, [d.id]: true }))} className="text-[10px] flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
                   Dismiss
                 </button>
               )}
@@ -925,10 +925,10 @@ const CampaignView: React.FC = () => {
                   <stop offset="95%" stopColor="hsl(228,90%,64%)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="day" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-              <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
+              <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
               <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="url(#gSpend)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
@@ -1060,11 +1060,11 @@ const CampaignView: React.FC = () => {
           <PanelCard title="Spend vs ROAS — 30 Day Trend" badge="Dual Axis" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={spendRoasTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis yAxisId="spend" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
                 <YAxis yAxisId="roas" orientation="right" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹K)" />
                 <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
               </LineChart>

@@ -139,10 +139,10 @@ const FestivalCampaignsView: React.FC = () => {
           <PanelCard title="Festival Performance Comparison" badge="Last 3 Festivals" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={festivalComparison}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="festival" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="festival" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.6} radius={[4, 4, 0, 0]} name="Spend (₹K)" />
                 <Bar dataKey="conversions" fill="hsl(160,70%,48%)" opacity={0.8} radius={[4, 4, 0, 0]} name="Conversions" />
               </BarChart>
@@ -152,10 +152,10 @@ const FestivalCampaignsView: React.FC = () => {
           <PanelCard title="Pre-Festival Ramp-Up Timeline" badge="14 Days Before" badgeColor="amber" delay={0.1}>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={rampUpData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="diwali" stroke="hsl(38,92%,50%)" strokeWidth={2} dot={false} name="Diwali" />
                 <Line type="monotone" dataKey="republicDay" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Republic Day" />
               </LineChart>
@@ -165,10 +165,10 @@ const FestivalCampaignsView: React.FC = () => {
           <PanelCard title="Category Share — Festival vs Non-Festival" badge="30 Days" badgeColor="purple" delay={0.2}>
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={categoryShareData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Area type="monotone" dataKey="festival" stackId="1" fill="hsl(var(--sw-amber))" stroke="hsl(38,92%,50%)" fillOpacity={0.3} name="Festival Period" />
                 <Area type="monotone" dataKey="nonFestival" stackId="1" fill="hsl(var(--primary))" stroke="hsl(228,90%,64%)" fillOpacity={0.2} name="Non-Festival" />
               </AreaChart>

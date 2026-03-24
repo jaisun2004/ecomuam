@@ -78,14 +78,14 @@ const FilterDropdown: React.FC<{
   const selected = options.find(o => o.value === value);
   return (
     <div className="relative" style={{ minWidth: 160 }}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[12px] text-left" style={{ backgroundColor: "#1C1F27", border: "1px solid rgba(255,255,255,0.1)", color: "#E8EAF0" }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[12px] text-left" style={{ backgroundColor: "#1C1F27", border: "1px solid rgba(255,255,255,0.1)", color: "hsl(220,20%,15%)" }}>
         <span className="truncate">{selected?.label || label}</span>
-        <ChevronDown size={12} style={{ color: "#555A6E" }} />
+        <ChevronDown size={12} style={{ color: "hsl(220,10%,46%)" }} />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 mt-1 w-full z-50 overflow-y-auto" style={{ backgroundColor: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, maxHeight: 240 }}>
+          <div className="absolute top-full left-0 mt-1 w-full z-50 overflow-y-auto" style={{ backgroundColor: "#1C1F27", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, maxHeight: 240 }}>
             {options.map(opt => (
               <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false); }}
                 className="w-full text-left px-3 py-2 text-[12px] transition-colors"
@@ -443,7 +443,7 @@ const ContentAuditView: React.FC = () => {
     const gapColor = gap > 0 ? "#2ECF8E" : gap < 0 ? "#FF5C5C" : "#555A6E";
     return (
       <span className="font-mono text-[10px]" style={{ color: gapColor }}>
-        {yours} <span style={{ color: "#555A6E" }}>/</span> {theirs}
+        {yours} <span style={{ color: "hsl(220,10%,46%)" }}>/</span> {theirs}
       </span>
     );
   };
@@ -490,8 +490,8 @@ const ContentAuditView: React.FC = () => {
         {isComparing && (
           <div className="rounded-lg px-4 py-3 flex items-center justify-between" style={{ backgroundColor: "rgba(79,127,255,0.08)", borderLeft: "3px solid #4F7FFF" }}>
             <div>
-              <p className="text-[13px] font-medium" style={{ color: "#E8EAF0" }}>Comparing your content scores against {compareCompetitor}</p>
-              <p className="text-[11px]" style={{ color: "#8B8FA8" }}>Comparison columns shown in table. Your score / Their score.</p>
+              <p className="text-[13px] font-medium" style={{ color: "hsl(220,20%,15%)" }}>Comparing your content scores against {compareCompetitor}</p>
+              <p className="text-[11px]" style={{ color: "hsl(220,10%,46%)" }}>Comparison columns shown in table. Your score / Their score.</p>
             </div>
             <button onClick={() => setCompareCompetitor("None")} className="flex items-center gap-1 text-[11px]" style={{ color: "#4F7FFF" }}>
               Clear comparison <X size={12} />
@@ -735,10 +735,10 @@ const ContentAuditView: React.FC = () => {
           <PanelCard title="Score Distribution" badge="All SKUs" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={scoreBuckets}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="bucket" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="bucket" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]} name="SKUs">
                   {scoreBuckets.map((_, index) => {
                     const mid = index * 10 + 5;

@@ -262,11 +262,11 @@ const KeywordAnalysisView: React.FC = () => {
             </div>
             <ResponsiveContainer width="100%" height={240}>
               <ComposedChart data={combinedData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal vertical={false} />
-                <XAxis dataKey="keyword" tick={{ fontSize: 9, fill: "#888" }} axisLine={false} tickLine={false} angle={-15} textAnchor="end" height={45} />
-                <YAxis yAxisId="left" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "Search Vol (K)", angle: -90, position: "insideLeft", fontSize: 9, fill: "#555A6E" }} />
-                <YAxis yAxisId="right" orientation="right" domain={[0, 50]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} label={{ value: "SoS %", angle: 90, position: "insideRight", fontSize: 9, fill: "#555A6E" }} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal vertical={false} />
+                <XAxis dataKey="keyword" tick={{ fontSize: 9, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} angle={-15} textAnchor="end" height={45} />
+                <YAxis yAxisId="left" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} label={{ value: "Search Vol (K)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(220,10%,46%)" }} />
+                <YAxis yAxisId="right" orientation="right" domain={[0, 50]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} label={{ value: "SoS %", angle: 90, position: "insideRight", fontSize: 9, fill: "hsl(220,10%,46%)" }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="left" dataKey="searchVol" fill="hsl(228,90%,64%)" opacity={0.4} radius={[4, 4, 0, 0]} name="Search Volume (K)" barSize={28} />
                 <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={2.5} dot={{ r: 4, fill: "#2ECF8E" }} name="Share of Search %" />
               </ComposedChart>
@@ -277,10 +277,10 @@ const KeywordAnalysisView: React.FC = () => {
           <PanelCard title="Keyword Rank Trend — 30 Days" badge={selectedPlatform} badgeColor="accent" delay={0.1}>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={rankTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis reversed tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis reversed tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={2} dot={false} name="butter biscuits" />
                 <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={2} dot={false} name="cream biscuits" />
                 <Line type="monotone" dataKey="glucoseBiscuits" stroke="#FF5C5C" strokeWidth={2} dot={false} name="glucose biscuits" />
