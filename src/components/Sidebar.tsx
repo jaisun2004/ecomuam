@@ -96,8 +96,8 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             onClick={() => onChange(item.id)}
             className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
               isActive
-                ? "bg-primary/20 text-primary accent-glow"
-                : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:bg-white/10 hover:text-white"
             }`}
           >
             <Icon size={18} />
