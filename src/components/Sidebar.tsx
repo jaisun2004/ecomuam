@@ -173,13 +173,13 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
       {expanded ? (
         <div className="px-3 pt-2 flex-shrink-0">
-          <div className="h-px bg-surface-3 mb-2" />
+          <div className="h-px bg-white/10 mb-2" />
           <button
             onClick={() => onChange("account")}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
               active === "account"
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:bg-white/10 hover:text-white"
             }`}
           >
             <User size={16} />
