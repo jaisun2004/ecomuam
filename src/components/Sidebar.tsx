@@ -115,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
   return (
     <div
-      className={`fixed left-0 top-0 bottom-0 bg-background border-r border-subtle flex flex-col py-4 z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
+      className={`fixed left-0 top-0 bottom-0 bg-sidebar border-r border-sidebar-border flex flex-col py-4 z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
         expanded ? "w-[220px]" : "w-[68px]"
       }`}
     >
