@@ -121,14 +121,14 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
     >
       <div className={`flex items-center mb-4 flex-shrink-0 ${expanded ? "px-4 justify-between" : "justify-center"}`}>
         <div
-          className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center accent-glow cursor-pointer flex-shrink-0"
+          className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center cursor-pointer flex-shrink-0"
           onClick={() => onChange("cockpit")}
         >
-          <span className="font-display font-bold text-primary-foreground text-sm">SW</span>
+          <span className="font-display font-bold text-white text-sm">SW</span>
         </div>
         {expanded && (
-          <span className="font-display font-bold text-foreground text-sm ml-2 flex-1 truncate">
-            shelf<span className="text-primary">wise</span>
+          <span className="font-display font-bold text-white text-sm ml-2 flex-1 truncate">
+            shelf<span className="text-white/70">wise</span>
           </span>
         )}
         <button
