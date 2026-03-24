@@ -429,7 +429,7 @@ const LockEditPanel: React.FC<{
                     }}
                     className="p-3 rounded-xl border-2 text-left transition-all"
                     style={{
-                      borderColor: draft.trigger.type === t ? "hsl(var(--primary))" : "rgba(255,255,255,0.07)",
+                      borderColor: draft.trigger.type === t ? "hsl(var(--primary))" : "hsl(220,13%,91%)",
                       backgroundColor: draft.trigger.type === t ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
                     }}
                   >
@@ -880,7 +880,7 @@ const GuardrailsView: React.FC = () => {
                 onClick={() => { g.setConflictMode(opt.mode); cardD.flash(); }}
                 className="p-4 rounded-xl border-2 text-left transition-all"
                 style={{
-                  borderColor: g.conflictMode === opt.mode ? "hsl(var(--primary))" : "rgba(255,255,255,0.07)",
+                  borderColor: g.conflictMode === opt.mode ? "hsl(var(--primary))" : "hsl(220,13%,91%)",
                   backgroundColor: g.conflictMode === opt.mode ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
                 }}
               >
