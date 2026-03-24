@@ -143,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
       <div className={`flex-1 flex flex-col gap-0.5 ${expanded ? "px-3" : "items-center"}`}>
         {renderItem(cockpitItem, true)}
-        <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
+        <div className={`h-px bg-white/10 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
 
         {navSections.map((section, si) => (
           <React.Fragment key={section.label}>
