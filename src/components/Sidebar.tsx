@@ -133,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
         )}
         <button
           onClick={onToggleExpand}
-          className={`p-1.5 rounded-lg text-muted-foreground hover:bg-surface-3 hover:text-foreground transition-all flex-shrink-0 ${
+          className={`p-1.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-all flex-shrink-0 ${
             expanded ? "" : "mt-2"
           }`}
         >
