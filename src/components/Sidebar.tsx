@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             )}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
+        <TooltipContent side="right" className="bg-popover text-popover-foreground border text-xs">
           {item.label}
         </TooltipContent>
       </Tooltip>
