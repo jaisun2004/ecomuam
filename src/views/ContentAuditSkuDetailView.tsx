@@ -191,7 +191,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
             </span>
           </div>
         )}
-        <div className="rounded-lg p-3 mt-3" style={{ border: "1px dashed rgba(255,255,255,0.15)" }}>
+        <div className="rounded-lg p-3 mt-3" style={{ border: "1px dashed hsl(220,13%,85%)" }}>
           <p className="text-[10px] font-mono mb-1" style={{ color: "hsl(220,10%,46%)" }}>Suggested title</p>
           <p className="text-[12px]" style={{ color: "hsl(220,20%,15%)" }}>{sku.sku} | Micronized | Premium Grade | Lab Tested</p>
           <p className="text-[10px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>Why: adds size variant and category keyword</p>
