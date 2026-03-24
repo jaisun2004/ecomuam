@@ -24,14 +24,14 @@ const ScreenTabs: React.FC<ScreenTabsProps> = ({
           onClick={() => onTabChange(tab.key)}
           className="pb-2.5 text-[13px] font-medium transition-colors relative"
           style={{
-            color: activeTab === tab.key ? "hsl(228,25%,93%)" : "hsl(225,10%,30%)",
-            borderBottom: activeTab === tab.key ? "2px solid hsl(228,90%,64%)" : "2px solid transparent",
+            color: activeTab === tab.key ? "hsl(270,60%,42%)" : "hsl(220,10%,46%)",
+            borderBottom: activeTab === tab.key ? "2px solid hsl(270,60%,42%)" : "2px solid transparent",
           }}
           onMouseEnter={(e) => {
-            if (activeTab !== tab.key) e.currentTarget.style.color = "hsl(225,10%,46%)";
+            if (activeTab !== tab.key) e.currentTarget.style.color = "hsl(220,20%,15%)";
           }}
           onMouseLeave={(e) => {
-            if (activeTab !== tab.key) e.currentTarget.style.color = "hsl(225,10%,30%)";
+            if (activeTab !== tab.key) e.currentTarget.style.color = "hsl(220,10%,46%)";
           }}
         >
           {tab.label}

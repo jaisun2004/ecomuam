@@ -116,7 +116,7 @@ const AvailabilityView: React.FC = () => {
           <Info size={16} style={{ color: "#4F7FFF", marginTop: 2, flexShrink: 0 }} />
           <div>
             <p className="text-[13px] font-medium text-foreground">Campaign action already in progress</p>
-            <p className="text-[12px] mt-0.5" style={{ color: "#8B8FA8" }}>
+            <p className="text-[12px] mt-0.5" style={{ color: "hsl(220,10%,46%)" }}>
               A Tier 1 hard stop has been triggered in Campaign Manager for this availability signal.
             </p>
             <button onClick={() => g.navigateTo("campaigns", "campaign-conflict-banner")} className="text-[12px] font-medium mt-1.5 inline-block" style={{ color: "#4F7FFF" }}>
@@ -430,10 +430,10 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
       <PanelCard title="Availability Score — 30 Days" badge="Trend" badgeColor="accent" delay={0.1}>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={availScoreTrend}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-            <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
-            <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
-            <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+            <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+            <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
+            <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
             <ReferenceLine y={20} stroke="hsl(0,76%,57%)" strokeDasharray="5 5" label={{ value: "20% threshold", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
             <Line type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Availability %" />
           </LineChart>

@@ -177,7 +177,7 @@ const CategoryAssortmentView: React.FC = () => {
         <PanelCard title="Brand activity vs shelf space" badge="Click dots for details" badgeColor="accent" delay={0.15}>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="skuCount" name="SKU count" type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "SKU count →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis dataKey="activity" name="Activity" type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Activity ↑", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} formatter={(val: number, name: string) => [val, name === "skuCount" ? "SKUs" : "Activity"]} labelFormatter={(_, payload) => payload?.[0]?.payload?.brand ?? ""} />
@@ -241,7 +241,7 @@ const CategoryAssortmentView: React.FC = () => {
         <PanelCard title="Discount stress vs availability" badge="Margin risk" badgeColor="accent" delay={0.2}>
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={discountStressData} margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="sub" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} angle={-30} textAnchor="end" height={50} />
               <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Discount %", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Availability %", angle: 90, position: "insideRight", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
@@ -257,7 +257,7 @@ const CategoryAssortmentView: React.FC = () => {
         <PanelCard title="Opportunity priority matrix" badge="Growth" badgeColor="accent" delay={0.25}>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="growthPotential" name="Growth Potential" type="number" domain={[30, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Growth Potential →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis dataKey="adParticipation" name="Ad participation %" type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Ad participation ↑", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               <ZAxis dataKey="skuCount" range={[40, 400]} name="SKU count" />

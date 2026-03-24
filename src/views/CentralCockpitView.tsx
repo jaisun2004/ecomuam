@@ -100,7 +100,7 @@ const CentralCockpitView: React.FC = () => {
   };
 
   const confidencePips = (level: number) => {
-    const c = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "#555A6E";
+    const c = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "hsl(220,10%,46%)";
     return Array.from({ length: 5 }, (_, i) => (
       <span key={i} style={{ color: i < level ? c : "#333" }}>●</span>
     ));
@@ -123,9 +123,9 @@ const CentralCockpitView: React.FC = () => {
       {!hasUrgentOrPending ? (
         <div className="flex flex-col items-center justify-center py-16">
           <div className="w-3 h-3 rounded-full mb-4" style={{ backgroundColor: "#2ECF8E" }} />
-          <p className="text-base font-medium" style={{ color: "#E8EAF0" }}>All clear</p>
-          <p className="text-[13px] mt-1" style={{ color: "#555A6E" }}>No issues · No pending approvals</p>
-          <p className="text-[11px] mt-1" style={{ color: "#555A6E" }}>Last checked {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
+          <p className="text-base font-medium" style={{ color: "hsl(220,20%,15%)" }}>All clear</p>
+          <p className="text-[13px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>No issues · No pending approvals</p>
+          <p className="text-[11px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>Last checked {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
         </div>
       ) : (
         <div className="space-y-0">
@@ -149,8 +149,8 @@ const CentralCockpitView: React.FC = () => {
                   }}>
                     {item.tier}
                   </span>
-                  <span className="text-[13px] flex-1 truncate" style={{ color: "#E8EAF0" }}>{item.desc}</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ color: "#555A6E" }}>
+                  <span className="text-[13px] flex-1 truncate" style={{ color: "hsl(220,20%,15%)" }}>{item.desc}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
                     {item.source}
                   </span>
                   {isApprovable ? (
@@ -159,7 +159,7 @@ const CentralCockpitView: React.FC = () => {
                       <button onClick={() => handleApprove(item.id)} className="px-2 py-1 rounded-lg text-[10px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
                         Approve
                       </button>
-                      <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="px-2 py-1 rounded-lg text-[10px] font-medium border" style={{ borderColor: "rgba(255,255,255,0.12)", color: "#8B8FA8" }}>
+                      <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="px-2 py-1 rounded-lg text-[10px] font-medium border" style={{ borderColor: "hsl(220,13%,91%)", color: "hsl(220,10%,46%)" }}>
                         Review
                       </button>
                     </div>
@@ -181,17 +181,17 @@ const CentralCockpitView: React.FC = () => {
 
       {potentialFlags.length > 0 && (
         <div className="mt-6">
-          <p className="font-mono text-[10px] uppercase tracking-wider mb-1" style={{ color: "#555A6E" }}>Watching</p>
-          <p className="text-[12px] mb-3" style={{ color: "#555A6E" }}>Not urgent — leading indicators to monitor</p>
+          <p className="font-mono text-[10px] uppercase tracking-wider mb-1" style={{ color: "hsl(220,10%,46%)" }}>Watching</p>
+          <p className="text-[12px] mb-3" style={{ color: "hsl(220,10%,46%)" }}>Not urgent — leading indicators to monitor</p>
           <div className="space-y-0 rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
             {potentialFlags.slice(0, 5).map(flag => (
               <div key={flag.id} className="flex items-center gap-3 px-4" style={{ height: 44, borderLeft: "3px solid #4F7FFF" }}>
                 <span className="font-mono text-[10px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(79,127,255,0.1)", color: "#4F7FFF" }}>
                   Watch
                 </span>
-                <span className="text-[13px] flex-1 truncate" style={{ color: "#8B8FA8" }}>{flag.desc}</span>
-                <span className="text-[10px] font-mono flex-shrink-0" style={{ color: "#555A6E" }}>{flag.source}</span>
-                <button onClick={() => g.navigateTo(flag.sourceId)} className="text-[11px] flex-shrink-0" style={{ color: "#555A6E" }}>
+                <span className="text-[13px] flex-1 truncate" style={{ color: "hsl(220,10%,46%)" }}>{flag.desc}</span>
+                <span className="text-[10px] font-mono flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>{flag.source}</span>
+                <button onClick={() => g.navigateTo(flag.sourceId)} className="text-[11px] flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
                   → View
                 </button>
               </div>
@@ -201,7 +201,7 @@ const CentralCockpitView: React.FC = () => {
       )}
 
       <div className="mt-4">
-        <button onClick={() => setHealthOpen(!healthOpen)} className="flex items-center gap-1.5 text-[12px]" style={{ color: "#555A6E" }}>
+        <button onClick={() => setHealthOpen(!healthOpen)} className="flex items-center gap-1.5 text-[12px]" style={{ color: "hsl(220,10%,46%)" }}>
           {clearCount}/{systemRows.length} screens clear
           {healthOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
         </button>
@@ -209,11 +209,11 @@ const CentralCockpitView: React.FC = () => {
           <div className="mt-2 rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
             {systemRows.map((row, i) => (
               <div key={`${row.name}-${i}`} className="flex items-center justify-between px-4 py-2.5">
-                <span className="text-xs" style={{ color: "#E8EAF0" }}>{row.name}</span>
+                <span className="text-xs" style={{ color: "hsl(220,20%,15%)" }}>{row.name}</span>
                 <div className="flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: row.dot }} />
-                  <span className="text-[10px] font-mono w-16" style={{ color: "#555A6E" }}>{row.status}</span>
-                  <button onClick={() => g.navigateTo(row.id)} className="flex-shrink-0" style={{ color: "#555A6E" }}>
+                  <span className="text-[10px] font-mono w-16" style={{ color: "hsl(220,10%,46%)" }}>{row.status}</span>
+                  <button onClick={() => g.navigateTo(row.id)} className="flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
                     <ArrowRight size={12} />
                   </button>
                 </div>

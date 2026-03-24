@@ -138,10 +138,10 @@ const MarketShareView: React.FC = () => {
         <PanelCard title="Share by Platform" badge="Stacked comparison" badgeColor="accent" delay={0.2}>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={platformShareData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={false} vertical={true} />
-              <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="platform" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} width={120} />
-              <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={false} vertical={true} />
+              <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="platform" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} width={120} />
+              <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
               <Bar dataKey="you" stackId="a" fill="#A78BFA" radius={[0, 0, 0, 0]} name="You" />
               <Bar dataKey="rival1" stackId="a" fill="#FF5C5C" name="Sunfeast" />
               <Bar dataKey="rival2" stackId="a" fill="#FF8A80" name="Parle" />
@@ -223,15 +223,15 @@ const MarketShareView: React.FC = () => {
             </div>
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={shareOverTime}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} interval={14} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={14} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
                 <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Sunfeast" />
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Parle" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Unibic" />
-                <Line type="monotone" dataKey="rival4" stroke="#555A6E" strokeWidth={1} dot={false} strokeDasharray="5 5" name="ITC" />
+                <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="ITC" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
@@ -276,10 +276,10 @@ const MarketShareView: React.FC = () => {
           <PanelCard title="Who Is Gaining Fastest" badge="WoW change" badgeColor="green" delay={0.2}>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={velocityData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="brand" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#555A6E" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} formatter={(value: number) => `${value > 0 ? "+" : ""}${value}% share`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="brand" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} formatter={(value: number) => `${value > 0 ? "+" : ""}${value}% share`} />
                 <Bar dataKey="change" radius={[4, 4, 0, 0]} name="WoW Share Change">
                   {velocityData.map((entry, index) => (
                     <rect key={index} fill={entry.brand === "You" ? "#60A5FA" : entry.change > 0 ? "#F87171" : entry.change < 0 ? "#34D399" : "#6B7280"} />

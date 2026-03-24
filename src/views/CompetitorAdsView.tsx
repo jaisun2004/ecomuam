@@ -215,10 +215,10 @@ const CompetitorAdsView: React.FC = () => {
           <PanelCard title="Competitor Ad Activity — Hourly Pattern" badge="Today" badgeColor="accent" delay={0.35}>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={competitorHourlyData.filter((_, i) => i % 2 === 0)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
                 <XAxis dataKey="hour" tick={{ fontSize: 8, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
                 <Bar dataKey="sunfeast" fill="#FF5722" opacity={0.7} radius={[2, 2, 0, 0]} name="Sunfeast" />
                 <Bar dataKey="parle" fill="#FF9800" opacity={0.7} radius={[2, 2, 0, 0]} name="Parle" />
                 <Bar dataKey="unibic" fill="#4CAF50" opacity={0.7} radius={[2, 2, 0, 0]} name="Unibic" />
@@ -236,10 +236,10 @@ const CompetitorAdsView: React.FC = () => {
           <PanelCard title="Competitor Ad Spend Trend — 4 Weeks" badge="Estimated" badgeColor="amber" delay={0.4}>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={competitorSpendTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
                 <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
                 <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Sunfeast" />
                 <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Parle" />
                 <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Unibic" />
@@ -280,10 +280,10 @@ const CompetitorAdsView: React.FC = () => {
           <PanelCard title="Share of Voice — 30 Days" badge="You vs Top 3 Competitors" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={sovTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} unit="%" />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} unit="%" />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="hsl(var(--sw-purple))" strokeWidth={2} dot={false} name="Your Brand" />
                 <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} dot={false} name="Sunfeast" />
                 <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} dot={false} name="Parle" />

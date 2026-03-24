@@ -112,7 +112,7 @@ const ScopeSelector: React.FC<{
     <div className="space-y-2">
       <select
         className="px-2 py-1.5 rounded-lg border text-xs text-foreground"
-        style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+        style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
         value={value}
         onChange={(e) => onChange(e.target.value as CampaignScope, value === "custom" ? campaignIds : [])}
       >
@@ -233,7 +233,7 @@ const HardStopEditPanel: React.FC<{
                 <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Name</label>
                 <input
                   className="w-full mt-1 px-3 py-2 rounded-lg border text-xs text-foreground"
-                  style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                  style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                   maxLength={60}
                   value={draft.name}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -366,7 +366,7 @@ const LockEditPanel: React.FC<{
                 <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Name</label>
                 <input
                   className="w-full mt-1 px-3 py-2 rounded-lg border text-xs text-foreground"
-                  style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                  style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                   maxLength={60}
                   value={draft.name}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -376,7 +376,7 @@ const LockEditPanel: React.FC<{
                 <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Reason (optional)</label>
                 <input
                   className="w-full mt-1 px-3 py-2 rounded-lg border text-xs text-foreground"
-                  style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                  style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                   maxLength={120}
                   value={draft.reason}
                   onChange={(e) => setDraft({ ...draft, reason: e.target.value })}
@@ -429,8 +429,8 @@ const LockEditPanel: React.FC<{
                     }}
                     className="p-3 rounded-xl border-2 text-left transition-all"
                     style={{
-                      borderColor: draft.trigger.type === t ? "hsl(var(--primary))" : "rgba(255,255,255,0.07)",
-                      backgroundColor: draft.trigger.type === t ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
+                      borderColor: draft.trigger.type === t ? "hsl(var(--primary))" : "hsl(220,13%,91%)",
+                      backgroundColor: draft.trigger.type === t ? "hsl(var(--primary) / 0.08)" : "hsl(0,0%,100%)",
                     }}
                   >
                     <p className="text-xs font-medium text-foreground capitalize">{t}</p>
@@ -451,7 +451,7 @@ const LockEditPanel: React.FC<{
                       <input
                         type="date"
                         className="w-full mt-1 px-2 py-1.5 rounded-lg border text-xs text-foreground"
-                        style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                        style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                         value={draft.trigger.start_date}
                         onChange={(e) => setDraft({ ...draft, trigger: { ...draft.trigger as any, start_date: e.target.value } })}
                       />
@@ -461,7 +461,7 @@ const LockEditPanel: React.FC<{
                       <input
                         type="date"
                         className="w-full mt-1 px-2 py-1.5 rounded-lg border text-xs text-foreground"
-                        style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                        style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                         value={draft.trigger.end_date}
                         onChange={(e) => setDraft({ ...draft, trigger: { ...draft.trigger as any, end_date: e.target.value } })}
                       />
@@ -514,7 +514,7 @@ const LockEditPanel: React.FC<{
                             min={1}
                             max={720}
                             className="w-16 px-2 py-1 rounded-lg border text-xs text-foreground font-mono"
-                            style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                            style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                             value={(draft.trigger as any).release_hours || 24}
                             onChange={(e) => setDraft({ ...draft, trigger: { ...draft.trigger as any, release_hours: parseInt(e.target.value) || 24 } })}
                           />
@@ -668,7 +668,7 @@ const GuardrailsView: React.FC = () => {
                         <button
                           onClick={() => { g.updateHardStop(rule.id, { enabled: !rule.enabled }); cardA.flash(); }}
                           className="w-10 h-5 rounded-full relative transition-colors"
-                          style={{ backgroundColor: rule.enabled ? "hsl(228,90%,64%)" : "hsl(225,10%,30%)" }}
+                          style={{ backgroundColor: rule.enabled ? "hsl(270,60%,42%)" : "hsl(220,13%,85%)" }}
                         >
                           <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
                             style={{ left: rule.enabled ? "22px" : "2px" }} />
@@ -794,7 +794,7 @@ const GuardrailsView: React.FC = () => {
                       <button
                         onClick={() => { g.updateStrategicLock(lock.id, { enabled: !lock.enabled }); cardB.flash(); }}
                         className="w-10 h-5 rounded-full relative transition-colors"
-                        style={{ backgroundColor: lock.enabled ? "hsl(228,90%,64%)" : "hsl(225,10%,30%)" }}
+                        style={{ backgroundColor: lock.enabled ? "hsl(270,60%,42%)" : "hsl(220,13%,85%)" }}
                       >
                         <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
                           style={{ left: lock.enabled ? "22px" : "2px" }} />
@@ -880,8 +880,8 @@ const GuardrailsView: React.FC = () => {
                 onClick={() => { g.setConflictMode(opt.mode); cardD.flash(); }}
                 className="p-4 rounded-xl border-2 text-left transition-all"
                 style={{
-                  borderColor: g.conflictMode === opt.mode ? "hsl(var(--primary))" : "rgba(255,255,255,0.07)",
-                  backgroundColor: g.conflictMode === opt.mode ? "hsl(var(--primary) / 0.08)" : "hsl(230,22%,8%)",
+                  borderColor: g.conflictMode === opt.mode ? "hsl(var(--primary))" : "hsl(220,13%,91%)",
+                  backgroundColor: g.conflictMode === opt.mode ? "hsl(var(--primary) / 0.08)" : "hsl(0,0%,100%)",
                 }}
               >
                 <p className="text-xs font-medium text-foreground mb-1">{opt.title}</p>
@@ -894,7 +894,7 @@ const GuardrailsView: React.FC = () => {
               <span className="text-[11px] text-muted-foreground">Est. resolution time:</span>
               <input
                 className="px-2 py-1 rounded-md text-xs text-foreground border w-28"
-                style={{ background: "hsl(230,22%,8%)", borderColor: "rgba(255,255,255,0.12)" }}
+                style={{ background: "hsl(0,0%,100%)", borderColor: "hsl(220,13%,91%)" }}
                 value={g.estResolutionTime}
                 onChange={(e) => { g.setEstResolutionTime(e.target.value); cardD.flash(); }}
               />
@@ -935,11 +935,11 @@ const GuardrailsView: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button onClick={() => { g.updateVelocityLimits({ maxActionsPerCampaignPerDay: Math.max(1, g.velocityLimits.maxActionsPerCampaignPerDay - 1) }); cardE.flash(); }}
                   className="w-7 h-7 rounded-lg border text-foreground text-sm flex items-center justify-center"
-                  style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}>−</button>
+                  style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}>−</button>
                 <span className="font-mono text-sm text-foreground w-6 text-center">{g.velocityLimits.maxActionsPerCampaignPerDay}</span>
                 <button onClick={() => { g.updateVelocityLimits({ maxActionsPerCampaignPerDay: g.velocityLimits.maxActionsPerCampaignPerDay + 1 }); cardE.flash(); }}
                   className="w-7 h-7 rounded-lg border text-foreground text-sm flex items-center justify-center"
-                  style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}>+</button>
+                  style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}>+</button>
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -947,11 +947,11 @@ const GuardrailsView: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button onClick={() => { g.updateVelocityLimits({ maxActionsPerHour: Math.max(1, g.velocityLimits.maxActionsPerHour - 1) }); cardE.flash(); }}
                   className="w-7 h-7 rounded-lg border text-foreground text-sm flex items-center justify-center"
-                  style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}>−</button>
+                  style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}>−</button>
                 <span className="font-mono text-sm text-foreground w-6 text-center">{g.velocityLimits.maxActionsPerHour}</span>
                 <button onClick={() => { g.updateVelocityLimits({ maxActionsPerHour: g.velocityLimits.maxActionsPerHour + 1 }); cardE.flash(); }}
                   className="w-7 h-7 rounded-lg border text-foreground text-sm flex items-center justify-center"
-                  style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}>+</button>
+                  style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}>+</button>
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -959,18 +959,18 @@ const GuardrailsView: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button onClick={() => { g.updateVelocityLimits({ coolingOffHours: Math.max(0.5, g.velocityLimits.coolingOffHours - 0.5) }); cardE.flash(); }}
                   className="w-7 h-7 rounded-lg border text-foreground text-sm flex items-center justify-center"
-                  style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}>−</button>
+                  style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}>−</button>
                 <span className="font-mono text-sm text-foreground w-12 text-center">{g.velocityLimits.coolingOffHours}h</span>
                 <button onClick={() => { g.updateVelocityLimits({ coolingOffHours: g.velocityLimits.coolingOffHours + 0.5 }); cardE.flash(); }}
                   className="w-7 h-7 rounded-lg border text-foreground text-sm flex items-center justify-center"
-                  style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}>+</button>
+                  style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}>+</button>
               </div>
             </div>
           </div>
           <div className="flex justify-end mt-4">
             <button onClick={() => { g.resetVelocityDefaults(); cardE.flash(); }}
               className="px-3 py-1.5 rounded-lg text-[11px] font-medium border text-muted-foreground hover:text-foreground transition-all"
-              style={{ borderColor: "rgba(255,255,255,0.12)", background: "transparent" }}
+              style={{ borderColor: "hsl(220,13%,91%)", background: "transparent" }}
             >
               Reset to defaults
             </button>
@@ -982,10 +982,10 @@ const GuardrailsView: React.FC = () => {
           <PanelCard title="Rule Trigger History — 30 Days" badge="Timeline" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={triggerHistory}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="triggers" stroke="hsl(0,76%,57%)" strokeWidth={2} dot={false} name="Triggers" />
               </LineChart>
             </ResponsiveContainer>
@@ -994,10 +994,10 @@ const GuardrailsView: React.FC = () => {
           <PanelCard title="Action Block/Allow Ratio" badge="By Insight Type" badgeColor="red" delay={0.1}>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={blockAllowData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={true} vertical={false} />
-                <XAxis dataKey="type" tick={{ fontSize: 9, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+                <XAxis dataKey="type" tick={{ fontSize: 9, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="allowed" fill="hsl(160,70%,48%)" radius={[4, 4, 0, 0]} name="Allowed" />
                 <Bar dataKey="blocked" fill="hsl(0,76%,57%)" radius={[4, 4, 0, 0]} name="Blocked" opacity={0.7} />
               </BarChart>

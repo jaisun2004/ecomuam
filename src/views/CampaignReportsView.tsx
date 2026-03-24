@@ -119,7 +119,7 @@ const CampaignReportsView: React.FC = () => {
         <PanelCard title="Spend & ROAS trend (30D)" badge="Daily" badgeColor="accent" delay={0.05}>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={spendTrend} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} interval={4} />
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />
@@ -130,7 +130,7 @@ const CampaignReportsView: React.FC = () => {
         <PanelCard title="Platform spend breakdown" badge="₹K" badgeColor="accent" delay={0.1}>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={platformBreakdown} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="platform" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />

@@ -103,10 +103,10 @@ const BudgetOptimiserView: React.FC = () => {
         <PanelCard title="Current vs Optimised ROAS by Platform" badge="AI Recommendation" badgeColor="purple" delay={0.2}>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-              <RTooltip contentStyle={{ background: "hsl(232,28%,6%)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontSize: 11 }} />
+              <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
               <Bar dataKey="current" fill="hsl(228,90%,64%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Current ROAS" />
               <Bar dataKey="optimised" fill="hsl(160,70%,48%)" opacity={0.8} radius={[4, 4, 0, 0]} name="Optimised ROAS" />
             </BarChart>
@@ -226,10 +226,10 @@ const BudgetOptimiserView: React.FC = () => {
           <PanelCard title="Budget Utilisation by Campaign" badge="Spend / Cap Ratio" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={budgetUtilData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={false} vertical={true} />
-                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(225,10%,30%)" }} axisLine={false} tickLine={false} domain={[0, 100]} unit="%" />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(228,25%,93%)" }} axisLine={false} tickLine={false} width={120} />
-                <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={false} vertical={true} />
+                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[0, 100]} unit="%" />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} width={120} />
+                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="ratio" radius={[0, 4, 4, 0]} name="Utilisation %">
                   {budgetUtilData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Bar>
@@ -244,7 +244,7 @@ const BudgetOptimiserView: React.FC = () => {
                   <Pie data={wastedSpendData} dataKey="value" cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2}>
                     {wastedSpendData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                   </Pie>
-                  <RTooltip contentStyle={{ background: "#1C1F27", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, fontSize: 13 }} />
+                  <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="space-y-2">
