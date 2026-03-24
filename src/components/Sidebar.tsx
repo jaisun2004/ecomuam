@@ -76,12 +76,12 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
           onClick={() => onChange(item.id)}
           className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 flex-shrink-0 text-left ${
             isActive
-              ? "bg-primary/15 text-primary"
-              : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+              ? "bg-white/20 text-white"
+              : "text-white/60 hover:bg-white/10 hover:text-white"
           }`}
         >
           <Icon size={16} className="flex-shrink-0" />
-          <span className={`text-[12px] font-medium truncate ${isCockpit && !isActive ? "text-foreground/80" : ""}`}>{item.label}</span>
+          <span className={`text-[12px] font-medium truncate ${isCockpit && !isActive ? "text-white/80" : ""}`}>{item.label}</span>
           {item.notify && (
             <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
           )}
@@ -96,8 +96,8 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             onClick={() => onChange(item.id)}
             className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
               isActive
-                ? "bg-primary/20 text-primary accent-glow"
-                : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:bg-white/10 hover:text-white"
             }`}
           >
             <Icon size={18} />
@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             )}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
+        <TooltipContent side="right" className="bg-popover text-popover-foreground border text-xs">
           {item.label}
         </TooltipContent>
       </Tooltip>
@@ -115,25 +115,25 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
   return (
     <div
-      className={`fixed left-0 top-0 bottom-0 bg-background border-r border-subtle flex flex-col py-4 z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
+      className={`fixed left-0 top-0 bottom-0 bg-sidebar border-r border-sidebar-border flex flex-col py-4 z-50 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
         expanded ? "w-[220px]" : "w-[68px]"
       }`}
     >
       <div className={`flex items-center mb-4 flex-shrink-0 ${expanded ? "px-4 justify-between" : "justify-center"}`}>
         <div
-          className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center accent-glow cursor-pointer flex-shrink-0"
+          className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center cursor-pointer flex-shrink-0"
           onClick={() => onChange("cockpit")}
         >
-          <span className="font-display font-bold text-primary-foreground text-sm">SW</span>
+          <span className="font-display font-bold text-white text-sm">SW</span>
         </div>
         {expanded && (
-          <span className="font-display font-bold text-foreground text-sm ml-2 flex-1 truncate">
-            shelf<span className="text-primary">wise</span>
+          <span className="font-display font-bold text-white text-sm ml-2 flex-1 truncate">
+            shelf<span className="text-white/70">wise</span>
           </span>
         )}
         <button
           onClick={onToggleExpand}
-          className={`p-1.5 rounded-lg text-muted-foreground hover:bg-surface-3 hover:text-foreground transition-all flex-shrink-0 ${
+          className={`p-1.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-all flex-shrink-0 ${
             expanded ? "" : "mt-2"
           }`}
         >
@@ -143,21 +143,21 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
       <div className={`flex-1 flex flex-col gap-0.5 ${expanded ? "px-3" : "items-center"}`}>
         {renderItem(cockpitItem, true)}
-        <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
+        <div className={`h-px bg-white/10 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
 
         {navSections.map((section, si) => (
           <React.Fragment key={section.label}>
             {si > 0 && (
-              <div className={`h-px bg-surface-3 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
+              <div className={`h-px bg-white/10 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-1.5"}`} />
             )}
             {expanded ? (
-              <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase px-2 py-1.5 flex-shrink-0">
+              <p className="text-[10px] font-mono text-white/40 tracking-widest uppercase px-2 py-1.5 flex-shrink-0">
                 {section.label}
               </p>
             ) : (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="text-[6px] font-mono text-muted-foreground tracking-widest uppercase mb-0.5 cursor-default">
+                  <span className="text-[6px] font-mono text-white/40 tracking-widest uppercase mb-0.5 cursor-default">
                     {section.label.slice(0, 3)}
                   </span>
                 </TooltipTrigger>
@@ -173,13 +173,13 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
 
       {expanded ? (
         <div className="px-3 pt-2 flex-shrink-0">
-          <div className="h-px bg-surface-3 mb-2" />
+          <div className="h-px bg-white/10 mb-2" />
           <button
             onClick={() => onChange("account")}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
               active === "account"
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:bg-white/10 hover:text-white"
             }`}
           >
             <User size={16} />
@@ -193,8 +193,8 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
               onClick={() => onChange("account")}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 self-center ${
                 active === "account"
-                  ? "bg-primary/20 text-primary"
-                  : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+                  ? "bg-white/20 text-white"
+                  : "text-white/60 hover:bg-white/10 hover:text-white"
               }`}
             >
               <User size={18} />
