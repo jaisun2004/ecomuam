@@ -1,59 +1,48 @@
 
 
-# Restyle to Match mFilterIt Purple/White Theme
+# Availability Screen — MySQL Schema & API Documentation
 
-## What changes
+This is a documentation-only deliverable. A comprehensive MySQL schema and API specification will be generated based on the data structures currently used in `AvailabilityView.tsx` and `AvailabilitySection.tsx`.
 
-The current app uses a dark theme (dark background, light text). The reference image shows a **light/white theme** with a **purple sidebar** and clean white content area. This is a full theme overhaul.
+## Deliverable
 
-## Changes required
+A single markdown file exported to `/mnt/documents/availability-db-schema.md` containing:
 
-### 1. CSS Variables (src/index.css)
-Rewrite all CSS custom properties to a light theme:
-- **Background**: White (`0 0% 100%`)
-- **Foreground**: Dark text (`220 20% 15%`)
-- **Card/Popover**: White with subtle grey borders
-- **Primary**: Purple (`270 70% 50%`) to match the mFilterIt purple
-- **Sidebar**: Deep purple background (`270 60% 35%`), white text
-- **Surface layers**: Light greys instead of dark greys
-- **Borders**: Light grey (`220 10% 90%`) instead of white-alpha
-- **Muted**: Light grey backgrounds, medium grey text
-- **Status colors**: Keep red/amber/green but adjust for light background readability
+1. **MySQL CREATE DATABASE + CREATE TABLE statements** for all availability entities
+2. **Full API endpoint list** with request/response key definitions
+3. **Textual ER diagram** showing table relationships
+4. **Indexes** optimized for analytics queries
+5. **Audit fields** (created_at, updated_at) on all tables
+6. **BIGINT IDs**, ENUMs, foreign keys, and constraints
 
-### 2. Sidebar (src/components/Sidebar.tsx)
-- Change background from `bg-background` to a deep purple (`bg-[#5B2D8E]` or similar)
-- All text becomes white
-- Active item: white background with purple text (or lighter purple highlight)
-- Section labels: white/light purple
-- Logo area: white text on purple
-- Hover states: lighter purple overlay
+## Tables to be defined (based on screen data)
 
-### 3. Topbar (src/components/Topbar.tsx)
-- White background with subtle bottom border
-- Dark text
-- Surface pills become light grey
+| Table | Purpose | Source in UI |
+|-------|---------|-------------|
+| `skus` | Master SKU reference | allSkus array, oosProductsToday |
+| `platforms` | Platform reference (Amazon, Blinkit, etc.) | platformAvailability |
+| `competitors` | Competitor brands | competitionAvailability |
+| `availability_snapshots` | Per-SKU per-platform availability % over time | availScoreTrend, heatmapData |
+| `oos_events` | Out-of-stock event log | oosProductsToday |
+| `platform_sku_availability` | Matrix: SKU × Platform availability | platformAvailability with nested skus |
+| `stock_forecasts` | AI-predicted days-to-OOS | stockForecast |
+| `darkstore_gaps` | City × SKU darkstore listing coverage | darkstoreGaps |
+| `competition_availability` | Competitor vs own availability | competitionAvailability |
+| `competition_oos_opportunities` | Competitor OOS for conquest campaigns | Competition OOS panel |
+| `campaign_triggers` | Availability-based campaign triggers | campaignTriggers |
+| `availability_kpi_snapshots` | Daily KPI rollups | KPI cards |
 
-### 4. PanelCard (src/components/sw/PanelCard.tsx)
-- White cards with light grey borders instead of dark surface colors
+## API Endpoints to be documented
 
-### 5. AlertItem (src/components/sw/AlertItem.tsx)
-- White/light background cards
+~12 endpoints covering: KPIs, OOS products, platform-SKU matrix, stock forecasts, darkstore gaps, competition availability, competition OOS opportunities, campaign triggers, score trend, heatmap data, and campaign launch actions.
 
-### 6. Tailwind Config (tailwind.config.ts)
-- No structural changes needed; colors flow from CSS variables
+Each endpoint will include: method, path, query parameters, response keys with types and descriptions.
 
-## Files to modify
-1. `src/index.css` — Full variable rewrite
-2. `src/components/Sidebar.tsx` — Purple sidebar styling
-3. `src/components/Topbar.tsx` — Light topbar
-4. `src/components/sw/PanelCard.tsx` — Light cards
-5. `src/components/sw/AlertItem.tsx` — Light alert cards
+## Technical details
 
-## Visual target
-- Purple sidebar (#5B2D8E / #6B3FA0 range)
-- White main content area
-- Light grey card backgrounds
-- Dark text throughout content
-- Purple accents for active states and buttons
-- Status badges remain colorful (red critical, amber warning, green success)
+- All IDs: `BIGINT UNSIGNED AUTO_INCREMENT`
+- ENUMs for: `platform_type` (marketplace, qcommerce), `trend_status` (critical, warning, ok, stable, improving, declining), `oos_severity`, `campaign_trigger_urgency`
+- Composite indexes on `(sku_id, platform_id, recorded_at)` for time-series queries
+- Foreign keys with `ON DELETE CASCADE` where appropriate
+- `created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`, `updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
 
