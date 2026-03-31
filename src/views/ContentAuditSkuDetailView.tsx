@@ -153,12 +153,16 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
       <div className="rounded-xl border border-subtle bg-surface-1 p-4">
         <h3 className="text-sm font-medium mb-3" style={{ color: "hsl(220,20%,15%)" }}>Score trend — last 30 days</h3>
         <div className="flex items-center gap-2 mb-3">
-          {platforms.map(p => (
-            <button key={p} onClick={() => setPlatformFilter(p)}
-              className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${platformFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>
-              {p}
-            </button>
-          ))}
+          <Select value={platformFilter} onValueChange={setPlatformFilter}>
+            <SelectTrigger className="w-[180px] h-8 text-[11px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {platforms.map(p => (
+                <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={trendData}>

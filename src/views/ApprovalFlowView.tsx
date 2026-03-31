@@ -222,15 +222,29 @@ const ApprovalFlowView: React.FC = () => {
                       <div className="flex gap-3 mb-3">
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] text-muted-foreground">Day Part:</span>
-                          {["All", "Morning", "Evening"].map(v => (
-                            <button key={v} onClick={() => setFilterDayPart(v)} className={`text-[10px] px-2 py-1 rounded-md transition-colors ${filterDayPart === v ? "bg-primary/15 text-primary" : "bg-surface-2 text-muted-foreground hover:text-foreground"}`}>{v}</button>
-                          ))}
+                          <Select value={filterDayPart} onValueChange={setFilterDayPart}>
+                            <SelectTrigger className="w-[120px] h-7 text-[10px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {["All", "Morning", "Evening"].map(v => (
+                                <SelectItem key={v} value={v} className="text-[10px]">{v}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] text-muted-foreground">Day Type:</span>
-                          {["All", "Weekday", "Weekend"].map(v => (
-                            <button key={v} onClick={() => setFilterDayType(v)} className={`text-[10px] px-2 py-1 rounded-md transition-colors ${filterDayType === v ? "bg-primary/15 text-primary" : "bg-surface-2 text-muted-foreground hover:text-foreground"}`}>{v}</button>
-                          ))}
+                          <Select value={filterDayType} onValueChange={setFilterDayType}>
+                            <SelectTrigger className="w-[120px] h-7 text-[10px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {["All", "Weekday", "Weekend"].map(v => (
+                                <SelectItem key={v} value={v} className="text-[10px]">{v}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 

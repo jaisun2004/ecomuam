@@ -548,9 +548,6 @@ const ContentAuditView: React.FC = () => {
                           );
                         })()}
                       </td>
-                      <td className="py-2.5 px-2 text-center">
-                        <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
-                      </td>
                       <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{Math.round((Date.now() - new Date(`2026-${s.lastUpdated.replace("Mar ", "03-")}`).getTime()) / (1000 * 60 * 60 * 24))}d ago</td>
                       <td className="py-2.5 px-2 text-center">
                         {overall < 70 && (

@@ -251,26 +251,29 @@ const CategoryAssortmentView: React.FC = () => {
 
         {/* Opportunity Priority Matrix — no VFM */}
         <PanelCard title="Opportunity priority matrix" badge="Growth" badgeColor="accent" delay={0.25}>
-          <ResponsiveContainer width="100%" height={260}>
-            <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
-              <XAxis dataKey="growthPotential" name="Growth Potential" type="number" domain={[30, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Growth Potential →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-              <YAxis dataKey="adParticipation" name="Ad participation %" type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Ad participation ↑", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-              <ZAxis dataKey="skuCount" range={[40, 400]} name="SKU count" />
-              <Tooltip {...tooltipStyle} formatter={(val: number, name: string) => [val, name]} labelFormatter={(_, payload) => payload?.[0]?.payload?.sub ?? ""} />
-              <Scatter data={opportunityData}>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={opportunityData} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={false} vertical={true} />
+              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="sub" tick={{ fontSize: 9, fill: "hsl(var(--foreground))" }} axisLine={false} tickLine={false} width={110} />
+              <Tooltip {...tooltipStyle} />
+              <Bar dataKey="growthPotential" name="Growth Potential" radius={[0, 4, 4, 0]} barSize={10}>
                 {opportunityData.map((entry, i) => {
-                  const isHighGrowthLowAd = entry.growthPotential >= 70 && entry.adParticipation < 50;
-                  const isLowGrowthHighAd = entry.growthPotential < 50 && entry.adParticipation >= 60;
-                  const color = isHighGrowthLowAd ? "hsl(var(--primary))" : isLowGrowthHighAd ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))";
-                  return <Cell key={i} fill={color} fillOpacity={0.8} />;
+                  const isHighGrowth = entry.growthPotential >= 70;
+                  return <Cell key={i} fill={isHighGrowth ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"} fillOpacity={0.7} />;
                 })}
-              </Scatter>
-            </ScatterChart>
+              </Bar>
+              <Bar dataKey="adParticipation" name="Ad Participation %" radius={[0, 4, 4, 0]} barSize={10}>
+                {opportunityData.map((entry, i) => {
+                  const isHighAd = entry.adParticipation >= 60;
+                  return <Cell key={i} fill={isHighAd ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))"} fillOpacity={0.5} />;
+                })}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-3 mt-2 pt-2 border-t border-border">
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-primary" />High growth, low ads — ad adoption opp.</span>
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-destructive" />High ads, low growth — curation needed</span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-3 h-1.5 rounded-full bg-primary opacity-70" />Growth Potential</span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-3 h-1.5 rounded-full bg-destructive opacity-50" />Ad Participation</span>
           </div>
         </PanelCard>
       </div>

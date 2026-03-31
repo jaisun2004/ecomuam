@@ -417,13 +417,17 @@ const DiscoveryView: React.FC = () => {
           </PanelCard>
 
           <PanelCard title="Share of Search Over Time — 30 Days" badge="Multi-brand" badgeColor="accent" delay={0.2}>
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              {["All", "Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"].map(p => (
-                <button key={p} onClick={() => setSosPlatformFilter(p)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${sosPlatformFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
-                  {p}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <Select value={sosPlatformFilter} onValueChange={setSosPlatformFilter}>
+                <SelectTrigger className="w-[200px] h-8 text-[11px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["All", "Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"].map(p => (
+                    <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={sosOverTime}>

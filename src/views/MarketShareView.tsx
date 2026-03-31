@@ -362,16 +362,17 @@ const MarketShareView: React.FC = () => {
 
           {/* Dark Store Map */}
           <PanelCard title="Dark Store Network — Pincode Level" badge={`${filteredStores.length} stores`} badgeColor="cyan" delay={0.35}>
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
-              {(["All", "Blinkit", "Zepto", "Swiggy Instamart"] as const).map(p => (
-                <button key={p} onClick={() => { setStoreFilter(p); setSelectedStore(null); }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    storeFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                  }`}>
-                  {p !== "All" && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColorMap[p] }} />}
-                  {p}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 mb-4">
+              <Select value={storeFilter} onValueChange={(v) => { setStoreFilter(v as any); setSelectedStore(null); }}>
+                <SelectTrigger className="w-[200px] h-8 text-[11px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(["All", "Blinkit", "Zepto", "Swiggy Instamart"] as const).map(p => (
+                    <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid grid-cols-5 gap-4">
