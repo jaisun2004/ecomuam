@@ -214,13 +214,17 @@ const MarketShareView: React.FC = () => {
         <div className="space-y-5">
           {/* Share over time */}
           <PanelCard title="Market Share Over Time — 90 Days" badge="Multi-brand" badgeColor="accent" delay={0}>
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              {["All", ...platforms].map(p => (
-                <button key={p} onClick={() => setPlatformFilter(p)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${platformFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
-                  {p}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                <SelectTrigger className="w-[180px] h-8 text-[11px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["All", ...platforms].map(p => (
+                    <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={shareOverTime}>
