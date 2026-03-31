@@ -331,10 +331,10 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
   const skuNames = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
-  const heatmapData = skuNames.map(sku => ({
+  const heatmapData = useMemo(() => skuNames.map(sku => ({
     sku,
     days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
-  }));
+  })), []);
 
   const cellColor = (val: number) => {
     if (val <= 20) return "rgba(255,92,92,0.7)";
