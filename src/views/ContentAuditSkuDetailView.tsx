@@ -3,6 +3,7 @@ import { useGuardrails, type ContextFilter } from "@/contexts/GuardrailContext";
 import { skuData, getOverall, competitorScores } from "@/views/ContentAuditView";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Mock data for detail page
 const titleChecks = [
