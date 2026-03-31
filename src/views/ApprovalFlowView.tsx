@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { CheckCircle2, AlertTriangle, Clock, Send, ChevronDown, ChevronRight, Shield, Zap, Target, ArrowRight } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
