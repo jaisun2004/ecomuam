@@ -347,6 +347,8 @@ const ContentAuditView: React.FC = () => {
   const [sortBy, setSortBy] = useState("score_asc");
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [copiedFlags, setCopiedFlags] = useState<Record<string, boolean>>({});
+  const [heatmapBrand, setHeatmapBrand] = useState("You");
+  const [autoGen, setAutoGen] = useState(false);
   const g = useGuardrails();
 
   const categories = useMemo(() => ["All", ...Array.from(new Set(skuData.map(s => s.category)))], []);
