@@ -834,7 +834,6 @@ const ContentAuditView: React.FC = () => {
           <PanelCard title="Title Quality Detail" badge="Per SKU" badgeColor="amber" delay={0.2}>
             {(() => {
               return (
-              return (
                 <>
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-[10px] text-muted-foreground">Auto-generate optimised titles</span>
