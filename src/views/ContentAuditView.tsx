@@ -45,28 +45,6 @@ const getCompOverall = (c: { title: number; heroImage: number; searchListing: nu
 const scoreColor = (score: number) => score >= 80 ? "#2ECF8E" : score >= 60 ? "#F5A623" : "#FF5C5C";
 const dimColor = (score: number) => score >= 16 ? "#2ECF8E" : score >= 12 ? "#F5A623" : "#FF5C5C";
 
-const sparklineData: Record<string, number[]> = {
-  "sku-001": [74, 75, 76, 77, 77, 76, 77],
-  "sku-002": [68, 67, 66, 66, 65, 66, 66],
-  "sku-003": [52, 51, 50, 51, 51, 50, 51],
-  "sku-004": [70, 69, 69, 70, 70, 69, 69],
-  "sku-005": [83, 82, 82, 82, 83, 82, 82],
-  "sku-006": [57, 56, 56, 55, 56, 56, 56],
-};
-
-const Sparkline: React.FC<{ data: number[]; width?: number; height?: number }> = ({ data, width = 60, height = 24 }) => {
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = max - min || 1;
-  const trend = data[data.length - 1] - data[0];
-  const color = trend > 0 ? "#2ECF8E" : trend < 0 ? "#FF5C5C" : "hsl(220,10%,46%)";
-  const points = data.map((v, i) => `${(i / (data.length - 1)) * width},${height - ((v - min) / range) * height}`).join(" ");
-  return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      <polyline points={points} fill="none" stroke={color} strokeWidth="1.5" />
-    </svg>
-  );
-};
 
 const FilterDropdown: React.FC<{
   label: string;
@@ -519,7 +497,7 @@ const ContentAuditView: React.FC = () => {
                   <th className="text-center py-2.5 px-2 font-normal">Price Parity</th>
                   <th className="text-center py-2.5 px-2 font-normal">Availability</th>
                   <th className="text-center py-2.5 px-2 font-normal">Imp. Change (14d)</th>
-                  <th className="text-center py-2.5 px-2 font-normal">Trend</th>
+                  
                   <th className="text-right py-2.5 px-2 font-normal">Days Since Update</th>
                   <th className="text-center py-2.5 px-2 font-normal">Alert</th>
                   <th className="text-right py-2.5 px-3 font-normal">Action</th>
@@ -569,9 +547,6 @@ const ContentAuditView: React.FC = () => {
                             </span>
                           );
                         })()}
-                      </td>
-                      <td className="py-2.5 px-2 text-center">
-                        <Sparkline data={sparklineData[s.id] || [50, 50, 50, 50, 50, 50, 50]} />
                       </td>
                       <td className="py-2.5 px-2 text-right text-muted-foreground text-[10px] font-mono">{Math.round((Date.now() - new Date(`2026-${s.lastUpdated.replace("Mar ", "03-")}`).getTime()) / (1000 * 60 * 60 * 24))}d ago</td>
                       <td className="py-2.5 px-2 text-center">

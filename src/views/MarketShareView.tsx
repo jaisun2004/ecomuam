@@ -5,6 +5,7 @@ import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, Legend } from "recharts";
 import { ArrowRight, AlertCircle, MapPin, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 /* ── Dark Store pincode-level data ── */
 interface DarkStore {
@@ -110,6 +111,8 @@ const MarketShareView: React.FC = () => {
   const g = useGuardrails();
   const [platformFilter, setPlatformFilter] = useState("All");
   const [selectedStore, setSelectedStore] = useState<DarkStore | null>(null);
+  const [expandedSubcategories, setExpandedSubcategories] = useState<Record<string, boolean>>({});
+  const [expandedEntrants, setExpandedEntrants] = useState<Record<string, boolean>>({});
   const [storeFilter, setStoreFilter] = useState<"All" | "Blinkit" | "Zepto" | "Swiggy Instamart">("All");
 
   const filteredStores = useMemo(() =>
@@ -161,7 +164,8 @@ const MarketShareView: React.FC = () => {
         <PanelCard title="Subcategories to Watch" badge="WoW change" badgeColor="amber" delay={0.3}>
           <div className="space-y-2">
             {subcategoryMovers.map(s => {
-              const [showDetail, setShowDetail] = React.useState(false);
+              const showDetail = expandedSubcategories[s.name] || false;
+              const setShowDetail = (v: boolean) => setExpandedSubcategories(p => ({ ...p, [s.name]: v }));
               return (
               <div key={s.name}>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-2 border border-subtle">
@@ -213,13 +217,17 @@ const MarketShareView: React.FC = () => {
         <div className="space-y-5">
           {/* Share over time */}
           <PanelCard title="Market Share Over Time — 90 Days" badge="Multi-brand" badgeColor="accent" delay={0}>
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              {["All", ...platforms].map(p => (
-                <button key={p} onClick={() => setPlatformFilter(p)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${platformFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
-                  {p}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                <SelectTrigger className="w-[180px] h-8 text-[11px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["All", ...platforms].map(p => (
+                    <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={shareOverTime}>
@@ -298,7 +306,8 @@ const MarketShareView: React.FC = () => {
           <PanelCard title="New Competitors Detected" badge="Last 30 days" badgeColor="red" delay={0.3}>
             <div className="space-y-3">
               {newEntrants.map(e => {
-                const [showProducts, setShowProducts] = React.useState(false);
+                const showProducts = expandedEntrants[e.brand] || false;
+                const setShowProducts = (v: boolean) => setExpandedEntrants(p => ({ ...p, [e.brand]: v }));
                 const productTrend = Array.from({ length: 4 }, (_, w) => ({
                   week: `W${w + 1}`,
                   rank: Math.round(20 - w * 3 + Math.random() * 5),
@@ -357,16 +366,17 @@ const MarketShareView: React.FC = () => {
 
           {/* Dark Store Map */}
           <PanelCard title="Dark Store Network — Pincode Level" badge={`${filteredStores.length} stores`} badgeColor="cyan" delay={0.35}>
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
-              {(["All", "Blinkit", "Zepto", "Swiggy Instamart"] as const).map(p => (
-                <button key={p} onClick={() => { setStoreFilter(p); setSelectedStore(null); }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    storeFilter === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                  }`}>
-                  {p !== "All" && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColorMap[p] }} />}
-                  {p}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 mb-4">
+              <Select value={storeFilter} onValueChange={(v) => { setStoreFilter(v as any); setSelectedStore(null); }}>
+                <SelectTrigger className="w-[200px] h-8 text-[11px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(["All", "Blinkit", "Zepto", "Swiggy Instamart"] as const).map(p => (
+                    <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid grid-cols-5 gap-4">

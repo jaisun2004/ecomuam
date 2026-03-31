@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ReferenceLine } from "recharts";
 import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
@@ -229,14 +230,18 @@ const AvailabilityView: React.FC = () => {
       {/* Darkstore Listing Gaps */}
       <PanelCard title="Darkstore Listing Gaps" badge="Q-Commerce Coverage" badgeColor="amber" delay={0.28}>
         <div className="flex items-center gap-2 mb-4">
-          {darkstoreGaps.map((c, i) => (
-            <button key={c.city} onClick={() => setSelectedCity(i)}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
-                selectedCity === i ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-              }`}>
-              <MapPin size={10} className="inline mr-1" />{c.city} · {c.totalDarkstores} stores
-            </button>
-          ))}
+          <Select value={String(selectedCity)} onValueChange={(v) => setSelectedCity(Number(v))}>
+            <SelectTrigger className="w-[220px] h-8 text-[11px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {darkstoreGaps.map((c, i) => (
+                <SelectItem key={c.city} value={String(i)} className="text-[11px]">
+                  {c.city} · {c.totalDarkstores} stores
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -331,10 +336,10 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
   const skuNames = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
-  const heatmapData = skuNames.map(sku => ({
+  const heatmapData = useMemo(() => skuNames.map(sku => ({
     sku,
     days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
-  }));
+  })), []);
 
   const cellColor = (val: number) => {
     if (val <= 20) return "rgba(255,92,92,0.7)";
@@ -357,7 +362,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
   return (
     <div className="space-y-5">
       <PanelCard title="Availability by SKU Over Time" badge="30 Days" badgeColor="red" delay={0}>
-        <div className="relative">
+        <div className="relative" style={{ overflow: "visible" }}>
           <div className="overflow-x-auto">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1">
@@ -394,7 +399,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
           </div>
 
           {selectedCell && (
-            <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-10 overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden">
               <div className="p-4 border-b border-subtle flex items-center justify-between">
                 <h4 className="text-sm font-medium text-foreground">Action for {selectedCell.sku} — Mar {selectedCell.day}</h4>
                 <button onClick={() => setSelectedCell(null)} className="text-muted-foreground hover:text-foreground">✕</button>
