@@ -833,7 +833,7 @@ const ContentAuditView: React.FC = () => {
           {/* Title quality - with auto-generate toggle */}
           <PanelCard title="Title Quality Detail" badge="Per SKU" badgeColor="amber" delay={0.2}>
             {(() => {
-              const [autoGen, setAutoGen] = React.useState(false);
+              return (
               return (
                 <>
                   <div className="flex items-center justify-between mb-3">
