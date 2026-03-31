@@ -174,24 +174,20 @@ const CategoryAssortmentView: React.FC = () => {
         </PanelCard>
 
         {/* Brand Activity vs Shelf Space — clickable */}
-        <PanelCard title="Brand activity vs shelf space" badge="Click dots for details" badgeColor="accent" delay={0.15}>
-          <ResponsiveContainer width="100%" height={260}>
-            <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
-              <XAxis dataKey="skuCount" name="SKU count" type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "SKU count →", position: "bottom", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-              <YAxis dataKey="activity" name="Activity" type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} label={{ value: "Activity ↑", angle: -90, position: "insideLeft", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-              <Tooltip {...tooltipStyle} formatter={(val: number, name: string) => [val, name === "skuCount" ? "SKUs" : "Activity"]} labelFormatter={(_, payload) => payload?.[0]?.payload?.brand ?? ""} />
-              <Scatter data={brandActivityData} onClick={(data: any) => setSelectedBrand(data)}>
-                {brandActivityData.map((entry, i) => (
-                  <Cell key={i} fill={quadrantColors[getBrandQuadrant(entry.skuCount, entry.activity)]} fillOpacity={0.85} r={entry.brand === "Britannia" ? 9 : 6} stroke={entry.brand === "Britannia" ? "hsl(var(--primary))" : "none"} strokeWidth={entry.brand === "Britannia" ? 2 : 0} cursor="pointer" />
-                ))}
-              </Scatter>
-            </ScatterChart>
+        <PanelCard title="Brand activity vs shelf space" badge="Click bars for details" badgeColor="accent" delay={0.15}>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={brandActivityData} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={false} vertical={true} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="brand" tick={{ fontSize: 10, fill: "hsl(var(--foreground))" }} axisLine={false} tickLine={false} width={90} />
+              <Tooltip {...tooltipStyle} />
+              <Bar dataKey="skuCount" name="SKU Count" fill="hsl(var(--primary))" fillOpacity={0.7} radius={[0, 4, 4, 0]} barSize={10} onClick={(data: any) => setSelectedBrand(data)} cursor="pointer" />
+              <Bar dataKey="activity" name="Activity Score" fill="hsl(142 71% 45%)" fillOpacity={0.7} radius={[0, 4, 4, 0]} barSize={10} onClick={(data: any) => setSelectedBrand(data)} cursor="pointer" />
+            </BarChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-3 mt-2 pt-2 border-t border-border">
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: quadrantColors.zombie }} />Zombie brands</span>
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: quadrantColors.expand }} />Range expansion</span>
-            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: quadrantColors.strong }} />Strong performers</span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-3 h-1.5 rounded-full bg-primary opacity-70" />SKU Count</span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "hsl(142 71% 45%)" }} />Activity Score</span>
           </div>
         </PanelCard>
 
