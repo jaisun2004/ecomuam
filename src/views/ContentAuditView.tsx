@@ -775,7 +775,7 @@ const ContentAuditView: React.FC = () => {
           {/* Dimension breakdown with brand heatmap toggle */}
           <PanelCard title="Dimension Breakdown" badge="Avg across catalogue" badgeColor="purple" delay={0.15}>
             {(() => {
-              const [heatmapBrand, setHeatmapBrand] = React.useState("You");
+              const brandOptions = ["You", ...competitors];
               const brandOptions = ["You", ...competitors];
               const heatmapDims = dimensions;
               const heatmapSkus = skuData.map(s => s.sku);
