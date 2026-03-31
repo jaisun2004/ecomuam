@@ -1,48 +1,41 @@
 
 
-# Availability Screen — MySQL Schema & API Documentation
+# Revised Plan: Fix Visuals, Filters, and Bugs Across All Screens
 
-This is a documentation-only deliverable. A comprehensive MySQL schema and API specification will be generated based on the data structures currently used in `AvailabilityView.tsx` and `AvailabilitySection.tsx`.
+## Point 1 (revised): Remove sparkline/trend columns from tables
 
-## Deliverable
+Only **one file** has inline trend charts inside a table:
 
-A single markdown file exported to `/mnt/documents/availability-db-schema.md` containing:
+- **`src/views/ContentAuditView.tsx`** — The "SKU Content Performance" table has a `Trend` column (line 522) rendering a `<Sparkline>` SVG component (line 574). Remove:
+  - The `<th>` for "Trend" (line 522)
+  - The `<td>` with `<Sparkline>` (lines 573-575)
+  - The `Sparkline` component definition (lines 57-69) and `sparklineData` constant (lines 48-55) if no longer used elsewhere
 
-1. **MySQL CREATE DATABASE + CREATE TABLE statements** for all availability entities
-2. **Full API endpoint list** with request/response key definitions
-3. **Textual ER diagram** showing table relationships
-4. **Indexes** optimized for analytics queries
-5. **Audit fields** (created_at, updated_at) on all tables
-6. **BIGINT IDs**, ENUMs, foreign keys, and constraints
+No other screens have trend/sparkline columns inside tables.
 
-## Tables to be defined (based on screen data)
+## Point 2: Replace scatter plots with grouped bar charts
+**File**: `src/views/CategoryAssortmentView.tsx`
+- Replace scatter chart visuals with horizontal grouped bar charts showing the same dimensions
 
-| Table | Purpose | Source in UI |
-|-------|---------|-------------|
-| `skus` | Master SKU reference | allSkus array, oosProductsToday |
-| `platforms` | Platform reference (Amazon, Blinkit, etc.) | platformAvailability |
-| `competitors` | Competitor brands | competitionAvailability |
-| `availability_snapshots` | Per-SKU per-platform availability % over time | availScoreTrend, heatmapData |
-| `oos_events` | Out-of-stock event log | oosProductsToday |
-| `platform_sku_availability` | Matrix: SKU × Platform availability | platformAvailability with nested skus |
-| `stock_forecasts` | AI-predicted days-to-OOS | stockForecast |
-| `darkstore_gaps` | City × SKU darkstore listing coverage | darkstoreGaps |
-| `competition_availability` | Competitor vs own availability | competitionAvailability |
-| `competition_oos_opportunities` | Competitor OOS for conquest campaigns | Competition OOS panel |
-| `campaign_triggers` | Availability-based campaign triggers | campaignTriggers |
-| `availability_kpi_snapshots` | Daily KPI rollups | KPI cards |
+## Point 3: Replace filter buttons with `<Select>` dropdowns
+Replace button-based filters with shadcn `<Select>` in:
+- `MarketShareView.tsx` — platform and store filters
+- `DiscoveryView.tsx` — SOS platform filter
+- `ContentAuditSkuDetailView.tsx` — platform filter
+- `ApprovalFlowView.tsx` — day part/day type filters
+- `AvailabilityView.tsx` — city selector
 
-## API Endpoints to be documented
+## Point 4: Fix Market Share analytics tab
+Debug conditional rendering so the analytics tab content appears correctly.
 
-~12 endpoints covering: KPIs, OOS products, platform-SKU matrix, stock forecasts, darkstore gaps, competition availability, competition OOS opportunities, campaign triggers, score trend, heatmap data, and campaign launch actions.
+## Point 5: Fix Availability heatmap bugs
+- **Values changing on click**: Wrap `heatmapData` in `useMemo` with empty deps to stabilize random values across re-renders
+- **Tooltip hidden**: Increase z-index on the action panel to `z-50` and set `overflow-visible` on parent
 
-Each endpoint will include: method, path, query parameters, response keys with types and descriptions.
-
-## Technical details
-
-- All IDs: `BIGINT UNSIGNED AUTO_INCREMENT`
-- ENUMs for: `platform_type` (marketplace, qcommerce), `trend_status` (critical, warning, ok, stable, improving, declining), `oos_severity`, `campaign_trigger_urgency`
-- Composite indexes on `(sku_id, platform_id, recorded_at)` for time-series queries
-- Foreign keys with `ON DELETE CASCADE` where appropriate
-- `created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`, `updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
+## Implementation order
+1. Remove Sparkline trend column from ContentAuditView
+2. Fix Availability heatmap (useMemo + z-index)
+3. Fix Market Share analytics
+4. Replace filter buttons → Select dropdowns (all files)
+5. Replace scatter plots → bar charts
 
