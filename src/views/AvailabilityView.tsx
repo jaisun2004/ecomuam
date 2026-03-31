@@ -229,14 +229,18 @@ const AvailabilityView: React.FC = () => {
       {/* Darkstore Listing Gaps */}
       <PanelCard title="Darkstore Listing Gaps" badge="Q-Commerce Coverage" badgeColor="amber" delay={0.28}>
         <div className="flex items-center gap-2 mb-4">
-          {darkstoreGaps.map((c, i) => (
-            <button key={c.city} onClick={() => setSelectedCity(i)}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
-                selectedCity === i ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-              }`}>
-              <MapPin size={10} className="inline mr-1" />{c.city} · {c.totalDarkstores} stores
-            </button>
-          ))}
+          <Select value={String(selectedCity)} onValueChange={(v) => setSelectedCity(Number(v))}>
+            <SelectTrigger className="w-[220px] h-8 text-[11px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {darkstoreGaps.map((c, i) => (
+                <SelectItem key={c.city} value={String(i)} className="text-[11px]">
+                  {c.city} · {c.totalDarkstores} stores
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
