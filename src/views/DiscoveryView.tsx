@@ -221,28 +221,27 @@ const DiscoveryView: React.FC = () => {
       {/* MERGED: Keywords & Share of Shelf */}
       <PanelCard title="🔥 Keywords & Share of Shelf" badge={`${selectedCategory} · ${selectedPlatform}`} badgeColor="accent" delay={0.2}>
         {/* Filters */}
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <div className="flex items-center gap-1 flex-wrap">
-            {categoryFilter.map(c => (
-              <button key={c} onClick={() => setSelectedCategory(c)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedCategory === c ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-1 mb-3 flex-wrap">
-          {platformFilter.map(p => (
-            <button key={p} onClick={() => setSelectedPlatform(p)}
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-medium transition-all ${
-                selectedPlatform === p ? "bg-sw-amber/20 text-sw-amber" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-              }`}>
-              {p !== "All Platforms" && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColors[p] }} />}
-              {p}
-            </button>
-          ))}
+        <div className="flex items-center gap-3 mb-3">
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-[180px] h-8 text-[11px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {categoryFilter.map(c => (
+                <SelectItem key={c} value={c} className="text-[11px]">{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+            <SelectTrigger className="w-[180px] h-8 text-[11px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {platformFilter.map(p => (
+                <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="overflow-x-auto">
