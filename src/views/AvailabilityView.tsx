@@ -357,7 +357,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
   return (
     <div className="space-y-5">
       <PanelCard title="Availability by SKU Over Time" badge="30 Days" badgeColor="red" delay={0}>
-        <div className="relative">
+        <div className="relative" style={{ overflow: "visible" }}>
           <div className="overflow-x-auto">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1">
