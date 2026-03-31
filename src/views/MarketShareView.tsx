@@ -306,7 +306,8 @@ const MarketShareView: React.FC = () => {
           <PanelCard title="New Competitors Detected" badge="Last 30 days" badgeColor="red" delay={0.3}>
             <div className="space-y-3">
               {newEntrants.map(e => {
-                const [showProducts, setShowProducts] = React.useState(false);
+                const showProducts = expandedEntrants[e.brand] || false;
+                const setShowProducts = (v: boolean) => setExpandedEntrants(p => ({ ...p, [e.brand]: v }));
                 const productTrend = Array.from({ length: 4 }, (_, w) => ({
                   week: `W${w + 1}`,
                   rank: Math.round(20 - w * 3 + Math.random() * 5),
