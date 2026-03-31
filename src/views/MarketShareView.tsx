@@ -111,6 +111,8 @@ const MarketShareView: React.FC = () => {
   const g = useGuardrails();
   const [platformFilter, setPlatformFilter] = useState("All");
   const [selectedStore, setSelectedStore] = useState<DarkStore | null>(null);
+  const [expandedSubcategories, setExpandedSubcategories] = useState<Record<string, boolean>>({});
+  const [expandedEntrants, setExpandedEntrants] = useState<Record<string, boolean>>({});
   const [storeFilter, setStoreFilter] = useState<"All" | "Blinkit" | "Zepto" | "Swiggy Instamart">("All");
 
   const filteredStores = useMemo(() =>
