@@ -347,6 +347,8 @@ const ContentAuditView: React.FC = () => {
   const [sortBy, setSortBy] = useState("score_asc");
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [copiedFlags, setCopiedFlags] = useState<Record<string, boolean>>({});
+  const [heatmapBrand, setHeatmapBrand] = useState("You");
+  const [autoGen, setAutoGen] = useState(false);
   const g = useGuardrails();
 
   const categories = useMemo(() => ["All", ...Array.from(new Set(skuData.map(s => s.category)))], []);
@@ -773,7 +775,6 @@ const ContentAuditView: React.FC = () => {
           {/* Dimension breakdown with brand heatmap toggle */}
           <PanelCard title="Dimension Breakdown" badge="Avg across catalogue" badgeColor="purple" delay={0.15}>
             {(() => {
-              const [heatmapBrand, setHeatmapBrand] = React.useState("You");
               const brandOptions = ["You", ...competitors];
               const heatmapDims = dimensions;
               const heatmapSkus = skuData.map(s => s.sku);
@@ -831,7 +832,6 @@ const ContentAuditView: React.FC = () => {
           {/* Title quality - with auto-generate toggle */}
           <PanelCard title="Title Quality Detail" badge="Per SKU" badgeColor="amber" delay={0.2}>
             {(() => {
-              const [autoGen, setAutoGen] = React.useState(false);
               return (
                 <>
                   <div className="flex items-center justify-between mb-3">
