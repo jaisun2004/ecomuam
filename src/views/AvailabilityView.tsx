@@ -394,7 +394,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
           </div>
 
           {selectedCell && (
-            <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-10 overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden">
               <div className="p-4 border-b border-subtle flex items-center justify-between">
                 <h4 className="text-sm font-medium text-foreground">Action for {selectedCell.sku} — Mar {selectedCell.day}</h4>
                 <button onClick={() => setSelectedCell(null)} className="text-muted-foreground hover:text-foreground">✕</button>
