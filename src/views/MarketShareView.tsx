@@ -164,7 +164,8 @@ const MarketShareView: React.FC = () => {
         <PanelCard title="Subcategories to Watch" badge="WoW change" badgeColor="amber" delay={0.3}>
           <div className="space-y-2">
             {subcategoryMovers.map(s => {
-              const [showDetail, setShowDetail] = React.useState(false);
+              const showDetail = expandedSubcategories[s.name] || false;
+              const setShowDetail = (v: boolean) => setExpandedSubcategories(p => ({ ...p, [s.name]: v }));
               return (
               <div key={s.name}>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-2 border border-subtle">
