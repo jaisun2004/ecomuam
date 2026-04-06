@@ -145,7 +145,7 @@ const AvailabilityView: React.FC = () => {
         </div>
       )}
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 5 platforms · 6 SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Dropped due to Flipkart OOS surge — needs attention" accentColor="bg-sw-green" delay={0} /> accentColor="bg-sw-green" delay={0} />
         <KPICard title="OOS Products Today" value={String(oosProductsToday.length)} delta="▲ 2 vs yesterday" deltaType="negative" sub="Products currently out of stock" accentColor="bg-sw-red" delay={0.05} />
         <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Across 3 cities · Q-Commerce" accentColor="bg-sw-amber" delay={0.1} />
         <KPICard title="Ad Budget Wasted" value="₹2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
