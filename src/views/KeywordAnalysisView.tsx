@@ -112,10 +112,10 @@ const KeywordAnalysisView: React.FC = () => {
       {tab === "overview" ? (
         <>
           <div className="grid grid-cols-4 gap-4">
-            <KPICard title="Tracked Keywords" value={String(keywords.length)} delta="Across selected platform" deltaType="neutral" sub={selectedPlatform} accentColor="bg-sw-cyan" delay={0} />
-            <KPICard title="Page 1 (Organic)" value={`${page1Count}/${keywords.length}`} delta={page1Count === keywords.length ? "All on page 1" : `${keywords.length - page1Count} need improvement`} deltaType={page1Count === keywords.length ? "positive" : "negative"} sub="Organic rank ≤ 10" accentColor="bg-sw-green" delay={0.05} />
-            <KPICard title="Avg Share of Search" value={`${avgSoS}%`} delta="▲ 2% vs last week" deltaType="positive" sub="Across tracked keywords" accentColor="bg-sw-purple" delay={0.1} />
-            <KPICard title="Spend Reducible" value={String(canReduceCount)} delta="Organic rank < 3" deltaType="positive" sub="Keywords where ad spend can be cut" accentColor="bg-sw-green" delay={0.15} />
+            <KPICard title="Tracked Keywords" value={String(keywords.length)} delta="Across selected platform" deltaType="neutral" sub="Coverage across selected platform keywords" accentColor="bg-sw-cyan" delay={0} />
+            <KPICard title="Page 1 (Organic)" value={`${page1Count}/${keywords.length}`} delta={page1Count === keywords.length ? "All on page 1" : `${keywords.length - page1Count} need improvement`} deltaType={page1Count === keywords.length ? "positive" : "negative"} sub="Good if all on page 1; otherwise needs SEO push" accentColor="bg-sw-green" delay={0.05} />
+            <KPICard title="Avg Share of Search" value={`${avgSoS}%`} delta="▲ 2% vs last week" deltaType="positive" sub="Improving — better ad placements boosting share" accentColor="bg-sw-purple" delay={0.1} />
+            <KPICard title="Spend Reducible" value={String(canReduceCount)} delta="Organic rank < 3" deltaType="positive" sub="Good — strong organic rank means ad savings possible" accentColor="bg-sw-green" delay={0.15} />
           </div>
 
           <div className="flex items-center gap-2">

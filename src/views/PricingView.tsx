@@ -201,10 +201,10 @@ const PricingView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
-        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
-        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Across all platforms" accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
+        <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Good — competitive positioning maintained across SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Monitor — competitor price cuts may erode your margin" accentColor="bg-sw-amber" delay={0.05} />
+        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Caution — slightly above market; may impact conversion" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Bad — overpriced SKUs losing click-to-buy rate" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
       {/* Competitor Matrix with SKU Group + Platform filters + Need Attention button */}
