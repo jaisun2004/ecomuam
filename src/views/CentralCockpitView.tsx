@@ -17,10 +17,10 @@ const urgentIssues = [
 ];
 
 const kpiData = [
-  { label: "Brand SoV", value: "48%", delta: "+2%", positive: true },
-  { label: "Content Score", value: "74/100", delta: "-5%", positive: false },
-  { label: "ROAS", value: "4.2x", delta: "+0.3x", positive: true },
-  { label: "Availability", value: "68%", delta: "-4%", positive: false },
+  { label: "Brand SoV", value: "48%", delta: "+2%", positive: true, sub: "Positive \u2014 ad spend efficiency improving visibility" },
+  { label: "Content Score", value: "74/100", delta: "-5%", positive: false, sub: "Declining \u2014 search page listings need refresh" },
+  { label: "ROAS", value: "4.2x", delta: "+0.3x", positive: true, sub: "Healthy \u2014 budget reallocation improving efficiency" },
+  { label: "Availability", value: "68%", delta: "-4%", positive: false, sub: "Dropped due to Flipkart OOS surge \u2014 needs attention" },
 ];
 
 const potentialFlags = [
