@@ -136,7 +136,7 @@ const CompetitorAdsView: React.FC = () => {
         <div className="grid grid-cols-4 gap-4">
           <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Active monitoring — no blind spots in ad landscape" accentColor="bg-sw-red" delay={0} /> accentColor="bg-sw-red" delay={0} />
           <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Opportunity — capture their lost impressions now" accentColor="bg-sw-green" delay={0.05} /> accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" sub="Available for conquest campaigns" accentColor="bg-sw-purple" delay={0.1} />
+          <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" sub="Good — uncontested brand keywords available for conquest" accentColor="bg-sw-purple" delay={0.1} /> accentColor="bg-sw-purple" delay={0.1} />
           <KPICard title="Est. Competitor Spend" value="₹11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
