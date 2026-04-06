@@ -120,10 +120,25 @@ const BudgetOptimiserView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary/50 rounded-full" /> Current</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> Optimised</span>
             </div>
-            <button onClick={() => setApplyAll(true)}
-              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-foreground hover:bg-primary/80"}`}>
-              {applyAll ? "✓ All Reallocations Applied" : "⚡ Apply All Recommendations"}
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-foreground hover:bg-primary/80"}`}>
+                  {applyAll ? "✓ All Reallocations Applied" : "⚡ Apply All Recommendations"}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Apply all budget reallocations?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will apply {samePlatformShifts.length + crossPlatformShifts.length} budget shift recommendations across all platforms. Projected impact: +0.8x blended ROAS, +4,600 conversions.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => setApplyAll(true)} className="bg-primary text-primary-foreground">Confirm Apply All</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </PanelCard>
 
