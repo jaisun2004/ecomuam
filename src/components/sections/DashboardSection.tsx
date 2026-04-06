@@ -237,7 +237,7 @@ const DashboardSection = ({ onNavigate }: DashboardProps) => {
       {/* Top-level KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KPICard title="In-Stock Rate" value="91.3%" change={2.1} <KPICard title="In-Stock Rate" value="91.3%" change={2.1} changeLabel="Improving — fewer OOS events this month" icon={<Box className="h-5 w-5" />} variant="primary" /> className="h-5 w-5" />} variant="primary" />
-        <KPICard title="Price Competitiveness" value="87%" change={3} changeLabel="within 5% of comp" icon={<DollarSign className="h-5 w-5" />} variant="success" />
+        <KPICard title="Price Competitiveness" value="87%" change={3} <KPICard title="Price Competitiveness" value="87%" change={3} changeLabel="Good — within 5% of competition pricing" icon={<DollarSign className="h-5 w-5" />} variant="success" /> icon={<DollarSign className="h-5 w-5" />} variant="success" />
         <KPICard title="Market Share" value="24%" change={2} changeLabel="vs last quarter" icon={<TrendingUp className="h-5 w-5" />} variant="warning" />
         <KPICard title="Content Score" value="68/100" change={-5} changeLabel="search page avg" icon={<FileText className="h-5 w-5" />} variant="destructive" />
       </div>
