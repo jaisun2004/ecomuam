@@ -258,7 +258,7 @@ const ShelfView: React.FC = () => {
       {/* KPI Row */}
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Shelf Health Score" value="76 / 100" delta="▼ 3.2 vs last wk" deltaType="negative" <KPICard title="Shelf Health Score" value="76 / 100" delta="▼ 3.2 vs last wk" deltaType="negative" sub="Dropped — OOS and content gaps pulling score down" accentColor="bg-sw-green" delay={0} /> accentColor="bg-sw-green" delay={0} />
-        <KPICard title="OOS Products Today" value="6" delta="▲ 2 vs yesterday" deltaType="negative" sub="Across all platforms" accentColor="bg-sw-red" delay={0.05} />
+        <KPICard title="OOS Products Today" value="6" delta="▲ 2 vs yesterday" deltaType="negative" <KPICard title="OOS Products Today" value="6" delta="▲ 2 vs yesterday" deltaType="negative" sub="Bad — replenishment delays impacting 2 platforms" accentColor="bg-sw-red" delay={0.05} /> delay={0.05} />
         <KPICard title="Share of Search" value="28%" delta="▲ 1.8% MoM" deltaType="positive" sub="Biscuits category · Amazon" accentColor="bg-primary" delay={0.1} />
         <KPICard title="Content Score Avg" value="62%" delta="⚠ 11 SKUs need update" deltaType="warning" sub="Title + Images + A+ content" accentColor="bg-sw-amber" delay={0.15} />
       </div>
