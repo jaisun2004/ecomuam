@@ -119,6 +119,7 @@ const CentralCockpitView: React.FC = () => {
             <span className={`inline-block mt-1 font-mono text-[10px] px-1.5 py-0.5 rounded-full ${
               kpi.positive ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
             }`}>{kpi.delta}</span>
+            <p className="text-[10px] text-muted-foreground mt-1.5">{kpi.sub}</p>
           </div>
         ))}
       </div>
