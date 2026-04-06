@@ -167,10 +167,25 @@ const BudgetOptimiserView: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   <p className="text-[10px] text-sw-green">💡 {s.projImpact}</p>
-                  <button onClick={() => setSamePlatformApplied(p => ({ ...p, [i]: true }))}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${samePlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"}`}>
-                    {samePlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${samePlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"}`}>
+                        {samePlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Apply budget shift on {s.platform}?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Shift {s.amount} from "{s.from.campaign}" (ROAS {s.from.roas}) to "{s.to.campaign}" (ROAS {s.to.roas}). Projected impact: {s.projImpact}.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => setSamePlatformApplied(p => ({ ...p, [i]: true }))} className="bg-primary text-primary-foreground">Confirm Shift</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))}
