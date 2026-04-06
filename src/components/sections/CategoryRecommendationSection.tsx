@@ -52,7 +52,7 @@ const CategoryRecommendationSection = () => {
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <KPICard title="Top Opportunity Score" value="85/100" change={0} changeLabel="Mango Chilli variant" icon={<Lightbulb className="h-5 w-5" />} variant="primary" />
+        <KPICard title="Top Opportunity Score" value="85/100" change={0} <KPICard title="Top Opportunity Score" value="85/100" change={0} changeLabel="High — strong whitespace for new variant" icon={<Lightbulb className="h-5 w-5" />} variant="primary" /> icon={<Lightbulb className="h-5 w-5" />} variant="primary" />
         <KPICard title="Category Growth" value="+12%" change={12} changeLabel="QoQ avg" icon={<TrendingUp className="h-5 w-5" />} variant="success" />
         <KPICard title="Whitespace Gaps" value="4" change={0} changeLabel="actionable opportunities" icon={<BarChart3 className="h-5 w-5" />} variant="warning" />
       </div>
