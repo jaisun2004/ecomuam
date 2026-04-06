@@ -86,7 +86,7 @@ const AvailabilitySection = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="In-Stock Rate" value="91.3%" change={2.1} changeLabel="vs last month" icon={<PackageCheck className="h-5 w-5" />} variant="primary" />
+        <KPICard title="In-Stock Rate" value="91.3%" change={2.1} <KPICard title="In-Stock Rate" value="91.3%" change={2.1} changeLabel="Improving — replenishment cycles tightening" icon={<PackageCheck className="h-5 w-5" />} variant="primary" /> icon={<PackageCheck className="h-5 w-5" />} variant="primary" />
         <KPICard title="OOS SKUs" value="47" change={-15} changeLabel="down from 55" icon={<PackageX className="h-5 w-5" />} variant="destructive" />
         <KPICard title="Revenue at Risk" value="₹12.4L" change={-8} changeLabel="daily est. loss" icon={<AlertTriangle className="h-5 w-5" />} variant="warning" />
         <KPICard title="Active SKUs" value="1,284" change={3.5} changeLabel="across 4 platforms" icon={<Box className="h-5 w-5" />} />
