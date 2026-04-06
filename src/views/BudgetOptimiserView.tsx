@@ -99,7 +99,7 @@ const BudgetOptimiserView: React.FC = () => {
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
           <KPICard title="Budget to Reallocate" value="₹2.8L" delta="From underperformers" deltaType="positive" sub="6 reallocation recommendations" accentColor="bg-primary" delay={0} />
-          <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" sub="Blended across all platforms" accentColor="bg-sw-green" delay={0.05} />
+          <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" sub="Good — shifting budget to high-performers drives efficiency" accentColor="bg-sw-green" delay={0.05} /> accentColor="bg-sw-green" delay={0.05} />
           <KPICard title="Conversion Uplift" value="+4,600" delta="Monthly projection" deltaType="positive" sub="If all recommendations applied" accentColor="bg-sw-cyan" delay={0.1} />
           <KPICard title="Underperforming Campaigns" value="4" delta="ROAS < 2.5x for 5+ days" deltaType="negative" sub="Flagged for budget reduction" accentColor="bg-sw-red" delay={0.15} />
         </div>
