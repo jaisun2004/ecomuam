@@ -222,10 +222,25 @@ const BudgetOptimiserView: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   <p className="text-[10px] text-sw-green">💡 {s.projImpact}</p>
-                  <button onClick={() => setCrossPlatformApplied(p => ({ ...p, [i]: true }))}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${crossPlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-sw-purple/20 text-sw-purple hover:bg-sw-purple/30"}`}>
-                    {crossPlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${crossPlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-sw-purple/20 text-sw-purple hover:bg-sw-purple/30"}`}>
+                        {crossPlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Apply cross-platform shift?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Shift {s.amount} from {s.from.platform} "{s.from.campaign}" to {s.to.platform} "{s.to.campaign}". Confidence: {s.confidence}%. Impact: {s.projImpact}.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => setCrossPlatformApplied(p => ({ ...p, [i]: true }))} className="bg-primary text-primary-foreground">Confirm Shift</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))}
