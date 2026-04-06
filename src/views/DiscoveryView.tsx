@@ -164,7 +164,7 @@ const DiscoveryView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Across 6 platforms" accentColor="bg-sw-cyan" delay={0} />
+        <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Good — early capture opportunity on rising search terms" accentColor="bg-sw-cyan" delay={0} /> accentColor="bg-sw-cyan" delay={0} />
         <KPICard title="Competition Rank Improved" value={String(compRankImprovements.length)} delta="▲ WoW rank gains" deltaType="negative" sub="Products that moved up" accentColor="bg-sw-red" delay={0.05} />
         <KPICard title="New Keywords on Ad Manager" value="23" delta="▲ Detected this month" deltaType="positive" sub="AI-detected from ad platforms" accentColor="bg-sw-green" delay={0.1} />
         <KPICard title="Overall Share of Shelf" value={`${shareOfShelf}%`} delta="▲ 3% vs last week" deltaType="positive" sub="Presence on generic keywords" accentColor="bg-sw-green" delay={0.15} />
