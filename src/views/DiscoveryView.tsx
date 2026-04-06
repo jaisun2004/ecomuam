@@ -166,7 +166,7 @@ const DiscoveryView: React.FC = () => {
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" <KPICard title="Trending Keywords" value="47" delta="▲ 12 new this week" deltaType="positive" sub="Good — early capture opportunity on rising search terms" accentColor="bg-sw-cyan" delay={0} /> accentColor="bg-sw-cyan" delay={0} />
         <KPICard title="Competition Rank Improved" value={String(compRankImprovements.length)} delta="▲ WoW rank gains" deltaType="negative" <KPICard title="Competition Rank Improved" value={String(compRankImprovements.length)} delta="▲ WoW rank gains" deltaType="negative" sub="Risk — competitors climbing on your core keywords" accentColor="bg-sw-red" delay={0.05} /> accentColor="bg-sw-red" delay={0.05} />
-        <KPICard title="New Keywords on Ad Manager" value="23" delta="▲ Detected this month" deltaType="positive" sub="AI-detected from ad platforms" accentColor="bg-sw-green" delay={0.1} />
+        <KPICard title="New Keywords on Ad Manager" value="23" delta="▲ Detected this month" deltaType="positive" <KPICard title="New Keywords on Ad Manager" value="23" delta="▲ Detected this month" deltaType="positive" sub="Positive — AI surfaced untapped high-intent terms" accentColor="bg-sw-green" delay={0.1} /> accentColor="bg-sw-green" delay={0.1} />
         <KPICard title="Overall Share of Shelf" value={`${shareOfShelf}%`} delta="▲ 3% vs last week" deltaType="positive" sub="Presence on generic keywords" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
