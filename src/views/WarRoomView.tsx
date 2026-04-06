@@ -4,6 +4,10 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 import { useToast } from "@/hooks/use-toast";
 import { Target, ChevronRight, ChevronDown, GripVertical, Shield, Zap, AlertTriangle, CheckCircle2, Minus, Plus, X, Lock, Info, RefreshCw, Send, MessageSquare, ArrowUp, ArrowDown } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 /* ── Types ── */
 type GoalType = "Increase ROAS" | "Increase Market Share" | "Increase Availability" | "Increase SoS" | "Increase Content Score";
