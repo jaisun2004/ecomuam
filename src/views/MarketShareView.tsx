@@ -133,7 +133,7 @@ const MarketShareView: React.FC = () => {
         <div className="grid grid-cols-4 gap-4">
           <KPICard title="Overall Category Share" value="22%" delta="▲ 1.4% vs last wk" deltaType="positive" <KPICard title="Overall Category Share" value="22%" delta="▲ 1.4% vs last wk" deltaType="positive" sub="Growing — new keyword wins driving incremental share" accentColor="bg-primary" delay={0} /> accentColor="bg-primary" delay={0} />
           <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" sub="Positive — ad + organic improvements closing gap with Parle" accentColor="bg-sw-green" delay={0.05} /> accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Fastest Growing Competitor" value="ITC" delta="+3.2% share gain" deltaType="negative" sub="Aggressive Q-commerce push" accentColor="bg-sw-red" delay={0.1} />
+          <KPICard title="Fastest Growing Competitor" value="ITC" delta="+3.2% share gain" deltaType="negative" <KPICard title="Fastest Growing Competitor" value="ITC" delta="+3.2% share gain" deltaType="negative" sub="Risk — ITC gaining via aggressive Blinkit & Zepto push" accentColor="bg-sw-red" delay={0.1} /> accentColor="bg-sw-red" delay={0.1} />
           <KPICard title="Platform Where You Lead" value="Flipkart" delta="Highest share: 31%" deltaType="positive" sub="2.1x vs nearest rival" accentColor="bg-sw-purple" delay={0.15} />
         </div>
 
