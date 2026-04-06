@@ -439,7 +439,7 @@ const ContentAuditView: React.FC = () => {
 
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Avg Content Score" value={`${avgScore}/100`} delta={avgScore >= 80 ? "Strong" : avgScore >= 60 ? "Needs work" : "Critical"} deltaType={avgScore >= 70 ? "positive" : "negative"} sub="Across all SKUs" accentColor="bg-primary" delay={0} />
+          <KPICard title="Avg Content Score" value={`${avgScore}/100`} delta={avgScore >= 80 ? "Strong" : avgScore >= 60 ? "Needs work" : "Critical"} deltaType={avgScore >= 70 ? "positive" : "negative"} <KPICard title="Avg Content Score" value={`${avgScore}/100`} delta={avgScore >= 80 ? "Strong" : avgScore >= 60 ? "Needs work" : "Critical"} deltaType={avgScore >= 70 ? "positive" : "negative"} sub="Driven by image quality gaps on newer listings" accentColor="bg-primary" delay={0} /> accentColor="bg-primary" delay={0} />
           <KPICard title="SKUs Below 60" value={String(criticalCount)} delta={criticalCount > 0 ? "Immediate action needed" : "All clear"} deltaType={criticalCount > 0 ? "negative" : "positive"} sub="Critical content quality" accentColor="bg-sw-red" delay={0.05} />
           <KPICard title="Competitor Content Stronger" value={String(competitorStronger)} delta="vs your listing" deltaType="negative" sub="Competitors optimising actively" accentColor="bg-sw-amber" delay={0.1} />
           <LastAuditKPI />
