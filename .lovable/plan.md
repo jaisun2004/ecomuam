@@ -1,41 +1,77 @@
 
 
-# Revised Plan: Fix Visuals, Filters, and Bugs Across All Screens
+# UI Improvements: Date Comparison, Confirmations, OOS City Column, Cockpit Redesign
 
-## Point 1 (revised): Remove sparkline/trend columns from tables
+## 1. Comparison Date Range in Topbar
 
-Only **one file** has inline trend charts inside a table:
+**File**: `src/components/Topbar.tsx`
 
-- **`src/views/ContentAuditView.tsx`** — The "SKU Content Performance" table has a `Trend` column (line 522) rendering a `<Sparkline>` SVG component (line 574). Remove:
-  - The `<th>` for "Trend" (line 522)
-  - The `<td>` with `<Sparkline>` (lines 573-575)
-  - The `Sparkline` component definition (lines 57-69) and `sparklineData` constant (lines 48-55) if no longer used elsewhere
+Add a "Compare" toggle next to the time range selector. When enabled, show two date-range selectors (current period + comparison period) using the Popover + Calendar pattern. The Topbar already manages `timeRange` state; extend it with `compareEnabled` and `compareRange` state. Display delta badges (e.g., "vs Mar 1-7") when comparison is active. This propagates visually — KPI cards already show deltas, so the comparison range serves as context for those deltas.
 
-No other screens have trend/sparkline columns inside tables.
+## 2. Confirmation Dialogs for Major Actions
 
-## Point 2: Replace scatter plots with grouped bar charts
-**File**: `src/views/CategoryAssortmentView.tsx`
-- Replace scatter chart visuals with horizontal grouped bar charts showing the same dimensions
+Use the existing `AlertDialog` component from `src/components/ui/alert-dialog.tsx` (already in the project).
 
-## Point 3: Replace filter buttons with `<Select>` dropdowns
-Replace button-based filters with shadcn `<Select>` in:
-- `MarketShareView.tsx` — platform and store filters
-- `DiscoveryView.tsx` — SOS platform filter
-- `ContentAuditSkuDetailView.tsx` — platform filter
-- `ApprovalFlowView.tsx` — day part/day type filters
-- `AvailabilityView.tsx` — city selector
+Add confirmation dialogs to these destructive/high-impact actions:
 
-## Point 4: Fix Market Share analytics tab
-Debug conditional rendering so the analytics tab content appears correctly.
+| Screen | Action | File |
+|--------|--------|------|
+| Availability | "Pause Campaigns" per SKU (line 158) | `AvailabilityView.tsx` |
+| Availability | "Bulk Pause All OOS Campaigns" (line 170) | `AvailabilityView.tsx` |
+| Central Cockpit | "Approve" and "Approve all safe" actions | `CentralCockpitView.tsx` |
+| War Room | Rule actions that include "Pause campaign" / "Increase budget" | `WarRoomView.tsx` |
+| Budget Optimiser | Any budget reallocation confirmations | `BudgetOptimiserView.tsx` |
 
-## Point 5: Fix Availability heatmap bugs
-- **Values changing on click**: Wrap `heatmapData` in `useMemo` with empty deps to stabilize random values across re-renders
-- **Tooltip hidden**: Increase z-index on the action panel to `z-50` and set `overflow-visible` on parent
+**Pattern**: Wrap each action button in `<AlertDialog>` + `<AlertDialogTrigger>`. The dialog content shows a summary of what will happen (SKU name, campaign name, budget amount). Two buttons: Cancel and Confirm (styled red for destructive, purple for approvals).
 
-## Implementation order
-1. Remove Sparkline trend column from ContentAuditView
-2. Fix Availability heatmap (useMemo + z-index)
-3. Fix Market Share analytics
-4. Replace filter buttons → Select dropdowns (all files)
-5. Replace scatter plots → bar charts
+## 3. Add City Column to OOS Products Today
+
+**File**: `src/views/AvailabilityView.tsx`
+
+- Add `city` field to `oosProductsToday` data (lines 16-21), e.g., `{ sku: "50-50 Maska Chaska 120g", platform: "Flipkart", city: "Delhi NCR", since: "6h ago" }`
+- Add `<th>City</th>` column header (line 141) and `<td>{item.city}</td>` in the row
+- Update "Pause Campaigns" button to navigate with city context: `g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku, city: item.city } })` — this filters the campaign list to that city
+
+## 4. Central Cockpit Redesign — Simpler, Web-Friendly
+
+**File**: `src/views/CentralCockpitView.tsx` — full rewrite
+
+Current problems: single-column scroll-heavy layout, dense row items, watching section + health accordion adds vertical bulk.
+
+**New layout** (fits in one viewport, no scroll needed):
+
+```text
+┌──────────────────────────────────────────────────┐
+│  Central Cockpit          Updated 4m ago  [↻]    │
+├──────────────────────────────────────────────────┤
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐                │
+│  │ SoV │ │Score│ │ROAS │ │Avail│   (KPI cards)   │
+│  │ 48% │ │74   │ │4.2x │ │ 68% │                │
+│  └─────┘ └─────┘ └─────┘ └─────┘                │
+├──────────────┬───────────────────────────────────┤
+│  Alerts (3)  │  Watching (5)    │  Health (8)    │
+│  ─────────── │  ───────────────  │  ────────────  │
+│  T1 item     │  Watch item 1    │  ● Campaign Mgr│
+│  T1 item     │  Watch item 2    │  ● Availability│
+│  T2 item     │  Watch item 3    │  ● Pricing     │
+│  T3 approve  │  ...             │  ...           │
+└──────────────┴───────────────────┴───────────────┘
+```
+
+Key changes:
+- **KPI summary row** at top (4 cards in a grid) — uses the existing `kpiData` array which is currently unused
+- **Three-column grid below** (alerts | watching | system health) — all visible at once, no accordions or expandable sections
+- Alerts column: compact list with tier badges, action buttons inline
+- Watching column: simple list with blue dot indicators
+- Health column: always-visible module status dots (no accordion toggle)
+- Remove `max-w-3xl` constraint to use full width
+- Batch approve button stays at top of alerts column
+- "All clear" empty state remains centered when nothing to show
+
+## Technical details
+
+- Confirmation dialog uses existing `AlertDialog` from shadcn — no new dependencies
+- Comparison date range uses existing `Calendar` + `Popover` components
+- City data added as static mock data to `oosProductsToday`
+- Cockpit redesign is a layout-only change, all logic (approve, navigate, batch) preserved
 
