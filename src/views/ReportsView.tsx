@@ -72,7 +72,7 @@ const ReportsView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-5 gap-4">
-        <KPICard title="Availability %" value={kpis.avail} delta={kpis.availDelta} deltaType={kpis.availDelta.includes("▲") ? "positive" : "negative"} sub="Across all platforms" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Availability %" value={kpis.avail} delta={kpis.availDelta} deltaType={kpis.availDelta.includes("▲") ? "positive" : "negative"} <KPICard title="Availability %" value={kpis.avail} delta={kpis.availDelta} deltaType={kpis.availDelta.includes("▲") ? "positive" : "negative"} sub="Reflects stock health across all connected platforms" accentColor="bg-sw-green" delay={0} /> delay={0} />
         <KPICard title="Share of Search" value={kpis.sos} delta={kpis.sosDelta} deltaType="positive" sub="Avg across keywords" accentColor="bg-sw-purple" delay={0.05} />
         <KPICard title="Sponsored Rank" value={kpis.sponsRank} delta={kpis.sponsDelta} deltaType="neutral" sub="Avg weighted by spend" accentColor="bg-primary" delay={0.1} />
         <KPICard title="Organic Rank" value={kpis.orgRank} delta={kpis.orgDelta} deltaType="neutral" sub="Avg across keywords" accentColor="bg-sw-cyan" delay={0.12} />
