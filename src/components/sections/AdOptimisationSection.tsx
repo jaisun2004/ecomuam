@@ -74,7 +74,7 @@ const AdOptimisationSection = () => {
         <KPICard title="Avg ROAS" value="3.7x" change={12} <KPICard title="Avg ROAS" value="3.7x" change={12} changeLabel="Improving — bid optimisation paying off" icon={<TrendingUp className="h-5 w-5" />} variant="success" /> icon={<TrendingUp className="h-5 w-5" />} variant="success" />
         <KPICard title="Monthly Spend" value="₹5L" change={-5} <KPICard title="Monthly Spend" value="₹5L" change={-5} changeLabel="Good — reduced without losing performance" icon={<DollarSign className="h-5 w-5" />} variant="primary" /> icon={<DollarSign className="h-5 w-5" />} variant="primary" />
         <KPICard title="Active Campaigns" value="8" change={2} changeLabel="across platforms" icon={<Megaphone className="h-5 w-5" />} />
-        <KPICard title="Est. Clicks" value="45.2K" change={8} changeLabel="this month" icon={<BarChart3 className="h-5 w-5" />} variant="warning" />
+        <KPICard title="Est. Clicks" value="45.2K" change={8} <KPICard title="Est. Clicks" value="45.2K" change={8} changeLabel="Healthy growth from better targeting" icon={<BarChart3 className="h-5 w-5" />} variant="warning" /> icon={<BarChart3 className="h-5 w-5" />} variant="warning" />
       </div>
 
       {!deepDive ? (

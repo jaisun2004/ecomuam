@@ -111,7 +111,7 @@ const CampaignReportsView: React.FC = () => {
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Improving — underperformers paused, winners scaled" accentColor="bg-sw-green" delay={0.05} /> accentColor="bg-sw-green" delay={0.05} />
         <KPICard title="Total Impressions" value="4.2M" delta="▲ 18%" deltaType="positive" <KPICard title="Total Impressions" value="4.2M" delta="▲ 18%" deltaType="positive" sub="Healthy growth — broader keyword coverage driving reach" accentColor="bg-sw-cyan" delay={0.1} /> delay={0.1} />
         <KPICard title="Avg CTR" value="3.1%" delta="▲ 0.4%" deltaType="positive" <KPICard title="Avg CTR" value="3.1%" delta="▲ 0.4%" deltaType="positive" sub="Strong — above industry avg, creative refresh working" accentColor="bg-sw-purple" delay={0.15} /> accentColor="bg-sw-purple" delay={0.15} />
-        <KPICard title="Avg CPC" value="₹18.2" delta="▼ ₹2.1" deltaType="positive" sub="30-day average" accentColor="bg-sw-amber" delay={0.2} />
+        <KPICard title="Avg CPC" value="₹18.2" delta="▼ ₹2.1" deltaType="positive" <KPICard title="Avg CPC" value="₹18.2" delta="▼ ₹2.1" deltaType="positive" sub="Good — lower CPC from better quality scores" accentColor="bg-sw-amber" delay={0.2} /> accentColor="bg-sw-amber" delay={0.2} />
       </div>
 
       {/* Charts */}

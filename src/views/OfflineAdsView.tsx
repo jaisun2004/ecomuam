@@ -83,7 +83,7 @@ const OfflineAdsView: React.FC = () => {
           <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" sub="Healthy — online channels performing well" accentColor="bg-sw-green" delay={0} /> accentColor="bg-sw-green" delay={0} />
           <KPICard title="Offline Opportunity" value="₹28L/mo" delta="Incremental potential" deltaType="positive" <KPICard title="Offline Opportunity" value="₹28L/mo" delta="Incremental potential" deltaType="positive" sub="Good — large untapped offline revenue potential" accentColor="bg-sw-purple" delay={0.05} /> accentColor="bg-sw-purple" delay={0.05} />
           <KPICard title="Est. Blended ROI" value="3.5x" delta="Online + Offline combined" deltaType="positive" <KPICard title="Est. Blended ROI" value="3.5x" delta="Online + Offline combined" deltaType="positive" sub="Positive — combined online + offline boosts total return" accentColor="bg-sw-cyan" delay={0.1} /> accentColor="bg-sw-cyan" delay={0.1} />
-          <KPICard title="Cities to Target" value="5" delta="Based on online penetration" deltaType="positive" sub="Highest offline potential" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Cities to Target" value="5" delta="Based on online penetration" deltaType="positive" <KPICard title="Cities to Target" value="5" delta="Based on online penetration" deltaType="positive" sub="Strategic — high online penetration signals offline demand" accentColor="bg-sw-amber" delay={0.15} /> accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <div className="p-5 rounded-2xl bg-gradient-to-r from-sw-green/10 to-primary/10 border border-sw-green/20">

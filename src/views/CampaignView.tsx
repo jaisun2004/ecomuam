@@ -713,7 +713,7 @@ const CampaignView: React.FC = () => {
         <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" sub="Spend up due to new campaign launches — on track" accentColor="bg-primary" delay={0} /> accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Healthy — budget reallocation improving efficiency" accentColor="bg-sw-green" delay={0.05} /> accentColor="bg-sw-green" delay={0.05} />
         <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹3.4L" deltaType="positive" <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹3.4L" deltaType="positive" sub="Good — auto-shifting spend from low-ROAS campaigns" accentColor="bg-sw-purple" delay={0.1} /> accentColor="bg-sw-purple" delay={0.1} />
-        <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Across all campaigns" accentColor="bg-sw-cyan" delay={0.15} />
+        <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Growing — higher bids + new keywords driving visibility" accentColor="bg-sw-cyan" delay={0.15} /> accentColor="bg-sw-cyan" delay={0.15} />
       </div>
 
       {/* Action bar */}
