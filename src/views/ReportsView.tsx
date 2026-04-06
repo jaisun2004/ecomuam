@@ -72,11 +72,11 @@ const ReportsView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-5 gap-4">
-        <KPICard title="Availability %" value={kpis.avail} delta={kpis.availDelta} deltaType={kpis.availDelta.includes("▲") ? "positive" : "negative"} <KPICard title="Availability %" value={kpis.avail} delta={kpis.availDelta} deltaType={kpis.availDelta.includes("▲") ? "positive" : "negative"} sub="Reflects stock health across all connected platforms" accentColor="bg-sw-green" delay={0} /> delay={0} />
-        <KPICard title="Share of Search" value={kpis.sos} delta={kpis.sosDelta} deltaType="positive" sub="Avg across keywords" accentColor="bg-sw-purple" delay={0.05} />
-        <KPICard title="Sponsored Rank" value={kpis.sponsRank} delta={kpis.sponsDelta} deltaType="neutral" <KPICard title="Sponsored Rank" value={kpis.sponsRank} delta={kpis.sponsDelta} deltaType="neutral" sub="Weighted by spend — stable indicates consistent bidding" accentColor="bg-primary" delay={0.1} /> accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Organic Rank" value={kpis.orgRank} delta={kpis.orgDelta} deltaType="neutral" <KPICard title="Organic Rank" value={kpis.orgRank} delta={kpis.orgDelta} deltaType="neutral" sub="Reflects SEO and content quality across keywords" accentColor="bg-sw-cyan" delay={0.12} /> delay={0.12} />
-        <KPICard title="ROAS" value={kpis.roas} delta={kpis.roasDelta} deltaType="positive" <KPICard title="ROAS" value={kpis.roas} delta={kpis.roasDelta} deltaType="positive" sub="Blended efficiency — higher means better spend utilisation" accentColor="bg-sw-green" delay={0.15} /> accentColor="bg-sw-green" delay={0.15} />
+        <KPICard title="Availability %" value={kpis.avail} delta={kpis.availDelta} deltaType={kpis.availDelta.includes("▲") ? "positive" : "negative"} sub="Reflects stock health across all connected platforms" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Share of Search" value={kpis.sos} delta={kpis.sosDelta} deltaType="positive" sub="Trend driven by keyword bid and content changes" accentColor="bg-sw-purple" delay={0.05} />
+        <KPICard title="Sponsored Rank" value={kpis.sponsRank} delta={kpis.sponsDelta} deltaType="neutral" sub="Weighted by spend — stable indicates consistent bidding" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Organic Rank" value={kpis.orgRank} delta={kpis.orgDelta} deltaType="neutral" sub="Reflects SEO and content quality across keywords" accentColor="bg-sw-cyan" delay={0.12} />
+        <KPICard title="ROAS" value={kpis.roas} delta={kpis.roasDelta} deltaType="positive" sub="Blended efficiency — higher means better spend utilisation" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
       <div className="grid grid-cols-3 gap-4">

@@ -74,10 +74,10 @@ const FestivalCampaignsView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Plan ahead — early campaign setup improves ROAS" accentColor="bg-sw-amber" delay={0} /> accentColor="bg-sw-amber" delay={0} />
-          <KPICard title="Pre-built Campaigns" value="8" delta="AI-optimised & pre-fed" deltaType="positive" <KPICard title="Pre-built Campaigns" value="8" delta="AI-optimised & pre-fed" deltaType="positive" sub="Ready — AI-optimised campaigns reduce setup time" accentColor="bg-sw-purple" delay={0.05} /> accentColor="bg-sw-purple" delay={0.05} />
-          <KPICard title="Avg Festival ROAS" value="4.8x" delta="▲ Based on past festivals" deltaType="positive" <KPICard title="Avg Festival ROAS" value="4.8x" delta="▲ Based on past festivals" deltaType="positive" sub="Strong — festivals consistently outperform regular periods" accentColor="bg-sw-green" delay={0.1} /> accentColor="bg-sw-green" delay={0.1} />
-          <KPICard title="Total Planned Spend" value="₹9.6L" delta="Across all festivals" deltaType="positive" <KPICard title="Total Planned Spend" value="₹9.6L" delta="Across all festivals" deltaType="positive" sub="Allocated — deploy selectively based on inventory" accentColor="bg-sw-cyan" delay={0.15} /> accentColor="bg-sw-cyan" delay={0.15} />
+          <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Plan ahead — early campaign setup improves ROAS" accentColor="bg-sw-amber" delay={0} />
+          <KPICard title="Pre-built Campaigns" value="8" delta="AI-optimised & pre-fed" deltaType="positive" sub="Ready — AI-optimised campaigns reduce setup time" accentColor="bg-sw-purple" delay={0.05} />
+          <KPICard title="Avg Festival ROAS" value="4.8x" delta="▲ Based on past festivals" deltaType="positive" sub="Strong — festivals consistently outperform regular periods" accentColor="bg-sw-green" delay={0.1} />
+          <KPICard title="Total Planned Spend" value="₹9.6L" delta="Across all festivals" deltaType="positive" sub="Allocated — deploy selectively based on inventory" accentColor="bg-sw-cyan" delay={0.15} />
         </div>
 
         <PanelCard title="Past Festival Performance" badge="Benchmarks" badgeColor="green" delay={0.2}>

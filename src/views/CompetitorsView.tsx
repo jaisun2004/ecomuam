@@ -28,10 +28,10 @@ const CompetitorsView: React.FC = () => {
   return (
     <div className="space-y-6 pb-20">
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Competitors Tracked" value="18" delta="+3 new detected" deltaType="positive" <KPICard title="Competitors Tracked" value="18" delta="+3 new detected" deltaType="positive" sub="New entrants detected — expanding monitoring coverage" accentColor="bg-sw-red" delay={0} /> accentColor="bg-sw-red" delay={0} />
-        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Watch — competitor price drops may trigger share loss" accentColor="bg-sw-amber" delay={0.05} /> />
-        <KPICard title="Share of Voice" value="22%" delta="▲ 1.4% this week" deltaType="positive" <KPICard title="Share of Voice" value="22%" delta="▲ 1.4% this week" deltaType="positive" sub="Positive — ad spend efficiency improving visibility" accentColor="bg-primary" delay={0.1} /> accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Your Price Position" value="#2" delta="Best value in category" deltaType="positive" <KPICard title="Your Price Position" value="#2" delta="Best value in category" deltaType="positive" sub="Good — price-value perception strong vs competitors" accentColor="bg-sw-green" delay={0.15} /> />
+        <KPICard title="Competitors Tracked" value="18" delta="+3 new detected" deltaType="positive" sub="New entrants detected — expanding monitoring coverage" accentColor="bg-sw-red" delay={0} />
+        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Watch — competitor price drops may trigger share loss" accentColor="bg-sw-amber" delay={0.05} />
+        <KPICard title="Share of Voice" value="22%" delta="▲ 1.4% this week" deltaType="positive" sub="Positive — ad spend efficiency improving visibility" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Your Price Position" value="#2" delta="Best value in category" deltaType="positive" sub="Good — price-value perception strong vs competitors" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
       <PanelCard title="Competitor Intelligence Matrix — Whey Protein 1kg · Amazon" badge="Real-time" badgeColor="red" delay={0.2}>
