@@ -4,6 +4,10 @@ import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
 import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const budgetUtilData = [
@@ -116,10 +120,25 @@ const BudgetOptimiserView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary/50 rounded-full" /> Current</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> Optimised</span>
             </div>
-            <button onClick={() => setApplyAll(true)}
-              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-foreground hover:bg-primary/80"}`}>
-              {applyAll ? "✓ All Reallocations Applied" : "⚡ Apply All Recommendations"}
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-foreground hover:bg-primary/80"}`}>
+                  {applyAll ? "✓ All Reallocations Applied" : "⚡ Apply All Recommendations"}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Apply all budget reallocations?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will apply {samePlatformShifts.length + crossPlatformShifts.length} budget shift recommendations across all platforms. Projected impact: +0.8x blended ROAS, +4,600 conversions.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => setApplyAll(true)} className="bg-primary text-primary-foreground">Confirm Apply All</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </PanelCard>
 
@@ -148,10 +167,25 @@ const BudgetOptimiserView: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   <p className="text-[10px] text-sw-green">💡 {s.projImpact}</p>
-                  <button onClick={() => setSamePlatformApplied(p => ({ ...p, [i]: true }))}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${samePlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"}`}>
-                    {samePlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${samePlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"}`}>
+                        {samePlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Apply budget shift on {s.platform}?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Shift {s.amount} from "{s.from.campaign}" (ROAS {s.from.roas}) to "{s.to.campaign}" (ROAS {s.to.roas}). Projected impact: {s.projImpact}.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => setSamePlatformApplied(p => ({ ...p, [i]: true }))} className="bg-primary text-primary-foreground">Confirm Shift</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))}
@@ -188,10 +222,25 @@ const BudgetOptimiserView: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   <p className="text-[10px] text-sw-green">💡 {s.projImpact}</p>
-                  <button onClick={() => setCrossPlatformApplied(p => ({ ...p, [i]: true }))}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${crossPlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-sw-purple/20 text-sw-purple hover:bg-sw-purple/30"}`}>
-                    {crossPlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${crossPlatformApplied[i] || applyAll ? "bg-sw-green-dim text-sw-green" : "bg-sw-purple/20 text-sw-purple hover:bg-sw-purple/30"}`}>
+                        {crossPlatformApplied[i] || applyAll ? "✓ Applied" : "Apply Shift"}
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Apply cross-platform shift?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Shift {s.amount} from {s.from.platform} "{s.from.campaign}" to {s.to.platform} "{s.to.campaign}". Confidence: {s.confidence}%. Impact: {s.projImpact}.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => setCrossPlatformApplied(p => ({ ...p, [i]: true }))} className="bg-primary text-primary-foreground">Confirm Shift</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))}

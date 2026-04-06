@@ -4,6 +4,10 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 import { useToast } from "@/hooks/use-toast";
 import { Target, ChevronRight, ChevronDown, GripVertical, Shield, Zap, AlertTriangle, CheckCircle2, Minus, Plus, X, Lock, Info, RefreshCw, Send, MessageSquare, ArrowUp, ArrowDown } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 /* ── Types ── */
 type GoalType = "Increase ROAS" | "Increase Market Share" | "Increase Availability" | "Increase SoS" | "Increase Content Score";
@@ -683,10 +687,26 @@ const WarRoomView: React.FC = () => {
             {inputMode === "absolute" && ` · Budget: ₹${Number(budgetAlloc).toLocaleString()}`}
             {prelaunchHasIssues && !prelaunchCleared && <span className="text-sw-red ml-2">· Pre-launch gate: LOCKED</span>}
           </div>
-          <button onClick={handleActivate}
-            className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${prelaunchHasIssues && !prelaunchCleared ? "bg-surface-3 text-muted-foreground cursor-not-allowed" : "bg-primary text-primary-foreground hover:bg-primary/80"}`}>
-            <Zap size={14} /> Activate War Room
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${prelaunchHasIssues && !prelaunchCleared ? "bg-surface-3 text-muted-foreground cursor-not-allowed" : "bg-primary text-primary-foreground hover:bg-primary/80"}`}>
+                <Zap size={14} /> Activate War Room
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Activate War Room?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will wire {totalCards} campaigns across {selectedSkus.length} SKUs to Campaign Manager and apply all configured rules to Guardrails.
+                  {inputMode === "absolute" && ` Total budget: ₹${Number(budgetAlloc).toLocaleString()}.`}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleActivate} className="bg-primary text-primary-foreground">Confirm Activate</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
     </div>
