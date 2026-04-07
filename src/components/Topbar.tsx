@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { CalendarIcon, GitCompare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,27 +19,33 @@ const platformFilters = [
   { name: "Flipkart", color: "#2F77FF" },
 ];
 
+const getPresetRange = (preset: string) => {
+  const today = new Date();
+  const days = preset === "7D" ? 7 : preset === "30D" ? 30 : 90;
+  return { from: subDays(today, days), to: today };
+};
+
 const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
   const [timeRange, setTimeRange] = useState("30D");
   const [compareEnabled, setCompareEnabled] = useState(false);
-  const [currentRange, setCurrentRange] = useState<{ from?: Date; to?: Date }>({
-    from: new Date(2026, 2, 7),
-    to: new Date(2026, 3, 6),
-  });
+  const [currentRange, setCurrentRange] = useState<{ from?: Date; to?: Date }>(getPresetRange("30D"));
   const [compareRange, setCompareRange] = useState<{ from?: Date; to?: Date }>({
-    from: new Date(2026, 1, 5),
-    to: new Date(2026, 2, 6),
+    from: subDays(new Date(), 60),
+    to: subDays(new Date(), 31),
   });
+
+  const handlePreset = (t: string) => {
+    setTimeRange(t);
+    setCurrentRange(getPresetRange(t));
+  };
 
   return (
     <div className="sticky top-0 bg-background border-b border-subtle flex items-center justify-between px-6 z-40 min-h-[60px] py-2">
-      {/* Brand + Tabs */}
       <div className="flex items-center gap-6">
         <h1 className="font-display font-bold text-lg">
           <span className="text-foreground">shelf</span>
           <span className="text-primary">wise</span>
         </h1>
-
         <div className="flex items-center bg-surface-2 rounded-full p-0.5">
           <button
             onClick={() => onChange("shelf")}
@@ -64,14 +70,13 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
         </div>
       </div>
 
-      {/* Right side */}
       <div className="flex items-center gap-3">
-        {/* Time Range */}
+        {/* Time Range Presets */}
         <div className="flex items-center bg-surface-2 rounded-lg p-0.5">
           {timeRanges.map((t) => (
             <button
               key={t}
-              onClick={() => setTimeRange(t)}
+              onClick={() => handlePreset(t)}
               className={`px-3 py-1 rounded-md font-mono text-[11px] font-medium transition-all ${
                 timeRange === t
                   ? "bg-surface-3 text-foreground"
@@ -82,6 +87,26 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
             </button>
           ))}
         </div>
+
+        {/* Always-visible primary date range */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 px-2 text-foreground">
+              <CalendarIcon size={10} />
+              {currentRange.from && currentRange.to
+                ? `${format(currentRange.from, "MMM d")} – ${format(currentRange.to, "MMM d")}`
+                : "Select range"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="range"
+              selected={currentRange as any}
+              onSelect={(range: any) => range && setCurrentRange(range)}
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
 
         {/* Compare toggle */}
         <button
@@ -96,37 +121,17 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
           Compare
         </button>
 
-        {/* Date range selectors (visible when compare enabled) */}
+        {/* Comparison date range (visible when compare enabled) */}
         {compareEnabled && (
           <div className="flex items-center gap-1.5">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 px-2 border-primary/30 text-foreground">
-                  <CalendarIcon size={10} />
-                  {currentRange.from && currentRange.to
-                    ? `${format(currentRange.from, "MMM d")} – ${format(currentRange.to, "MMM d")}`
-                    : "Current"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  mode="range"
-                  selected={currentRange as any}
-                  onSelect={(range: any) => range && setCurrentRange(range)}
-                  className={cn("p-3 pointer-events-auto")}
-                />
-              </PopoverContent>
-            </Popover>
-
             <span className="text-[10px] text-muted-foreground">vs</span>
-
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 px-2 border-dashed text-muted-foreground">
                   <CalendarIcon size={10} />
                   {compareRange.from && compareRange.to
                     ? `${format(compareRange.from, "MMM d")} – ${format(compareRange.to, "MMM d")}`
-                    : "Compare"}
+                    : "Compare range"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
