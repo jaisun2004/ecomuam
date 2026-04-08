@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
