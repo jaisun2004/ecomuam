@@ -128,9 +128,11 @@ const IndexInner = () => {
 const Index = () => {
   return (
     <TooltipProvider>
-      <GuardrailProvider>
-        <IndexInner />
-      </GuardrailProvider>
+      <DateRangeProvider>
+        <GuardrailProvider>
+          <IndexInner />
+        </GuardrailProvider>
+      </DateRangeProvider>
     </TooltipProvider>
   );
 };
