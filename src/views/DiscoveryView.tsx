@@ -398,6 +398,7 @@ const DiscoveryView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="volume" stroke="hsl(187,92%,43%)" strokeWidth={2} dot={false} name="Search Volume" />
+                {compareEnabled && <Line type="monotone" dataKey="volume" stroke="hsl(187,92%,43%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Search Vol (prev)" />}
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>
@@ -443,6 +444,7 @@ const DiscoveryView: React.FC = () => {
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Sunfeast" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="ITC" />
                 <Line type="monotone" dataKey="categoryAvg" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
+                {compareEnabled && <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="You (prev)" />}
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">

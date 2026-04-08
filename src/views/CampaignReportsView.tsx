@@ -127,6 +127,7 @@ const CampaignReportsView: React.FC = () => {
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />
               <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} name="Spend (₹K)" />
+              {compareEnabled && <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} name="Spend (prev)" />}
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>

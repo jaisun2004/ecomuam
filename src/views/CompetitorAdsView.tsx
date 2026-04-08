@@ -246,6 +246,10 @@ const CompetitorAdsView: React.FC = () => {
                 <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Sunfeast" />
                 <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Parle" />
                 <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Unibic" />
+                {compareEnabled && <>
+                  <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Sunfeast (prev)" />
+                  <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Parle (prev)" />
+                </>}
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">

@@ -272,6 +272,7 @@ const KeywordAnalysisView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="left" dataKey="searchVol" fill="hsl(228,90%,64%)" opacity={0.4} radius={[4, 4, 0, 0]} name="Search Volume (K)" barSize={28} />
                 <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={2.5} dot={{ r: 4, fill: "#2ECF8E" }} name="Share of Search %" />
+                {compareEnabled && <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="SoS (prev)" />}
               </ComposedChart>
             </ResponsiveContainer>
           </PanelCard>
@@ -287,6 +288,10 @@ const KeywordAnalysisView: React.FC = () => {
                 <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={2} dot={false} name="butter biscuits" />
                 <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={2} dot={false} name="cream biscuits" />
                 <Line type="monotone" dataKey="glucoseBiscuits" stroke="#FF5C5C" strokeWidth={2} dot={false} name="glucose biscuits" />
+                {compareEnabled && <>
+                  <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="butter (prev)" />
+                  <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="cream (prev)" />
+                </>}
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>

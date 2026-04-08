@@ -243,6 +243,7 @@ const MarketShareView: React.FC = () => {
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Parle" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Unibic" />
                 <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="ITC" />
+                {compareEnabled && <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="You (prev)" />}
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
@@ -251,6 +252,7 @@ const MarketShareView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Parle</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Unibic</span>
             </div>
+            <ComparisonLegend />
           </PanelCard>
 
           {/* Platform share matrix */}
