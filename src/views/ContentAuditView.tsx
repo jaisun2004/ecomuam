@@ -726,8 +726,10 @@ const ContentAuditView: React.FC = () => {
                     return <rect key={index} fill={fill} />;
                   })}
                 </Bar>
+                {compareEnabled && <Bar dataKey="count" radius={[4, 4, 0, 0]} name="SKUs (prev)" fill="hsl(220,10%,46%)" opacity={0.2} />}
               </BarChart>
             </ResponsiveContainer>
+            <ComparisonLegend />
             <div className="flex items-center gap-3 mt-2 text-[9px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#EF4444" }} /> 0-29 Critical</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#F97316" }} /> 30-59 Poor</span>
