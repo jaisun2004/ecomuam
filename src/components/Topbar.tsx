@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { format, subDays } from "date-fns";
+import React from "react";
+import { format } from "date-fns";
 import { CalendarIcon, GitCompare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useDateRange } from "@/contexts/DateRangeContext";
 
 interface TopbarProps {
   active: string;
@@ -19,25 +20,13 @@ const platformFilters = [
   { name: "Flipkart", color: "#2F77FF" },
 ];
 
-const getPresetRange = (preset: string) => {
-  const today = new Date();
-  const days = preset === "7D" ? 7 : preset === "30D" ? 30 : 90;
-  return { from: subDays(today, days), to: today };
-};
-
 const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
-  const [timeRange, setTimeRange] = useState("30D");
-  const [compareEnabled, setCompareEnabled] = useState(false);
-  const [currentRange, setCurrentRange] = useState<{ from?: Date; to?: Date }>(getPresetRange("30D"));
-  const [compareRange, setCompareRange] = useState<{ from?: Date; to?: Date }>({
-    from: subDays(new Date(), 60),
-    to: subDays(new Date(), 31),
-  });
-
-  const handlePreset = (t: string) => {
-    setTimeRange(t);
-    setCurrentRange(getPresetRange(t));
-  };
+  const {
+    currentRange, setCurrentRange,
+    compareRange, setCompareRange,
+    compareEnabled, setCompareEnabled,
+    timePreset, setTimePreset,
+  } = useDateRange();
 
   return (
     <div className="sticky top-0 bg-background border-b border-subtle flex items-center justify-between px-6 z-40 min-h-[60px] py-2">
@@ -76,9 +65,9 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
           {timeRanges.map((t) => (
             <button
               key={t}
-              onClick={() => handlePreset(t)}
+              onClick={() => setTimePreset(t)}
               className={`px-3 py-1 rounded-md font-mono text-[11px] font-medium transition-all ${
-                timeRange === t
+                timePreset === t
                   ? "bg-surface-3 text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
