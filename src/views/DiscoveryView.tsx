@@ -142,6 +142,7 @@ const shelfCoverageData: Record<string, {
 
 const DiscoveryView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const { compareEnabled } = useDateRange();
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
   const g = useGuardrails();
   const [sosPlatformFilter, setSosPlatformFilter] = useState("All");

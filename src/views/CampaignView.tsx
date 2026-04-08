@@ -394,6 +394,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 
 const CampaignView: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(0);
+  const { compareEnabled } = useDateRange();
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
   const [copilotStates, setCopilotStates] = useState<Record<number, boolean>>({});
   const [reallocApplied, setReallocApplied] = useState(false);

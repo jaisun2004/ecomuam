@@ -177,6 +177,7 @@ const priceIndexBySku: Record<string, any[]> = {
 
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [selectedSku, setSelectedSku] = useState("Good Day 200g");

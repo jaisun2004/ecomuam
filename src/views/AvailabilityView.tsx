@@ -99,6 +99,7 @@ const competitionAvailability = [
 
 const AvailabilityView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [selectedCity, setSelectedCity] = useState(0);
   const [compCampaignStates, setCompCampaignStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();

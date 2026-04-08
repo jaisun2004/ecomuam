@@ -75,6 +75,7 @@ const cityWiseOpps = [
 
 const OfflineAdsView: React.FC = () => {
   const [channelActions, setChannelActions] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
 
   return (

@@ -110,6 +110,7 @@ const newEntrants = [
 
 const MarketShareView: React.FC = () => {
   const [tab, setTab] = useState("overview");
+  const { compareEnabled } = useDateRange();
   const g = useGuardrails();
   const [platformFilter, setPlatformFilter] = useState("All");
   const [selectedStore, setSelectedStore] = useState<DarkStore | null>(null);

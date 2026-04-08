@@ -80,6 +80,7 @@ const chartData = platformSummary.map(p => ({ name: p.platform, current: p.roas,
 
 const BudgetOptimiserView: React.FC = () => {
   const [samePlatformApplied, setSamePlatformApplied] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [crossPlatformApplied, setCrossPlatformApplied] = useState<Record<number, boolean>>({});
   const [applyAll, setApplyAll] = useState(false);
   const [guardrailOpen, setGuardrailOpen] = useState(true);

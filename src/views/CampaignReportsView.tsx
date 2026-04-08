@@ -79,6 +79,7 @@ const platformBreakdown = [
 
 const CampaignReportsView: React.FC = () => {
   const g = useGuardrails();
+  const { compareEnabled } = useDateRange();
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});

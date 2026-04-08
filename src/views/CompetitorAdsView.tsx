@@ -81,6 +81,7 @@ const keywordConquestOpps = [
 
 const CompetitorAdsView: React.FC = () => {
   const [bidActions, setBidActions] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [conquestActions, setConquestActions] = useState<Record<number, boolean>>({});
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
   const [selectedKeyword, setSelectedKeyword] = useState("butter biscuits");

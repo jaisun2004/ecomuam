@@ -88,6 +88,7 @@ const opportunityData = healthData.map(h => ({
 
 const CategoryAssortmentView: React.FC = () => {
   const [selectedBrand, setSelectedBrand] = useState<typeof brandActivityData[0] | null>(null);
+  const { compareEnabled } = useDateRange();
 
   const tooltipStyle = {
     contentStyle: { backgroundColor: "hsl(var(--surface-2))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 11 },

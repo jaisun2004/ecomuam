@@ -69,6 +69,7 @@ const pastPerformance = [
 
 const FestivalCampaignsView: React.FC = () => {
   const [launchedCampaigns, setLaunchedCampaigns] = useState<Record<string, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
 
   return (

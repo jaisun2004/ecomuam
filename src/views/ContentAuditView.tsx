@@ -342,6 +342,7 @@ Report generated on ${today.toLocaleDateString("en-IN", { day: "numeric", month:
 
 const ContentAuditView: React.FC = () => {
   const [tab, setTab] = useState("overview");
+  const { compareEnabled } = useDateRange();
   const [platformFilter, setPlatformFilter] = useState("All");
   const [scoreFilter, setScoreFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");

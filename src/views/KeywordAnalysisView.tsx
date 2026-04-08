@@ -91,6 +91,7 @@ const losingKeywords = [
 
 const KeywordAnalysisView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
   const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();
