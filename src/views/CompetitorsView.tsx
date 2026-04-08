@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const matrixRows = [
   { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },

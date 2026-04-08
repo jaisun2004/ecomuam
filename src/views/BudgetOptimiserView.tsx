@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
 import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger

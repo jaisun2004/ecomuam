@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { Megaphone, Sparkles } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, AreaChart, Area } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const festivalComparison = [
   { festival: "Diwali", spend: 380, roas: 6.2, conversions: 2400 },

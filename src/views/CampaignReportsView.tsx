@@ -5,6 +5,8 @@ import KPICard from "@/components/sw/KPICard";
 import { ChevronDown, ChevronRight, ArrowLeft } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 /* ── Report Data ── */
 type ReportKeyword = {

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import PanelCard from "@/components/sw/PanelCard";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Line, ComposedChart, Cell } from "recharts";
 import { X } from "lucide-react";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 /* ── Sub-category health data — Biscuits ── */
 const healthData = [

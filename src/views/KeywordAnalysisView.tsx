@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ComposedChart, Area } from "recharts";
 import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target, Shield } from "lucide-react";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };

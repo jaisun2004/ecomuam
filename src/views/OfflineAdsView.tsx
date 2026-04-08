@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { Tv, CheckCircle2, MapPin, Megaphone } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const channelPerformance = [
   { channel: "Kirana Partnerships", roi: 3.5, reach: 380 },
