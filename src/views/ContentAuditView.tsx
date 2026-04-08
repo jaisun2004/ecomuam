@@ -4,6 +4,8 @@ import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 import { ChevronDown, ChevronRight, Copy, Check, X, AlertTriangle, ArrowRight, Download, Loader2, RefreshCw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 
@@ -340,6 +342,7 @@ Report generated on ${today.toLocaleDateString("en-IN", { day: "numeric", month:
 
 const ContentAuditView: React.FC = () => {
   const [tab, setTab] = useState("overview");
+  const { compareEnabled } = useDateRange();
   const [platformFilter, setPlatformFilter] = useState("All");
   const [scoreFilter, setScoreFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -723,8 +726,10 @@ const ContentAuditView: React.FC = () => {
                     return <rect key={index} fill={fill} />;
                   })}
                 </Bar>
+                {compareEnabled && <Bar dataKey="count" radius={[4, 4, 0, 0]} name="SKUs (prev)" fill="hsl(220,10%,46%)" opacity={0.2} />}
               </BarChart>
             </ResponsiveContainer>
+            <ComparisonLegend />
             <div className="flex items-center gap-3 mt-2 text-[9px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#EF4444" }} /> 0-29 Critical</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#F97316" }} /> 30-59 Poor</span>

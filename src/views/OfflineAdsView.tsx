@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { Tv, CheckCircle2, MapPin, Megaphone } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const channelPerformance = [
   { channel: "Kirana Partnerships", roi: 3.5, reach: 380 },
@@ -73,6 +75,7 @@ const cityWiseOpps = [
 
 const OfflineAdsView: React.FC = () => {
   const [channelActions, setChannelActions] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
 
   return (
@@ -158,6 +161,7 @@ const OfflineAdsView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="roi" fill="hsl(var(--sw-purple))" radius={[4, 4, 0, 0]} name="ROI (x)" />
+                {compareEnabled && <Bar dataKey="roi" fill="hsl(var(--sw-purple))" opacity={0.25} radius={[4, 4, 0, 0]} name="ROI (prev)" strokeDasharray="5 5" />}
               </BarChart>
             </ResponsiveContainer>
           </PanelCard>

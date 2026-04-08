@@ -3,6 +3,8 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle, ArrowRight } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
@@ -79,6 +81,7 @@ const keywordConquestOpps = [
 
 const CompetitorAdsView: React.FC = () => {
   const [bidActions, setBidActions] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [conquestActions, setConquestActions] = useState<Record<number, boolean>>({});
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
   const [selectedKeyword, setSelectedKeyword] = useState("butter biscuits");
@@ -243,6 +246,10 @@ const CompetitorAdsView: React.FC = () => {
                 <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Sunfeast" />
                 <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Parle" />
                 <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Unibic" />
+                {compareEnabled && <>
+                  <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Sunfeast (prev)" />
+                  <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Parle (prev)" />
+                </>}
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">

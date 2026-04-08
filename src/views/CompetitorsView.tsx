@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const matrixRows = [
   { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
@@ -25,6 +27,7 @@ const priceHistory = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const CompetitorsView: React.FC = () => {
+  const { compareEnabled } = useDateRange();
   return (
     <div className="space-y-6 pb-20">
       <div className="grid grid-cols-4 gap-4">
@@ -100,6 +103,7 @@ const CompetitorsView: React.FC = () => {
               <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
               <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price" />
               <Line type="monotone" dataKey="comp" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name="MuscleBlaze" />
+              {compareEnabled && <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Your Price (prev)" />}
               <ReferenceDot x="Mar 13" y={2199} r={5} fill="hsl(0,76%,57%)" stroke="none" />
             </LineChart>
           </ResponsiveContainer>

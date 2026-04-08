@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
 import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
@@ -78,6 +80,7 @@ const chartData = platformSummary.map(p => ({ name: p.platform, current: p.roas,
 
 const BudgetOptimiserView: React.FC = () => {
   const [samePlatformApplied, setSamePlatformApplied] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [crossPlatformApplied, setCrossPlatformApplied] = useState<Record<number, boolean>>({});
   const [applyAll, setApplyAll] = useState(false);
   const [guardrailOpen, setGuardrailOpen] = useState(true);
@@ -113,6 +116,7 @@ const BudgetOptimiserView: React.FC = () => {
               <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
               <Bar dataKey="current" fill="hsl(228,90%,64%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Current ROAS" />
               <Bar dataKey="optimised" fill="hsl(160,70%,48%)" opacity={0.8} radius={[4, 4, 0, 0]} name="Optimised ROAS" />
+              {compareEnabled && <Bar dataKey="current" fill="hsl(228,90%,64%)" opacity={0.2} radius={[4, 4, 0, 0]} name="Current (prev)" strokeDasharray="5 5" />}
             </BarChart>
           </ResponsiveContainer>
           <div className="flex items-center justify-between mt-3">

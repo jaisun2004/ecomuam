@@ -5,6 +5,8 @@ import KPICard from "@/components/sw/KPICard";
 import { ChevronDown, ChevronRight, ArrowLeft } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 /* ── Report Data ── */
 type ReportKeyword = {
@@ -77,6 +79,7 @@ const platformBreakdown = [
 
 const CampaignReportsView: React.FC = () => {
   const g = useGuardrails();
+  const { compareEnabled } = useDateRange();
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
@@ -124,6 +127,7 @@ const CampaignReportsView: React.FC = () => {
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />
               <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} name="Spend (₹K)" />
+              {compareEnabled && <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} name="Spend (prev)" />}
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { Megaphone, Sparkles } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, AreaChart, Area } from "recharts";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const festivalComparison = [
   { festival: "Diwali", spend: 380, roas: 6.2, conversions: 2400 },
@@ -67,6 +69,7 @@ const pastPerformance = [
 
 const FestivalCampaignsView: React.FC = () => {
   const [launchedCampaigns, setLaunchedCampaigns] = useState<Record<string, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
 
   return (
@@ -158,6 +161,10 @@ const FestivalCampaignsView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="diwali" stroke="hsl(38,92%,50%)" strokeWidth={2} dot={false} name="Diwali" />
                 <Line type="monotone" dataKey="republicDay" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Republic Day" />
+                {compareEnabled && <>
+                  <Line type="monotone" dataKey="diwali" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Diwali (prev)" />
+                  <Line type="monotone" dataKey="republicDay" stroke="hsl(228,90%,64%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Rep Day (prev)" />
+                </>}
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>
@@ -171,6 +178,7 @@ const FestivalCampaignsView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Area type="monotone" dataKey="festival" stackId="1" fill="hsl(var(--sw-amber))" stroke="hsl(38,92%,50%)" fillOpacity={0.3} name="Festival Period" />
                 <Area type="monotone" dataKey="nonFestival" stackId="1" fill="hsl(var(--primary))" stroke="hsl(228,90%,64%)" fillOpacity={0.2} name="Non-Festival" />
+                {compareEnabled && <Area type="monotone" dataKey="festival" stroke="hsl(38,92%,50%)" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} name="Festival (prev)" />}
               </AreaChart>
             </ResponsiveContainer>
           </PanelCard>

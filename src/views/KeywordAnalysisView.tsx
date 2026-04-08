@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ComposedChart, Area } from "recharts";
 import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target, Shield } from "lucide-react";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
@@ -89,6 +91,7 @@ const losingKeywords = [
 
 const KeywordAnalysisView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
   const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();
@@ -269,6 +272,7 @@ const KeywordAnalysisView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="left" dataKey="searchVol" fill="hsl(228,90%,64%)" opacity={0.4} radius={[4, 4, 0, 0]} name="Search Volume (K)" barSize={28} />
                 <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={2.5} dot={{ r: 4, fill: "#2ECF8E" }} name="Share of Search %" />
+                {compareEnabled && <Line yAxisId="right" type="monotone" dataKey="sos" stroke="#2ECF8E" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="SoS (prev)" />}
               </ComposedChart>
             </ResponsiveContainer>
           </PanelCard>
@@ -284,6 +288,10 @@ const KeywordAnalysisView: React.FC = () => {
                 <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={2} dot={false} name="butter biscuits" />
                 <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={2} dot={false} name="cream biscuits" />
                 <Line type="monotone" dataKey="glucoseBiscuits" stroke="#FF5C5C" strokeWidth={2} dot={false} name="glucose biscuits" />
+                {compareEnabled && <>
+                  <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="butter (prev)" />
+                  <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="cream (prev)" />
+                </>}
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>

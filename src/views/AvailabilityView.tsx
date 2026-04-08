@@ -6,6 +6,8 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
@@ -97,6 +99,7 @@ const competitionAvailability = [
 
 const AvailabilityView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
+  const { compareEnabled } = useDateRange();
   const [selectedCity, setSelectedCity] = useState(0);
   const [compCampaignStates, setCompCampaignStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();
@@ -451,8 +454,10 @@ const AvailabilityView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13, color: "hsl(220,20%,15%)" }} />
                 <ReferenceLine y={50} stroke="hsl(0,76%,57%)" strokeDasharray="4 4" label={{ value: "Critical", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
                 <Area type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" fill="hsl(228,90%,64%)" fillOpacity={0.15} strokeWidth={2} />
+                {compareEnabled && <Area type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.4} name="Score (prev)" />}
               </AreaChart>
             </ResponsiveContainer>
+            <ComparisonLegend />
           </PanelCard>
 
           <PanelCard title="Availability by SKU Over Time" badge="Heatmap" badgeColor="accent" delay={0.1}>
@@ -515,8 +520,13 @@ const AvailabilityView: React.FC = () => {
                 <Line type="monotone" dataKey="score" stroke="#FF9900" strokeWidth={2} dot={false} name="Amazon" />
                 <Line type="monotone" dataKey="score" stroke="#2F77FF" strokeWidth={2} dot={false} name="Flipkart" />
                 <Line type="monotone" dataKey="score" stroke="#FDDC2B" strokeWidth={2} dot={false} name="Blinkit" />
+                {compareEnabled && <>
+                  <Line type="monotone" dataKey="score" stroke="#FF9900" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Amazon (prev)" />
+                  <Line type="monotone" dataKey="score" stroke="#2F77FF" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Flipkart (prev)" />
+                </>}
               </LineChart>
             </ResponsiveContainer>
+            <ComparisonLegend />
           </PanelCard>
         </div>
       )}

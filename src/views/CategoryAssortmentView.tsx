@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import PanelCard from "@/components/sw/PanelCard";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Line, ComposedChart, Cell } from "recharts";
 import { X } from "lucide-react";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import ComparisonLegend from "@/components/ComparisonLegend";
 
 /* ── Sub-category health data — Biscuits ── */
 const healthData = [
@@ -86,6 +88,7 @@ const opportunityData = healthData.map(h => ({
 
 const CategoryAssortmentView: React.FC = () => {
   const [selectedBrand, setSelectedBrand] = useState<typeof brandActivityData[0] | null>(null);
+  const { compareEnabled } = useDateRange();
 
   const tooltipStyle = {
     contentStyle: { backgroundColor: "hsl(var(--surface-2))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 11 },
@@ -245,6 +248,7 @@ const CategoryAssortmentView: React.FC = () => {
               <Bar yAxisId="left" dataKey="sponsoredDiscount" name="Sponsored disc %" fill="hsl(var(--destructive))" fillOpacity={0.7} radius={[4, 4, 0, 0]} barSize={14} />
               <Bar yAxisId="left" dataKey="nonSponsoredDiscount" name="Non-sponsored disc %" fill="hsl(var(--primary))" fillOpacity={0.5} radius={[4, 4, 0, 0]} barSize={14} />
               <Line yAxisId="right" dataKey="availability" name="Availability %" stroke="hsl(142 71% 45%)" strokeWidth={2} dot={{ r: 3 }} />
+              {compareEnabled && <Line yAxisId="right" dataKey="availability" stroke="hsl(142 71% 45%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Availability (prev)" />}
             </ComposedChart>
           </ResponsiveContainer>
         </PanelCard>
