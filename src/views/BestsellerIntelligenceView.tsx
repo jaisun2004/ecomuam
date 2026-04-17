@@ -20,22 +20,84 @@ import {
   ReferenceLine,
   LabelList,
 } from "recharts";
-import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap, ArrowRight, Users, PiggyBank } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
+import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap, ArrowRight, Users, PiggyBank, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { useToast } from "@/hooks/use-toast";
 
-// ───────── Competitor mock data ─────────
-const competitors = [
-  { name: "Britannia Bourbon 150g", organicRank: 6, organicDelta: -2, sponsoredRank: 3, sponsoredDelta: 1 },
-  { name: "Sunfeast Dark Fantasy", organicRank: 4, organicDelta: 1, sponsoredRank: 5, sponsoredDelta: -2 },
+// ───────── Competitor brand mock data (extensive comparison) ─────────
+type CompetitorBrand = {
+  name: string;
+  isUs?: boolean;
+  color: string;
+  currentRank: number;
+  startRank: number;
+  organicRank: number;
+  sponsoredRank: number;
+};
+
+const competitorBrands: CompetitorBrand[] = [
+  { name: "Our SKU", isUs: true, color: "hsl(270,60%,42%)", currentRank: 4, startRank: 9, organicRank: 5, sponsoredRank: 3 },
+  { name: "Britannia Bourbon", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
+  { name: "Sunfeast Dark Fantasy", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
+  { name: "Parle Hide & Seek", color: "hsl(35,85%,50%)", currentRank: 8, startRank: 7, organicRank: 9, sponsoredRank: 7 },
+  { name: "Unibic Choco Chip", color: "hsl(140,55%,40%)", currentRank: 11, startRank: 8, organicRank: 12, sponsoredRank: 10 },
 ];
 
-// Low-ROAS / high-spend candidate campaigns to recommend reductions on
+// Build multi-brand rank series for chart
+const buildCompetitorRankSeries = (days: number) => {
+  const today = new Date();
+  return Array.from({ length: days }, (_, idx) => {
+    const i = days - 1 - idx;
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const t = (days - 1 - i) / Math.max(1, days - 1); // 0 → 1 across window
+    const point: Record<string, any> = {
+      day: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    };
+    competitorBrands.forEach((b) => {
+      const interp = b.startRank + (b.currentRank - b.startRank) * t;
+      const noise = Math.sin((i + b.name.length) / 3) * 0.6;
+      point[b.name] = Math.max(1, Math.round(interp + noise));
+    });
+    return point;
+  });
+};
+
+// Low-ROAS / high-spend campaign candidates with concrete details
 const reductionCandidates = [
-  { name: "Marie Gold — Generic Search", spend: "₹48k/wk", roas: "1.4x", reduction: "30%" },
-  { name: "Good Day — Broad Match", spend: "₹62k/wk", roas: "1.7x", reduction: "20%" },
-];
+  {
+    name: "Marie Gold — Generic Search",
+    platform: "Amazon",
+    dailySpend: 6800,
+    suggestedSpend: 4760,
+    roas: 1.4,
+    reductionPct: 30,
+    monthlySavings: 61200,
+    why: "ROAS 1.4x, organic rank already #3 — paid spend redundant",
+  },
+  {
+    name: "Good Day — Broad Match",
+    platform: "Flipkart",
+    dailySpend: 8900,
+    suggestedSpend: 7120,
+    roas: 1.7,
+    reductionPct: 20,
+    monthlySavings: 53400,
+    why: "ROAS 1.7x, organic rank improving — overlap with organic traffic",
+  },
+  {
+    name: "NutriChoice — Category Top Slot",
+    platform: "Blinkit",
+    dailySpend: 5400,
+    suggestedSpend: 3780,
+    roas: 1.9,
+    reductionPct: 30,
+    monthlySavings: 48600,
+    why: "Holding #2 organically — top-slot bid no longer required",
+  },
+].sort((a, b) => b.monthlySavings - a.monthlySavings);
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const skuOptions = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "50-50 Maska Chaska 120g"];
@@ -120,51 +182,98 @@ const rankColor = (delta: number) => {
   return "hsl(220, 8%, 55%)";
 };
 
-// ───────── Competitor Rank Strip ─────────
-const CompetitorRankStrip: React.FC = () => {
-  const renderDelta = (delta: number) => {
-    const color = rankColor(delta);
-    const Icon = delta < 0 ? TrendingUp : delta > 0 ? TrendingDown : Minus;
-    return (
-      <span className="inline-flex items-center gap-1 font-mono text-[11px]" style={{ color }}>
-        <Icon size={12} />
-        {delta === 0 ? "flat" : `${Math.abs(delta)} pos`}
-      </span>
-    );
+// ───────── Extensive Competitor Comparison (chart + leaderboard) ─────────
+const CompetitorComparison: React.FC<{ days: number }> = ({ days }) => {
+  const data = useMemo(() => buildCompetitorRankSeries(days), [days]);
+  const sorted = [...competitorBrands].sort((a, b) => a.currentRank - b.currentRank);
+
+  const movement = (delta: number) => {
+    if (delta < -1) return { label: "Climbing", color: "hsl(140,60%,42%)", Icon: TrendingUp };
+    if (delta > 1) return { label: "Falling", color: "hsl(0,70%,55%)", Icon: TrendingDown };
+    return { label: "Stable", color: "hsl(220,8%,55%)", Icon: Minus };
   };
+
   return (
-    <PanelCard title="Competitor Keyword Rank" badge="Top 2 rivals" badgeColor="accent" delay={0.18}>
+    <PanelCard title="Bestseller Rank — Us vs Competitors" badge={`${competitorBrands.length} brands`} badgeColor="accent" delay={0.18}>
       <p className="text-[11px] text-muted-foreground mb-3">
-        Average organic and sponsored rank across your tracked keywords for the selected window.
+        Daily bestseller rank (#1 top) for our SKU and the top 4 competing brands across the selected window.
       </p>
-      <div className="space-y-2">
-        {competitors.map((c) => (
-          <div key={c.name} className="grid grid-cols-12 items-center gap-3 py-2.5 px-3 rounded-lg border border-border bg-surface-1">
-            <div className="col-span-5 flex items-center gap-2">
-              <Users size={13} className="text-muted-foreground" />
-              <span className="text-[12px] font-medium text-foreground">{c.name}</span>
-            </div>
-            <div className="col-span-3 flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Organic</span>
-              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.organicRank}</span>
-              {renderDelta(c.organicDelta)}
-            </div>
-            <div className="col-span-3 flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Sponsored</span>
-              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.sponsoredRank}</span>
-              {renderDelta(c.sponsoredDelta)}
-            </div>
-            <div className="col-span-1 text-right">
-              {c.organicDelta < 0 || c.sponsoredDelta < 0 ? (
-                <TrendingUp size={14} className="inline text-sw-green" />
-              ) : c.organicDelta > 0 || c.sponsoredDelta > 0 ? (
-                <TrendingDown size={14} className="inline text-sw-red" />
-              ) : (
-                <Minus size={14} className="inline text-muted-foreground" />
-              )}
-            </div>
+      <div className="h-[280px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" vertical={false} />
+            <XAxis dataKey="day" tick={{ fontSize: 10 }} stroke="hsl(220,10%,46%)" interval={Math.ceil(data.length / 8)} />
+            <YAxis reversed domain={[1, "dataMax + 2"]} tick={{ fontSize: 10 }} stroke="hsl(220,10%,46%)" />
+            <RTooltip
+              contentStyle={{ background: "white", border: "1px solid hsl(220,15%,88%)", borderRadius: 8, fontSize: 11 }}
+              formatter={(v: number, n: string) => [`#${v}`, n]}
+            />
+            {competitorBrands.map((b) => (
+              <Line
+                key={b.name}
+                type="monotone"
+                dataKey={b.name}
+                stroke={b.color}
+                strokeWidth={b.isUs ? 2.6 : 1.6}
+                strokeDasharray={b.isUs ? undefined : "4 3"}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+            ))}
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 mt-2 mb-4">
+        {competitorBrands.map((b) => (
+          <div key={b.name} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className="w-3 rounded" style={{ background: b.color, height: b.isUs ? 3 : 1.5 }} />
+            <span className={b.isUs ? "text-foreground font-semibold" : ""}>{b.name}</span>
           </div>
         ))}
+      </div>
+
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-surface-1 hover:bg-surface-1">
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono">Brand</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Current Rank</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Δ vs start</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Avg Organic</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Avg Sponsored</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-right pr-4">Movement</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sorted.map((b) => {
+              const delta = b.currentRank - b.startRank;
+              const m = movement(delta);
+              return (
+                <TableRow key={b.name} className={b.isUs ? "bg-primary/5" : ""}>
+                  <TableCell className="py-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full" style={{ background: b.color }} />
+                      <span className={`text-[12px] ${b.isUs ? "font-semibold text-foreground" : "text-foreground"}`}>{b.name}</span>
+                      {b.isUs && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-primary/15 text-primary">YOU</span>}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px] font-semibold">#{b.currentRank}</TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px]" style={{ color: m.color }}>
+                    {delta === 0 ? "0" : delta < 0 ? `↑ ${Math.abs(delta)}` : `↓ ${delta}`}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px] text-foreground">#{b.organicRank}</TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px] text-foreground">#{b.sponsoredRank}</TableCell>
+                  <TableCell className="py-2.5 text-right pr-4">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium" style={{ color: m.color }}>
+                      <m.Icon size={12} />
+                      {m.label}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     </PanelCard>
   );
@@ -173,7 +282,9 @@ const CompetitorRankStrip: React.FC = () => {
 // ───────── Organic Momentum / Campaign Linkage Card ─────────
 const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain }) => {
   const { navigateTo } = useGuardrails();
+  const { toast } = useToast();
   if (organicGain < 2) return null;
+  const totalSavings = reductionCandidates.reduce((a, c) => a + c.monthlySavings, 0);
   return (
     <div
       className="rounded-2xl p-5 border opacity-0 animate-fade-slide-in"
@@ -187,16 +298,38 @@ const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain })
           <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider mb-1">Organic momentum detected</p>
           <p className="text-sm text-foreground">
             Organic rank improved by <span className="font-semibold text-sw-green">{organicGain} positions</span>.
-            Consider reducing spend on {reductionCandidates.length} low-ROAS campaigns to protect margin without losing rank.
+            Reduce spend on the {reductionCandidates.length} campaigns below to save ~<span className="font-semibold text-sw-green">₹{(totalSavings / 1000).toFixed(0)}k/month</span> without losing rank.
           </p>
           <div className="mt-3 space-y-1.5">
             {reductionCandidates.map((c) => (
-              <div key={c.name} className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-white border border-sw-green/20">
-                <div className="flex-1">
-                  <p className="text-[12px] font-medium text-foreground">{c.name}</p>
-                  <p className="text-[10px] font-mono text-muted-foreground">{c.spend} · ROAS {c.roas}</p>
+              <div key={c.name} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg bg-white border border-sw-green/20">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-[12px] font-medium text-foreground">{c.name}</p>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground uppercase">{c.platform}</span>
+                  </div>
+                  <p className="text-[10px] font-mono text-muted-foreground mt-0.5">
+                    Spend ₹{c.dailySpend.toLocaleString()}/d → <span className="text-sw-green font-semibold">₹{c.suggestedSpend.toLocaleString()}/d</span> · ROAS {c.roas}x
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/90 italic mt-0.5">{c.why}</p>
                 </div>
-                <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reduction}</span>
+                <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                  <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reductionPct}%</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">~₹{(c.monthlySavings / 1000).toFixed(0)}k/mo</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 px-2 text-[10px] text-sw-green hover:bg-sw-green/10"
+                    onClick={() =>
+                      toast({
+                        title: "Budget reduction queued",
+                        description: `${c.name}: -${c.reductionPct}% (₹${c.dailySpend.toLocaleString()} → ₹${c.suggestedSpend.toLocaleString()}/day)`,
+                      })
+                    }
+                  >
+                    Apply -{c.reductionPct}%
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
@@ -397,7 +530,7 @@ const OverviewTab: React.FC<{ platform: string; sku: string }> = ({ platform, sk
         </div>
       </div>
 
-      <CompetitorRankStrip />
+      <CompetitorComparison days={days} />
       <OrganicMomentumCard organicGain={Math.max(0, moved)} />
     </div>
   );
@@ -430,7 +563,7 @@ const HeatmapCell: React.FC<{ value: number; isStrongest: boolean }> = ({ value,
 
 const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, sku }) => {
   const [targetRank, setTargetRank] = useState(3);
-  const [organicThreshold, setOrganicThreshold] = useState(5);
+  const thresholdSet = [3, 5, 10];
   const strongest = lagData.reduce((m, d) => (d.correlation > m.correlation ? d : m), lagData[0]);
   const strongestLagDays = parseInt(strongest.lag);
 
@@ -599,58 +732,48 @@ const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, s
         </div>
       </PanelCard>
 
-      {/* Organic-vs-Paid Spend Efficiency */}
-      {(() => {
-        // savings band: stronger threshold (lower rank) → more savings possible
-        const inverseFactor = Math.max(0.05, (11 - organicThreshold) / 10);
-        const savings = {
-          conservative: Math.round(15 * inverseFactor),
-          base: Math.round(28 * inverseFactor),
-          aggressive: Math.round(42 * inverseFactor),
-        };
-        return (
-          <PanelCard title="Organic-vs-Paid Spend Efficiency" badge="Savings planner" badgeColor="green" delay={0.2}>
-            <p className="text-[12px] text-foreground/80 mb-4">
-              When organic rank is in <span className="font-semibold">top {organicThreshold}</span>, paid contribution can drop without losing bestseller position.
-            </p>
-            <div className="flex items-center gap-4 mb-5">
-              <div className="flex items-center gap-2 min-w-[180px]">
-                <Target size={14} className="text-sw-green" />
-                <label className="text-[12px] text-foreground font-medium">Organic rank threshold:</label>
-              </div>
-              <div className="flex-1 max-w-xs">
-                <Slider
-                  value={[organicThreshold]}
-                  onValueChange={(v) => setOrganicThreshold(v[0])}
-                  min={1}
-                  max={10}
-                  step={1}
-                />
-              </div>
-              <span className="font-mono text-[13px] font-semibold text-foreground min-w-[40px]">#{organicThreshold}</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { key: "conservative", label: "Conservative", color: "hsl(195,70%,45%)", desc: "Safe reduction, minimal rank risk", val: savings.conservative },
-                { key: "base", label: "Base", color: "hsl(140,60%,42%)", desc: "Balanced spend cut", val: savings.base },
-                { key: "aggressive", label: "Aggressive", color: "hsl(270,60%,42%)", desc: "Maximum savings, monitor closely", val: savings.aggressive },
-              ].map((s, i) => (
-                <div
-                  key={s.key}
-                  className="rounded-xl p-4 border opacity-0 animate-fade-slide-in"
-                  style={{ animationDelay: `${0.25 + i * 0.05}s`, borderColor: s.color + "55", background: s.color + "0F" }}
-                >
-                  <p className="text-[11px] font-mono uppercase tracking-wider" style={{ color: s.color }}>{s.label}</p>
-                  <p className="font-display font-bold text-2xl text-foreground mt-1">
-                    ↓ {s.val}% <span className="text-[11px] font-mono text-muted-foreground font-normal">paid spend</span>
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-1.5">{s.desc}</p>
+      {/* Organic-vs-Paid Spend Efficiency — absolute thresholds, no slider */}
+      <PanelCard title="Organic-vs-Paid Spend Efficiency" badge="Savings planner" badgeColor="green" delay={0.2}>
+        <p className="text-[12px] text-foreground/80 mb-4">
+          Recommended paid spend reduction by organic rank position. Stronger organic standing → more paid spend can be safely cut.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {thresholdSet.map((threshold, ti) => {
+            const inverseFactor = Math.max(0.05, (11 - threshold) / 10);
+            const bands = [
+              { key: "conservative", label: "Conservative", color: "hsl(195,70%,45%)", val: Math.round(15 * inverseFactor) },
+              { key: "base", label: "Base", color: "hsl(140,60%,42%)", val: Math.round(28 * inverseFactor) },
+              { key: "aggressive", label: "Aggressive", color: "hsl(270,60%,42%)", val: Math.round(42 * inverseFactor) },
+            ];
+            return (
+              <div
+                key={threshold}
+                className="rounded-xl p-4 border bg-surface-1 opacity-0 animate-fade-slide-in"
+                style={{ animationDelay: `${0.25 + ti * 0.05}s`, borderColor: "hsl(220,15%,88%)" }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Trophy size={14} className="text-sw-green" />
+                    <p className="text-[12px] font-semibold text-foreground">Organic Top {threshold}</p>
+                  </div>
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sw-green/15 text-sw-green uppercase">Threshold</span>
                 </div>
-              ))}
-            </div>
-          </PanelCard>
-        );
-      })()}
+                <div className="space-y-2">
+                  {bands.map((b) => (
+                    <div key={b.key} className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg" style={{ background: b.color + "0F" }}>
+                      <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: b.color }}>{b.label}</span>
+                      <span className="font-mono text-[13px] font-bold text-foreground">↓ {b.val}%</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2.5">
+                  Safe paid spend reduction band when organic rank stays within top {threshold}.
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </PanelCard>
     </div>
   );
 };
