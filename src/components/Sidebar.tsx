@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck, Trophy } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -24,6 +24,7 @@ const navSections = [
       { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
       { id: "categoryassortment", icon: LayoutList, label: "Category Assortment", notify: false },
+      { id: "bestseller", icon: Trophy, label: "Bestseller Intelligence", notify: false },
     ],
   },
   {
