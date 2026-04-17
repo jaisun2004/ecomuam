@@ -1,43 +1,37 @@
 
 
-## Plan: Competitive Angle + Campaign Linkage for Bestseller Intelligence
+## Plan: Extensive Competitor Comparison + Absolute Values + Concrete Campaign Surfacing
 
-Add competitor keyword-rank context and a campaign efficiency tie-back to the existing `BestsellerIntelligenceView`. No new screens — extend the two existing tabs.
+Three changes to `src/views/BestsellerIntelligenceView.tsx` only.
 
-### Overview tab additions
-1. **Competitor Keyword Rank strip** (below the main rank/volume chart)
-   - Compact card showing top 2 competing SKUs with their average **Organic Rank** and **Sponsored Rank** across the brand's tracked keywords for the selected window
-   - Each row: competitor name · organic rank (with green/red delta) · sponsored rank (with delta) · mini trend indicator (arrow only, no sparkline — per memory rule)
-   - Source: keyword data already tracked in `KeywordAnalysisView` pattern
+### 1. Extensive Bestseller Rank Comparison (Overview tab)
+Replace the compact 2-row competitor strip with a richer comparison block:
 
-2. **Campaign Efficiency Callout card** (right side, alongside existing "Spend response" card)
-   - Title: "Organic momentum detected"
-   - Logic: if organic rank improved ≥ X positions in the window AND there exist campaigns flagged high-spend / low-ROAS, surface a recommendation
-   - Body: "Organic rank improved by N positions. Consider reducing spend on 2 low-ROAS campaigns to protect margin."
-   - CTA button: "Review in Campaign Manager" → navigates to `campaigns` view (uses existing `handleNavigate` pattern in `Index.tsx`)
-   - Lists 2 mock candidate campaigns with current spend, ROAS, suggested spend reduction %
+- **Multi-line rank chart**: Add competitor lines to the existing rank-over-time chart. Our SKU + top 4 competitor brands plotted on the same inverted Y-axis. Each line color-coded; legend below. Lets the user instantly see who is climbing/falling vs us in bestseller rank.
+- **Competitor leaderboard table** (below the chart): 5 rows (Us + 4 competitors) with columns:
+  - Brand · Current Bestseller Rank · Δ vs start of window · Avg Organic Rank · Avg Sponsored Rank · Movement label (Climbing / Stable / Falling)
+  - Color: green for improvement, red for decline, grey stable. Arrow icons only — no inline sparklines (per memory rule).
+  - Sort by current rank ascending.
 
-### Analytics tab additions
-3. **Competitor lag comparison row** added to existing correlation heatmap
-   - Heatmap gains 2 extra rows: "Competitor A organic rank vs our rank" and "Competitor B sponsored rank vs our rank" at the same 0/7/14/21 day lags
-   - Helps user see whether competitor keyword shifts predict their own bestseller movement
+### 2. Remove slider, use absolute values
+In the **Spend Efficiency Planner** card (Analytics tab):
+- Delete the `<Slider>` for `organicThreshold`.
+- Replace with **3 fixed absolute threshold cards** shown side by side: "Top 3", "Top 5", "Top 10". Each card displays the recommended paid spend reduction band (conservative / base / aggressive) for that exact threshold.
+- No interactive control — pure read-only comparison, matching the analytics-tab read-only rule.
 
-4. **Organic-vs-Paid Spend Efficiency card** (below scatter plot)
-   - Small panel: "When organic rank is in top 5, paid contribution can drop to ~X% without rank loss"
-   - Threshold slider: user picks organic rank threshold (1–10) → output shows recommended paid spend reduction band
-   - Reuses the existing scenario-calculator pattern (conservative/base/aggressive) but inverted — savings instead of investment
-
-### File changes
-- **Edit** `src/views/BestsellerIntelligenceView.tsx` only
-  - Add competitor mock data array (2 competitors × keyword ranks over time)
-  - Add `CompetitorRankStrip` sub-component for Overview
-  - Add `OrganicMomentumCard` sub-component with navigate-to-campaigns CTA (consume `useGuardrails().navigateTo`)
-  - Extend correlation heatmap rows
-  - Add spend-efficiency planner card
+### 3. Concrete campaign surfacing in Organic Momentum card
+Currently the `OrganicMomentumCard` lists 2 mock candidate campaigns generically. Strengthen it:
+- Show **named campaigns** with: Campaign name · Platform · Current daily spend · Current ROAS · Suggested new spend · Estimated monthly savings.
+- Add a small "Why flagged" line per row: e.g. "ROAS 1.4x, organic rank already #3 — paid spend redundant".
+- Keep the "Review in Campaign Manager" CTA; add a secondary inline "Apply -30% budget" ghost button per row (visual only, triggers existing toast pattern).
+- Sort campaigns by potential savings descending.
 
 ### Design adherence
-- Tier color system: rank improvement green, decline red, stable grey (already defined)
-- KPI context one-liner pattern on new cards
-- No sparklines inside tables (arrow indicators only)
-- Insufficient-data warning continues to apply (< 30 days)
+- Tier color system (green/red/grey) preserved
+- KPI context one-liner on new cards
+- No sparklines in tables — arrow indicators only
+- Insufficient-data warning still applies
+
+### File touched
+- `src/views/BestsellerIntelligenceView.tsx` (only)
 
