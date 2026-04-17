@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
+import DateRangeSubtitle from "@/components/DateRangeSubtitle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
 import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle, ArrowRight } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
@@ -142,13 +144,20 @@ const CompetitorAdsView: React.FC = () => {
 
         <PanelCard title="Competitor Ad Profiles" badge="Real-time monitoring" badgeColor="red" delay={0.2}>
           <div className="flex items-center gap-2 mb-4">
-            {platformFilter.map(p => (
-              <button key={p} onClick={() => setSelectedPlatform(p)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
-                {p !== "All Platforms" && <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />}
-                {p}
-              </button>
-            ))}
+            <span className="text-[10px] text-muted-foreground">Platform</span>
+            <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+              <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {platformFilter.map(p => (
+                  <SelectItem key={p} value={p}>
+                    <span className="flex items-center gap-1.5">
+                      {p !== "All Platforms" && <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />}
+                      {p}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {filteredProfiles.map(c => (
@@ -180,13 +189,14 @@ const CompetitorAdsView: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <PanelCard title="Budget Exhaustion — Bid Reduction Opps" badge={`${budgetAlerts.length} detected`} badgeColor="green" delay={0.3}>
-            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-              {keywordOptions.map(kw => (
-                <button key={kw} onClick={() => setSelectedKeyword(kw)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${selectedKeyword === kw ? "bg-sw-green/20 text-sw-green" : "bg-surface-3 text-muted-foreground hover:text-foreground"}`}>
-                  "{kw}"
-                </button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[10px] text-muted-foreground">Keyword</span>
+              <Select value={selectedKeyword} onValueChange={setSelectedKeyword}>
+                <SelectTrigger className="w-[200px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {keywordOptions.map(kw => <SelectItem key={kw} value={kw}>"{kw}"</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             {budgetAlerts.length === 0 ? (
               <div className="p-4 rounded-xl bg-surface-2 border border-subtle text-center"><p className="text-xs text-muted-foreground">No budget exhaustion detected for this keyword</p></div>

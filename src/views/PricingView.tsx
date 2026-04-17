@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
+import DateRangeSubtitle from "@/components/DateRangeSubtitle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
@@ -198,6 +200,7 @@ const PricingView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
+      <DateRangeSubtitle />
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
@@ -210,26 +213,28 @@ const PricingView: React.FC = () => {
       {/* Competitor Matrix with SKU Group + Platform filters + Need Attention button */}
       <PanelCard title="Competitor Intelligence Matrix" badge="Real-time" badgeColor="red" delay={0.2}>
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <div className="flex items-center gap-1">
-            <span className="text-[10px] text-muted-foreground mr-1">SKU Group:</span>
-            {skuGroupOptions.map(sg => (
-              <button key={sg} onClick={() => setSelectedSkuGroup(sg)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  selectedSkuGroup === sg ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>{sg}</button>
-            ))}
-          </div>
+          <span className="text-[10px] text-muted-foreground">SKU Group</span>
+          <Select value={selectedSkuGroup} onValueChange={setSelectedSkuGroup}>
+            <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {skuGroupOptions.map(sg => <SelectItem key={sg} value={sg}>{sg}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex items-center gap-2 mb-4">
-          {platformOptions.map(p => (
-            <button key={p} onClick={() => setSelectedPlatform(p)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
-                selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-              }`}>
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />
-              {p}
-            </button>
-          ))}
+          <span className="text-[10px] text-muted-foreground">Platform</span>
+          <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+            <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {platformOptions.map(p => (
+                <SelectItem key={p} value={p}>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />{p}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <button onClick={() => { setShowNeedAttention(true); setSelectedPlatform("Flipkart"); }}
             className="ml-auto px-3 py-1.5 rounded-lg text-[10px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center gap-1">
             <AlertTriangle size={10} /> Need Attention
@@ -390,22 +395,24 @@ const PricingView: React.FC = () => {
             <button onClick={() => setPriceHistoryToggle("platform")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "platform" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>Platform</button>
           </div>
           {priceHistoryToggle === "sku" ? (
-            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-              {skuOptions.map(s => (
-                <button key={s} onClick={() => setSelectedSku(s)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    selectedSku === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                  }`}>{s}</button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[10px] text-muted-foreground">SKU</span>
+              <Select value={selectedSku} onValueChange={setSelectedSku}>
+                <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {skuOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-              {["All", ...platformOptions].map(p => (
-                <button key={p} onClick={() => setPriceHistoryPlatform(p)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    priceHistoryPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                  }`}>{p}</button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[10px] text-muted-foreground">Platform</span>
+              <Select value={priceHistoryPlatform} onValueChange={setPriceHistoryPlatform}>
+                <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["All", ...platformOptions].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
           )}
           <ResponsiveContainer width="100%" height={200}>
@@ -459,14 +466,14 @@ const PricingView: React.FC = () => {
       </>) : (
         <div className="space-y-5">
           <PanelCard title="Price Index Trend — 30 Days" badge="You vs Category Avg" badgeColor="accent" delay={0}>
-            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-              <span className="text-[10px] text-muted-foreground mr-1">Filter SKU:</span>
-              {["All SKUs", ...skuOptions].map(s => (
-                <button key={s} onClick={() => setAnalyticsSkuFilter(s)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    analyticsSkuFilter === s ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                  }`}>{s}</button>
-              ))}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[10px] text-muted-foreground">Filter SKU</span>
+              <Select value={analyticsSkuFilter} onValueChange={setAnalyticsSkuFilter}>
+                <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["All SKUs", ...skuOptions].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={priceIndexBySku[analyticsSkuFilter] || priceIndexTrend}>

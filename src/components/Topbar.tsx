@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
+import { CalendarIcon } from "lucide-react";
+import { DateRange as DRPickerRange } from "react-day-picker";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import { useDateRange, formatRangeLabel, TimePreset } from "@/contexts/DateRangeContext";
+import { cn } from "@/lib/utils";
 
 interface TopbarProps {
   active: string;
   onChange: (id: string) => void;
 }
 
-const timeRanges = ["7D", "30D", "90D"];
+const presets: TimePreset[] = ["7D", "30D", "90D"];
 
 const platformFilters = [
   { name: "Amazon", color: "#FF9900" },
@@ -14,7 +21,16 @@ const platformFilters = [
 ];
 
 const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
-  const [timeRange, setTimeRange] = useState("30D");
+  const {
+    currentRange,
+    compareRange,
+    compareEnabled,
+    timePreset,
+    setTimePreset,
+    setCurrentRange,
+    setCompareRange,
+    setCompareEnabled,
+  } = useDateRange();
 
   return (
     <div className="sticky top-0 h-[60px] bg-background border-b border-subtle flex items-center justify-between px-6 z-40">
@@ -50,15 +66,15 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-4">
-        {/* Time Range */}
+      <div className="flex items-center gap-3">
+        {/* Preset pills */}
         <div className="flex items-center bg-surface-2 rounded-lg p-0.5">
-          {timeRanges.map((t) => (
+          {presets.map((t) => (
             <button
               key={t}
-              onClick={() => setTimeRange(t)}
-              className={`px-3 py-1 rounded-md font-mono text-[11px] font-medium transition-all ${
-                timeRange === t
+              onClick={() => setTimePreset(t)}
+              className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all ${
+                timePreset === t
                   ? "bg-surface-3 text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
@@ -67,6 +83,61 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
             </button>
           ))}
         </div>
+
+        {/* Primary date range */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              className={cn(
+                "flex items-center gap-1.5 h-8 px-2.5 rounded-lg bg-surface-2 border border-subtle text-[11px] font-mono text-foreground hover:bg-surface-3 transition-colors",
+                timePreset === "custom" && "border-primary/40"
+              )}
+            >
+              <CalendarIcon className="h-3 w-3 text-muted-foreground" />
+              {formatRangeLabel(currentRange)}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="range"
+              selected={{ from: currentRange.from, to: currentRange.to } as DRPickerRange}
+              onSelect={(r) => {
+                if (r?.from && r?.to) setCurrentRange({ from: r.from, to: r.to });
+              }}
+              numberOfMonths={2}
+              className="p-3 pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
+
+        {/* Compare toggle */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] text-muted-foreground">Compare</span>
+          <Switch checked={compareEnabled} onCheckedChange={setCompareEnabled} />
+        </div>
+
+        {/* Secondary compare range */}
+        {compareEnabled && compareRange && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-1.5 h-8 px-2.5 rounded-lg bg-surface-2 border border-dashed border-primary/40 text-[11px] font-mono text-muted-foreground hover:text-foreground transition-colors">
+                <CalendarIcon className="h-3 w-3" />
+                vs {formatRangeLabel(compareRange)}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="range"
+                selected={{ from: compareRange.from, to: compareRange.to } as DRPickerRange}
+                onSelect={(r) => {
+                  if (r?.from && r?.to) setCompareRange({ from: r.from, to: r.to });
+                }}
+                numberOfMonths={2}
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+        )}
 
         {/* Platform pills */}
         <div className="flex items-center gap-1.5">

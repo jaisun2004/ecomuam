@@ -3,6 +3,8 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import AlertItem from "@/components/sw/AlertItem";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DateRangeSubtitle from "@/components/DateRangeSubtitle";
 import { Megaphone, ChevronDown, ChevronRight, MapPin, TrendingUp, TrendingDown, Shield, Swords, Eye, X } from "lucide-react";
 
 /* ── mock data ── */
@@ -319,16 +321,20 @@ const ShelfView: React.FC = () => {
         {/* Share of Search with platform switcher + campaign triggers */}
         <PanelCard title="Share of Search" badge={`${sosPlatform} · 30D`} badgeColor="accent" delay={0.25}>
           {/* Platform switcher */}
-          <div className="flex items-center gap-1 mb-3 flex-wrap">
-            {platformsList.map(p => (
-              <button key={p.name} onClick={() => setSosPlatform(p.name)}
-                className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  sosPlatform === p.name ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-                {p.name}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] text-muted-foreground">Platform</span>
+            <Select value={sosPlatform} onValueChange={setSosPlatform}>
+              <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {platformsList.map(p => (
+                  <SelectItem key={p.name} value={p.name}>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />{p.name}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <p className="text-[10px] text-muted-foreground mb-3 uppercase tracking-wide">Keyword → Your Brand vs Top Competitor</p>
           <div className="space-y-3">
