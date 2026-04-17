@@ -598,6 +598,59 @@ const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, s
           ))}
         </div>
       </PanelCard>
+
+      {/* Organic-vs-Paid Spend Efficiency */}
+      {(() => {
+        // savings band: stronger threshold (lower rank) → more savings possible
+        const inverseFactor = Math.max(0.05, (11 - organicThreshold) / 10);
+        const savings = {
+          conservative: Math.round(15 * inverseFactor),
+          base: Math.round(28 * inverseFactor),
+          aggressive: Math.round(42 * inverseFactor),
+        };
+        return (
+          <PanelCard title="Organic-vs-Paid Spend Efficiency" badge="Savings planner" badgeColor="green" delay={0.2}>
+            <p className="text-[12px] text-foreground/80 mb-4">
+              When organic rank is in <span className="font-semibold">top {organicThreshold}</span>, paid contribution can drop without losing bestseller position.
+            </p>
+            <div className="flex items-center gap-4 mb-5">
+              <div className="flex items-center gap-2 min-w-[180px]">
+                <Target size={14} className="text-sw-green" />
+                <label className="text-[12px] text-foreground font-medium">Organic rank threshold:</label>
+              </div>
+              <div className="flex-1 max-w-xs">
+                <Slider
+                  value={[organicThreshold]}
+                  onValueChange={(v) => setOrganicThreshold(v[0])}
+                  min={1}
+                  max={10}
+                  step={1}
+                />
+              </div>
+              <span className="font-mono text-[13px] font-semibold text-foreground min-w-[40px]">#{organicThreshold}</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { key: "conservative", label: "Conservative", color: "hsl(195,70%,45%)", desc: "Safe reduction, minimal rank risk", val: savings.conservative },
+                { key: "base", label: "Base", color: "hsl(140,60%,42%)", desc: "Balanced spend cut", val: savings.base },
+                { key: "aggressive", label: "Aggressive", color: "hsl(270,60%,42%)", desc: "Maximum savings, monitor closely", val: savings.aggressive },
+              ].map((s, i) => (
+                <div
+                  key={s.key}
+                  className="rounded-xl p-4 border opacity-0 animate-fade-slide-in"
+                  style={{ animationDelay: `${0.25 + i * 0.05}s`, borderColor: s.color + "55", background: s.color + "0F" }}
+                >
+                  <p className="text-[11px] font-mono uppercase tracking-wider" style={{ color: s.color }}>{s.label}</p>
+                  <p className="font-display font-bold text-2xl text-foreground mt-1">
+                    ↓ {s.val}% <span className="text-[11px] font-mono text-muted-foreground font-normal">paid spend</span>
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1.5">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </PanelCard>
+        );
+      })()}
     </div>
   );
 };
