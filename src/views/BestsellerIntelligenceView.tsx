@@ -454,18 +454,36 @@ const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, s
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <PanelCard title="Paid Volume → Rank Correlation by Lag" badge="14d strongest" badgeColor="green" delay={0}>
-          <div className="grid grid-cols-4 gap-3 mb-3">
+          {/* Header row with lag labels */}
+          <div className="grid gap-3 mb-2" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <div />
+            {lagData.map((d) => (
+              <p key={d.lag} className="text-center text-[10px] font-mono text-muted-foreground uppercase tracking-wider">{d.lag} lag</p>
+            ))}
+          </div>
+          {/* Our paid volume row */}
+          <div className="grid gap-3 mb-2 items-center" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <p className="text-[11px] font-medium text-foreground">Our paid volume → rank</p>
             {lagData.map((d) => (
               <HeatmapCell key={d.lag} value={d.correlation} isStrongest={d.lag === strongest.lag} />
             ))}
           </div>
-          <div className="grid grid-cols-4 gap-3">
-            {lagData.map((d) => (
-              <p key={d.lag} className="text-center text-[11px] font-mono text-muted-foreground">{d.lag} lag</p>
+          {/* Competitor A organic */}
+          <div className="grid gap-3 mb-2 items-center" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <p className="text-[11px] font-medium text-foreground">Competitor A organic rank</p>
+            {[0.22, 0.48, 0.61, 0.39].map((v, i) => (
+              <HeatmapCell key={i} value={v} isStrongest={false} />
+            ))}
+          </div>
+          {/* Competitor B sponsored */}
+          <div className="grid gap-3 mb-2 items-center" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <p className="text-[11px] font-medium text-foreground">Competitor B sponsored rank</p>
+            {[0.31, 0.55, 0.44, 0.28].map((v, i) => (
+              <HeatmapCell key={i} value={v} isStrongest={false} />
             ))}
           </div>
           <p className="text-[11px] text-muted-foreground mt-3">
-            Higher value = stronger relationship. Strongest lag is auto-highlighted in green.
+            Higher value = stronger relationship. Competitor rows show whether their keyword shifts predict your bestseller movement.
           </p>
         </PanelCard>
 
