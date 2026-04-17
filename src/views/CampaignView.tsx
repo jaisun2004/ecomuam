@@ -3,8 +3,6 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical, Shield, AlertTriangle, Swords, TrendingUp, Target, DollarSign, Zap } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
@@ -394,7 +392,6 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 
 const CampaignView: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(0);
-  const { compareEnabled } = useDateRange();
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
   const [copilotStates, setCopilotStates] = useState<Record<number, boolean>>({});
   const [reallocApplied, setReallocApplied] = useState(false);
@@ -713,10 +710,10 @@ const CampaignView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" sub="Spend up due to new campaign launches — on track" accentColor="bg-primary" delay={0} />
-        <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Healthy — budget reallocation improving efficiency" accentColor="bg-sw-green" delay={0.05} />
-        <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹3.4L" deltaType="positive" sub="Good — auto-shifting spend from low-ROAS campaigns" accentColor="bg-sw-purple" delay={0.1} />
-        <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Growing — higher bids + new keywords driving visibility" accentColor="bg-sw-cyan" delay={0.15} />
+        <KPICard title="Total Ad Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
+        <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x · 93% of goal" accentColor="bg-sw-green" delay={0.05} />
+        <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
+        <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Across all campaigns" accentColor="bg-sw-cyan" delay={0.15} />
       </div>
 
       {/* Action bar */}
@@ -933,7 +930,6 @@ const CampaignView: React.FC = () => {
               <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
               <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
               <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="url(#gSpend)" strokeWidth={2} />
-              {compareEnabled && <Area type="monotone" dataKey="spend" stroke="hsl(228,90%,64%)" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} name="Spend (prev)" />}
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>
@@ -1071,10 +1067,6 @@ const CampaignView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹K)" />
                 <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
-                {compareEnabled && <>
-                  <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.2} radius={[4, 4, 0, 0]} name="Spend (prev)" strokeDasharray="5 5" />
-                  <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="ROAS (prev)" />
-                </>}
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">

@@ -3,8 +3,6 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line } from "recharts";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 import { Eye, TrendingDown, TrendingUp, Megaphone, AlertTriangle, ArrowRight } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
@@ -81,7 +79,6 @@ const keywordConquestOpps = [
 
 const CompetitorAdsView: React.FC = () => {
   const [bidActions, setBidActions] = useState<Record<number, boolean>>({});
-  const { compareEnabled } = useDateRange();
   const [conquestActions, setConquestActions] = useState<Record<number, boolean>>({});
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
   const [selectedKeyword, setSelectedKeyword] = useState("butter biscuits");
@@ -137,10 +134,10 @@ const CompetitorAdsView: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Active monitoring — no blind spots in ad landscape" accentColor="bg-sw-red" delay={0} />
-          <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Opportunity — capture their lost impressions now" accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" sub="Good — uncontested brand keywords available for conquest" accentColor="bg-sw-purple" delay={0.1} />
-          <KPICard title="Est. Competitor Spend" value="₹11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Risk — competitors increasing investment aggressively" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Real-time sponsored rank tracking" accentColor="bg-sw-red" delay={0} />
+          <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Competitors out of budget today" accentColor="bg-sw-green" delay={0.05} />
+          <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" sub="Available for conquest campaigns" accentColor="bg-sw-purple" delay={0.1} />
+          <KPICard title="Est. Competitor Spend" value="₹11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <PanelCard title="Competitor Ad Profiles" badge="Real-time monitoring" badgeColor="red" delay={0.2}>
@@ -246,10 +243,6 @@ const CompetitorAdsView: React.FC = () => {
                 <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Sunfeast" />
                 <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Parle" />
                 <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Unibic" />
-                {compareEnabled && <>
-                  <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Sunfeast (prev)" />
-                  <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Parle (prev)" />
-                </>}
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">

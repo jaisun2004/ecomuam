@@ -27,7 +27,6 @@ import KeywordAnalysisView from "@/views/KeywordAnalysisView";
 import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
 import CampaignReportsView from "@/views/CampaignReportsView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
-import { DateRangeProvider } from "@/contexts/DateRangeContext";
 
 const views: Record<string, React.FC> = {
   cockpit: CentralCockpitView,
@@ -128,11 +127,9 @@ const IndexInner = () => {
 const Index = () => {
   return (
     <TooltipProvider>
-      <DateRangeProvider>
-        <GuardrailProvider>
-          <IndexInner />
-        </GuardrailProvider>
-      </DateRangeProvider>
+      <GuardrailProvider>
+        <IndexInner />
+      </GuardrailProvider>
     </TooltipProvider>
   );
 };

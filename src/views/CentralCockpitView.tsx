@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { Gauge, RefreshCw, ArrowRight } from "lucide-react";
+import { Gauge, RefreshCw, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
 
 const urgentIssues = [
   { id: 1, tier: "T1" as const, desc: "Availability below 20% — 4 campaigns paused", source: "Availability", sourceId: "availability", target: "avail-dedup-banner" },
@@ -17,10 +13,19 @@ const urgentIssues = [
 ];
 
 const kpiData = [
-  { label: "Brand SoV", value: "48%", delta: "+2%", positive: true, sub: "Positive \u2014 ad spend efficiency improving visibility" },
-  { label: "Content Score", value: "74/100", delta: "-5%", positive: false, sub: "Declining \u2014 search page listings need refresh" },
-  { label: "ROAS", value: "4.2x", delta: "+0.3x", positive: true, sub: "Healthy \u2014 budget reallocation improving efficiency" },
-  { label: "Availability", value: "68%", delta: "-4%", positive: false, sub: "Dropped due to Flipkart OOS surge \u2014 needs attention" },
+  { label: "Brand SoV", value: "48%", delta: "+2%", accent: "bg-sw-green" },
+  { label: "Content Score", value: "74/100", delta: "-5%", accent: "bg-sw-amber" },
+  { label: "ROAS", value: "4.2x", delta: "+0.3x", accent: "bg-sw-green" },
+  { label: "Availability", value: "68%", delta: "-4%", accent: "bg-sw-red" },
+];
+
+const engagementData = [
+  { label: "Impressions", value: "1.24M", delta: "+12%" },
+  { label: "Clicks", value: "24.7K", delta: "+8%" },
+  { label: "CTR", value: "2.0%", delta: "-0.1%" },
+  { label: "Orders", value: "842", delta: "+15%" },
+  { label: "AOV", value: "₹875", delta: "-3%" },
+  { label: "Conversion Rate", value: "3.4%", delta: "+0.2%" },
 ];
 
 const potentialFlags = [
@@ -53,18 +58,24 @@ const CentralCockpitView: React.FC = () => {
   const g = useGuardrails();
   const { toast } = useToast();
   const [approvedIds, setApprovedIds] = useState<Set<number>>(new Set());
+  const [healthOpen, setHealthOpen] = useState(false);
+
+  const hasIssues = urgentIssues.length > 0;
+  const hasPendingApprovals = urgentIssues.some(i => i.confidence && i.confidence >= 3 && !approvedIds.has(i.id));
+  const hasUrgentOrPending = hasIssues || hasPendingApprovals;
 
   const visibleItems = urgentIssues
     .filter(i => !approvedIds.has(i.id))
     .sort((a, b) => {
-      const tierOrder: Record<string, number> = { T1: 0, T2: 1, T3: 3 };
+      const tierOrder = { T1: 0, T2: 1, T3: 3 };
       const aOrder = a.confidence && a.confidence >= 3 ? 2 : tierOrder[a.tier];
       const bOrder = b.confidence && b.confidence >= 3 ? 2 : tierOrder[b.tier];
       return aOrder - bOrder;
-    });
+    })
+    .slice(0, 8);
 
   const approvableItems = urgentIssues.filter(i => i.tier === "T3" && i.confidence && i.confidence >= 4 && !approvedIds.has(i.id));
-  const hasUrgentOrPending = visibleItems.length > 0;
+  const showBatchApprove = approvableItems.length >= 2;
 
   const handleApprove = (id: number) => {
     setApprovedIds(prev => new Set(prev).add(id));
@@ -91,15 +102,14 @@ const CentralCockpitView: React.FC = () => {
   const confidencePips = (level: number) => {
     const c = level >= 4 ? "#2ECF8E" : level === 3 ? "#F5A623" : "hsl(220,10%,46%)";
     return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} style={{ color: i < level ? c : "hsl(220,13%,91%)" }}>●</span>
+      <span key={i} style={{ color: i < level ? c : "#333" }}>●</span>
     ));
   };
 
   const clearCount = systemRows.filter(r => r.dot === "#2ECF8E").length;
 
   return (
-    <div className="space-y-5 pb-10">
-      {/* Header */}
+    <div className="space-y-5 pb-20 max-w-3xl">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
           <Gauge size={20} className="text-primary" /> Central Cockpit
@@ -110,163 +120,108 @@ const CentralCockpitView: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-4 gap-3">
-        {kpiData.map(kpi => (
-          <div key={kpi.label} className="rounded-xl border border-subtle bg-surface-1 p-4">
-            <p className="text-[10px] text-muted-foreground mb-1">{kpi.label}</p>
-            <p className="font-display font-bold text-xl text-foreground">{kpi.value}</p>
-            <span className={`inline-block mt-1 font-mono text-[10px] px-1.5 py-0.5 rounded-full ${
-              kpi.positive ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
-            }`}>{kpi.delta}</span>
-            <p className="text-[10px] text-muted-foreground mt-1.5">{kpi.sub}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* All clear state */}
-      {!hasUrgentOrPending && potentialFlags.length === 0 ? (
+      {!hasUrgentOrPending ? (
         <div className="flex flex-col items-center justify-center py-16">
           <div className="w-3 h-3 rounded-full mb-4" style={{ backgroundColor: "#2ECF8E" }} />
-          <p className="text-base font-medium text-foreground">All clear</p>
-          <p className="text-[13px] mt-1 text-muted-foreground">No issues · No pending approvals</p>
+          <p className="text-base font-medium" style={{ color: "hsl(220,20%,15%)" }}>All clear</p>
+          <p className="text-[13px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>No issues · No pending approvals</p>
+          <p className="text-[11px] mt-1" style={{ color: "hsl(220,10%,46%)" }}>Last checked {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
         </div>
       ) : (
-        /* Three-column grid */
-        <div className="grid grid-cols-3 gap-4" style={{ minHeight: 340 }}>
-          {/* Alerts column */}
-          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden flex flex-col">
-            <div className="px-4 py-3 border-b border-subtle flex items-center justify-between">
-              <h3 className="text-sm font-medium text-foreground">Alerts ({visibleItems.length})</h3>
-              {approvableItems.length >= 2 && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button className="px-2.5 py-1 rounded-lg text-[10px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
-                      Approve all safe ({approvableItems.length})
+        <div className="space-y-0">
+          {showBatchApprove && (
+            <div className="mb-3">
+              <button onClick={handleBatchApprove} className="px-3 py-1.5 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+                Approve all safe ({approvableItems.length} actions)
+              </button>
+            </div>
+          )}
+
+          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
+            {visibleItems.map(item => {
+              const isApprovable = item.confidence && item.confidence >= 3;
+              const borderColor = isApprovable ? "#4F7FFF" : tierBorder(item.tier);
+              return (
+                <div key={item.id} className="flex items-center gap-3 px-4" style={{ height: 48, borderLeft: `3px solid ${borderColor}` }}>
+                  <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded flex-shrink-0" style={{
+                    backgroundColor: `${borderColor}15`,
+                    color: borderColor,
+                  }}>
+                    {item.tier}
+                  </span>
+                  <span className="text-[13px] flex-1 truncate" style={{ color: "hsl(220,20%,15%)" }}>{item.desc}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
+                    {item.source}
+                  </span>
+                  {isApprovable ? (
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-[10px] flex gap-0.5">{confidencePips(item.confidence!)}</span>
+                      <button onClick={() => handleApprove(item.id)} className="px-2 py-1 rounded-lg text-[10px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
+                        Approve
+                      </button>
+                      <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="px-2 py-1 rounded-lg text-[10px] font-medium border" style={{ borderColor: "hsl(220,13%,91%)", color: "hsl(220,10%,46%)" }}>
+                        Review
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="text-[11px] font-medium flex-shrink-0" style={{ color: "#4F7FFF" }}>
+                      Act →
                     </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Approve {approvableItems.length} safe actions?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        The following high-confidence actions will be approved:
-                        <ul className="mt-2 space-y-1 list-disc pl-4">
-                          {approvableItems.map(item => (
-                            <li key={item.id}>{item.desc}</li>
-                          ))}
-                        </ul>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleBatchApprove} className="bg-primary text-primary-foreground">Confirm Approve All</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-            </div>
-            <div className="flex-1 overflow-y-auto divide-y divide-subtle/50">
-              {visibleItems.map(item => {
-                const isApprovable = item.confidence && item.confidence >= 3;
-                const borderColor = isApprovable ? "#4F7FFF" : tierBorder(item.tier);
-                return (
-                  <div key={item.id} className="px-4 py-3" style={{ borderLeft: `3px solid ${borderColor}` }}>
-                    <div className="flex items-start gap-2">
-                      <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5" style={{
-                        backgroundColor: `${borderColor}15`,
-                        color: borderColor,
-                      }}>
-                        {item.tier}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[12px] text-foreground leading-tight">{item.desc}</p>
-                        <p className="text-[10px] text-muted-foreground mt-1">{item.source}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-2 justify-end">
-                      {isApprovable ? (
-                        <>
-                          <span className="text-[10px] flex gap-0.5">{confidencePips(item.confidence!)}</span>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <button className="px-2 py-1 rounded-lg text-[10px] font-medium text-white" style={{ backgroundColor: "#A78BFA" }}>
-                                Approve
-                              </button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Approve this action?</AlertDialogTitle>
-                                <AlertDialogDescription>{item.desc}</AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleApprove(item.id)} className="bg-primary text-primary-foreground">Confirm</AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                          <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="px-2 py-1 rounded-lg text-[10px] font-medium border border-border text-muted-foreground">
-                            Review
-                          </button>
-                        </>
-                      ) : (
-                        <button onClick={() => g.navigateTo(item.sourceId, item.target)} className="text-[11px] font-medium" style={{ color: "#4F7FFF" }}>
-                          Act →
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          {/* Watching column */}
-          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden flex flex-col">
-            <div className="px-4 py-3 border-b border-subtle">
-              <h3 className="text-sm font-medium text-foreground">Watching ({potentialFlags.length})</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Leading indicators to monitor</p>
-            </div>
-            <div className="flex-1 overflow-y-auto divide-y divide-subtle/50">
-              {potentialFlags.map(flag => (
-                <div key={flag.id} className="px-4 py-3 flex items-start gap-3" style={{ borderLeft: "3px solid #4F7FFF" }}>
-                  <span className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0 mt-1" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[12px] text-foreground leading-tight">{flag.desc}</p>
-                    <p className="text-[10px] text-muted-foreground mt-1">{flag.source}</p>
-                  </div>
-                  <button onClick={() => g.navigateTo(flag.sourceId)} className="text-[10px] flex-shrink-0 text-muted-foreground hover:text-foreground">
-                    View →
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+          {urgentIssues.length > 8 && (
+            <p className="text-[11px] font-medium mt-2" style={{ color: "#4F7FFF" }}>{urgentIssues.length - 8} more items →</p>
+          )}
+        </div>
+      )}
 
-          {/* System Health column */}
-          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden flex flex-col">
-            <div className="px-4 py-3 border-b border-subtle">
-              <h3 className="text-sm font-medium text-foreground">System Health</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{clearCount}/{systemRows.length} modules clear</p>
-            </div>
-            <div className="flex-1 overflow-y-auto divide-y divide-subtle/50">
-              {systemRows.map((row, i) => (
-                <div key={`${row.name}-${i}`} className="flex items-center justify-between px-4 py-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: row.dot }} />
-                    <span className="text-xs text-foreground">{row.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-muted-foreground">{row.status}</span>
-                    <button onClick={() => g.navigateTo(row.id)} className="flex-shrink-0 text-muted-foreground hover:text-foreground">
-                      <ArrowRight size={12} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {potentialFlags.length > 0 && (
+        <div className="mt-6">
+          <p className="font-mono text-[10px] uppercase tracking-wider mb-1" style={{ color: "hsl(220,10%,46%)" }}>Watching</p>
+          <p className="text-[12px] mb-3" style={{ color: "hsl(220,10%,46%)" }}>Not urgent — leading indicators to monitor</p>
+          <div className="space-y-0 rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
+            {potentialFlags.slice(0, 5).map(flag => (
+              <div key={flag.id} className="flex items-center gap-3 px-4" style={{ height: 44, borderLeft: "3px solid #4F7FFF" }}>
+                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: "rgba(79,127,255,0.1)", color: "#4F7FFF" }}>
+                  Watch
+                </span>
+                <span className="text-[13px] flex-1 truncate" style={{ color: "hsl(220,10%,46%)" }}>{flag.desc}</span>
+                <span className="text-[10px] font-mono flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>{flag.source}</span>
+                <button onClick={() => g.navigateTo(flag.sourceId)} className="text-[11px] flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
+                  → View
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}
+
+      <div className="mt-4">
+        <button onClick={() => setHealthOpen(!healthOpen)} className="flex items-center gap-1.5 text-[12px]" style={{ color: "hsl(220,10%,46%)" }}>
+          {clearCount}/{systemRows.length} screens clear
+          {healthOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+        </button>
+        {healthOpen && (
+          <div className="mt-2 rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
+            {systemRows.map((row, i) => (
+              <div key={`${row.name}-${i}`} className="flex items-center justify-between px-4 py-2.5">
+                <span className="text-xs" style={{ color: "hsl(220,20%,15%)" }}>{row.name}</span>
+                <div className="flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: row.dot }} />
+                  <span className="text-[10px] font-mono w-16" style={{ color: "hsl(220,10%,46%)" }}>{row.status}</span>
+                  <button onClick={() => g.navigateTo(row.id)} className="flex-shrink-0" style={{ color: "hsl(220,10%,46%)" }}>
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

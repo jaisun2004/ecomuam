@@ -1,12 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 
 const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
@@ -177,7 +175,6 @@ const priceIndexBySku: Record<string, any[]> = {
 
 const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
-  const { compareEnabled } = useDateRange();
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [selectedSku, setSelectedSku] = useState("Good Day 200g");
@@ -204,10 +201,10 @@ const PricingView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Good — competitive positioning maintained across SKUs" accentColor="bg-sw-green" delay={0} />
-        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Monitor — competitor price cuts may erode your margin" accentColor="bg-sw-amber" delay={0.05} />
-        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Caution — slightly above market; may impact conversion" accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Bad — overpriced SKUs losing click-to-buy rate" accentColor="bg-sw-red" delay={0.15} />
+        <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
+        <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Across all platforms" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
       {/* Competitor Matrix with SKU Group + Platform filters + Need Attention button */}
@@ -421,7 +418,6 @@ const PricingView: React.FC = () => {
               <Line type="monotone" dataKey="comp1" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name={compNames[0]} />
               <Line type="monotone" dataKey="comp2" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[1]} />
               <Line type="monotone" dataKey="comp3" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[2]} />
-              {compareEnabled && <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Your Price (prev)" />}
             </LineChart>
           </ResponsiveContainer>
         </PanelCard>
@@ -480,7 +476,6 @@ const PricingView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price Index" />
                 <Line type="monotone" dataKey="categoryAvg" stroke="hsl(225,10%,46%)" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Category Avg" />
-                {compareEnabled && <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Your Index (prev)" />}
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>

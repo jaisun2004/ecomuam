@@ -95,10 +95,10 @@ const PricingSection = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Avg Selling Price" value="₹345" change={1.8} changeLabel="Slight increase — within acceptable range" icon={<DollarSign className="h-5 w-5" />} variant="primary" />
-        <KPICard title="MAP Violations" value="14" change={-40} changeLabel="Improving — enforcement reducing violations" icon={<TrendingDown className="h-5 w-5" />} variant="destructive" />
-        <KPICard title="Price Competitiveness" value="87%" change={3} changeLabel="Good — maintaining competitive position" icon={<BarChart3 className="h-5 w-5" />} variant="success" />
-        <KPICard title="Margin Opportunity" value="₹8.2L" change={12} changeLabel="Positive — margin upside from pricing corrections" icon={<TrendingUp className="h-5 w-5" />} variant="warning" />
+        <KPICard title="Avg Selling Price" value="₹345" change={1.8} changeLabel="vs last month" icon={<DollarSign className="h-5 w-5" />} variant="primary" />
+        <KPICard title="MAP Violations" value="14" change={-40} changeLabel="down from 23" icon={<TrendingDown className="h-5 w-5" />} variant="destructive" />
+        <KPICard title="Price Competitiveness" value="87%" change={3} changeLabel="within 5% of competition" icon={<BarChart3 className="h-5 w-5" />} variant="success" />
+        <KPICard title="Margin Opportunity" value="₹8.2L" change={12} changeLabel="monthly potential" icon={<TrendingUp className="h-5 w-5" />} variant="warning" />
       </div>
 
       {!deepDive ? (

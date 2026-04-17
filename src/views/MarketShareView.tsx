@@ -6,8 +6,6 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, Legend } from "recharts";
 import { ArrowRight, AlertCircle, MapPin, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 
 /* ── Dark Store pincode-level data ── */
 interface DarkStore {
@@ -110,7 +108,6 @@ const newEntrants = [
 
 const MarketShareView: React.FC = () => {
   const [tab, setTab] = useState("overview");
-  const { compareEnabled } = useDateRange();
   const g = useGuardrails();
   const [platformFilter, setPlatformFilter] = useState("All");
   const [selectedStore, setSelectedStore] = useState<DarkStore | null>(null);
@@ -134,10 +131,10 @@ const MarketShareView: React.FC = () => {
 
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Overall Category Share" value="22%" delta="▲ 1.4% vs last wk" deltaType="positive" sub="Growing — new keyword wins driving incremental share" accentColor="bg-primary" delay={0} />
-          <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" sub="Positive — ad + organic improvements closing gap with Parle" accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Fastest Growing Competitor" value="ITC" delta="+3.2% share gain" deltaType="negative" sub="Risk — ITC gaining via aggressive Blinkit & Zepto push" accentColor="bg-sw-red" delay={0.1} />
-          <KPICard title="Platform Where You Lead" value="Flipkart" delta="Highest share: 31%" deltaType="positive" sub="Strong — Flipkart dominance from better pricing + content" accentColor="bg-sw-purple" delay={0.15} />
+          <KPICard title="Overall Category Share" value="22%" delta="▲ 1.4% vs last wk" deltaType="positive" sub="Across all platforms" accentColor="bg-primary" delay={0} />
+          <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" sub="Behind Parle at 26%" accentColor="bg-sw-green" delay={0.05} />
+          <KPICard title="Fastest Growing Competitor" value="ITC" delta="+3.2% share gain" deltaType="negative" sub="Aggressive Q-commerce push" accentColor="bg-sw-red" delay={0.1} />
+          <KPICard title="Platform Where You Lead" value="Flipkart" delta="Highest share: 31%" deltaType="positive" sub="2.1x vs nearest rival" accentColor="bg-sw-purple" delay={0.15} />
         </div>
 
         {/* Share by platform */}
@@ -243,7 +240,6 @@ const MarketShareView: React.FC = () => {
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Parle" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Unibic" />
                 <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="ITC" />
-                {compareEnabled && <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="You (prev)" />}
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
@@ -252,7 +248,6 @@ const MarketShareView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Parle</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Unibic</span>
             </div>
-            <ComparisonLegend />
           </PanelCard>
 
           {/* Platform share matrix */}

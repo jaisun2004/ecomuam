@@ -1,11 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { Megaphone, Sparkles } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, AreaChart, Area } from "recharts";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 
 const festivalComparison = [
   { festival: "Diwali", spend: 380, roas: 6.2, conversions: 2400 },
@@ -69,7 +67,6 @@ const pastPerformance = [
 
 const FestivalCampaignsView: React.FC = () => {
   const [launchedCampaigns, setLaunchedCampaigns] = useState<Record<string, boolean>>({});
-  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
 
   return (
@@ -77,10 +74,10 @@ const FestivalCampaignsView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Plan ahead — early campaign setup improves ROAS" accentColor="bg-sw-amber" delay={0} />
-          <KPICard title="Pre-built Campaigns" value="8" delta="AI-optimised & pre-fed" deltaType="positive" sub="Ready — AI-optimised campaigns reduce setup time" accentColor="bg-sw-purple" delay={0.05} />
-          <KPICard title="Avg Festival ROAS" value="4.8x" delta="▲ Based on past festivals" deltaType="positive" sub="Strong — festivals consistently outperform regular periods" accentColor="bg-sw-green" delay={0.1} />
-          <KPICard title="Total Planned Spend" value="₹9.6L" delta="Across all festivals" deltaType="positive" sub="Allocated — deploy selectively based on inventory" accentColor="bg-sw-cyan" delay={0.15} />
+          <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Campaigns ready to deploy" accentColor="bg-sw-amber" delay={0} />
+          <KPICard title="Pre-built Campaigns" value="8" delta="AI-optimised & pre-fed" deltaType="positive" sub="Across all festivals" accentColor="bg-sw-purple" delay={0.05} />
+          <KPICard title="Avg Festival ROAS" value="4.8x" delta="▲ Based on past festivals" deltaType="positive" sub="Historical performance" accentColor="bg-sw-green" delay={0.1} />
+          <KPICard title="Total Planned Spend" value="₹9.6L" delta="Across all festivals" deltaType="positive" sub="If all campaigns deployed" accentColor="bg-sw-cyan" delay={0.15} />
         </div>
 
         <PanelCard title="Past Festival Performance" badge="Benchmarks" badgeColor="green" delay={0.2}>
@@ -161,10 +158,6 @@ const FestivalCampaignsView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="diwali" stroke="hsl(38,92%,50%)" strokeWidth={2} dot={false} name="Diwali" />
                 <Line type="monotone" dataKey="republicDay" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Republic Day" />
-                {compareEnabled && <>
-                  <Line type="monotone" dataKey="diwali" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Diwali (prev)" />
-                  <Line type="monotone" dataKey="republicDay" stroke="hsl(228,90%,64%)" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Rep Day (prev)" />
-                </>}
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>
@@ -178,7 +171,6 @@ const FestivalCampaignsView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Area type="monotone" dataKey="festival" stackId="1" fill="hsl(var(--sw-amber))" stroke="hsl(38,92%,50%)" fillOpacity={0.3} name="Festival Period" />
                 <Area type="monotone" dataKey="nonFestival" stackId="1" fill="hsl(var(--primary))" stroke="hsl(228,90%,64%)" fillOpacity={0.2} name="Non-Festival" />
-                {compareEnabled && <Area type="monotone" dataKey="festival" stroke="hsl(38,92%,50%)" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} name="Festival (prev)" />}
               </AreaChart>
             </ResponsiveContainer>
           </PanelCard>

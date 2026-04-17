@@ -1,11 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { Tv, CheckCircle2, MapPin, Megaphone } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip } from "recharts";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 
 const channelPerformance = [
   { channel: "Kirana Partnerships", roi: 3.5, reach: 380 },
@@ -75,7 +73,6 @@ const cityWiseOpps = [
 
 const OfflineAdsView: React.FC = () => {
   const [channelActions, setChannelActions] = useState<Record<number, boolean>>({});
-  const { compareEnabled } = useDateRange();
   const [tab, setTab] = useState("overview");
 
   return (
@@ -83,10 +80,10 @@ const OfflineAdsView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" sub="Healthy — online channels performing well" accentColor="bg-sw-green" delay={0} />
-          <KPICard title="Offline Opportunity" value="₹28L/mo" delta="Incremental potential" deltaType="positive" sub="Good — large untapped offline revenue potential" accentColor="bg-sw-purple" delay={0.05} />
-          <KPICard title="Est. Blended ROI" value="3.5x" delta="Online + Offline combined" deltaType="positive" sub="Positive — combined online + offline boosts total return" accentColor="bg-sw-cyan" delay={0.1} />
-          <KPICard title="Cities to Target" value="5" delta="Based on online penetration" deltaType="positive" sub="Strategic — high online penetration signals offline demand" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" sub="No online issues detected" accentColor="bg-sw-green" delay={0} />
+          <KPICard title="Offline Opportunity" value="₹28L/mo" delta="Incremental potential" deltaType="positive" sub="Across 4 offline channels" accentColor="bg-sw-purple" delay={0.05} />
+          <KPICard title="Est. Blended ROI" value="3.5x" delta="Online + Offline combined" deltaType="positive" sub="Based on attribution modeling" accentColor="bg-sw-cyan" delay={0.1} />
+          <KPICard title="Cities to Target" value="5" delta="Based on online penetration" deltaType="positive" sub="Highest offline potential" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <div className="p-5 rounded-2xl bg-gradient-to-r from-sw-green/10 to-primary/10 border border-sw-green/20">
@@ -161,7 +158,6 @@ const OfflineAdsView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar dataKey="roi" fill="hsl(var(--sw-purple))" radius={[4, 4, 0, 0]} name="ROI (x)" />
-                {compareEnabled && <Bar dataKey="roi" fill="hsl(var(--sw-purple))" opacity={0.25} radius={[4, 4, 0, 0]} name="ROI (prev)" strokeDasharray="5 5" />}
               </BarChart>
             </ResponsiveContainer>
           </PanelCard>

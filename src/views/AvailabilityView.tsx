@@ -6,12 +6,6 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
 
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
@@ -19,11 +13,11 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const oosProductsToday = [
-  { sku: "50-50 Maska Chaska 120g", platform: "Flipkart", city: "Delhi NCR", since: "6h ago" },
-  { sku: "Marie Gold 250g", platform: "Instamart", city: "Mumbai", since: "3h ago" },
-  { sku: "Marie Gold 250g", platform: "Blinkit", city: "Delhi NCR", since: "1h ago" },
-  { sku: "Milk Bikis 100g", platform: "Zepto", city: "Bangalore", since: "4h ago" },
-  { sku: "NutriChoice Digestive", platform: "Flipkart", city: "Mumbai", since: "2h ago" },
+  { sku: "50-50 Maska Chaska 120g", platform: "Flipkart", since: "6h ago" },
+  { sku: "Marie Gold 250g", platform: "Instamart", since: "3h ago" },
+  { sku: "Marie Gold 250g", platform: "Blinkit", since: "1h ago" },
+  { sku: "Milk Bikis 100g", platform: "Zepto", since: "4h ago" },
+  { sku: "NutriChoice Digestive", platform: "Flipkart", since: "2h ago" },
 ];
 
 const platformAvailability = [
@@ -88,6 +82,7 @@ const darkstoreGaps = [
   },
 ];
 
+/* Competition availability data */
 const competitionAvailability = [
   { competitor: "Sunfeast", platform: "Amazon", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Sunfeast Butter 200g", trend: "stable" },
   { competitor: "Sunfeast", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Sunfeast Cream 150g", trend: "improving" },
@@ -99,7 +94,6 @@ const competitionAvailability = [
 
 const AvailabilityView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
-  const { compareEnabled } = useDateRange();
   const [selectedCity, setSelectedCity] = useState(0);
   const [compCampaignStates, setCompCampaignStates] = useState<Record<number, boolean>>({});
   const g = useGuardrails();
@@ -108,21 +102,6 @@ const AvailabilityView: React.FC = () => {
   const [tab, setTab] = useState("overview");
 
   const allSkus = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
-
-  // Stabilize heatmap data
-  const heatmapData = useMemo(() => {
-    const skus = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    return skus.map(sku => ({
-      sku,
-      values: days.map(day => ({
-        day,
-        value: Math.round(40 + Math.random() * 55),
-      })),
-    }));
-  }, []);
-
-  const [selectedCell, setSelectedCell] = useState<{ sku: string; day: string; value: number } | null>(null);
 
   return (
     <div className="space-y-6 pb-20">
@@ -148,9 +127,9 @@ const AvailabilityView: React.FC = () => {
         </div>
       )}
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Dropped due to Flipkart OOS surge — needs attention" accentColor="bg-sw-green" delay={0} />
-        <KPICard title="OOS Products Today" value={String(oosProductsToday.length)} delta="▲ 2 vs yesterday" deltaType="negative" sub="Stockout spike from delayed replenishment — critical" accentColor="bg-sw-red" delay={0.05} />
-        <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Listing gaps widening — lost discoverability in key cities" accentColor="bg-sw-amber" delay={0.1} />
+        <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 5 platforms · 6 SKUs" accentColor="bg-sw-green" delay={0} />
+        <KPICard title="OOS Products Today" value={String(oosProductsToday.length)} delta="▲ 2 vs yesterday" deltaType="negative" sub="Products currently out of stock" accentColor="bg-sw-red" delay={0.05} />
+        <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Across 3 cities · Q-Commerce" accentColor="bg-sw-amber" delay={0.1} />
         <KPICard title="Ad Budget Wasted" value="₹2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
@@ -161,7 +140,6 @@ const AvailabilityView: React.FC = () => {
             <tr className="text-muted-foreground">
               <th className="text-left py-2 font-normal">Product</th>
               <th className="text-left py-2 font-normal">Platform</th>
-              <th className="text-left py-2 font-normal">City</th>
               <th className="text-right py-2 font-normal">Since</th>
               <th className="text-right py-2 font-normal">Action</th>
             </tr>
@@ -174,75 +152,29 @@ const AvailabilityView: React.FC = () => {
                   {item.sku}
                 </td>
                 <td className="py-2.5 text-muted-foreground">{item.platform}</td>
-                <td className="py-2.5 text-muted-foreground">
-                  <span className="flex items-center gap-1"><MapPin size={10} />{item.city}</span>
-                </td>
                 <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
                 <td className="py-2.5 text-right">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
-                        Pause Campaigns →
-                      </button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Pause campaigns for {item.sku}?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will pause all active campaigns for <strong>{item.sku}</strong> on <strong>{item.platform}</strong> in <strong>{item.city}</strong>. OOS since {item.since}.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku, city: item.city } })}
-                        >
-                          Confirm Pause
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  <button
+                    onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku } })}
+                    className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
+                    Pause Campaigns →
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="mt-3 pt-3 border-t border-subtle">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button className="w-full px-3 py-2 rounded-lg text-[11px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center justify-center gap-2">
-                <AlertTriangle size={12} />
-                Bulk Pause All OOS Campaigns ({oosProductsToday.length} products)
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Bulk pause all OOS campaigns?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will pause campaigns for {oosProductsToday.length} out-of-stock products across all platforms and cities:
-                  <ul className="mt-2 space-y-1 list-disc pl-4">
-                    {oosProductsToday.map((item, i) => (
-                      <li key={i}>{item.sku} — {item.platform} ({item.city})</li>
-                    ))}
-                  </ul>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: oosProductsToday.map(o => o.sku).join(",") } })}
-                >
-                  Confirm Bulk Pause
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <button
+            onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: oosProductsToday.map(o => o.sku).join(",") } })}
+            className="w-full px-3 py-2 rounded-lg text-[11px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center justify-center gap-2">
+            <AlertTriangle size={12} />
+            Bulk Pause All OOS Campaigns ({oosProductsToday.length} products)
+          </button>
         </div>
       </PanelCard>
 
-      {/* Own SKU Availability — Platform Matrix */}
+      {/* Merged Own SKU Availability — All Platforms */}
       <PanelCard title="Own SKU Availability — Platform Matrix" badge="Own Brand Only" badgeColor="accent" delay={0.25}>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -384,152 +316,207 @@ const AvailabilityView: React.FC = () => {
               </div>
               <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
                 className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  actionStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"
+                  actionStates[i] ? "bg-sw-green-dim text-sw-green" :
+                  s.trend === "critical" ? "bg-sw-red/20 text-sw-red hover:bg-sw-red/30" : "bg-surface-3 text-foreground hover:bg-primary/10"
                 }`}>
-                {actionStates[i] ? "✓ Actioned" : "Pre-order →"}
+                {actionStates[i] ? "✓ Ordered" : "Reorder"}
               </button>
             </div>
           ))}
         </div>
       </PanelCard>
+      </>) : (
+        <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
+      )}
+    </div>
+  );
+};
 
-      {/* Competition Availability */}
-      <PanelCard title="Competition Availability Comparison" badge="Competitive Intel" badgeColor="purple" delay={0.5}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-muted-foreground border-b border-subtle">
-                <th className="text-left py-2 font-normal">Competitor</th>
-                <th className="text-left py-2 font-normal">Platform</th>
-                <th className="text-center py-2 font-normal">Their Avail</th>
-                <th className="text-center py-2 font-normal">Your Avail</th>
-                <th className="text-center py-2 font-normal">Gap</th>
-                <th className="text-left py-2 font-normal">Top Product</th>
-                <th className="text-center py-2 font-normal">Trend</th>
-                <th className="text-right py-2 font-normal">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {competitionAvailability.map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2.5 text-foreground font-medium">{row.competitor}</td>
-                  <td className="py-2.5 text-muted-foreground">{row.platform}</td>
-                  <td className="py-2.5 text-center font-mono text-sw-green">{row.avail}%</td>
-                  <td className="py-2.5 text-center font-mono text-foreground">{row.yourAvail}%</td>
-                  <td className="py-2.5 text-center">
-                    <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-full ${
-                      row.gap.startsWith("+") ? "bg-sw-red-dim text-sw-red" : "bg-sw-green-dim text-sw-green"
-                    }`}>{row.gap}</span>
-                  </td>
-                  <td className="py-2.5 text-muted-foreground">{row.topProduct}</td>
-                  <td className="py-2.5 text-center">
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${
-                      row.trend === "improving" ? "bg-sw-green-dim text-sw-green" : row.trend === "declining" ? "bg-sw-red-dim text-sw-red" : "bg-surface-3 text-muted-foreground"
-                    }`}>{row.trend}</span>
-                  </td>
-                  <td className="py-2.5 text-right">
-                    <button
-                      onClick={() => setCompCampaignStates(p => ({ ...p, [i]: true }))}
-                      className={`text-[10px] font-medium px-2 py-1 rounded-lg ${
-                        compCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/15 text-primary hover:bg-primary/25"
-                      }`}>
-                      {compCampaignStates[i] ? "✓ Tracked" : "Track Gap →"}
-                    </button>
-                  </td>
-                </tr>
+const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
+  const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
+
+  const skuNames = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
+  const heatmapData = useMemo(() => skuNames.map(sku => ({
+    sku,
+    days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
+  })), []);
+
+  const cellColor = (val: number) => {
+    if (val <= 20) return "rgba(255,92,92,0.7)";
+    if (val <= 50) return "rgba(245,166,35,0.5)";
+    return "rgba(46,207,142,0.5)";
+  };
+
+  const affectedCampaigns = ["Good Day — Sponsored", "Q-Commerce Biscuit Push"];
+  const tier2Locks = ["Manual pause — NutriChoice Retargeting"];
+
+  const competitionAvailData = [
+    { competitor: "Sunfeast", platform: "Amazon", compAvail: 96, yourAvail: 86, product: "Sunfeast Butter 200g", keywords: ["sunfeast butter cookies", "sunfeast biscuits"], trend: "stable" },
+    { competitor: "Sunfeast", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Sunfeast Cream 150g", keywords: ["sunfeast cream biscuits", "cream cookies"], trend: "improving" },
+    { competitor: "Parle", platform: "Flipkart", compAvail: 92, yourAvail: 68, product: "Parle-G Gold 200g", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
+    { competitor: "Parle", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Parle Krackjack 120g", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
+    { competitor: "ITC", platform: "Instamart", compAvail: 72, yourAvail: 21, product: "Sunfeast Dark Fantasy", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
+    { competitor: "Unibic", platform: "Amazon", compAvail: 84, yourAvail: 86, product: "Unibic Butter 200g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <PanelCard title="Availability by SKU Over Time" badge="30 Days" badgeColor="red" delay={0}>
+        <div className="relative" style={{ overflow: "visible" }}>
+          <div className="overflow-x-auto">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground w-32 flex-shrink-0" />
+                {Array.from({ length: 30 }, (_, i) => (
+                  <span key={i} className="text-[7px] font-mono text-muted-foreground w-4 text-center flex-shrink-0">{i + 1}</span>
+                ))}
+              </div>
+              {heatmapData.map((row) => (
+                <div key={row.sku} className="flex items-center gap-1">
+                  <span className="text-[10px] text-foreground w-32 flex-shrink-0 truncate">{row.sku}</span>
+                  <div className="flex gap-px">
+                    {row.days.map((val, di) => (
+                      <div
+                        key={di}
+                        className={`w-4 h-4 rounded-sm ${val <= 50 ? "cursor-pointer hover:ring-1 hover:ring-primary" : ""}`}
+                        style={{ backgroundColor: cellColor(val) }}
+                        title={`${row.sku} · Mar ${di + 1} · ${val}%`}
+                        onClick={() => {
+                          if (val <= 50) setSelectedCell({ sku: row.sku, day: di + 1, value: val });
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+            <div className="flex items-center gap-3 mt-3 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(255,92,92,0.7)" }} /> 0-20%</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(245,166,35,0.5)" }} /> 20-50%</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "rgba(46,207,142,0.5)" }} /> 50-100%</span>
+              <span className="text-[9px] text-muted-foreground ml-2">Click red/amber cells for actions</span>
+            </div>
+          </div>
+
+          {selectedCell && (
+            <div className="absolute top-0 right-0 w-80 bg-surface-1 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="p-4 border-b border-subtle flex items-center justify-between">
+                <h4 className="text-sm font-medium text-foreground">Action for {selectedCell.sku} — Mar {selectedCell.day}</h4>
+                <button onClick={() => setSelectedCell(null)} className="text-muted-foreground hover:text-foreground">✕</button>
+              </div>
+              <div className="p-4 space-y-3">
+                <div>
+                  <p className="text-[10px] text-muted-foreground">Availability</p>
+                  <p className="font-mono text-lg font-bold" style={{ color: selectedCell.value <= 20 ? "#FF5C5C" : "#F5A623" }}>{selectedCell.value}%</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">Affected Campaigns</p>
+                  {affectedCampaigns.map(c => (
+                    <p key={c} className="text-xs text-foreground">• {c}</p>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">Active Tier 2 Locks</p>
+                  {tier2Locks.map(l => (
+                    <p key={l} className="text-xs text-sw-amber">• {l}</p>
+                  ))}
+                </div>
+                <button
+                  onClick={() => { g.navigateWithContext("campaigns", "campaign-digest", { type: "availability", params: { sku: selectedCell.sku } }); setSelectedCell(null); }}
+                  className="w-full px-3 py-2 rounded-lg text-[11px] font-medium text-white" style={{ backgroundColor: "#4F7FFF" }}>
+                  View in Campaign Manager →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </PanelCard>
-      </>) : (
-        /* Analytics Tab */
-        <div className="space-y-5">
-          <PanelCard title="Availability Score Over Time" badge="30-day trend" badgeColor="accent" delay={0}>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={availScoreTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[40, 100]} />
-                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13, color: "hsl(220,20%,15%)" }} />
-                <ReferenceLine y={50} stroke="hsl(0,76%,57%)" strokeDasharray="4 4" label={{ value: "Critical", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
-                <Area type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" fill="hsl(228,90%,64%)" fillOpacity={0.15} strokeWidth={2} />
-                {compareEnabled && <Area type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.4} name="Score (prev)" />}
-              </AreaChart>
-            </ResponsiveContainer>
-            <ComparisonLegend />
-          </PanelCard>
 
-          <PanelCard title="Availability by SKU Over Time" badge="Heatmap" badgeColor="accent" delay={0.1}>
-            <div className="overflow-visible relative z-10">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="text-muted-foreground">
-                    <th className="text-left py-2 font-normal w-40">SKU</th>
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => (
-                      <th key={d} className="text-center py-2 font-normal">{d}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {heatmapData.map((row) => (
-                    <tr key={row.sku}>
-                      <td className="py-1.5 text-foreground text-[10px]">{row.sku}</td>
-                      {row.values.map((cell) => (
-                        <td key={cell.day} className="py-1.5 text-center">
-                          <button
-                            onClick={() => setSelectedCell({ sku: row.sku, day: cell.day, value: cell.value })}
-                            className="w-8 h-8 rounded-lg font-mono text-[9px] text-foreground transition-all hover:ring-2 hover:ring-primary/40"
-                            style={{
-                              backgroundColor: cell.value >= 80
-                                ? "hsla(160,70%,48%,0.25)"
-                                : cell.value >= 50
-                                ? "hsla(38,92%,50%,0.25)"
-                                : "hsla(0,76%,57%,0.25)"
-                            }}
-                          >
-                            {cell.value}
-                          </button>
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {selectedCell && (
-              <div className="mt-3 p-3 rounded-xl bg-primary/5 border border-primary/20 relative z-50">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-foreground">{selectedCell.sku} — {selectedCell.day}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Availability: <span className="font-mono font-bold">{selectedCell.value}%</span></p>
-                  </div>
-                  <button onClick={() => setSelectedCell(null)} className="text-[10px] text-muted-foreground hover:text-foreground">✕ Close</button>
-                </div>
+      <PanelCard title="Availability Score — 30 Days" badge="Trend" badgeColor="accent" delay={0.1}>
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={availScoreTrend}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
+            <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+            <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
+            <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
+            <ReferenceLine y={20} stroke="hsl(0,76%,57%)" strokeDasharray="5 5" label={{ value: "20% threshold", fill: "hsl(0,76%,57%)", fontSize: 9 }} />
+            <Line type="monotone" dataKey="score" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Availability %" />
+          </LineChart>
+        </ResponsiveContainer>
+      </PanelCard>
+
+      {/* Competition Availability */}
+      <PanelCard title="Competition Availability vs Yours" badge="Opportunity" badgeColor="green" delay={0.15}>
+        <p className="text-[10px] text-muted-foreground mb-3">Competitors with higher availability — trigger campaigns to target their products when you're available and they're not.</p>
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-muted-foreground border-b border-subtle">
+              <th className="text-left py-2 font-normal">Competitor</th>
+              <th className="text-left py-2 font-normal">Platform</th>
+              <th className="text-center py-2 font-normal">Their Avail.</th>
+              <th className="text-center py-2 font-normal">Your Avail.</th>
+              <th className="text-center py-2 font-normal">Gap</th>
+              <th className="text-left py-2 font-normal">Top Product</th>
+              <th className="text-right py-2 font-normal">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {competitionAvailData.map((c, i) => (
+              <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                <td className="py-2.5 text-foreground font-medium">{c.competitor}</td>
+                <td className="py-2.5 text-muted-foreground">{c.platform}</td>
+                <td className="py-2.5 text-center font-mono text-sw-green">{c.compAvail}%</td>
+                <td className="py-2.5 text-center font-mono" style={{ color: c.yourAvail >= 70 ? "#2ECF8E" : c.yourAvail >= 50 ? "#F5A623" : "#FF5C5C" }}>{c.yourAvail}%</td>
+                <td className="py-2.5 text-center font-mono text-sw-red">{c.compAvail > c.yourAvail ? `+${c.compAvail - c.yourAvail}%` : `${c.compAvail - c.yourAvail}%`}</td>
+                <td className="py-2.5 text-foreground text-[10px]">{c.product}</td>
+                <td className="py-2.5 text-right">
+                  <button
+                    onClick={() => setCompCampaignStates(p => ({ ...p, [i]: true }))}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                      compCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}>
+                    <Megaphone size={10} />
+                    {compCampaignStates[i] ? "✓ Campaign Triggered" : "Target Competition"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </PanelCard>
+
+      {/* Competition OOS — Your Opportunity */}
+      <PanelCard title="Competition OOS — Your Opportunity" badge="Strike now" badgeColor="red" delay={0.2}>
+        <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
+        <div className="space-y-2">
+          {[
+            { competitor: "Sunfeast", product: "Sunfeast Cream 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
+            { competitor: "Parle", product: "Parle-G Gold 200g", platform: "Instamart", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
+            { competitor: "ITC", product: "Sunfeast Dark Fantasy", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+          ].map((item, i) => (
+            <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-foreground font-medium">{item.competitor} — {item.product}</span>
+                <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-red-dim text-sw-red">OOS {item.since}</span>
               </div>
-            )}
-          </PanelCard>
-
-          <PanelCard title="Platform-wise Availability Trend" badge="Line Chart" badgeColor="accent" delay={0.2}>
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={availScoreTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
-                <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13, color: "hsl(220,20%,15%)" }} />
-                <Line type="monotone" dataKey="score" stroke="#FF9900" strokeWidth={2} dot={false} name="Amazon" />
-                <Line type="monotone" dataKey="score" stroke="#2F77FF" strokeWidth={2} dot={false} name="Flipkart" />
-                <Line type="monotone" dataKey="score" stroke="#FDDC2B" strokeWidth={2} dot={false} name="Blinkit" />
-                {compareEnabled && <>
-                  <Line type="monotone" dataKey="score" stroke="#FF9900" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Amazon (prev)" />
-                  <Line type="monotone" dataKey="score" stroke="#2F77FF" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} dot={false} name="Flipkart (prev)" />
-                </>}
-              </LineChart>
-            </ResponsiveContainer>
-            <ComparisonLegend />
-          </PanelCard>
+              <p className="text-[10px] text-muted-foreground">{item.platform} · Est. demand: {item.estDemand}</p>
+              <div className="flex items-center gap-1 mt-1 mb-2">
+                {item.keywords.map(kw => (
+                  <span key={kw} className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground">{kw}</span>
+                ))}
+              </div>
+              <button
+                onClick={() => setCompCampaignStates(p => ({ ...p, [`oos-${i}`]: true }))}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                  compCampaignStates[`oos-${i}`] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
+                }`}>
+                <Megaphone size={10} />
+                {compCampaignStates[`oos-${i}`] ? "✓ Campaign Launched" : "Launch Conquest Campaign"}
+              </button>
+            </div>
+          ))}
         </div>
-      )}
+      </PanelCard>
     </div>
   );
 };

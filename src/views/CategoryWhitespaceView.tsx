@@ -28,10 +28,10 @@ const CategoryWhitespaceView: React.FC = () => {
   return (
     <div className="space-y-6 pb-20">
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="White-space Opportunities" value={String(opportunities.length)} delta="▲ 2 new this week" deltaType="positive" sub="Good — new gaps opening from competitor exits" accentColor="bg-sw-cyan" delay={0} />
-        <KPICard title="Sub-category Gaps" value={String(whitespaceBySub.length)} delta="Across 5 sub-categories" deltaType="neutral" sub="Moderate — product line expansion recommended" accentColor="bg-sw-purple" delay={0.05} />
-        <KPICard title="Total Addressable Search" value="105K" delta="Monthly searches in gap areas" deltaType="positive" sub="Large — high uncontested demand volume available" accentColor="bg-sw-green" delay={0.1} />
-        <KPICard title="Avg Competition" value="Low" delta="Most gaps have <3 sellers" deltaType="positive" sub="Favorable — low barriers to entry in gap areas" accentColor="bg-sw-amber" delay={0.15} />
+        <KPICard title="White-space Opportunities" value={String(opportunities.length)} delta="▲ 2 new this week" deltaType="positive" sub="Ready to capture" accentColor="bg-sw-cyan" delay={0} />
+        <KPICard title="Sub-category Gaps" value={String(whitespaceBySub.length)} delta="Across 5 sub-categories" deltaType="neutral" sub="Product gaps identified" accentColor="bg-sw-purple" delay={0.05} />
+        <KPICard title="Total Addressable Search" value="105K" delta="Monthly searches in gap areas" deltaType="positive" sub="Uncontested volume" accentColor="bg-sw-green" delay={0.1} />
+        <KPICard title="Avg Competition" value="Low" delta="Most gaps have <3 sellers" deltaType="positive" sub="Easy entry points" accentColor="bg-sw-amber" delay={0.15} />
       </div>
 
       <PanelCard title="💡 Category White-Space Opportunities" badge={`${opportunities.length} actionable`} badgeColor="green" delay={0.2}>

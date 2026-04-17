@@ -5,8 +5,6 @@ import KPICard from "@/components/sw/KPICard";
 import { ChevronDown, ChevronRight, ArrowLeft } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { useDateRange } from "@/contexts/DateRangeContext";
-import ComparisonLegend from "@/components/ComparisonLegend";
 
 /* ── Report Data ── */
 type ReportKeyword = {
@@ -79,7 +77,6 @@ const platformBreakdown = [
 
 const CampaignReportsView: React.FC = () => {
   const g = useGuardrails();
-  const { compareEnabled } = useDateRange();
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
@@ -110,11 +107,11 @@ const CampaignReportsView: React.FC = () => {
 
       {/* KPIs */}
       <div className="grid grid-cols-5 gap-4">
-        <KPICard title="Total Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L MoM" deltaType="positive" sub="Up from new campaign activations — within budget" accentColor="bg-primary" delay={0} />
-        <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Improving — underperformers paused, winners scaled" accentColor="bg-sw-green" delay={0.05} />
-        <KPICard title="Total Impressions" value="4.2M" delta="▲ 18%" deltaType="positive" sub="Healthy growth — broader keyword coverage driving reach" accentColor="bg-sw-cyan" delay={0.1} />
-        <KPICard title="Avg CTR" value="3.1%" delta="▲ 0.4%" deltaType="positive" sub="Strong — above industry avg, creative refresh working" accentColor="bg-sw-purple" delay={0.15} />
-        <KPICard title="Avg CPC" value="₹18.2" delta="▼ ₹2.1" deltaType="positive" sub="Good — lower CPC from better quality scores" accentColor="bg-sw-amber" delay={0.2} />
+        <KPICard title="Total Spend (30D)" value="₹18.4L" delta="▲ ₹2.1L MoM" deltaType="positive" sub="24 campaigns" accentColor="bg-primary" delay={0} />
+        <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x" accentColor="bg-sw-green" delay={0.05} />
+        <KPICard title="Total Impressions" value="4.2M" delta="▲ 18%" deltaType="positive" sub="Across all platforms" accentColor="bg-sw-cyan" delay={0.1} />
+        <KPICard title="Avg CTR" value="3.1%" delta="▲ 0.4%" deltaType="positive" sub="Industry avg: 2.2%" accentColor="bg-sw-purple" delay={0.15} />
+        <KPICard title="Avg CPC" value="₹18.2" delta="▼ ₹2.1" deltaType="positive" sub="30-day average" accentColor="bg-sw-amber" delay={0.2} />
       </div>
 
       {/* Charts */}
@@ -127,7 +124,6 @@ const CampaignReportsView: React.FC = () => {
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />
               <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} name="Spend (₹K)" />
-              {compareEnabled && <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="none" strokeWidth={1.5} strokeDasharray="5 5" strokeOpacity={0.35} name="Spend (prev)" />}
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>
