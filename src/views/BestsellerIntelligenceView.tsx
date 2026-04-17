@@ -530,7 +530,7 @@ const OverviewTab: React.FC<{ platform: string; sku: string }> = ({ platform, sk
         </div>
       </div>
 
-      <CompetitorRankStrip />
+      <CompetitorComparison days={days} />
       <OrganicMomentumCard organicGain={Math.max(0, moved)} />
     </div>
   );
