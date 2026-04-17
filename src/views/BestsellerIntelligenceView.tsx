@@ -20,7 +20,22 @@ import {
   ReferenceLine,
   LabelList,
 } from "recharts";
-import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap, ArrowRight, Users, PiggyBank } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { useGuardrails } from "@/contexts/GuardrailContext";
+
+// ───────── Competitor mock data ─────────
+const competitors = [
+  { name: "Britannia Bourbon 150g", organicRank: 6, organicDelta: -2, sponsoredRank: 3, sponsoredDelta: 1 },
+  { name: "Sunfeast Dark Fantasy", organicRank: 4, organicDelta: 1, sponsoredRank: 5, sponsoredDelta: -2 },
+];
+
+// Low-ROAS / high-spend candidate campaigns to recommend reductions on
+const reductionCandidates = [
+  { name: "Marie Gold — Generic Search", spend: "₹48k/wk", roas: "1.4x", reduction: "30%" },
+  { name: "Good Day — Broad Match", spend: "₹62k/wk", roas: "1.7x", reduction: "20%" },
+];
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const skuOptions = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "50-50 Maska Chaska 120g"];
@@ -103,6 +118,100 @@ const rankColor = (delta: number) => {
   if (delta < -1) return "hsl(140, 60%, 42%)";
   if (delta > 1) return "hsl(0, 70%, 55%)";
   return "hsl(220, 8%, 55%)";
+};
+
+// ───────── Competitor Rank Strip ─────────
+const CompetitorRankStrip: React.FC = () => {
+  const renderDelta = (delta: number) => {
+    const color = rankColor(delta);
+    const Icon = delta < 0 ? TrendingUp : delta > 0 ? TrendingDown : Minus;
+    return (
+      <span className="inline-flex items-center gap-1 font-mono text-[11px]" style={{ color }}>
+        <Icon size={12} />
+        {delta === 0 ? "flat" : `${Math.abs(delta)} pos`}
+      </span>
+    );
+  };
+  return (
+    <PanelCard title="Competitor Keyword Rank" badge="Top 2 rivals" badgeColor="accent" delay={0.18}>
+      <p className="text-[11px] text-muted-foreground mb-3">
+        Average organic and sponsored rank across your tracked keywords for the selected window.
+      </p>
+      <div className="space-y-2">
+        {competitors.map((c) => (
+          <div key={c.name} className="grid grid-cols-12 items-center gap-3 py-2.5 px-3 rounded-lg border border-border bg-surface-1">
+            <div className="col-span-5 flex items-center gap-2">
+              <Users size={13} className="text-muted-foreground" />
+              <span className="text-[12px] font-medium text-foreground">{c.name}</span>
+            </div>
+            <div className="col-span-3 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Organic</span>
+              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.organicRank}</span>
+              {renderDelta(c.organicDelta)}
+            </div>
+            <div className="col-span-3 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Sponsored</span>
+              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.sponsoredRank}</span>
+              {renderDelta(c.sponsoredDelta)}
+            </div>
+            <div className="col-span-1 text-right">
+              {c.organicDelta < 0 || c.sponsoredDelta < 0 ? (
+                <TrendingUp size={14} className="inline text-sw-green" />
+              ) : c.organicDelta > 0 || c.sponsoredDelta > 0 ? (
+                <TrendingDown size={14} className="inline text-sw-red" />
+              ) : (
+                <Minus size={14} className="inline text-muted-foreground" />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </PanelCard>
+  );
+};
+
+// ───────── Organic Momentum / Campaign Linkage Card ─────────
+const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain }) => {
+  const { navigateTo } = useGuardrails();
+  if (organicGain < 2) return null;
+  return (
+    <div
+      className="rounded-2xl p-5 border opacity-0 animate-fade-slide-in"
+      style={{ animationDelay: "0.25s", background: "hsl(140,60%,96%)", borderColor: "hsl(140,60%,75%)" }}
+    >
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "hsl(140,60%,42%, 0.18)" }}>
+          <PiggyBank size={18} className="text-sw-green" />
+        </div>
+        <div className="flex-1">
+          <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider mb-1">Organic momentum detected</p>
+          <p className="text-sm text-foreground">
+            Organic rank improved by <span className="font-semibold text-sw-green">{organicGain} positions</span>.
+            Consider reducing spend on {reductionCandidates.length} low-ROAS campaigns to protect margin without losing rank.
+          </p>
+          <div className="mt-3 space-y-1.5">
+            {reductionCandidates.map((c) => (
+              <div key={c.name} className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-white border border-sw-green/20">
+                <div className="flex-1">
+                  <p className="text-[12px] font-medium text-foreground">{c.name}</p>
+                  <p className="text-[10px] font-mono text-muted-foreground">{c.spend} · ROAS {c.roas}</p>
+                </div>
+                <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reduction}</span>
+              </div>
+            ))}
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-3 h-8 text-[12px] border-sw-green/40 text-sw-green hover:bg-sw-green/10"
+            onClick={() => navigateTo("campaigns")}
+          >
+            Review in Campaign Manager <ArrowRight size={12} className="ml-1" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // ───────── Overview Tab ─────────
@@ -287,6 +396,9 @@ const OverviewTab: React.FC<{ platform: string; sku: string }> = ({ platform, sk
           </p>
         </div>
       </div>
+
+      <CompetitorRankStrip />
+      <OrganicMomentumCard organicGain={Math.max(0, moved)} />
     </div>
   );
 };
@@ -318,6 +430,7 @@ const HeatmapCell: React.FC<{ value: number; isStrongest: boolean }> = ({ value,
 
 const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, sku }) => {
   const [targetRank, setTargetRank] = useState(3);
+  const [organicThreshold, setOrganicThreshold] = useState(5);
   const strongest = lagData.reduce((m, d) => (d.correlation > m.correlation ? d : m), lagData[0]);
   const strongestLagDays = parseInt(strongest.lag);
 
@@ -342,18 +455,36 @@ const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, s
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <PanelCard title="Paid Volume → Rank Correlation by Lag" badge="14d strongest" badgeColor="green" delay={0}>
-          <div className="grid grid-cols-4 gap-3 mb-3">
+          {/* Header row with lag labels */}
+          <div className="grid gap-3 mb-2" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <div />
+            {lagData.map((d) => (
+              <p key={d.lag} className="text-center text-[10px] font-mono text-muted-foreground uppercase tracking-wider">{d.lag} lag</p>
+            ))}
+          </div>
+          {/* Our paid volume row */}
+          <div className="grid gap-3 mb-2 items-center" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <p className="text-[11px] font-medium text-foreground">Our paid volume → rank</p>
             {lagData.map((d) => (
               <HeatmapCell key={d.lag} value={d.correlation} isStrongest={d.lag === strongest.lag} />
             ))}
           </div>
-          <div className="grid grid-cols-4 gap-3">
-            {lagData.map((d) => (
-              <p key={d.lag} className="text-center text-[11px] font-mono text-muted-foreground">{d.lag} lag</p>
+          {/* Competitor A organic */}
+          <div className="grid gap-3 mb-2 items-center" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <p className="text-[11px] font-medium text-foreground">Competitor A organic rank</p>
+            {[0.22, 0.48, 0.61, 0.39].map((v, i) => (
+              <HeatmapCell key={i} value={v} isStrongest={false} />
+            ))}
+          </div>
+          {/* Competitor B sponsored */}
+          <div className="grid gap-3 mb-2 items-center" style={{ gridTemplateColumns: "180px repeat(4, 1fr)" }}>
+            <p className="text-[11px] font-medium text-foreground">Competitor B sponsored rank</p>
+            {[0.31, 0.55, 0.44, 0.28].map((v, i) => (
+              <HeatmapCell key={i} value={v} isStrongest={false} />
             ))}
           </div>
           <p className="text-[11px] text-muted-foreground mt-3">
-            Higher value = stronger relationship. Strongest lag is auto-highlighted in green.
+            Higher value = stronger relationship. Competitor rows show whether their keyword shifts predict your bestseller movement.
           </p>
         </PanelCard>
 
@@ -467,6 +598,59 @@ const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, s
           ))}
         </div>
       </PanelCard>
+
+      {/* Organic-vs-Paid Spend Efficiency */}
+      {(() => {
+        // savings band: stronger threshold (lower rank) → more savings possible
+        const inverseFactor = Math.max(0.05, (11 - organicThreshold) / 10);
+        const savings = {
+          conservative: Math.round(15 * inverseFactor),
+          base: Math.round(28 * inverseFactor),
+          aggressive: Math.round(42 * inverseFactor),
+        };
+        return (
+          <PanelCard title="Organic-vs-Paid Spend Efficiency" badge="Savings planner" badgeColor="green" delay={0.2}>
+            <p className="text-[12px] text-foreground/80 mb-4">
+              When organic rank is in <span className="font-semibold">top {organicThreshold}</span>, paid contribution can drop without losing bestseller position.
+            </p>
+            <div className="flex items-center gap-4 mb-5">
+              <div className="flex items-center gap-2 min-w-[180px]">
+                <Target size={14} className="text-sw-green" />
+                <label className="text-[12px] text-foreground font-medium">Organic rank threshold:</label>
+              </div>
+              <div className="flex-1 max-w-xs">
+                <Slider
+                  value={[organicThreshold]}
+                  onValueChange={(v) => setOrganicThreshold(v[0])}
+                  min={1}
+                  max={10}
+                  step={1}
+                />
+              </div>
+              <span className="font-mono text-[13px] font-semibold text-foreground min-w-[40px]">#{organicThreshold}</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { key: "conservative", label: "Conservative", color: "hsl(195,70%,45%)", desc: "Safe reduction, minimal rank risk", val: savings.conservative },
+                { key: "base", label: "Base", color: "hsl(140,60%,42%)", desc: "Balanced spend cut", val: savings.base },
+                { key: "aggressive", label: "Aggressive", color: "hsl(270,60%,42%)", desc: "Maximum savings, monitor closely", val: savings.aggressive },
+              ].map((s, i) => (
+                <div
+                  key={s.key}
+                  className="rounded-xl p-4 border opacity-0 animate-fade-slide-in"
+                  style={{ animationDelay: `${0.25 + i * 0.05}s`, borderColor: s.color + "55", background: s.color + "0F" }}
+                >
+                  <p className="text-[11px] font-mono uppercase tracking-wider" style={{ color: s.color }}>{s.label}</p>
+                  <p className="font-display font-bold text-2xl text-foreground mt-1">
+                    ↓ {s.val}% <span className="text-[11px] font-mono text-muted-foreground font-normal">paid spend</span>
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1.5">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </PanelCard>
+        );
+      })()}
     </div>
   );
 };
