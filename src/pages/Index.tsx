@@ -26,6 +26,7 @@ import ApprovalFlowView from "@/views/ApprovalFlowView";
 import KeywordAnalysisView from "@/views/KeywordAnalysisView";
 import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
 import CampaignReportsView from "@/views/CampaignReportsView";
+import BestsellerIntelligenceView from "@/views/BestsellerIntelligenceView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
@@ -52,6 +53,7 @@ const views: Record<string, React.FC> = {
   keywordanalysis: KeywordAnalysisView,
   whitespace: CategoryWhitespaceView,
   campaignreports: CampaignReportsView,
+  bestseller: BestsellerIntelligenceView,
 };
 
 const IndexInner = () => {
