@@ -396,6 +396,9 @@ const OverviewTab: React.FC<{ platform: string; sku: string }> = ({ platform, sk
           </p>
         </div>
       </div>
+
+      <CompetitorRankStrip />
+      <OrganicMomentumCard organicGain={Math.max(0, moved)} />
     </div>
   );
 };
