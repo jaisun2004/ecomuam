@@ -20,22 +20,84 @@ import {
   ReferenceLine,
   LabelList,
 } from "recharts";
-import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap, ArrowRight, Users, PiggyBank } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
+import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap, ArrowRight, Users, PiggyBank, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { useToast } from "@/hooks/use-toast";
 
-// ───────── Competitor mock data ─────────
-const competitors = [
-  { name: "Britannia Bourbon 150g", organicRank: 6, organicDelta: -2, sponsoredRank: 3, sponsoredDelta: 1 },
-  { name: "Sunfeast Dark Fantasy", organicRank: 4, organicDelta: 1, sponsoredRank: 5, sponsoredDelta: -2 },
+// ───────── Competitor brand mock data (extensive comparison) ─────────
+type CompetitorBrand = {
+  name: string;
+  isUs?: boolean;
+  color: string;
+  currentRank: number;
+  startRank: number;
+  organicRank: number;
+  sponsoredRank: number;
+};
+
+const competitorBrands: CompetitorBrand[] = [
+  { name: "Our SKU", isUs: true, color: "hsl(270,60%,42%)", currentRank: 4, startRank: 9, organicRank: 5, sponsoredRank: 3 },
+  { name: "Britannia Bourbon", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
+  { name: "Sunfeast Dark Fantasy", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
+  { name: "Parle Hide & Seek", color: "hsl(35,85%,50%)", currentRank: 8, startRank: 7, organicRank: 9, sponsoredRank: 7 },
+  { name: "Unibic Choco Chip", color: "hsl(140,55%,40%)", currentRank: 11, startRank: 8, organicRank: 12, sponsoredRank: 10 },
 ];
 
-// Low-ROAS / high-spend candidate campaigns to recommend reductions on
+// Build multi-brand rank series for chart
+const buildCompetitorRankSeries = (days: number) => {
+  const today = new Date();
+  return Array.from({ length: days }, (_, idx) => {
+    const i = days - 1 - idx;
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const t = (days - 1 - i) / Math.max(1, days - 1); // 0 → 1 across window
+    const point: Record<string, any> = {
+      day: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    };
+    competitorBrands.forEach((b) => {
+      const interp = b.startRank + (b.currentRank - b.startRank) * t;
+      const noise = Math.sin((i + b.name.length) / 3) * 0.6;
+      point[b.name] = Math.max(1, Math.round(interp + noise));
+    });
+    return point;
+  });
+};
+
+// Low-ROAS / high-spend campaign candidates with concrete details
 const reductionCandidates = [
-  { name: "Marie Gold — Generic Search", spend: "₹48k/wk", roas: "1.4x", reduction: "30%" },
-  { name: "Good Day — Broad Match", spend: "₹62k/wk", roas: "1.7x", reduction: "20%" },
-];
+  {
+    name: "Marie Gold — Generic Search",
+    platform: "Amazon",
+    dailySpend: 6800,
+    suggestedSpend: 4760,
+    roas: 1.4,
+    reductionPct: 30,
+    monthlySavings: 61200,
+    why: "ROAS 1.4x, organic rank already #3 — paid spend redundant",
+  },
+  {
+    name: "Good Day — Broad Match",
+    platform: "Flipkart",
+    dailySpend: 8900,
+    suggestedSpend: 7120,
+    roas: 1.7,
+    reductionPct: 20,
+    monthlySavings: 53400,
+    why: "ROAS 1.7x, organic rank improving — overlap with organic traffic",
+  },
+  {
+    name: "NutriChoice — Category Top Slot",
+    platform: "Blinkit",
+    dailySpend: 5400,
+    suggestedSpend: 3780,
+    roas: 1.9,
+    reductionPct: 30,
+    monthlySavings: 48600,
+    why: "Holding #2 organically — top-slot bid no longer required",
+  },
+].sort((a, b) => b.monthlySavings - a.monthlySavings);
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const skuOptions = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "50-50 Maska Chaska 120g"];
