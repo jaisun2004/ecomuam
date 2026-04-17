@@ -430,6 +430,7 @@ const HeatmapCell: React.FC<{ value: number; isStrongest: boolean }> = ({ value,
 
 const AnalyticsTab: React.FC<{ platform: string; sku: string }> = ({ platform, sku }) => {
   const [targetRank, setTargetRank] = useState(3);
+  const [organicThreshold, setOrganicThreshold] = useState(5);
   const strongest = lagData.reduce((m, d) => (d.correlation > m.correlation ? d : m), lagData[0]);
   const strongestLagDays = parseInt(strongest.lag);
 
