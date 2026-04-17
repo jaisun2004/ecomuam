@@ -120,6 +120,100 @@ const rankColor = (delta: number) => {
   return "hsl(220, 8%, 55%)";
 };
 
+// ───────── Competitor Rank Strip ─────────
+const CompetitorRankStrip: React.FC = () => {
+  const renderDelta = (delta: number) => {
+    const color = rankColor(delta);
+    const Icon = delta < 0 ? TrendingUp : delta > 0 ? TrendingDown : Minus;
+    return (
+      <span className="inline-flex items-center gap-1 font-mono text-[11px]" style={{ color }}>
+        <Icon size={12} />
+        {delta === 0 ? "flat" : `${Math.abs(delta)} pos`}
+      </span>
+    );
+  };
+  return (
+    <PanelCard title="Competitor Keyword Rank" badge="Top 2 rivals" badgeColor="accent" delay={0.18}>
+      <p className="text-[11px] text-muted-foreground mb-3">
+        Average organic and sponsored rank across your tracked keywords for the selected window.
+      </p>
+      <div className="space-y-2">
+        {competitors.map((c) => (
+          <div key={c.name} className="grid grid-cols-12 items-center gap-3 py-2.5 px-3 rounded-lg border border-border bg-surface-1">
+            <div className="col-span-5 flex items-center gap-2">
+              <Users size={13} className="text-muted-foreground" />
+              <span className="text-[12px] font-medium text-foreground">{c.name}</span>
+            </div>
+            <div className="col-span-3 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Organic</span>
+              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.organicRank}</span>
+              {renderDelta(c.organicDelta)}
+            </div>
+            <div className="col-span-3 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Sponsored</span>
+              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.sponsoredRank}</span>
+              {renderDelta(c.sponsoredDelta)}
+            </div>
+            <div className="col-span-1 text-right">
+              {c.organicDelta < 0 || c.sponsoredDelta < 0 ? (
+                <TrendingUp size={14} className="inline text-sw-green" />
+              ) : c.organicDelta > 0 || c.sponsoredDelta > 0 ? (
+                <TrendingDown size={14} className="inline text-sw-red" />
+              ) : (
+                <Minus size={14} className="inline text-muted-foreground" />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </PanelCard>
+  );
+};
+
+// ───────── Organic Momentum / Campaign Linkage Card ─────────
+const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain }) => {
+  const { navigateTo } = useGuardrails();
+  if (organicGain < 2) return null;
+  return (
+    <div
+      className="rounded-2xl p-5 border opacity-0 animate-fade-slide-in"
+      style={{ animationDelay: "0.25s", background: "hsl(140,60%,96%)", borderColor: "hsl(140,60%,75%)" }}
+    >
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "hsl(140,60%,42%, 0.18)" }}>
+          <PiggyBank size={18} className="text-sw-green" />
+        </div>
+        <div className="flex-1">
+          <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider mb-1">Organic momentum detected</p>
+          <p className="text-sm text-foreground">
+            Organic rank improved by <span className="font-semibold text-sw-green">{organicGain} positions</span>.
+            Consider reducing spend on {reductionCandidates.length} low-ROAS campaigns to protect margin without losing rank.
+          </p>
+          <div className="mt-3 space-y-1.5">
+            {reductionCandidates.map((c) => (
+              <div key={c.name} className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-white border border-sw-green/20">
+                <div className="flex-1">
+                  <p className="text-[12px] font-medium text-foreground">{c.name}</p>
+                  <p className="text-[10px] font-mono text-muted-foreground">{c.spend} · ROAS {c.roas}</p>
+                </div>
+                <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reduction}</span>
+              </div>
+            ))}
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-3 h-8 text-[12px] border-sw-green/40 text-sw-green hover:bg-sw-green/10"
+            onClick={() => navigateTo("campaigns")}
+          >
+            Review in Campaign Manager <ArrowRight size={12} className="ml-1" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ───────── Overview Tab ─────────
 const OverviewTab: React.FC<{ platform: string; sku: string }> = ({ platform, sku }) => {
   const [localPreset, setLocalPreset] = useState<Preset>("30D");
