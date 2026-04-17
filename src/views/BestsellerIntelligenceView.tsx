@@ -20,7 +20,22 @@ import {
   ReferenceLine,
   LabelList,
 } from "recharts";
-import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Target, Sparkles, AlertTriangle, Calendar, Zap, ArrowRight, Users, PiggyBank } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { useGuardrails } from "@/contexts/GuardrailContext";
+
+// ───────── Competitor mock data ─────────
+const competitors = [
+  { name: "Britannia Bourbon 150g", organicRank: 6, organicDelta: -2, sponsoredRank: 3, sponsoredDelta: 1 },
+  { name: "Sunfeast Dark Fantasy", organicRank: 4, organicDelta: 1, sponsoredRank: 5, sponsoredDelta: -2 },
+];
+
+// Low-ROAS / high-spend candidate campaigns to recommend reductions on
+const reductionCandidates = [
+  { name: "Marie Gold — Generic Search", spend: "₹48k/wk", roas: "1.4x", reduction: "30%" },
+  { name: "Good Day — Broad Match", spend: "₹62k/wk", roas: "1.7x", reduction: "20%" },
+];
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const skuOptions = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "50-50 Maska Chaska 120g"];
