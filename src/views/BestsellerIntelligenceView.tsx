@@ -182,51 +182,98 @@ const rankColor = (delta: number) => {
   return "hsl(220, 8%, 55%)";
 };
 
-// ───────── Competitor Rank Strip ─────────
-const CompetitorRankStrip: React.FC = () => {
-  const renderDelta = (delta: number) => {
-    const color = rankColor(delta);
-    const Icon = delta < 0 ? TrendingUp : delta > 0 ? TrendingDown : Minus;
-    return (
-      <span className="inline-flex items-center gap-1 font-mono text-[11px]" style={{ color }}>
-        <Icon size={12} />
-        {delta === 0 ? "flat" : `${Math.abs(delta)} pos`}
-      </span>
-    );
+// ───────── Extensive Competitor Comparison (chart + leaderboard) ─────────
+const CompetitorComparison: React.FC<{ days: number }> = ({ days }) => {
+  const data = useMemo(() => buildCompetitorRankSeries(days), [days]);
+  const sorted = [...competitorBrands].sort((a, b) => a.currentRank - b.currentRank);
+
+  const movement = (delta: number) => {
+    if (delta < -1) return { label: "Climbing", color: "hsl(140,60%,42%)", Icon: TrendingUp };
+    if (delta > 1) return { label: "Falling", color: "hsl(0,70%,55%)", Icon: TrendingDown };
+    return { label: "Stable", color: "hsl(220,8%,55%)", Icon: Minus };
   };
+
   return (
-    <PanelCard title="Competitor Keyword Rank" badge="Top 2 rivals" badgeColor="accent" delay={0.18}>
+    <PanelCard title="Bestseller Rank — Us vs Competitors" badge={`${competitorBrands.length} brands`} badgeColor="accent" delay={0.18}>
       <p className="text-[11px] text-muted-foreground mb-3">
-        Average organic and sponsored rank across your tracked keywords for the selected window.
+        Daily bestseller rank (#1 top) for our SKU and the top 4 competing brands across the selected window.
       </p>
-      <div className="space-y-2">
-        {competitors.map((c) => (
-          <div key={c.name} className="grid grid-cols-12 items-center gap-3 py-2.5 px-3 rounded-lg border border-border bg-surface-1">
-            <div className="col-span-5 flex items-center gap-2">
-              <Users size={13} className="text-muted-foreground" />
-              <span className="text-[12px] font-medium text-foreground">{c.name}</span>
-            </div>
-            <div className="col-span-3 flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Organic</span>
-              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.organicRank}</span>
-              {renderDelta(c.organicDelta)}
-            </div>
-            <div className="col-span-3 flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Sponsored</span>
-              <span className="font-mono text-[12px] font-semibold text-foreground">#{c.sponsoredRank}</span>
-              {renderDelta(c.sponsoredDelta)}
-            </div>
-            <div className="col-span-1 text-right">
-              {c.organicDelta < 0 || c.sponsoredDelta < 0 ? (
-                <TrendingUp size={14} className="inline text-sw-green" />
-              ) : c.organicDelta > 0 || c.sponsoredDelta > 0 ? (
-                <TrendingDown size={14} className="inline text-sw-red" />
-              ) : (
-                <Minus size={14} className="inline text-muted-foreground" />
-              )}
-            </div>
+      <div className="h-[280px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" vertical={false} />
+            <XAxis dataKey="day" tick={{ fontSize: 10 }} stroke="hsl(220,10%,46%)" interval={Math.ceil(data.length / 8)} />
+            <YAxis reversed domain={[1, "dataMax + 2"]} tick={{ fontSize: 10 }} stroke="hsl(220,10%,46%)" />
+            <RTooltip
+              contentStyle={{ background: "white", border: "1px solid hsl(220,15%,88%)", borderRadius: 8, fontSize: 11 }}
+              formatter={(v: number, n: string) => [`#${v}`, n]}
+            />
+            {competitorBrands.map((b) => (
+              <Line
+                key={b.name}
+                type="monotone"
+                dataKey={b.name}
+                stroke={b.color}
+                strokeWidth={b.isUs ? 2.6 : 1.6}
+                strokeDasharray={b.isUs ? undefined : "4 3"}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+            ))}
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 mt-2 mb-4">
+        {competitorBrands.map((b) => (
+          <div key={b.name} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className="w-3 rounded" style={{ background: b.color, height: b.isUs ? 3 : 1.5 }} />
+            <span className={b.isUs ? "text-foreground font-semibold" : ""}>{b.name}</span>
           </div>
         ))}
+      </div>
+
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-surface-1 hover:bg-surface-1">
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono">Brand</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Current Rank</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Δ vs start</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Avg Organic</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-center">Avg Sponsored</TableHead>
+              <TableHead className="h-9 text-[10px] uppercase tracking-wider font-mono text-right pr-4">Movement</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sorted.map((b) => {
+              const delta = b.currentRank - b.startRank;
+              const m = movement(delta);
+              return (
+                <TableRow key={b.name} className={b.isUs ? "bg-primary/5" : ""}>
+                  <TableCell className="py-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full" style={{ background: b.color }} />
+                      <span className={`text-[12px] ${b.isUs ? "font-semibold text-foreground" : "text-foreground"}`}>{b.name}</span>
+                      {b.isUs && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-primary/15 text-primary">YOU</span>}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px] font-semibold">#{b.currentRank}</TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px]" style={{ color: m.color }}>
+                    {delta === 0 ? "0" : delta < 0 ? `↑ ${Math.abs(delta)}` : `↓ ${delta}`}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px] text-foreground">#{b.organicRank}</TableCell>
+                  <TableCell className="py-2.5 text-center font-mono text-[12px] text-foreground">#{b.sponsoredRank}</TableCell>
+                  <TableCell className="py-2.5 text-right pr-4">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium" style={{ color: m.color }}>
+                      <m.Icon size={12} />
+                      {m.label}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     </PanelCard>
   );
@@ -235,7 +282,9 @@ const CompetitorRankStrip: React.FC = () => {
 // ───────── Organic Momentum / Campaign Linkage Card ─────────
 const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain }) => {
   const { navigateTo } = useGuardrails();
+  const { toast } = useToast();
   if (organicGain < 2) return null;
+  const totalSavings = reductionCandidates.reduce((a, c) => a + c.monthlySavings, 0);
   return (
     <div
       className="rounded-2xl p-5 border opacity-0 animate-fade-slide-in"
@@ -249,16 +298,38 @@ const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain })
           <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider mb-1">Organic momentum detected</p>
           <p className="text-sm text-foreground">
             Organic rank improved by <span className="font-semibold text-sw-green">{organicGain} positions</span>.
-            Consider reducing spend on {reductionCandidates.length} low-ROAS campaigns to protect margin without losing rank.
+            Reduce spend on the {reductionCandidates.length} campaigns below to save ~<span className="font-semibold text-sw-green">₹{(totalSavings / 1000).toFixed(0)}k/month</span> without losing rank.
           </p>
           <div className="mt-3 space-y-1.5">
             {reductionCandidates.map((c) => (
-              <div key={c.name} className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-white border border-sw-green/20">
-                <div className="flex-1">
-                  <p className="text-[12px] font-medium text-foreground">{c.name}</p>
-                  <p className="text-[10px] font-mono text-muted-foreground">{c.spend} · ROAS {c.roas}</p>
+              <div key={c.name} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg bg-white border border-sw-green/20">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-[12px] font-medium text-foreground">{c.name}</p>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground uppercase">{c.platform}</span>
+                  </div>
+                  <p className="text-[10px] font-mono text-muted-foreground mt-0.5">
+                    Spend ₹{c.dailySpend.toLocaleString()}/d → <span className="text-sw-green font-semibold">₹{c.suggestedSpend.toLocaleString()}/d</span> · ROAS {c.roas}x
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/90 italic mt-0.5">{c.why}</p>
                 </div>
-                <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reduction}</span>
+                <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                  <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reductionPct}%</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">~₹{(c.monthlySavings / 1000).toFixed(0)}k/mo</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 px-2 text-[10px] text-sw-green hover:bg-sw-green/10"
+                    onClick={() =>
+                      toast({
+                        title: "Budget reduction queued",
+                        description: `${c.name}: -${c.reductionPct}% (₹${c.dailySpend.toLocaleString()} → ₹${c.suggestedSpend.toLocaleString()}/day)`,
+                      })
+                    }
+                  >
+                    Apply -{c.reductionPct}%
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
