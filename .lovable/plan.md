@@ -1,57 +1,43 @@
 
 
-# Plan: Global Date Range Filter + Convert Button Filters to Dropdowns
+## Plan: Competitive Angle + Campaign Linkage for Bestseller Intelligence
 
-## Part 1: Global Date Range Filter (synced with all visuals)
+Add competitor keyword-rank context and a campaign efficiency tie-back to the existing `BestsellerIntelligenceView`. No new screens — extend the two existing tabs.
 
-### Create `src/contexts/DateRangeContext.tsx`
-A new React context exposing:
-- `currentRange: { from: Date; to: Date }`
-- `compareRange: { from: Date; to: Date } | null`
-- `compareEnabled: boolean`
-- `timePreset: "7D" | "30D" | "90D" | "custom"`
-- Setters for each
+### Overview tab additions
+1. **Competitor Keyword Rank strip** (below the main rank/volume chart)
+   - Compact card showing top 2 competing SKUs with their average **Organic Rank** and **Sponsored Rank** across the brand's tracked keywords for the selected window
+   - Each row: competitor name · organic rank (with green/red delta) · sponsored rank (with delta) · mini trend indicator (arrow only, no sparkline — per memory rule)
+   - Source: keyword data already tracked in `KeywordAnalysisView` pattern
 
-Wrap `<App />` with `<DateRangeProvider>` in `src/main.tsx` (or `App.tsx`).
+2. **Campaign Efficiency Callout card** (right side, alongside existing "Spend response" card)
+   - Title: "Organic momentum detected"
+   - Logic: if organic rank improved ≥ X positions in the window AND there exist campaigns flagged high-spend / low-ROAS, surface a recommendation
+   - Body: "Organic rank improved by N positions. Consider reducing spend on 2 low-ROAS campaigns to protect margin."
+   - CTA button: "Review in Campaign Manager" → navigates to `campaigns` view (uses existing `handleNavigate` pattern in `Index.tsx`)
+   - Lists 2 mock candidate campaigns with current spend, ROAS, suggested spend reduction %
 
-### Update `src/components/Topbar.tsx`
-Replace the local `timeRange` useState + button group with:
-1. **Preset pills** (7D / 30D / 90D / Custom) — kept as compact toggle (these are 3-4 fixed values, OK as buttons since they're a primary control, not a category filter).
-2. **Primary date range picker** — always-visible Shadcn `<Popover>` + `<Calendar mode="range">` button showing `MMM d – MMM d`.
-3. **"Compare" toggle** — Shadcn `<Switch>`. When ON, reveals a secondary range picker with dashed border showing the comparison period.
-4. Selecting a preset auto-computes `currentRange` (e.g. 30D = today minus 30 days) and, if compare is on, sets `compareRange` to the prior equivalent window.
+### Analytics tab additions
+3. **Competitor lag comparison row** added to existing correlation heatmap
+   - Heatmap gains 2 extra rows: "Competitor A organic rank vs our rank" and "Competitor B sponsored rank vs our rank" at the same 0/7/14/21 day lags
+   - Helps user see whether competitor keyword shifts predict their own bestseller movement
 
-### Wire visuals to the context
-Charts/KPIs across views currently use static mock data. To keep this scoped and avoid touching every chart's data, we will:
-- Add a `useDateRange()` hook consumption to the top-level dashboard sections (`DashboardSection`, `AvailabilitySection`, `MarketShareView`, `PricingView`, `DiscoveryView`, `ContentAuditView`, `ShelfView`, `ReportsView`, `CampaignReportsView`).
-- Pass `currentRange` / `compareRange` as a `key` prop or dependency so charts re-render with date labels reflecting the selected window (axis labels formatted from the range).
-- A subtitle line "Showing: Apr 1 – Apr 30 vs Mar 2 – Mar 31" appears in each section header so users see the sync visually.
+4. **Organic-vs-Paid Spend Efficiency card** (below scatter plot)
+   - Small panel: "When organic rank is in top 5, paid contribution can drop to ~X% without rank loss"
+   - Threshold slider: user picks organic rank threshold (1–10) → output shows recommended paid spend reduction band
+   - Reuses the existing scenario-calculator pattern (conservative/base/aggressive) but inverted — savings instead of investment
 
-(Mock data stays mock — the visible sync is via labels, axis formatting, and the section header. Real data wiring would require backend, which we'll note.)
+### File changes
+- **Edit** `src/views/BestsellerIntelligenceView.tsx` only
+  - Add competitor mock data array (2 competitors × keyword ranks over time)
+  - Add `CompetitorRankStrip` sub-component for Overview
+  - Add `OrganicMomentumCard` sub-component with navigate-to-campaigns CTA (consume `useGuardrails().navigateTo`)
+  - Extend correlation heatmap rows
+  - Add spend-efficiency planner card
 
-## Part 2: Convert remaining button-group filters to `<Select>` dropdowns
-
-Files with categorical button filters still to convert:
-
-| File | Filter |
-|---|---|
-| `PricingView.tsx` | SKU group (L216), platform (L225), SKU picker (L395), price-history platform (L404), analytics SKU (L465) |
-| `KeywordAnalysisView.tsx` | platform (L123, L251) |
-| `CompetitorAdsView.tsx` | platform (L146), keyword (L185) |
-| `ShelfView.tsx` | SOS platform (L324) |
-
-Each converted to `<Select><SelectTrigger className="w-[160px] h-8"><SelectValue /></SelectTrigger><SelectContent>...</SelectContent></Select>`, preserving existing state setters.
-
-**Excluded** (intentionally kept as buttons): action buttons (Approve/Trigger/Override), 2-state toggles (SKU/Platform view-mode toggle in price history L389-390), nav buttons.
-
-## Implementation order
-1. Create `DateRangeContext` + provider
-2. Rebuild `Topbar` with date range picker + compare toggle
-3. Add date-range header line to top-level views
-4. Convert PricingView button filters to Selects
-5. Convert KeywordAnalysisView, CompetitorAdsView, ShelfView button filters to Selects
-
-## Notes
-- Uses existing Shadcn `Calendar`, `Popover`, `Select`, `Switch` components — no new deps.
-- Charts will visibly reflect changes through axis labels and section subtitles since underlying data is mock; full data refetch would require a backend.
+### Design adherence
+- Tier color system: rank improvement green, decline red, stable grey (already defined)
+- KPI context one-liner pattern on new cards
+- No sparklines inside tables (arrow indicators only)
+- Insufficient-data warning continues to apply (< 30 days)
 
