@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
+import DateRangeSubtitle from "@/components/DateRangeSubtitle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ComposedChart, Area } from "recharts";
 import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target, Shield } from "lucide-react";
@@ -108,6 +110,7 @@ const KeywordAnalysisView: React.FC = () => {
   return (
     <div className="space-y-6 pb-20">
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
+      <DateRangeSubtitle />
 
       {tab === "overview" ? (
         <>
@@ -119,15 +122,19 @@ const KeywordAnalysisView: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {platformOptions.map(p => (
-              <button key={p} onClick={() => setSelectedPlatform(p)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
-                  selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                }`}>
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: platformColors[p] }} />
-                {p}
-              </button>
-            ))}
+            <span className="text-[10px] text-muted-foreground">Platform</span>
+            <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+              <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {platformOptions.map(p => (
+                  <SelectItem key={p} value={p}>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] }} />{p}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Keyword ranking table */}
@@ -247,14 +254,19 @@ const KeywordAnalysisView: React.FC = () => {
           {/* Search Volume & SoS — moved to analytics */}
           <PanelCard title="Search Volume & Share of Search" badge={selectedPlatform} badgeColor="accent" delay={0}>
             <div className="flex items-center gap-2 mb-3">
-              {platformOptions.map(p => (
-                <button key={p} onClick={() => setSelectedPlatform(p)}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    selectedPlatform === p ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground hover:text-foreground"
-                  }`}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColors[p] }} />{p}
-                </button>
-              ))}
+              <span className="text-[10px] text-muted-foreground">Platform</span>
+              <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+                <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {platformOptions.map(p => (
+                    <SelectItem key={p} value={p}>
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: platformColors[p] }} />{p}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-sos-action", params: { platform: selectedPlatform } })}
                 className="ml-auto px-3 py-1 rounded-lg text-[10px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-1">
                 <Target size={10} /> Action on Weak SoS
