@@ -1,41 +1,57 @@
 
 
-# Revised Plan: Fix Visuals, Filters, and Bugs Across All Screens
+# Plan: Global Date Range Filter + Convert Button Filters to Dropdowns
 
-## Point 1 (revised): Remove sparkline/trend columns from tables
+## Part 1: Global Date Range Filter (synced with all visuals)
 
-Only **one file** has inline trend charts inside a table:
+### Create `src/contexts/DateRangeContext.tsx`
+A new React context exposing:
+- `currentRange: { from: Date; to: Date }`
+- `compareRange: { from: Date; to: Date } | null`
+- `compareEnabled: boolean`
+- `timePreset: "7D" | "30D" | "90D" | "custom"`
+- Setters for each
 
-- **`src/views/ContentAuditView.tsx`** — The "SKU Content Performance" table has a `Trend` column (line 522) rendering a `<Sparkline>` SVG component (line 574). Remove:
-  - The `<th>` for "Trend" (line 522)
-  - The `<td>` with `<Sparkline>` (lines 573-575)
-  - The `Sparkline` component definition (lines 57-69) and `sparklineData` constant (lines 48-55) if no longer used elsewhere
+Wrap `<App />` with `<DateRangeProvider>` in `src/main.tsx` (or `App.tsx`).
 
-No other screens have trend/sparkline columns inside tables.
+### Update `src/components/Topbar.tsx`
+Replace the local `timeRange` useState + button group with:
+1. **Preset pills** (7D / 30D / 90D / Custom) — kept as compact toggle (these are 3-4 fixed values, OK as buttons since they're a primary control, not a category filter).
+2. **Primary date range picker** — always-visible Shadcn `<Popover>` + `<Calendar mode="range">` button showing `MMM d – MMM d`.
+3. **"Compare" toggle** — Shadcn `<Switch>`. When ON, reveals a secondary range picker with dashed border showing the comparison period.
+4. Selecting a preset auto-computes `currentRange` (e.g. 30D = today minus 30 days) and, if compare is on, sets `compareRange` to the prior equivalent window.
 
-## Point 2: Replace scatter plots with grouped bar charts
-**File**: `src/views/CategoryAssortmentView.tsx`
-- Replace scatter chart visuals with horizontal grouped bar charts showing the same dimensions
+### Wire visuals to the context
+Charts/KPIs across views currently use static mock data. To keep this scoped and avoid touching every chart's data, we will:
+- Add a `useDateRange()` hook consumption to the top-level dashboard sections (`DashboardSection`, `AvailabilitySection`, `MarketShareView`, `PricingView`, `DiscoveryView`, `ContentAuditView`, `ShelfView`, `ReportsView`, `CampaignReportsView`).
+- Pass `currentRange` / `compareRange` as a `key` prop or dependency so charts re-render with date labels reflecting the selected window (axis labels formatted from the range).
+- A subtitle line "Showing: Apr 1 – Apr 30 vs Mar 2 – Mar 31" appears in each section header so users see the sync visually.
 
-## Point 3: Replace filter buttons with `<Select>` dropdowns
-Replace button-based filters with shadcn `<Select>` in:
-- `MarketShareView.tsx` — platform and store filters
-- `DiscoveryView.tsx` — SOS platform filter
-- `ContentAuditSkuDetailView.tsx` — platform filter
-- `ApprovalFlowView.tsx` — day part/day type filters
-- `AvailabilityView.tsx` — city selector
+(Mock data stays mock — the visible sync is via labels, axis formatting, and the section header. Real data wiring would require backend, which we'll note.)
 
-## Point 4: Fix Market Share analytics tab
-Debug conditional rendering so the analytics tab content appears correctly.
+## Part 2: Convert remaining button-group filters to `<Select>` dropdowns
 
-## Point 5: Fix Availability heatmap bugs
-- **Values changing on click**: Wrap `heatmapData` in `useMemo` with empty deps to stabilize random values across re-renders
-- **Tooltip hidden**: Increase z-index on the action panel to `z-50` and set `overflow-visible` on parent
+Files with categorical button filters still to convert:
+
+| File | Filter |
+|---|---|
+| `PricingView.tsx` | SKU group (L216), platform (L225), SKU picker (L395), price-history platform (L404), analytics SKU (L465) |
+| `KeywordAnalysisView.tsx` | platform (L123, L251) |
+| `CompetitorAdsView.tsx` | platform (L146), keyword (L185) |
+| `ShelfView.tsx` | SOS platform (L324) |
+
+Each converted to `<Select><SelectTrigger className="w-[160px] h-8"><SelectValue /></SelectTrigger><SelectContent>...</SelectContent></Select>`, preserving existing state setters.
+
+**Excluded** (intentionally kept as buttons): action buttons (Approve/Trigger/Override), 2-state toggles (SKU/Platform view-mode toggle in price history L389-390), nav buttons.
 
 ## Implementation order
-1. Remove Sparkline trend column from ContentAuditView
-2. Fix Availability heatmap (useMemo + z-index)
-3. Fix Market Share analytics
-4. Replace filter buttons → Select dropdowns (all files)
-5. Replace scatter plots → bar charts
+1. Create `DateRangeContext` + provider
+2. Rebuild `Topbar` with date range picker + compare toggle
+3. Add date-range header line to top-level views
+4. Convert PricingView button filters to Selects
+5. Convert KeywordAnalysisView, CompetitorAdsView, ShelfView button filters to Selects
+
+## Notes
+- Uses existing Shadcn `Calendar`, `Popover`, `Select`, `Switch` components — no new deps.
+- Charts will visibly reflect changes through axis labels and section subtitles since underlying data is mock; full data refetch would require a backend.
 
