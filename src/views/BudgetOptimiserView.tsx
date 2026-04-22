@@ -127,11 +127,16 @@ const BudgetOptimiserView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Budget to Reallocate" value="₹2.8L" delta="From underperformers" deltaType="positive" sub="6 reallocation recommendations" accentColor="bg-primary" delay={0} />
-          <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" sub="Blended across all platforms" accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Conversion Uplift" value="+4,600" delta="Monthly projection" deltaType="positive" sub="If all recommendations applied" accentColor="bg-sw-cyan" delay={0.1} />
-          <KPICard title="Underperforming Campaigns" value="4" delta="ROAS < 2.5x for 5+ days" deltaType="negative" sub="Flagged for budget reduction" accentColor="bg-sw-red" delay={0.15} />
+          <KPICard title="Optimisations carried out yesterday" value="12 actions" delta="Auto + manual" deltaType="positive" sub="Budget shifts applied across portfolio" accentColor="bg-primary" delay={0} />
+          <KPICard title="ROAS increment from yesterday" value="+0.3x" delta="vs prior day" deltaType="positive" sub="Blended portfolio gain" accentColor="bg-sw-green" delay={0.05} />
+          <KPICard title="Underperforming campaigns" value="7 campaigns" delta="Below brand avg 3.4x" deltaType="negative" sub="Click to review reduction candidates" accentColor="bg-sw-red" delay={0.1} />
+          <KPICard title="Lowest avg ROAS platform" value="Flipkart · 2.1x" delta="-1.3x vs brand avg" deltaType="negative" sub="Reallocation opportunity flagged" accentColor="bg-sw-amber" delay={0.15} />
         </div>
+
+        <PanelCard title="Rule Engine" badge="Automation" badgeColor="purple" delay={0.18}>
+          <p className="text-[11px] text-muted-foreground mb-4">Pre-built rule templates and a custom builder that monitor live metrics and apply bid/budget actions automatically.</p>
+          <RuleEngine />
+        </PanelCard>
 
         <PanelCard title="Current vs Optimised ROAS by Platform" badge="AI Recommendation" badgeColor="purple" delay={0.2}>
           <ResponsiveContainer width="100%" height={200}>
