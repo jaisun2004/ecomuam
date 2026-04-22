@@ -1,37 +1,57 @@
 
 
-## Plan: Extensive Competitor Comparison + Absolute Values + Concrete Campaign Surfacing
+## Plan: Rule Engine + Actionability KPI Cards on Budget Optimiser
 
-Three changes to `src/views/BestsellerIntelligenceView.tsx` only.
+Single-file edit: `src/views/BudgetOptimiserView.tsx`.
 
-### 1. Extensive Bestseller Rank Comparison (Overview tab)
-Replace the compact 2-row competitor strip with a richer comparison block:
+### 1. Replace top KPI cards (Overview tab)
+Swap the existing 4 KPI cards with action-oriented metrics:
 
-- **Multi-line rank chart**: Add competitor lines to the existing rank-over-time chart. Our SKU + top 4 competitor brands plotted on the same inverted Y-axis. Each line color-coded; legend below. Lets the user instantly see who is climbing/falling vs us in bestseller rank.
-- **Competitor leaderboard table** (below the chart): 5 rows (Us + 4 competitors) with columns:
-  - Brand · Current Bestseller Rank · Δ vs start of window · Avg Organic Rank · Avg Sponsored Rank · Movement label (Climbing / Stable / Falling)
-  - Color: green for improvement, red for decline, grey stable. Arrow icons only — no inline sparklines (per memory rule).
-  - Sort by current rank ascending.
+| Card | Value | Sub-context |
+|---|---|---|
+| Optimisations carried out yesterday | `12 actions` | Auto + manual budget shifts applied |
+| ROAS increment from yesterday | `+0.3x` | Blended portfolio gain vs prior day |
+| Underperforming campaigns | `7 campaigns` | Below brand avg ROAS of 3.4x → click to view |
+| Lowest avg ROAS platform | `Flipkart · 2.1x` | 1.3x below brand average |
 
-### 2. Remove slider, use absolute values
-In the **Spend Efficiency Planner** card (Analytics tab):
-- Delete the `<Slider>` for `organicThreshold`.
-- Replace with **3 fixed absolute threshold cards** shown side by side: "Top 3", "Top 5", "Top 10". Each card displays the recommended paid spend reduction band (conservative / base / aggressive) for that exact threshold.
-- No interactive control — pure read-only comparison, matching the analytics-tab read-only rule.
+Each is the existing `<KPICard>` component, preserves accent colors (primary / green / red / amber). The Underperforming and Lowest-Platform cards carry deltaType "negative" to flag attention.
 
-### 3. Concrete campaign surfacing in Organic Momentum card
-Currently the `OrganicMomentumCard` lists 2 mock candidate campaigns generically. Strengthen it:
-- Show **named campaigns** with: Campaign name · Platform · Current daily spend · Current ROAS · Suggested new spend · Estimated monthly savings.
-- Add a small "Why flagged" line per row: e.g. "ROAS 1.4x, organic rank already #3 — paid spend redundant".
-- Keep the "Review in Campaign Manager" CTA; add a secondary inline "Apply -30% budget" ghost button per row (visual only, triggers existing toast pattern).
-- Sort campaigns by potential savings descending.
+### 2. New "Rule Engine" section (Overview tab, inserted above Active Guardrails)
+
+A `<PanelCard title="Rule Engine" badge="Automation" badgeColor="purple">` containing two subsections:
+
+**A. Rule Templates (toggle on/off)** — 6 pre-built rule cards in a 2-column grid. Each row:
+- Rule name + one-line description
+- Metric chip(s) it monitors (e.g. ROAS, CPC, ACoS, CTR, Spend Pacing, Conversion Rate)
+- Action chip (e.g. "Reduce bid -20%", "Pause campaign", "Increase budget +15%")
+- `<Switch>` to enable/disable
+
+Templates:
+1. **Pause low-ROAS campaigns** — IF ROAS < 1.5x for 3 days → pause
+2. **Bid down high ACoS keywords** — IF ACoS > 40% → reduce bid 20%
+3. **Boost top performers** — IF ROAS > 5x AND budget util > 90% → increase budget 25%
+4. **Throttle overpacing campaigns** — IF spend pacing > 120% by noon → cap remaining spend
+5. **Defend dropping rank** — IF organic rank drops ≥ 3 positions → raise sponsored bid 15%
+6. **Cut redundant paid** — IF organic rank ≤ 3 AND paid ROAS < 2.5x → reduce budget 30%
+
+State held locally as `Record<ruleId, boolean>`.
+
+**B. Custom Rule Builder (compact)** — single inline row:
+- Metric `<Select>` (ROAS, ACoS, CPC, CTR, Conversion Rate, Spend Pacing, Budget Utilisation, Organic Rank, Sponsored Rank, Impression Share)
+- Operator `<Select>` (>, <, =, between)
+- Threshold input
+- Action `<Select>` (Pause, Reduce bid -X%, Increase budget +X%, Send alert)
+- "Add rule" button → appends to a "Custom rules" list below (visual only, mock state)
+
+Active custom rules render as small chips below the builder with a remove ✕.
 
 ### Design adherence
-- Tier color system (green/red/grey) preserved
-- KPI context one-liner on new cards
-- No sparklines in tables — arrow indicators only
-- Insufficient-data warning still applies
+- Uses existing `KPICard`, `PanelCard`, Shadcn `Switch`, `Select`, `Input` — no new deps
+- Tier color system preserved (red/amber/green for thresholds)
+- KPI context one-liner pattern on all 4 new cards
+- No revenue metrics shown
+- Animation delays follow existing `delay={0/0.05/0.1/0.15}` cascade
 
 ### File touched
-- `src/views/BestsellerIntelligenceView.tsx` (only)
+- `src/views/BudgetOptimiserView.tsx` only
 
