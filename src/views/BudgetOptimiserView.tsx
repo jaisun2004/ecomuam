@@ -3,8 +3,41 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, X, Plus } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+
+interface RuleTemplate {
+  id: string;
+  name: string;
+  description: string;
+  metrics: string[];
+  action: string;
+  actionTone: "red" | "amber" | "green" | "purple";
+}
+
+const RULE_TEMPLATES: RuleTemplate[] = [
+  { id: "pause-low-roas", name: "Pause low-ROAS campaigns", description: "IF ROAS < 1.5x for 3 days → pause campaign", metrics: ["ROAS"], action: "Pause campaign", actionTone: "red" },
+  { id: "bid-down-acos", name: "Bid down high ACoS keywords", description: "IF ACoS > 40% → reduce bid 20%", metrics: ["ACoS"], action: "Reduce bid -20%", actionTone: "amber" },
+  { id: "boost-top", name: "Boost top performers", description: "IF ROAS > 5x AND budget util > 90% → increase budget 25%", metrics: ["ROAS", "Budget Util"], action: "Increase budget +25%", actionTone: "green" },
+  { id: "throttle-pacing", name: "Throttle overpacing campaigns", description: "IF spend pacing > 120% by noon → cap remaining spend", metrics: ["Spend Pacing"], action: "Cap remaining spend", actionTone: "amber" },
+  { id: "defend-rank", name: "Defend dropping rank", description: "IF organic rank drops ≥ 3 positions → raise sponsored bid 15%", metrics: ["Organic Rank"], action: "Raise bid +15%", actionTone: "purple" },
+  { id: "cut-redundant", name: "Cut redundant paid", description: "IF organic rank ≤ 3 AND paid ROAS < 2.5x → reduce budget 30%", metrics: ["Organic Rank", "ROAS"], action: "Reduce budget -30%", actionTone: "red" },
+];
+
+const METRIC_OPTIONS = ["ROAS", "ACoS", "CPC", "CTR", "Conversion Rate", "Spend Pacing", "Budget Utilisation", "Organic Rank", "Sponsored Rank", "Impression Share"];
+const OPERATOR_OPTIONS = [">", "<", "=", "between"];
+const ACTION_OPTIONS = ["Pause campaign", "Reduce bid -20%", "Reduce bid -30%", "Increase budget +15%", "Increase budget +25%", "Send alert"];
+
+const toneClasses: Record<string, string> = {
+  red: "bg-sw-red-dim text-sw-red",
+  amber: "bg-sw-amber-dim text-sw-amber",
+  green: "bg-sw-green-dim text-sw-green",
+  purple: "bg-sw-purple-dim text-sw-purple",
+};
 
 const budgetUtilData = [
   { name: "Good Day Butter", ratio: 82, color: "hsl(160,70%,48%)" },
