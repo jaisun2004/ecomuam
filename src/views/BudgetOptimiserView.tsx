@@ -3,8 +3,41 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, X, Plus } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+
+interface RuleTemplate {
+  id: string;
+  name: string;
+  description: string;
+  metrics: string[];
+  action: string;
+  actionTone: "red" | "amber" | "green" | "purple";
+}
+
+const RULE_TEMPLATES: RuleTemplate[] = [
+  { id: "pause-low-roas", name: "Pause low-ROAS campaigns", description: "IF ROAS < 1.5x for 3 days → pause campaign", metrics: ["ROAS"], action: "Pause campaign", actionTone: "red" },
+  { id: "bid-down-acos", name: "Bid down high ACoS keywords", description: "IF ACoS > 40% → reduce bid 20%", metrics: ["ACoS"], action: "Reduce bid -20%", actionTone: "amber" },
+  { id: "boost-top", name: "Boost top performers", description: "IF ROAS > 5x AND budget util > 90% → increase budget 25%", metrics: ["ROAS", "Budget Util"], action: "Increase budget +25%", actionTone: "green" },
+  { id: "throttle-pacing", name: "Throttle overpacing campaigns", description: "IF spend pacing > 120% by noon → cap remaining spend", metrics: ["Spend Pacing"], action: "Cap remaining spend", actionTone: "amber" },
+  { id: "defend-rank", name: "Defend dropping rank", description: "IF organic rank drops ≥ 3 positions → raise sponsored bid 15%", metrics: ["Organic Rank"], action: "Raise bid +15%", actionTone: "purple" },
+  { id: "cut-redundant", name: "Cut redundant paid", description: "IF organic rank ≤ 3 AND paid ROAS < 2.5x → reduce budget 30%", metrics: ["Organic Rank", "ROAS"], action: "Reduce budget -30%", actionTone: "red" },
+];
+
+const METRIC_OPTIONS = ["ROAS", "ACoS", "CPC", "CTR", "Conversion Rate", "Spend Pacing", "Budget Utilisation", "Organic Rank", "Sponsored Rank", "Impression Share"];
+const OPERATOR_OPTIONS = [">", "<", "=", "between"];
+const ACTION_OPTIONS = ["Pause campaign", "Reduce bid -20%", "Reduce bid -30%", "Increase budget +15%", "Increase budget +25%", "Send alert"];
+
+const toneClasses: Record<string, string> = {
+  red: "bg-sw-red-dim text-sw-red",
+  amber: "bg-sw-amber-dim text-sw-amber",
+  green: "bg-sw-green-dim text-sw-green",
+  purple: "bg-sw-purple-dim text-sw-purple",
+};
 
 const budgetUtilData = [
   { name: "Good Day Butter", ratio: 82, color: "hsl(160,70%,48%)" },
@@ -72,6 +105,123 @@ const platformSummary = [
 
 const chartData = platformSummary.map(p => ({ name: p.platform, current: p.roas, optimised: p.optRoas }));
 
+interface CustomRule { id: string; metric: string; operator: string; threshold: string; action: string; }
+
+const RuleEngine: React.FC = () => {
+  const [enabled, setEnabled] = useState<Record<string, boolean>>({
+    "pause-low-roas": true,
+    "boost-top": true,
+    "defend-rank": true,
+  });
+  const [metric, setMetric] = useState("ROAS");
+  const [operator, setOperator] = useState("<");
+  const [threshold, setThreshold] = useState("");
+  const [action, setAction] = useState("Pause campaign");
+  const [customRules, setCustomRules] = useState<CustomRule[]>([
+    { id: "c1", metric: "CPC", operator: ">", threshold: "12", action: "Reduce bid -20%" },
+  ]);
+
+  const toggleRule = (id: string, name: string, next: boolean) => {
+    setEnabled(p => ({ ...p, [id]: next }));
+    toast({ title: next ? "Rule enabled" : "Rule disabled", description: name });
+  };
+
+  const addRule = () => {
+    if (!threshold.trim()) {
+      toast({ title: "Threshold required", description: "Enter a numeric threshold to add the rule." });
+      return;
+    }
+    const newRule: CustomRule = { id: `c${Date.now()}`, metric, operator, threshold: threshold.trim(), action };
+    setCustomRules(p => [...p, newRule]);
+    setThreshold("");
+    toast({ title: "Custom rule added", description: `IF ${metric} ${operator} ${newRule.threshold} → ${action}` });
+  };
+
+  const removeRule = (id: string) => setCustomRules(p => p.filter(r => r.id !== id));
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3 font-medium">Rule Templates</p>
+        <div className="grid grid-cols-2 gap-3">
+          {RULE_TEMPLATES.map(rule => {
+            const isOn = !!enabled[rule.id];
+            return (
+              <div key={rule.id} className={`p-3 rounded-xl border transition-colors ${isOn ? "bg-surface-2 border-primary/30" : "bg-surface-2 border-subtle"}`}>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-foreground">{rule.name}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{rule.description}</p>
+                  </div>
+                  <Switch checked={isOn} onCheckedChange={(v) => toggleRule(rule.id, rule.name, v)} />
+                </div>
+                <div className="flex items-center flex-wrap gap-1.5 mt-2">
+                  {rule.metrics.map(m => (
+                    <span key={m} className="px-1.5 py-0.5 rounded-full bg-surface-3 text-[9px] font-mono text-muted-foreground">{m}</span>
+                  ))}
+                  <span className="ml-auto px-2 py-0.5 rounded-full text-[9px] font-mono ${} ">
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono ${toneClasses[rule.actionTone]}`}>{rule.action}</span>
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="border-t border-subtle pt-4">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3 font-medium">Custom Rule Builder</p>
+        <div className="grid grid-cols-12 gap-2 items-end">
+          <div className="col-span-3">
+            <label className="text-[10px] text-muted-foreground">Metric</label>
+            <Select value={metric} onValueChange={setMetric}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{METRIC_OPTIONS.map(m => <SelectItem key={m} value={m} className="text-xs">{m}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-2">
+            <label className="text-[10px] text-muted-foreground">Operator</label>
+            <Select value={operator} onValueChange={setOperator}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{OPERATOR_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-2">
+            <label className="text-[10px] text-muted-foreground">Threshold</label>
+            <Input value={threshold} onChange={(e) => setThreshold(e.target.value)} placeholder="e.g. 2.5" className="h-9 text-xs" />
+          </div>
+          <div className="col-span-3">
+            <label className="text-[10px] text-muted-foreground">Action</label>
+            <Select value={action} onValueChange={setAction}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{ACTION_OPTIONS.map(a => <SelectItem key={a} value={a} className="text-xs">{a}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-2">
+            <button onClick={addRule} className="w-full h-9 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 inline-flex items-center justify-center gap-1">
+              <Plus size={12} /> Add rule
+            </button>
+          </div>
+        </div>
+
+        {customRules.length > 0 && (
+          <div className="mt-3">
+            <p className="text-[10px] text-muted-foreground mb-2">Custom rules ({customRules.length})</p>
+            <div className="flex flex-wrap gap-2">
+              {customRules.map(r => (
+                <span key={r.id} className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sw-purple-dim text-sw-purple text-[10px] font-mono">
+                  IF {r.metric} {r.operator} {r.threshold} → {r.action}
+                  <button onClick={() => removeRule(r.id)} className="hover:text-sw-red"><X size={10} /></button>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const BudgetOptimiserView: React.FC = () => {
   const [samePlatformApplied, setSamePlatformApplied] = useState<Record<number, boolean>>({});
   const [crossPlatformApplied, setCrossPlatformApplied] = useState<Record<number, boolean>>({});
@@ -94,11 +244,16 @@ const BudgetOptimiserView: React.FC = () => {
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
-          <KPICard title="Budget to Reallocate" value="₹2.8L" delta="From underperformers" deltaType="positive" sub="6 reallocation recommendations" accentColor="bg-primary" delay={0} />
-          <KPICard title="Projected ROAS Gain" value="+0.8x" delta="After optimisation" deltaType="positive" sub="Blended across all platforms" accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Conversion Uplift" value="+4,600" delta="Monthly projection" deltaType="positive" sub="If all recommendations applied" accentColor="bg-sw-cyan" delay={0.1} />
-          <KPICard title="Underperforming Campaigns" value="4" delta="ROAS < 2.5x for 5+ days" deltaType="negative" sub="Flagged for budget reduction" accentColor="bg-sw-red" delay={0.15} />
+          <KPICard title="Optimisations carried out yesterday" value="12 actions" delta="Auto + manual" deltaType="positive" sub="Budget shifts applied across portfolio" accentColor="bg-primary" delay={0} />
+          <KPICard title="ROAS increment from yesterday" value="+0.3x" delta="vs prior day" deltaType="positive" sub="Blended portfolio gain" accentColor="bg-sw-green" delay={0.05} />
+          <KPICard title="Underperforming campaigns" value="7 campaigns" delta="Below brand avg 3.4x" deltaType="negative" sub="Click to review reduction candidates" accentColor="bg-sw-red" delay={0.1} />
+          <KPICard title="Lowest avg ROAS platform" value="Flipkart · 2.1x" delta="-1.3x vs brand avg" deltaType="negative" sub="Reallocation opportunity flagged" accentColor="bg-sw-amber" delay={0.15} />
         </div>
+
+        <PanelCard title="Rule Engine" badge="Automation" badgeColor="purple" delay={0.18}>
+          <p className="text-[11px] text-muted-foreground mb-4">Pre-built rule templates and a custom builder that monitor live metrics and apply bid/budget actions automatically.</p>
+          <RuleEngine />
+        </PanelCard>
 
         <PanelCard title="Current vs Optimised ROAS by Platform" badge="AI Recommendation" badgeColor="purple" delay={0.2}>
           <ResponsiveContainer width="100%" height={200}>
