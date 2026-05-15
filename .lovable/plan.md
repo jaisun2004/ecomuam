@@ -1,57 +1,32 @@
+## Goal
+On `KeywordAnalysisView`, the action buttons in the **Keyword Rankings** table and the **Keyword Spend Efficiency — Campaign Actions** list currently call `g.navigateWithContext("campaigns", ...)`, sending the user to a different screen. Change them to open an in-place **Review Action** dialog where the user can inspect and edit the proposed change, then submit.
 
+## Files
+- `src/views/KeywordAnalysisView.tsx` — wire up dialog state + replace `onClick` handlers (no nav).
+- `src/views/KeywordAnalysisView.tsx` — add a new local `ReviewActionDialog` component (kept in-file for cohesion with mock data).
 
-## Plan: Rule Engine + Actionability KPI Cards on Budget Optimiser
+No other views, routing, or contexts touched.
 
-Single-file edit: `src/views/BudgetOptimiserView.tsx`.
+## Review Action Dialog — content
+Built with shadcn `Dialog`. Header shows the recommendation type (e.g. "Reduce Spend", "Boost Campaign", "Restructure") with the matching tier color and the keyword in mono.
 
-### 1. Replace top KPI cards (Overview tab)
-Swap the existing 4 KPI cards with action-oriented metrics:
+Body is grouped into 4 sections:
 
-| Card | Value | Sub-context |
-|---|---|---|
-| Optimisations carried out yesterday | `12 actions` | Auto + manual budget shifts applied |
-| ROAS increment from yesterday | `+0.3x` | Blended portfolio gain vs prior day |
-| Underperforming campaigns | `7 campaigns` | Below brand avg ROAS of 3.4x → click to view |
-| Lowest avg ROAS platform | `Flipkart · 2.1x` | 1.3x below brand average |
+1. **Campaign(s)** — table of campaigns serving this keyword: Campaign Name · Platform · Current Daily Budget (editable input) · Status. For Rankings rows, derived from `campaignKeywordPerf` filtered by keyword + platform; for Spend Efficiency rows, from `keywordCampaignImpact` (multiple campaigns may apply).
+2. **Keywords & Bids** — row(s) showing the keyword, current bid, suggested bid (from mock), and an editable "New Bid" input (₹). Includes match-type chip (Exact/Phrase/Broad — mocked).
+3. **Products** — list of ASINs/SKUs targeted by the campaign(s) with title, image placeholder, current rank, and content score. Mocked alongside the dialog.
+4. **Recommendation & Data Points** — the original `action` / `recommendation` string, plus supporting metrics (Spend, Clicks, CTR, ROAS, Organic Rank, SoS) pulled from the source row. A short "Why" line explains the rationale.
 
-Each is the existing `<KPICard>` component, preserves accent colors (primary / green / red / amber). The Underperforming and Lowest-Platform cards carry deltaType "negative" to flag attention.
+Footer: `Cancel` (ghost) and `Submit Action` (primary). Submit closes the dialog and shows a `useToast` success toast — no navigation, no real backend call (presentation-only, matches existing mock pattern).
 
-### 2. New "Rule Engine" section (Overview tab, inserted above Active Guardrails)
+## Behavior
+- New state in `KeywordAnalysisView`: `const [reviewItem, setReviewItem] = useState<ReviewPayload | null>(null);`
+- Each action button replaces its `g.navigateWithContext(...)` call with `setReviewItem({ source: "ranking" | "efficiency", keyword, platform, actionType, sourceRow })`.
+- Dialog reads `reviewItem` to build the campaign/keyword/product/recommendation slices from the existing mock arrays + a small new `mockProductsByKeyword` lookup.
+- Edits are stored in dialog-local state (bids per row, budgets per campaign). Submit consolidates them into the toast description ("Updated 2 bids · 1 budget for 'butter biscuits'").
+- Closing the dialog (X, Cancel, or overlay) discards edits.
 
-A `<PanelCard title="Rule Engine" badge="Automation" badgeColor="purple">` containing two subsections:
-
-**A. Rule Templates (toggle on/off)** — 6 pre-built rule cards in a 2-column grid. Each row:
-- Rule name + one-line description
-- Metric chip(s) it monitors (e.g. ROAS, CPC, ACoS, CTR, Spend Pacing, Conversion Rate)
-- Action chip (e.g. "Reduce bid -20%", "Pause campaign", "Increase budget +15%")
-- `<Switch>` to enable/disable
-
-Templates:
-1. **Pause low-ROAS campaigns** — IF ROAS < 1.5x for 3 days → pause
-2. **Bid down high ACoS keywords** — IF ACoS > 40% → reduce bid 20%
-3. **Boost top performers** — IF ROAS > 5x AND budget util > 90% → increase budget 25%
-4. **Throttle overpacing campaigns** — IF spend pacing > 120% by noon → cap remaining spend
-5. **Defend dropping rank** — IF organic rank drops ≥ 3 positions → raise sponsored bid 15%
-6. **Cut redundant paid** — IF organic rank ≤ 3 AND paid ROAS < 2.5x → reduce budget 30%
-
-State held locally as `Record<ruleId, boolean>`.
-
-**B. Custom Rule Builder (compact)** — single inline row:
-- Metric `<Select>` (ROAS, ACoS, CPC, CTR, Conversion Rate, Spend Pacing, Budget Utilisation, Organic Rank, Sponsored Rank, Impression Share)
-- Operator `<Select>` (>, <, =, between)
-- Threshold input
-- Action `<Select>` (Pause, Reduce bid -X%, Increase budget +X%, Send alert)
-- "Add rule" button → appends to a "Custom rules" list below (visual only, mock state)
-
-Active custom rules render as small chips below the builder with a remove ✕.
-
-### Design adherence
-- Uses existing `KPICard`, `PanelCard`, Shadcn `Switch`, `Select`, `Input` — no new deps
-- Tier color system preserved (red/amber/green for thresholds)
-- KPI context one-liner pattern on all 4 new cards
-- No revenue metrics shown
-- Animation delays follow existing `delay={0/0.05/0.1/0.15}` cascade
-
-### File touched
-- `src/views/BudgetOptimiserView.tsx` only
-
+## Out of scope
+- No changes to `Keywords Losing Rank & Share` (its "Defend This Keyword" already uses local state) or to `Keywords Not on Page 1` (still navigates — user only mentioned the two visuals).
+- No design system / color token changes.
+- No real persistence.
