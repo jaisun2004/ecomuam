@@ -550,23 +550,36 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
             <h4 className="text-[11px] font-semibold text-foreground mb-2">Products targeted ({products.length})</h4>
             <div className="space-y-1.5">
               {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
-              {products.map(p => (
-                <div key={p.sku} className="flex items-center gap-3 p-2.5 rounded-lg border border-subtle bg-card">
-                  <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] text-foreground truncate">{p.title}</p>
-                    <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Rank</p>
-                    <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Content</p>
-                    <p className={`font-mono text-[11px] font-bold ${p.contentScore >= 80 ? "text-sw-green" : p.contentScore >= 60 ? "text-sw-amber" : "text-sw-red"}`}>{p.contentScore}</p>
-                  </div>
-                </div>
-              ))}
+              {(() => {
+                const bestRoas = products.length > 1 ? Math.max(...products.map(p => p.roas)) : -1;
+                return products.map(p => {
+                  const isBest = products.length > 1 && p.roas === bestRoas;
+                  return (
+                    <div key={p.sku} className={`flex items-center gap-3 p-2.5 rounded-lg border bg-card ${isBest ? "border-sw-green/40 ring-1 ring-sw-green/20" : "border-subtle"}`}>
+                      <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-[11px] text-foreground truncate">{p.title}</p>
+                          {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground">ROAS</p>
+                        <p className={`font-mono text-[11px] font-bold ${p.roas >= 4 ? "text-sw-green" : p.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{p.roas.toFixed(1)}x</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground">Rank</p>
+                        <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground">Content</p>
+                        <p className={`font-mono text-[11px] font-bold ${p.contentScore >= 80 ? "text-sw-green" : p.contentScore >= 60 ? "text-sw-amber" : "text-sw-red"}`}>{p.contentScore}</p>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </section>
 
