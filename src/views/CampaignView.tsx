@@ -39,6 +39,36 @@ const bidProductsByKeyword: Record<string, { sku: string; title: string; rank: n
   ],
 };
 
+type BidCampaignRow = { campaign: string; spend: string; roas: number; budget: number };
+
+const bidCampaignsByKeyword: Record<string, BidCampaignRow[]> = {
+  "butter biscuits online": [
+    { campaign: "Good Day Butter — SP Exact", spend: "₹42K", roas: 6.4, budget: 2500 },
+    { campaign: "Good Day Butter — SP Broad", spend: "₹38K", roas: 5.1, budget: 2200 },
+    { campaign: "Butter Biscuits — SB Defence", spend: "₹25K", roas: 4.0, budget: 1800 },
+  ],
+  "cream biscuits": [
+    { campaign: "Bourbon Cream — SP Exact", spend: "₹30K", roas: 3.4, budget: 2000 },
+    { campaign: "Cream Range — SP Broad", spend: "₹22K", roas: 2.6, budget: 1700 },
+  ],
+  "glucose biscuits bulk": [
+    { campaign: "Marie Gold — SP Bulk", spend: "₹28K", roas: 1.4, budget: 1600 },
+  ],
+  "digestive biscuits": [
+    { campaign: "NutriChoice — Brand SP", spend: "₹55K", roas: 6.2, budget: 3000 },
+    { campaign: "Digestive — SP Exact", spend: "₹30K", roas: 5.0, budget: 2200 },
+    { campaign: "Multigrain Digestive — SP", spend: "₹18K", roas: 4.6, budget: 1700 },
+  ],
+  "choco chip cookies": [
+    { campaign: "Bourbon Choco — SP Exact", spend: "₹31K", roas: 4.9, budget: 2200 },
+    { campaign: "Choco Chip — SP Phrase", spend: "₹20K", roas: 3.8, budget: 1700 },
+  ],
+  "biscuit combo pack": [
+    { campaign: "Variety Pack — SP", spend: "₹22K", roas: 1.9, budget: 1500 },
+    { campaign: "Combo Pack — SP Broad", spend: "₹14K", roas: 1.6, budget: 1200 },
+  ],
+};
+
 type BidReview = { keyword: string; currentBid: string; suggestedBid: string; action: string; roas: string; imp: string; index: number };
 
 
