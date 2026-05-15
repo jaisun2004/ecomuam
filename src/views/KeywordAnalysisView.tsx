@@ -514,8 +514,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
   }];
   const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const products = mockProductsByKeyword[item.keyword] ?? [];
-  const currentBid = mockBidByKeyword[item.keyword] ?? 15;
-  const suggestedBid = item.actionType.toLowerCase().includes("reduce") ? Math.max(5, Math.round(currentBid * 0.6)) : Math.round(currentBid * 1.25);
+  const keywordRows: KwRow[] = buildKeywordRows(item.keyword, item.actionType, campaigns);
 
   const tone = item.actionType.toLowerCase().includes("reduce")
     ? "text-sw-green bg-sw-green/10"
