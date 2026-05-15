@@ -7,6 +7,52 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ComposedChart, Area } from "recharts";
 import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+type ReviewPayload = {
+  source: "ranking" | "efficiency";
+  keyword: string;
+  platform: string;
+  actionType: string;
+  recommendation: string;
+};
+
+const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number }[]> = {
+  "butter biscuits": [
+    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86 },
+    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78 },
+  ],
+  "cream biscuits": [
+    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72 },
+  ],
+  "glucose biscuits": [
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42 },
+  ],
+  "digestive biscuits": [
+    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91 },
+    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88 },
+  ],
+  "choco chip cookies": [
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75 },
+  ],
+  "biscuit combo pack": [
+    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68 },
+  ],
+  "sugar free biscuits": [
+    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38 },
+  ],
+  "kids biscuits": [
+    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82 },
+  ],
+};
+
+const mockBidByKeyword: Record<string, number> = {
+  "butter biscuits": 14, "cream biscuits": 18, "glucose biscuits": 22, "digestive biscuits": 12,
+  "choco chip cookies": 16, "biscuit combo pack": 20, "sugar free biscuits": 24, "kids biscuits": 13,
+};
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
@@ -93,6 +139,7 @@ const KeywordAnalysisView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
   const [tab, setTab] = useState("overview");
   const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
+  const [reviewItem, setReviewItem] = useState<ReviewPayload | null>(null);
   const g = useGuardrails();
 
   const keywords = keywordDataByPlatform[selectedPlatform] || [];
@@ -171,10 +218,10 @@ const KeywordAnalysisView: React.FC = () => {
                     </td>
                     <td className="py-2.5 text-right">
                       {k.canReduceSpend ? (
-                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-reduce", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                        <button onClick={() => setReviewItem({ source: "ranking", keyword: k.keyword, platform: selectedPlatform, actionType: "Reduce Spend", recommendation: `Organic rank #${k.organicRank} is strong — sponsored spend can be cut without losing visibility.` })}
                           className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-green/15 text-sw-green">Reduce spend →</button>
                       ) : (
-                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-boost", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                        <button onClick={() => setReviewItem({ source: "ranking", keyword: k.keyword, platform: selectedPlatform, actionType: k.action, recommendation: `${k.action} — Sponsored #${k.sponsoredRank} · Organic #${k.organicRank} · SoS ${k.shareOfSearch}% · Top comp ${k.topCompetitor} at #${k.compRank}.` })}
                           className={`text-[10px] font-medium px-2 py-1 rounded-lg ${k.action === "New campaign needed" ? "bg-sw-red/15 text-sw-red" : "bg-sw-amber/15 text-sw-amber"}`}>
                           {k.action} →
                         </button>
@@ -354,7 +401,7 @@ const KeywordAnalysisView: React.FC = () => {
                       {k.recommendation}
                     </p>
                     <button
-                      onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: k.organicRank <= 3 ? "keyword-reduce" : "keyword-boost", params: { keyword: k.keyword } })}
+                      onClick={() => setReviewItem({ source: "efficiency", keyword: k.keyword, platform: "All", actionType: k.organicRank <= 3 ? "Reduce Spend" : "Optimise Bids", recommendation: k.recommendation })}
                       className={`px-2 py-1 rounded-lg text-[10px] font-medium ${k.organicRank <= 3 ? "bg-sw-green/15 text-sw-green" : "bg-primary/15 text-primary"}`}>
                       {k.organicRank <= 3 ? "Reduce Spend →" : "Optimise →"}
                     </button>
@@ -365,7 +412,181 @@ const KeywordAnalysisView: React.FC = () => {
           </PanelCard>
         </div>
       )}
+
+      <ReviewActionDialog item={reviewItem} onClose={() => setReviewItem(null)} />
     </div>
+  );
+};
+
+interface ReviewDialogProps { item: ReviewPayload | null; onClose: () => void; }
+
+const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
+  const [bids, setBids] = useState<Record<string, string>>({});
+  const [budgets, setBudgets] = useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    if (item) {
+      const suggested = mockBidByKeyword[item.keyword] ?? 15;
+      setBids({ [item.keyword]: String(suggested) });
+      setBudgets({});
+    }
+  }, [item?.keyword, item?.source, item?.platform]);
+
+  if (!item) return null;
+
+  const matchingCampaigns = campaignKeywordPerf.filter(c =>
+    c.keyword === item.keyword && (item.source === "efficiency" || c.platform === item.platform)
+  );
+  const campaigns = matchingCampaigns.length ? matchingCampaigns : [{
+    keyword: item.keyword, campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Amazon" : item.platform,
+    spend: "₹—", clicks: 0, ctr: "—", roas: "—", rank: 0, action: item.recommendation,
+  }];
+  const products = mockProductsByKeyword[item.keyword] ?? [];
+  const currentBid = mockBidByKeyword[item.keyword] ?? 15;
+  const suggestedBid = item.actionType.toLowerCase().includes("reduce") ? Math.max(5, Math.round(currentBid * 0.6)) : Math.round(currentBid * 1.25);
+
+  const tone = item.actionType.toLowerCase().includes("reduce")
+    ? "text-sw-green bg-sw-green/10"
+    : item.actionType.toLowerCase().includes("new") || item.actionType.toLowerCase().includes("restructure")
+      ? "text-sw-red bg-sw-red/10"
+      : "text-sw-amber bg-sw-amber/10";
+
+  const handleSubmit = () => {
+    const bidEdits = Object.keys(bids).length;
+    const budgetEdits = Object.keys(budgets).length;
+    toast.success("Action submitted", {
+      description: `Updated ${bidEdits} bid${bidEdits === 1 ? "" : "s"} · ${budgetEdits} budget${budgetEdits === 1 ? "" : "s"} for "${item.keyword}".`,
+    });
+    onClose();
+  };
+
+  return (
+    <Dialog open={!!item} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${tone}`}>{item.actionType}</span>
+            <span className="font-mono text-xs text-muted-foreground">"{item.keyword}"</span>
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground">{item.platform}</span>
+          </div>
+          <DialogTitle className="text-base mt-2">Review &amp; confirm campaign action</DialogTitle>
+          <DialogDescription className="text-[11px]">{item.recommendation}</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 mt-2">
+          {/* Campaigns */}
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign(s) affected</h4>
+            <div className="rounded-lg border border-subtle overflow-hidden">
+              <table className="w-full text-[11px]">
+                <thead className="bg-surface-2 text-muted-foreground">
+                  <tr>
+                    <th className="text-left px-3 py-2 font-normal">Campaign</th>
+                    <th className="text-left px-3 py-2 font-normal">Platform</th>
+                    <th className="text-right px-3 py-2 font-normal">Spend / mo</th>
+                    <th className="text-right px-3 py-2 font-normal">ROAS</th>
+                    <th className="text-right px-3 py-2 font-normal">Daily Budget (₹)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaigns.map((c, i) => {
+                    const key = `${c.campaign}-${i}`;
+                    const defaultBudget = 2000 + i * 500;
+                    return (
+                      <tr key={key} className="border-t border-subtle">
+                        <td className="px-3 py-2 font-medium text-foreground">{c.campaign}</td>
+                        <td className="px-3 py-2">{c.platform}</td>
+                        <td className="px-3 py-2 text-right font-mono">{c.spend}</td>
+                        <td className="px-3 py-2 text-right font-mono text-sw-green">{c.roas}</td>
+                        <td className="px-3 py-2 text-right">
+                          <Input
+                            type="number"
+                            value={budgets[key] ?? String(defaultBudget)}
+                            onChange={(e) => setBudgets(p => ({ ...p, [key]: e.target.value }))}
+                            className="h-7 w-24 text-right font-mono text-[11px] ml-auto"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* Keywords & Bids */}
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Keyword bid</h4>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-surface-2/50 border border-subtle">
+              <span className="font-mono text-[11px] text-foreground">"{item.keyword}"</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Exact</span>
+              <div className="ml-auto flex items-center gap-3 text-[11px]">
+                <span className="text-muted-foreground">Current: <span className="font-mono line-through">₹{currentBid}</span></span>
+                <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">₹{suggestedBid}</span></span>
+                <label className="flex items-center gap-1.5">
+                  <span className="text-muted-foreground">New bid ₹</span>
+                  <Input
+                    type="number"
+                    value={bids[item.keyword] ?? String(suggestedBid)}
+                    onChange={(e) => setBids(p => ({ ...p, [item.keyword]: e.target.value }))}
+                    className="h-7 w-20 text-right font-mono text-[11px]"
+                  />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          {/* Products */}
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Products targeted ({products.length})</h4>
+            <div className="space-y-1.5">
+              {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
+              {products.map(p => (
+                <div key={p.sku} className="flex items-center gap-3 p-2.5 rounded-lg border border-subtle bg-card">
+                  <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] text-foreground truncate">{p.title}</p>
+                    <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-muted-foreground">Rank</p>
+                    <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-muted-foreground">Content</p>
+                    <p className={`font-mono text-[11px] font-bold ${p.contentScore >= 80 ? "text-sw-green" : p.contentScore >= 60 ? "text-sw-amber" : "text-sw-red"}`}>{p.contentScore}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Recommendation & data points */}
+          <section className="rounded-lg border border-subtle bg-surface-2/40 p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Target size={12} className="text-primary" />
+              <h4 className="text-[11px] font-semibold text-foreground">Recommendation rationale</h4>
+            </div>
+            <p className="text-[11px] text-foreground mb-3">{item.recommendation}</p>
+            <div className="grid grid-cols-4 gap-3 text-[10px]">
+              {campaigns.slice(0, 1).map((c, i) => (
+                <React.Fragment key={i}>
+                  <div><p className="text-muted-foreground">Spend</p><p className="font-mono text-foreground">{c.spend}</p></div>
+                  <div><p className="text-muted-foreground">Clicks</p><p className="font-mono text-foreground">{c.clicks.toLocaleString()}</p></div>
+                  <div><p className="text-muted-foreground">CTR</p><p className="font-mono text-foreground">{c.ctr}</p></div>
+                  <div><p className="text-muted-foreground">ROAS</p><p className="font-mono text-sw-green">{c.roas}</p></div>
+                </React.Fragment>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <DialogFooter className="mt-4">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Submit Action</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
