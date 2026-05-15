@@ -1233,13 +1233,44 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
 
         <div className="space-y-4 mt-2">
           <section>
-            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign</h4>
-            <div className="rounded-lg border border-subtle p-3 bg-surface-2/40 flex items-center gap-3 text-[11px]">
-              <span className="font-medium text-foreground flex-1">Good Day Butter — Sponsored (Amazon)</span>
-              <label className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Daily budget ₹</span>
-                <Input type="number" value={budget} onChange={(e) => setBudget(e.target.value)} className="h-7 w-24 text-right font-mono text-[11px]" />
-              </label>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign(s) using this keyword ({campaigns.length})</h4>
+            <div className="rounded-lg border border-subtle overflow-hidden">
+              <table className="w-full text-[11px]">
+                <thead className="bg-surface-2 text-muted-foreground">
+                  <tr>
+                    <th className="text-left px-3 py-2 font-normal">Campaign</th>
+                    <th className="text-right px-3 py-2 font-normal">Spend / mo</th>
+                    <th className="text-right px-3 py-2 font-normal">ROAS</th>
+                    <th className="text-right px-3 py-2 font-normal">Daily Budget (₹)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaigns.map((c, i) => {
+                    const key = `${c.campaign}-${i}`;
+                    const isBest = campaigns.length > 1 && c.roas === bestCampaignRoas;
+                    return (
+                      <tr key={key} className={`border-t border-subtle ${isBest ? "bg-sw-green/5" : ""}`}>
+                        <td className="px-3 py-2 font-medium text-foreground">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span>{c.campaign}</span>
+                            {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS Campaign</span>}
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono">{c.spend}</td>
+                        <td className={`px-3 py-2 text-right font-mono font-bold ${c.roas >= 4 ? "text-sw-green" : c.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{c.roas ? `${c.roas.toFixed(1)}x` : "—"}</td>
+                        <td className="px-3 py-2 text-right">
+                          <Input
+                            type="number"
+                            value={budgets[key] ?? String(c.budget)}
+                            onChange={(e) => setBudgets(p => ({ ...p, [key]: e.target.value }))}
+                            className="h-7 w-24 text-right font-mono text-[11px] ml-auto"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </section>
 
