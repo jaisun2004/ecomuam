@@ -20,32 +20,41 @@ type ReviewPayload = {
   recommendation: string;
 };
 
-const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number }[]> = {
+const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number; roas: number }[]> = {
   "butter biscuits": [
-    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86 },
-    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78 },
+    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86, roas: 5.4 },
+    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78, roas: 4.1 },
+    { sku: "B-GD-CMB", title: "Good Day Butter Combo (3-Pack)", rank: 7, contentScore: 74, roas: 3.2 },
   ],
   "cream biscuits": [
-    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72 },
+    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72, roas: 3.1 },
+    { sku: "B-BB-300", title: "Bourbon Cream Biscuits 300g Value", rank: 11, contentScore: 68, roas: 2.4 },
+    { sku: "B-LD-120", title: "Little Hearts Cream 120g", rank: 14, contentScore: 70, roas: 3.6 },
   ],
   "glucose biscuits": [
-    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42 },
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42, roas: 1.8 },
+    { sku: "B-MG-100", title: "Marie Gold Glucose 100g", rank: 17, contentScore: 48, roas: 2.2 },
   ],
   "digestive biscuits": [
-    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91 },
-    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88 },
+    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91, roas: 6.4 },
+    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88, roas: 5.9 },
+    { sku: "B-NC-MLT", title: "NutriChoice Multigrain Digestive 200g", rank: 4, contentScore: 84, roas: 4.7 },
   ],
   "choco chip cookies": [
-    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75 },
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75, roas: 4.0 },
+    { sku: "B-DF-250", title: "Bourbon Choco Chip Cookies 250g", rank: 8, contentScore: 71, roas: 3.3 },
   ],
   "biscuit combo pack": [
-    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68 },
+    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68, roas: 2.0 },
+    { sku: "B-VP-1KG", title: "Britannia Family Variety Pack 1Kg", rank: 13, contentScore: 64, roas: 1.6 },
   ],
   "sugar free biscuits": [
-    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38 },
+    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38, roas: 1.4 },
+    { sku: "B-NC-SF250", title: "NutriChoice Sugar Free Digestive 250g", rank: 21, contentScore: 41, roas: 1.7 },
   ],
   "kids biscuits": [
-    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82 },
+    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82, roas: 4.5 },
+    { sku: "B-TG-CMB", title: "Tiger Krunch Kids Combo 360g", rank: 6, contentScore: 76, roas: 3.7 },
   ],
 };
 
