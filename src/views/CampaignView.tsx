@@ -5,6 +5,42 @@ import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
 import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical, Shield, AlertTriangle, Swords, TrendingUp, Target, DollarSign, Zap } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+const bidProductsByKeyword: Record<string, { sku: string; title: string; rank: number; roas: number }[]> = {
+  "butter biscuits online": [
+    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, roas: 6.4 },
+    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, roas: 5.1 },
+    { sku: "B-GD-CMB", title: "Good Day Butter Combo (3-Pack)", rank: 7, roas: 4.0 },
+  ],
+  "cream biscuits": [
+    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, roas: 3.4 },
+    { sku: "B-BB-300", title: "Bourbon Cream Biscuits 300g Value", rank: 11, roas: 2.6 },
+  ],
+  "glucose biscuits bulk": [
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, roas: 1.4 },
+    { sku: "B-MG-1KG", title: "Marie Gold Glucose 1Kg Bulk", rank: 16, roas: 1.7 },
+  ],
+  "digestive biscuits": [
+    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, roas: 6.2 },
+    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, roas: 5.4 },
+    { sku: "B-NC-MLT", title: "NutriChoice Multigrain Digestive 200g", rank: 4, roas: 4.6 },
+  ],
+  "choco chip cookies": [
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, roas: 4.9 },
+    { sku: "B-DF-250", title: "Bourbon Choco Chip Cookies 250g", rank: 8, roas: 3.8 },
+  ],
+  "biscuit combo pack": [
+    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, roas: 1.9 },
+    { sku: "B-VP-1KG", title: "Britannia Family Variety Pack 1Kg", rank: 13, roas: 1.6 },
+  ],
+};
+
+type BidReview = { keyword: string; currentBid: string; suggestedBid: string; action: string; roas: string; imp: string; index: number };
+
 
 /* ── existing mock data ── */
 const revenueData = [
@@ -393,6 +429,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 const CampaignView: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(0);
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
+  const [bidReview, setBidReview] = useState<BidReview | null>(null);
   const [copilotStates, setCopilotStates] = useState<Record<number, boolean>>({});
   const [reallocApplied, setReallocApplied] = useState(false);
   const [showReports, setShowReports] = useState(false);
@@ -1015,7 +1052,12 @@ const CampaignView: React.FC = () => {
                   <p className="text-[9px] text-muted-foreground font-mono">{k.bid} · {k.imp} imp</p>
                 </div>
                 <span className={`font-mono text-[10px] ${k.roasColor}`}>{k.roas}</span>
-                <button onClick={() => setBidStates((p) => ({ ...p, [i]: k.action.includes("Raise") ? "↑ ₹34" : k.action.includes("Lower") ? "↓ ₹16" : "— ₹45" }))}
+                <button onClick={() => {
+                    if (k.action.includes("Hold")) { setBidStates((p) => ({ ...p, [i]: "— " + k.bid })); return; }
+                    const cur = parseInt(k.bid.replace(/[^\d]/g, "")) || 20;
+                    const suggested = k.action.includes("Raise") ? Math.round(cur * 1.2) : Math.round(cur * 0.7);
+                    setBidReview({ keyword: k.kw, currentBid: k.bid, suggestedBid: `₹${suggested}`, action: k.action, roas: k.roas, imp: k.imp, index: i });
+                  }}
                   className={`px-2 py-0.5 rounded text-[9px] font-medium border transition-all ${
                     bidStates[i] ? "bg-sw-green-dim text-sw-green border-sw-green/20" : k.actionColor
                   }`}>
@@ -1105,7 +1147,122 @@ const CampaignView: React.FC = () => {
           </PanelCard>
         </div>
       )}
+
+      <BidReviewDialog
+        item={bidReview}
+        onClose={() => setBidReview(null)}
+        onSubmit={(newBid) => {
+          if (bidReview) {
+            const arrow = bidReview.action.includes("Raise") ? "↑" : bidReview.action.includes("Lower") ? "↓" : "—";
+            setBidStates((p) => ({ ...p, [bidReview.index]: `${arrow} ₹${newBid}` }));
+            toast.success("Bid updated", { description: `"${bidReview.keyword}" → ₹${newBid}` });
+          }
+          setBidReview(null);
+        }}
+      />
     </div>
+  );
+};
+
+interface BidReviewDialogProps { item: BidReview | null; onClose: () => void; onSubmit: (newBid: string) => void; }
+
+const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubmit }) => {
+  const [bid, setBid] = useState("");
+  const [budget, setBudget] = useState("");
+
+  React.useEffect(() => {
+    if (item) {
+      setBid(item.suggestedBid.replace(/[^\d]/g, ""));
+      setBudget("2500");
+    }
+  }, [item?.keyword, item?.index]);
+
+  if (!item) return null;
+  const products = bidProductsByKeyword[item.keyword] ?? [];
+  const bestRoas = products.length > 1 ? Math.max(...products.map(p => p.roas)) : -1;
+  const isRaise = item.action.includes("Raise");
+  const tone = isRaise ? "text-sw-green bg-sw-green/10" : item.action.includes("Lower") ? "text-sw-red bg-sw-red/10" : "text-muted-foreground bg-surface-2";
+
+  return (
+    <Dialog open={!!item} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${tone}`}>{item.action}</span>
+            <span className="font-mono text-xs text-muted-foreground">"{item.keyword}"</span>
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground">Amazon</span>
+          </div>
+          <DialogTitle className="text-base mt-2">Review &amp; confirm bid change</DialogTitle>
+          <DialogDescription className="text-[11px]">
+            Current ROAS <span className="font-mono">{item.roas}</span> · {item.imp} impressions. {isRaise ? "ROAS is healthy — raising bid should capture more share." : "ROAS is below target — lowering bid will protect spend."}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-2">
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign</h4>
+            <div className="rounded-lg border border-subtle p-3 bg-surface-2/40 flex items-center gap-3 text-[11px]">
+              <span className="font-medium text-foreground flex-1">Good Day Butter — Sponsored (Amazon)</span>
+              <label className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Daily budget ₹</span>
+                <Input type="number" value={budget} onChange={(e) => setBudget(e.target.value)} className="h-7 w-24 text-right font-mono text-[11px]" />
+              </label>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Keyword bid</h4>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-surface-2/50 border border-subtle">
+              <span className="font-mono text-[11px] text-foreground">"{item.keyword}"</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Exact</span>
+              <div className="ml-auto flex items-center gap-3 text-[11px]">
+                <span className="text-muted-foreground">Current: <span className="font-mono line-through">{item.currentBid}</span></span>
+                <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">{item.suggestedBid}</span></span>
+                <label className="flex items-center gap-1.5">
+                  <span className="text-muted-foreground">New ₹</span>
+                  <Input type="number" value={bid} onChange={(e) => setBid(e.target.value)} className="h-7 w-20 text-right font-mono text-[11px]" />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Products targeted ({products.length})</h4>
+            <div className="space-y-1.5">
+              {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
+              {products.map(p => {
+                const isBest = products.length > 1 && p.roas === bestRoas;
+                return (
+                  <div key={p.sku} className={`flex items-center gap-3 p-2.5 rounded-lg border bg-card ${isBest ? "border-sw-green/40 ring-1 ring-sw-green/20" : "border-subtle"}`}>
+                    <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-[11px] text-foreground truncate">{p.title}</p>
+                        {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground">ROAS</p>
+                      <p className={`font-mono text-[11px] font-bold ${p.roas >= 4 ? "text-sw-green" : p.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{p.roas.toFixed(1)}x</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground">Rank</p>
+                      <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+
+        <DialogFooter className="mt-4">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button onClick={() => onSubmit(bid)}>Submit Bid Change</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

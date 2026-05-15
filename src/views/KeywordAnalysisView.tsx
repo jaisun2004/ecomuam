@@ -20,32 +20,41 @@ type ReviewPayload = {
   recommendation: string;
 };
 
-const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number }[]> = {
+const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number; roas: number }[]> = {
   "butter biscuits": [
-    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86 },
-    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78 },
+    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86, roas: 5.4 },
+    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78, roas: 4.1 },
+    { sku: "B-GD-CMB", title: "Good Day Butter Combo (3-Pack)", rank: 7, contentScore: 74, roas: 3.2 },
   ],
   "cream biscuits": [
-    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72 },
+    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72, roas: 3.1 },
+    { sku: "B-BB-300", title: "Bourbon Cream Biscuits 300g Value", rank: 11, contentScore: 68, roas: 2.4 },
+    { sku: "B-LD-120", title: "Little Hearts Cream 120g", rank: 14, contentScore: 70, roas: 3.6 },
   ],
   "glucose biscuits": [
-    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42 },
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42, roas: 1.8 },
+    { sku: "B-MG-100", title: "Marie Gold Glucose 100g", rank: 17, contentScore: 48, roas: 2.2 },
   ],
   "digestive biscuits": [
-    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91 },
-    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88 },
+    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91, roas: 6.4 },
+    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88, roas: 5.9 },
+    { sku: "B-NC-MLT", title: "NutriChoice Multigrain Digestive 200g", rank: 4, contentScore: 84, roas: 4.7 },
   ],
   "choco chip cookies": [
-    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75 },
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75, roas: 4.0 },
+    { sku: "B-DF-250", title: "Bourbon Choco Chip Cookies 250g", rank: 8, contentScore: 71, roas: 3.3 },
   ],
   "biscuit combo pack": [
-    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68 },
+    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68, roas: 2.0 },
+    { sku: "B-VP-1KG", title: "Britannia Family Variety Pack 1Kg", rank: 13, contentScore: 64, roas: 1.6 },
   ],
   "sugar free biscuits": [
-    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38 },
+    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38, roas: 1.4 },
+    { sku: "B-NC-SF250", title: "NutriChoice Sugar Free Digestive 250g", rank: 21, contentScore: 41, roas: 1.7 },
   ],
   "kids biscuits": [
-    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82 },
+    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82, roas: 4.5 },
+    { sku: "B-TG-CMB", title: "Tiger Krunch Kids Combo 360g", rank: 6, contentScore: 76, roas: 3.7 },
   ],
 };
 
@@ -541,23 +550,36 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
             <h4 className="text-[11px] font-semibold text-foreground mb-2">Products targeted ({products.length})</h4>
             <div className="space-y-1.5">
               {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
-              {products.map(p => (
-                <div key={p.sku} className="flex items-center gap-3 p-2.5 rounded-lg border border-subtle bg-card">
-                  <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] text-foreground truncate">{p.title}</p>
-                    <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Rank</p>
-                    <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Content</p>
-                    <p className={`font-mono text-[11px] font-bold ${p.contentScore >= 80 ? "text-sw-green" : p.contentScore >= 60 ? "text-sw-amber" : "text-sw-red"}`}>{p.contentScore}</p>
-                  </div>
-                </div>
-              ))}
+              {(() => {
+                const bestRoas = products.length > 1 ? Math.max(...products.map(p => p.roas)) : -1;
+                return products.map(p => {
+                  const isBest = products.length > 1 && p.roas === bestRoas;
+                  return (
+                    <div key={p.sku} className={`flex items-center gap-3 p-2.5 rounded-lg border bg-card ${isBest ? "border-sw-green/40 ring-1 ring-sw-green/20" : "border-subtle"}`}>
+                      <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-[11px] text-foreground truncate">{p.title}</p>
+                          {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground">ROAS</p>
+                        <p className={`font-mono text-[11px] font-bold ${p.roas >= 4 ? "text-sw-green" : p.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{p.roas.toFixed(1)}x</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground">Rank</p>
+                        <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground">Content</p>
+                        <p className={`font-mono text-[11px] font-bold ${p.contentScore >= 80 ? "text-sw-green" : p.contentScore >= 60 ? "text-sw-amber" : "text-sw-red"}`}>{p.contentScore}</p>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </section>
 
