@@ -476,13 +476,11 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
 
   if (!item) return null;
 
-  const matchingCampaigns = campaignKeywordPerf.filter(c =>
-    c.keyword === item.keyword && (item.source === "efficiency" || c.platform === item.platform)
-  );
-  const campaigns = matchingCampaigns.length ? matchingCampaigns : [{
-    keyword: item.keyword, campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Amazon" : item.platform,
-    spend: "₹—", clicks: 0, ctr: "—", roas: "—", rank: 0, action: item.recommendation,
+  const campaigns: CampaignRow[] = mockCampaignsByKeyword[item.keyword] ?? [{
+    campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Amazon" : item.platform,
+    spend: "₹—", clicks: 0, ctr: "—", roas: 0, budget: 2000,
   }];
+  const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const products = mockProductsByKeyword[item.keyword] ?? [];
   const currentBid = mockBidByKeyword[item.keyword] ?? 15;
   const suggestedBid = item.actionType.toLowerCase().includes("reduce") ? Math.max(5, Math.round(currentBid * 0.6)) : Math.round(currentBid * 1.25);
