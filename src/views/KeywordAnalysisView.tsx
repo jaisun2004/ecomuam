@@ -139,6 +139,7 @@ const KeywordAnalysisView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
   const [tab, setTab] = useState("overview");
   const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
+  const [reviewItem, setReviewItem] = useState<ReviewPayload | null>(null);
   const g = useGuardrails();
 
   const keywords = keywordDataByPlatform[selectedPlatform] || [];
