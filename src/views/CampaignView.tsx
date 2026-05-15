@@ -1295,15 +1295,11 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
             <div className="space-y-1.5">
               {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
               {products.map(p => {
-                const isBest = products.length > 1 && p.roas === bestRoas;
                 return (
-                  <div key={p.sku} className={`flex items-center gap-3 p-2.5 rounded-lg border bg-card ${isBest ? "border-sw-green/40 ring-1 ring-sw-green/20" : "border-subtle"}`}>
+                  <div key={p.sku} className="flex items-center gap-3 p-2.5 rounded-lg border border-subtle bg-card">
                     <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-[11px] text-foreground truncate">{p.title}</p>
-                        {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
-                      </div>
+                      <p className="text-[11px] text-foreground truncate">{p.title}</p>
                       <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
                     </div>
                     <div className="text-right">
