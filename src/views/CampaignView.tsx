@@ -1147,7 +1147,122 @@ const CampaignView: React.FC = () => {
           </PanelCard>
         </div>
       )}
+
+      <BidReviewDialog
+        item={bidReview}
+        onClose={() => setBidReview(null)}
+        onSubmit={(newBid) => {
+          if (bidReview) {
+            const arrow = bidReview.action.includes("Raise") ? "↑" : bidReview.action.includes("Lower") ? "↓" : "—";
+            setBidStates((p) => ({ ...p, [bidReview.index]: `${arrow} ₹${newBid}` }));
+            toast.success("Bid updated", { description: `"${bidReview.keyword}" → ₹${newBid}` });
+          }
+          setBidReview(null);
+        }}
+      />
     </div>
+  );
+};
+
+interface BidReviewDialogProps { item: BidReview | null; onClose: () => void; onSubmit: (newBid: string) => void; }
+
+const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubmit }) => {
+  const [bid, setBid] = useState("");
+  const [budget, setBudget] = useState("");
+
+  React.useEffect(() => {
+    if (item) {
+      setBid(item.suggestedBid.replace(/[^\d]/g, ""));
+      setBudget("2500");
+    }
+  }, [item?.keyword, item?.index]);
+
+  if (!item) return null;
+  const products = bidProductsByKeyword[item.keyword] ?? [];
+  const bestRoas = products.length > 1 ? Math.max(...products.map(p => p.roas)) : -1;
+  const isRaise = item.action.includes("Raise");
+  const tone = isRaise ? "text-sw-green bg-sw-green/10" : item.action.includes("Lower") ? "text-sw-red bg-sw-red/10" : "text-muted-foreground bg-surface-2";
+
+  return (
+    <Dialog open={!!item} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${tone}`}>{item.action}</span>
+            <span className="font-mono text-xs text-muted-foreground">"{item.keyword}"</span>
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground">Amazon</span>
+          </div>
+          <DialogTitle className="text-base mt-2">Review &amp; confirm bid change</DialogTitle>
+          <DialogDescription className="text-[11px]">
+            Current ROAS <span className="font-mono">{item.roas}</span> · {item.imp} impressions. {isRaise ? "ROAS is healthy — raising bid should capture more share." : "ROAS is below target — lowering bid will protect spend."}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-2">
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign</h4>
+            <div className="rounded-lg border border-subtle p-3 bg-surface-2/40 flex items-center gap-3 text-[11px]">
+              <span className="font-medium text-foreground flex-1">Good Day Butter — Sponsored (Amazon)</span>
+              <label className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Daily budget ₹</span>
+                <Input type="number" value={budget} onChange={(e) => setBudget(e.target.value)} className="h-7 w-24 text-right font-mono text-[11px]" />
+              </label>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Keyword bid</h4>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-surface-2/50 border border-subtle">
+              <span className="font-mono text-[11px] text-foreground">"{item.keyword}"</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Exact</span>
+              <div className="ml-auto flex items-center gap-3 text-[11px]">
+                <span className="text-muted-foreground">Current: <span className="font-mono line-through">{item.currentBid}</span></span>
+                <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">{item.suggestedBid}</span></span>
+                <label className="flex items-center gap-1.5">
+                  <span className="text-muted-foreground">New ₹</span>
+                  <Input type="number" value={bid} onChange={(e) => setBid(e.target.value)} className="h-7 w-20 text-right font-mono text-[11px]" />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Products targeted ({products.length})</h4>
+            <div className="space-y-1.5">
+              {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
+              {products.map(p => {
+                const isBest = products.length > 1 && p.roas === bestRoas;
+                return (
+                  <div key={p.sku} className={`flex items-center gap-3 p-2.5 rounded-lg border bg-card ${isBest ? "border-sw-green/40 ring-1 ring-sw-green/20" : "border-subtle"}`}>
+                    <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-[11px] text-foreground truncate">{p.title}</p>
+                        {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground">ROAS</p>
+                      <p className={`font-mono text-[11px] font-bold ${p.roas >= 4 ? "text-sw-green" : p.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{p.roas.toFixed(1)}x</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground">Rank</p>
+                      <p className={`font-mono text-[11px] font-bold ${p.rank <= 3 ? "text-sw-green" : p.rank <= 10 ? "text-sw-amber" : "text-sw-red"}`}>#{p.rank}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+
+        <DialogFooter className="mt-4">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button onClick={() => onSubmit(bid)}>Submit Bid Change</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
