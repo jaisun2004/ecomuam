@@ -1198,18 +1198,21 @@ interface BidReviewDialogProps { item: BidReview | null; onClose: () => void; on
 
 const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubmit }) => {
   const [bid, setBid] = useState("");
-  const [budget, setBudget] = useState("");
+  const [budgets, setBudgets] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (item) {
       setBid(item.suggestedBid.replace(/[^\d]/g, ""));
-      setBudget("2500");
+      setBudgets({});
     }
   }, [item?.keyword, item?.index]);
 
   if (!item) return null;
   const products = bidProductsByKeyword[item.keyword] ?? [];
-  const bestRoas = products.length > 1 ? Math.max(...products.map(p => p.roas)) : -1;
+  const campaigns: BidCampaignRow[] = bidCampaignsByKeyword[item.keyword] ?? [
+    { campaign: `${item.keyword} — Auto SP`, spend: "₹—", roas: parseFloat(item.roas) || 0, budget: 2500 },
+  ];
+  const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const isRaise = item.action.includes("Raise");
   const tone = isRaise ? "text-sw-green bg-sw-green/10" : item.action.includes("Lower") ? "text-sw-red bg-sw-red/10" : "text-muted-foreground bg-surface-2";
 
