@@ -99,6 +99,38 @@ const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
+type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
+
+const buildKeywordRows = (targetKeyword: string, action: string, campaignList: { campaign: string }[]): KwRow[] => {
+  const base = mockBidByKeyword[targetKeyword] ?? 15;
+  const isReduce = action.toLowerCase().includes("reduce");
+  const suggested = isReduce ? Math.max(5, Math.round(base * 0.6)) : Math.round(base * 1.25);
+  const matches: ("Exact" | "Phrase" | "Broad")[] = ["Exact", "Phrase", "Broad"];
+  const variantByKw: Record<string, string> = {
+    "butter biscuits": "butter cookies premium",
+    "cream biscuits": "cream filled biscuit",
+    "digestive biscuits": "digestive biscuit pack",
+    "glucose biscuits": "glucose biscuit value",
+    "choco chip cookies": "choco chip biscuit",
+    "biscuit combo pack": "biscuit family pack",
+    "sugar free biscuits": "no sugar biscuits",
+    "kids biscuits": "kids snack biscuits",
+  };
+  const rows: KwRow[] = campaignList.map((c, i) => ({
+    campaign: c.campaign, keyword: targetKeyword, matchType: matches[i % 3], currentBid: base, suggestedBid: suggested,
+  }));
+  // Variant: same campaign as the first, different long-tail keyword
+  const variant = variantByKw[targetKeyword];
+  if (variant && campaignList[0]) {
+    rows.push({
+      campaign: campaignList[0].campaign, keyword: variant, matchType: "Phrase",
+      currentBid: Math.max(4, base - 4), suggestedBid: isReduce ? Math.max(3, Math.round((base - 4) * 0.7)) : Math.round((base - 4) * 1.3),
+      isVariant: true,
+    });
+  }
+  return rows;
+};
+
 interface KeywordRank {
   keyword: string;
   sponsoredRank: number;
@@ -468,8 +500,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
 
   React.useEffect(() => {
     if (item) {
-      const suggested = mockBidByKeyword[item.keyword] ?? 15;
-      setBids({ [item.keyword]: String(suggested) });
+      setBids({});
       setBudgets({});
     }
   }, [item?.keyword, item?.source, item?.platform]);
@@ -482,8 +513,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
   }];
   const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const products = mockProductsByKeyword[item.keyword] ?? [];
-  const currentBid = mockBidByKeyword[item.keyword] ?? 15;
-  const suggestedBid = item.actionType.toLowerCase().includes("reduce") ? Math.max(5, Math.round(currentBid * 0.6)) : Math.round(currentBid * 1.25);
+  const keywordRows: KwRow[] = buildKeywordRows(item.keyword, item.actionType, campaigns);
 
   const tone = item.actionType.toLowerCase().includes("reduce")
     ? "text-sw-green bg-sw-green/10"
@@ -561,23 +591,36 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
 
           {/* Keywords & Bids */}
           <section>
-            <h4 className="text-[11px] font-semibold text-foreground mb-2">Keyword bid</h4>
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-surface-2/50 border border-subtle">
-              <span className="font-mono text-[11px] text-foreground">"{item.keyword}"</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Exact</span>
-              <div className="ml-auto flex items-center gap-3 text-[11px]">
-                <span className="text-muted-foreground">Current: <span className="font-mono line-through">₹{currentBid}</span></span>
-                <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">₹{suggestedBid}</span></span>
-                <label className="flex items-center gap-1.5">
-                  <span className="text-muted-foreground">New bid ₹</span>
-                  <Input
-                    type="number"
-                    value={bids[item.keyword] ?? String(suggestedBid)}
-                    onChange={(e) => setBids(p => ({ ...p, [item.keyword]: e.target.value }))}
-                    className="h-7 w-20 text-right font-mono text-[11px]"
-                  />
-                </label>
-              </div>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Keyword bids ({keywordRows.length})</h4>
+            <div className="space-y-1.5">
+              {keywordRows.map((r, i) => {
+                const key = `${r.campaign}::${r.keyword}::${i}`;
+                return (
+                  <div key={key} className={`flex items-center gap-3 p-3 rounded-lg border ${r.isVariant ? "bg-sw-purple/5 border-sw-purple/20" : "bg-surface-2/50 border-subtle"}`}>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono text-[11px] text-foreground">"{r.keyword}"</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">{r.matchType}</span>
+                        {r.isVariant && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-purple/15 text-sw-purple whitespace-nowrap">Same campaign · variant</span>}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-0.5 truncate">Campaign: <span className="text-foreground">{r.campaign}</span></p>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] flex-shrink-0">
+                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">₹{r.currentBid}</span></span>
+                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">₹{r.suggestedBid}</span></span>
+                      <label className="flex items-center gap-1.5">
+                        <span className="text-muted-foreground">New ₹</span>
+                        <Input
+                          type="number"
+                          value={bids[key] ?? String(r.suggestedBid)}
+                          onChange={(e) => setBids(p => ({ ...p, [key]: e.target.value }))}
+                          className="h-7 w-20 text-right font-mono text-[11px]"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
 
