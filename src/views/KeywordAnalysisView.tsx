@@ -531,17 +531,22 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                 <tbody>
                   {campaigns.map((c, i) => {
                     const key = `${c.campaign}-${i}`;
-                    const defaultBudget = 2000 + i * 500;
+                    const isBest = campaigns.length > 1 && c.roas === bestCampaignRoas;
                     return (
-                      <tr key={key} className="border-t border-subtle">
-                        <td className="px-3 py-2 font-medium text-foreground">{c.campaign}</td>
+                      <tr key={key} className={`border-t border-subtle ${isBest ? "bg-sw-green/5" : ""}`}>
+                        <td className="px-3 py-2 font-medium text-foreground">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span>{c.campaign}</span>
+                            {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS Campaign</span>}
+                          </div>
+                        </td>
                         <td className="px-3 py-2">{c.platform}</td>
                         <td className="px-3 py-2 text-right font-mono">{c.spend}</td>
-                        <td className="px-3 py-2 text-right font-mono text-sw-green">{c.roas}</td>
+                        <td className={`px-3 py-2 text-right font-mono font-bold ${c.roas >= 4 ? "text-sw-green" : c.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{c.roas ? `${c.roas.toFixed(1)}x` : "—"}</td>
                         <td className="px-3 py-2 text-right">
                           <Input
                             type="number"
-                            value={budgets[key] ?? String(defaultBudget)}
+                            value={budgets[key] ?? String(c.budget)}
                             onChange={(e) => setBudgets(p => ({ ...p, [key]: e.target.value }))}
                             className="h-7 w-24 text-right font-mono text-[11px] ml-auto"
                           />
