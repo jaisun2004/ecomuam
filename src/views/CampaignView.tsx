@@ -1361,7 +1361,11 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
 
         <DialogFooter className="mt-4">
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onSubmit(bid)}>Submit Bid Change</Button>
+          <Button onClick={() => {
+            const targetKey = Object.keys(bids).find(k => k.includes(`::${item.keyword}::`));
+            const submitted = (targetKey && bids[targetKey]) || String(suggested);
+            onSubmit(submitted);
+          }}>Submit Bid Change</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
