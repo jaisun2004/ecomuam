@@ -401,7 +401,7 @@ const KeywordAnalysisView: React.FC = () => {
                       {k.recommendation}
                     </p>
                     <button
-                      onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: k.organicRank <= 3 ? "keyword-reduce" : "keyword-boost", params: { keyword: k.keyword } })}
+                      onClick={() => setReviewItem({ source: "efficiency", keyword: k.keyword, platform: "All", actionType: k.organicRank <= 3 ? "Reduce Spend" : "Optimise Bids", recommendation: k.recommendation })}
                       className={`px-2 py-1 rounded-lg text-[10px] font-medium ${k.organicRank <= 3 ? "bg-sw-green/15 text-sw-green" : "bg-primary/15 text-primary"}`}>
                       {k.organicRank <= 3 ? "Reduce Spend →" : "Optimise →"}
                     </button>
