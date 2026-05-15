@@ -63,6 +63,39 @@ const mockBidByKeyword: Record<string, number> = {
   "choco chip cookies": 16, "biscuit combo pack": 20, "sugar free biscuits": 24, "kids biscuits": 13,
 };
 
+type CampaignRow = { campaign: string; platform: string; spend: string; clicks: number; ctr: string; roas: number; budget: number };
+
+const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
+  "butter biscuits": [
+    { campaign: "Good Day Butter — SP Exact", platform: "Amazon", spend: "₹42K", clicks: 3200, ctr: "2.8%", roas: 5.2, budget: 2500 },
+    { campaign: "Good Day Butter — SP Broad", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "2.1%", roas: 4.1, budget: 2200 },
+    { campaign: "Butter Biscuits — SB Defence", platform: "Amazon", spend: "₹25K", clicks: 1400, ctr: "1.6%", roas: 3.4, budget: 1800 },
+  ],
+  "cream biscuits": [
+    { campaign: "Cream Range — SP Exact", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "1.9%", roas: 3.1, budget: 2000 },
+    { campaign: "Bourbon Cream — SP Phrase", platform: "Amazon", spend: "₹30K", clicks: 1700, ctr: "2.0%", roas: 2.6, budget: 1800 },
+  ],
+  "glucose biscuits": [
+    { campaign: "Glucose Category — SP", platform: "Amazon", spend: "₹28K", clicks: 1400, ctr: "1.2%", roas: 1.8, budget: 1600 },
+  ],
+  "digestive biscuits": [
+    { campaign: "NutriChoice — Brand SP", platform: "Amazon", spend: "₹55K", clicks: 4100, ctr: "3.4%", roas: 6.1, budget: 3000 },
+    { campaign: "Digestive — SP Exact", platform: "Amazon", spend: "₹30K", clicks: 2200, ctr: "2.9%", roas: 5.0, budget: 2200 },
+  ],
+  "choco chip cookies": [
+    { campaign: "Bourbon Choco — SP", platform: "Flipkart", spend: "₹31K", clicks: 2800, ctr: "2.2%", roas: 4.0, budget: 2200 },
+  ],
+  "biscuit combo pack": [
+    { campaign: "Variety Pack — SP", platform: "Amazon", spend: "₹22K", clicks: 1100, ctr: "1.4%", roas: 2.0, budget: 1500 },
+  ],
+  "sugar free biscuits": [
+    { campaign: "NutriChoice SF — SP", platform: "Amazon", spend: "₹18K", clicks: 800, ctr: "0.9%", roas: 1.4, budget: 1400 },
+  ],
+  "kids biscuits": [
+    { campaign: "Tiger Kids — SP Exact", platform: "Amazon", spend: "₹16K", clicks: 1200, ctr: "2.4%", roas: 4.5, budget: 1600 },
+  ],
+};
+
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
