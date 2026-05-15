@@ -429,6 +429,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 const CampaignView: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(0);
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
+  const [bidReview, setBidReview] = useState<BidReview | null>(null);
   const [copilotStates, setCopilotStates] = useState<Record<number, boolean>>({});
   const [reallocApplied, setReallocApplied] = useState(false);
   const [showReports, setShowReports] = useState(false);
