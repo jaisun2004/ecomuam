@@ -500,8 +500,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
 
   React.useEffect(() => {
     if (item) {
-      const suggested = mockBidByKeyword[item.keyword] ?? 15;
-      setBids({ [item.keyword]: String(suggested) });
+      setBids({});
       setBudgets({});
     }
   }, [item?.keyword, item?.source, item?.platform]);
