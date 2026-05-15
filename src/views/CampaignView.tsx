@@ -1197,12 +1197,12 @@ const CampaignView: React.FC = () => {
 interface BidReviewDialogProps { item: BidReview | null; onClose: () => void; onSubmit: (newBid: string) => void; }
 
 const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubmit }) => {
-  const [bid, setBid] = useState("");
+  const [bids, setBids] = useState<Record<string, string>>({});
   const [budgets, setBudgets] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (item) {
-      setBid(item.suggestedBid.replace(/[^\d]/g, ""));
+      setBids({});
       setBudgets({});
     }
   }, [item?.keyword, item?.index]);
@@ -1215,6 +1215,30 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
   const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const isRaise = item.action.includes("Raise");
   const tone = isRaise ? "text-sw-green bg-sw-green/10" : item.action.includes("Lower") ? "text-sw-red bg-sw-red/10" : "text-muted-foreground bg-surface-2";
+
+  const variantByKw: Record<string, string> = {
+    "butter biscuits online": "butter cookies premium",
+    "cream biscuits": "cream filled biscuit",
+    "glucose biscuits bulk": "glucose biscuit value",
+    "digestive biscuits": "digestive biscuit pack",
+    "choco chip cookies": "choco chip biscuit",
+    "biscuit combo pack": "biscuit family pack",
+  };
+  const baseBid = parseInt(item.currentBid.replace(/[^\d]/g, "")) || 20;
+  const suggested = parseInt(item.suggestedBid.replace(/[^\d]/g, "")) || baseBid;
+  const matches: ("Exact" | "Phrase" | "Broad")[] = ["Exact", "Phrase", "Broad"];
+  const keywordRows: { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean }[] = campaigns.map((c, i) => ({
+    campaign: c.campaign, keyword: item.keyword, matchType: matches[i % 3], currentBid: baseBid, suggestedBid: suggested,
+  }));
+  const variant = variantByKw[item.keyword];
+  if (variant && campaigns[0]) {
+    const vc = Math.max(4, baseBid - 4);
+    keywordRows.push({
+      campaign: campaigns[0].campaign, keyword: variant, matchType: "Phrase",
+      currentBid: vc, suggestedBid: isRaise ? Math.round(vc * 1.3) : Math.max(3, Math.round(vc * 0.7)), isVariant: true,
+    });
+  }
+
 
   return (
     <Dialog open={!!item} onOpenChange={(o) => !o && onClose()}>
