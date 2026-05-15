@@ -218,10 +218,10 @@ const KeywordAnalysisView: React.FC = () => {
                     </td>
                     <td className="py-2.5 text-right">
                       {k.canReduceSpend ? (
-                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-reduce", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                        <button onClick={() => setReviewItem({ source: "ranking", keyword: k.keyword, platform: selectedPlatform, actionType: "Reduce Spend", recommendation: `Organic rank #${k.organicRank} is strong — sponsored spend can be cut without losing visibility.` })}
                           className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-green/15 text-sw-green">Reduce spend →</button>
                       ) : (
-                        <button onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-boost", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                        <button onClick={() => setReviewItem({ source: "ranking", keyword: k.keyword, platform: selectedPlatform, actionType: k.action, recommendation: `${k.action} — Sponsored #${k.sponsoredRank} · Organic #${k.organicRank} · SoS ${k.shareOfSearch}% · Top comp ${k.topCompetitor} at #${k.compRank}.` })}
                           className={`text-[10px] font-medium px-2 py-1 rounded-lg ${k.action === "New campaign needed" ? "bg-sw-red/15 text-sw-red" : "bg-sw-amber/15 text-sw-amber"}`}>
                           {k.action} →
                         </button>
