@@ -596,7 +596,6 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="text-[11px] text-foreground truncate">{p.title}</p>
-                          {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
                         </div>
                         <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
                       </div>
