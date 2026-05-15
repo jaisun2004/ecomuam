@@ -1052,7 +1052,12 @@ const CampaignView: React.FC = () => {
                   <p className="text-[9px] text-muted-foreground font-mono">{k.bid} · {k.imp} imp</p>
                 </div>
                 <span className={`font-mono text-[10px] ${k.roasColor}`}>{k.roas}</span>
-                <button onClick={() => setBidStates((p) => ({ ...p, [i]: k.action.includes("Raise") ? "↑ ₹34" : k.action.includes("Lower") ? "↓ ₹16" : "— ₹45" }))}
+                <button onClick={() => {
+                    if (k.action.includes("Hold")) { setBidStates((p) => ({ ...p, [i]: "— " + k.bid })); return; }
+                    const cur = parseInt(k.bid.replace(/[^\d]/g, "")) || 20;
+                    const suggested = k.action.includes("Raise") ? Math.round(cur * 1.2) : Math.round(cur * 0.7);
+                    setBidReview({ keyword: k.kw, currentBid: k.bid, suggestedBid: `₹${suggested}`, action: k.action, roas: k.roas, imp: k.imp, index: i });
+                  }}
                   className={`px-2 py-0.5 rounded text-[9px] font-medium border transition-all ${
                     bidStates[i] ? "bg-sw-green-dim text-sw-green border-sw-green/20" : k.actionColor
                   }`}>
