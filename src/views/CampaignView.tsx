@@ -5,6 +5,42 @@ import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
 import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical, Shield, AlertTriangle, Swords, TrendingUp, Target, DollarSign, Zap } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+const bidProductsByKeyword: Record<string, { sku: string; title: string; rank: number; roas: number }[]> = {
+  "butter biscuits online": [
+    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, roas: 6.4 },
+    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, roas: 5.1 },
+    { sku: "B-GD-CMB", title: "Good Day Butter Combo (3-Pack)", rank: 7, roas: 4.0 },
+  ],
+  "cream biscuits": [
+    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, roas: 3.4 },
+    { sku: "B-BB-300", title: "Bourbon Cream Biscuits 300g Value", rank: 11, roas: 2.6 },
+  ],
+  "glucose biscuits bulk": [
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, roas: 1.4 },
+    { sku: "B-MG-1KG", title: "Marie Gold Glucose 1Kg Bulk", rank: 16, roas: 1.7 },
+  ],
+  "digestive biscuits": [
+    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, roas: 6.2 },
+    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, roas: 5.4 },
+    { sku: "B-NC-MLT", title: "NutriChoice Multigrain Digestive 200g", rank: 4, roas: 4.6 },
+  ],
+  "choco chip cookies": [
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, roas: 4.9 },
+    { sku: "B-DF-250", title: "Bourbon Choco Chip Cookies 250g", rank: 8, roas: 3.8 },
+  ],
+  "biscuit combo pack": [
+    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, roas: 1.9 },
+    { sku: "B-VP-1KG", title: "Britannia Family Variety Pack 1Kg", rank: 13, roas: 1.6 },
+  ],
+};
+
+type BidReview = { keyword: string; currentBid: string; suggestedBid: string; action: string; roas: string; imp: string; index: number };
+
 
 /* ── existing mock data ── */
 const revenueData = [
