@@ -7,6 +7,52 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ComposedChart, Area } from "recharts";
 import { Search, AlertTriangle, TrendingUp, ArrowRight, DollarSign, Target, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+type ReviewPayload = {
+  source: "ranking" | "efficiency";
+  keyword: string;
+  platform: string;
+  actionType: string;
+  recommendation: string;
+};
+
+const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number }[]> = {
+  "butter biscuits": [
+    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86 },
+    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78 },
+  ],
+  "cream biscuits": [
+    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72 },
+  ],
+  "glucose biscuits": [
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42 },
+  ],
+  "digestive biscuits": [
+    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91 },
+    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88 },
+  ],
+  "choco chip cookies": [
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75 },
+  ],
+  "biscuit combo pack": [
+    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68 },
+  ],
+  "sugar free biscuits": [
+    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38 },
+  ],
+  "kids biscuits": [
+    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82 },
+  ],
+};
+
+const mockBidByKeyword: Record<string, number> = {
+  "butter biscuits": 14, "cream biscuits": 18, "glucose biscuits": 22, "digestive biscuits": 12,
+  "choco chip cookies": 16, "biscuit combo pack": 20, "sugar free biscuits": 24, "kids biscuits": 13,
+};
 
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
