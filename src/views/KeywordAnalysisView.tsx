@@ -631,7 +631,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                   <div><p className="text-muted-foreground">Spend</p><p className="font-mono text-foreground">{c.spend}</p></div>
                   <div><p className="text-muted-foreground">Clicks</p><p className="font-mono text-foreground">{c.clicks.toLocaleString()}</p></div>
                   <div><p className="text-muted-foreground">CTR</p><p className="font-mono text-foreground">{c.ctr}</p></div>
-                  <div><p className="text-muted-foreground">ROAS</p><p className="font-mono text-sw-green">{c.roas}</p></div>
+                  <div><p className="text-muted-foreground">ROAS</p><p className="font-mono text-sw-green">{c.roas ? `${c.roas.toFixed(1)}x` : "—"}</p></div>
                 </React.Fragment>
               ))}
             </div>
