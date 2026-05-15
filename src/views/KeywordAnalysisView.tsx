@@ -99,6 +99,38 @@ const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
+type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
+
+const buildKeywordRows = (targetKeyword: string, action: string, campaignList: { campaign: string }[]): KwRow[] => {
+  const base = mockBidByKeyword[targetKeyword] ?? 15;
+  const isReduce = action.toLowerCase().includes("reduce");
+  const suggested = isReduce ? Math.max(5, Math.round(base * 0.6)) : Math.round(base * 1.25);
+  const matches: ("Exact" | "Phrase" | "Broad")[] = ["Exact", "Phrase", "Broad"];
+  const variantByKw: Record<string, string> = {
+    "butter biscuits": "butter cookies premium",
+    "cream biscuits": "cream filled biscuit",
+    "digestive biscuits": "digestive biscuit pack",
+    "glucose biscuits": "glucose biscuit value",
+    "choco chip cookies": "choco chip biscuit",
+    "biscuit combo pack": "biscuit family pack",
+    "sugar free biscuits": "no sugar biscuits",
+    "kids biscuits": "kids snack biscuits",
+  };
+  const rows: KwRow[] = campaignList.map((c, i) => ({
+    campaign: c.campaign, keyword: targetKeyword, matchType: matches[i % 3], currentBid: base, suggestedBid: suggested,
+  }));
+  // Variant: same campaign as the first, different long-tail keyword
+  const variant = variantByKw[targetKeyword];
+  if (variant && campaignList[0]) {
+    rows.push({
+      campaign: campaignList[0].campaign, keyword: variant, matchType: "Phrase",
+      currentBid: Math.max(4, base - 4), suggestedBid: isReduce ? Math.max(3, Math.round((base - 4) * 0.7)) : Math.round((base - 4) * 1.3),
+      isVariant: true,
+    });
+  }
+  return rows;
+};
+
 interface KeywordRank {
   keyword: string;
   sponsoredRank: number;
