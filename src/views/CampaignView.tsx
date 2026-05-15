@@ -39,6 +39,36 @@ const bidProductsByKeyword: Record<string, { sku: string; title: string; rank: n
   ],
 };
 
+type BidCampaignRow = { campaign: string; spend: string; roas: number; budget: number };
+
+const bidCampaignsByKeyword: Record<string, BidCampaignRow[]> = {
+  "butter biscuits online": [
+    { campaign: "Good Day Butter — SP Exact", spend: "₹42K", roas: 6.4, budget: 2500 },
+    { campaign: "Good Day Butter — SP Broad", spend: "₹38K", roas: 5.1, budget: 2200 },
+    { campaign: "Butter Biscuits — SB Defence", spend: "₹25K", roas: 4.0, budget: 1800 },
+  ],
+  "cream biscuits": [
+    { campaign: "Bourbon Cream — SP Exact", spend: "₹30K", roas: 3.4, budget: 2000 },
+    { campaign: "Cream Range — SP Broad", spend: "₹22K", roas: 2.6, budget: 1700 },
+  ],
+  "glucose biscuits bulk": [
+    { campaign: "Marie Gold — SP Bulk", spend: "₹28K", roas: 1.4, budget: 1600 },
+  ],
+  "digestive biscuits": [
+    { campaign: "NutriChoice — Brand SP", spend: "₹55K", roas: 6.2, budget: 3000 },
+    { campaign: "Digestive — SP Exact", spend: "₹30K", roas: 5.0, budget: 2200 },
+    { campaign: "Multigrain Digestive — SP", spend: "₹18K", roas: 4.6, budget: 1700 },
+  ],
+  "choco chip cookies": [
+    { campaign: "Bourbon Choco — SP Exact", spend: "₹31K", roas: 4.9, budget: 2200 },
+    { campaign: "Choco Chip — SP Phrase", spend: "₹20K", roas: 3.8, budget: 1700 },
+  ],
+  "biscuit combo pack": [
+    { campaign: "Variety Pack — SP", spend: "₹22K", roas: 1.9, budget: 1500 },
+    { campaign: "Combo Pack — SP Broad", spend: "₹14K", roas: 1.6, budget: 1200 },
+  ],
+};
+
 type BidReview = { keyword: string; currentBid: string; suggestedBid: string; action: string; roas: string; imp: string; index: number };
 
 
@@ -1168,18 +1198,21 @@ interface BidReviewDialogProps { item: BidReview | null; onClose: () => void; on
 
 const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubmit }) => {
   const [bid, setBid] = useState("");
-  const [budget, setBudget] = useState("");
+  const [budgets, setBudgets] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (item) {
       setBid(item.suggestedBid.replace(/[^\d]/g, ""));
-      setBudget("2500");
+      setBudgets({});
     }
   }, [item?.keyword, item?.index]);
 
   if (!item) return null;
   const products = bidProductsByKeyword[item.keyword] ?? [];
-  const bestRoas = products.length > 1 ? Math.max(...products.map(p => p.roas)) : -1;
+  const campaigns: BidCampaignRow[] = bidCampaignsByKeyword[item.keyword] ?? [
+    { campaign: `${item.keyword} — Auto SP`, spend: "₹—", roas: parseFloat(item.roas) || 0, budget: 2500 },
+  ];
+  const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const isRaise = item.action.includes("Raise");
   const tone = isRaise ? "text-sw-green bg-sw-green/10" : item.action.includes("Lower") ? "text-sw-red bg-sw-red/10" : "text-muted-foreground bg-surface-2";
 
@@ -1200,13 +1233,44 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
 
         <div className="space-y-4 mt-2">
           <section>
-            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign</h4>
-            <div className="rounded-lg border border-subtle p-3 bg-surface-2/40 flex items-center gap-3 text-[11px]">
-              <span className="font-medium text-foreground flex-1">Good Day Butter — Sponsored (Amazon)</span>
-              <label className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Daily budget ₹</span>
-                <Input type="number" value={budget} onChange={(e) => setBudget(e.target.value)} className="h-7 w-24 text-right font-mono text-[11px]" />
-              </label>
+            <h4 className="text-[11px] font-semibold text-foreground mb-2">Campaign(s) using this keyword ({campaigns.length})</h4>
+            <div className="rounded-lg border border-subtle overflow-hidden">
+              <table className="w-full text-[11px]">
+                <thead className="bg-surface-2 text-muted-foreground">
+                  <tr>
+                    <th className="text-left px-3 py-2 font-normal">Campaign</th>
+                    <th className="text-right px-3 py-2 font-normal">Spend / mo</th>
+                    <th className="text-right px-3 py-2 font-normal">ROAS</th>
+                    <th className="text-right px-3 py-2 font-normal">Daily Budget (₹)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaigns.map((c, i) => {
+                    const key = `${c.campaign}-${i}`;
+                    const isBest = campaigns.length > 1 && c.roas === bestCampaignRoas;
+                    return (
+                      <tr key={key} className={`border-t border-subtle ${isBest ? "bg-sw-green/5" : ""}`}>
+                        <td className="px-3 py-2 font-medium text-foreground">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span>{c.campaign}</span>
+                            {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS Campaign</span>}
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono">{c.spend}</td>
+                        <td className={`px-3 py-2 text-right font-mono font-bold ${c.roas >= 4 ? "text-sw-green" : c.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{c.roas ? `${c.roas.toFixed(1)}x` : "—"}</td>
+                        <td className="px-3 py-2 text-right">
+                          <Input
+                            type="number"
+                            value={budgets[key] ?? String(c.budget)}
+                            onChange={(e) => setBudgets(p => ({ ...p, [key]: e.target.value }))}
+                            className="h-7 w-24 text-right font-mono text-[11px] ml-auto"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </section>
 
@@ -1231,15 +1295,11 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
             <div className="space-y-1.5">
               {products.length === 0 && <p className="text-[11px] text-muted-foreground">No products mapped for this keyword in mock data.</p>}
               {products.map(p => {
-                const isBest = products.length > 1 && p.roas === bestRoas;
                 return (
-                  <div key={p.sku} className={`flex items-center gap-3 p-2.5 rounded-lg border bg-card ${isBest ? "border-sw-green/40 ring-1 ring-sw-green/20" : "border-subtle"}`}>
+                  <div key={p.sku} className="flex items-center gap-3 p-2.5 rounded-lg border border-subtle bg-card">
                     <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center text-[9px] text-muted-foreground font-mono">{p.sku.slice(0, 4)}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-[11px] text-foreground truncate">{p.title}</p>
-                        {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
-                      </div>
+                      <p className="text-[11px] text-foreground truncate">{p.title}</p>
                       <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
                     </div>
                     <div className="text-right">

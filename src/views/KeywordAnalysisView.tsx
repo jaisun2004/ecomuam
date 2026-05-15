@@ -63,6 +63,39 @@ const mockBidByKeyword: Record<string, number> = {
   "choco chip cookies": 16, "biscuit combo pack": 20, "sugar free biscuits": 24, "kids biscuits": 13,
 };
 
+type CampaignRow = { campaign: string; platform: string; spend: string; clicks: number; ctr: string; roas: number; budget: number };
+
+const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
+  "butter biscuits": [
+    { campaign: "Good Day Butter — SP Exact", platform: "Amazon", spend: "₹42K", clicks: 3200, ctr: "2.8%", roas: 5.2, budget: 2500 },
+    { campaign: "Good Day Butter — SP Broad", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "2.1%", roas: 4.1, budget: 2200 },
+    { campaign: "Butter Biscuits — SB Defence", platform: "Amazon", spend: "₹25K", clicks: 1400, ctr: "1.6%", roas: 3.4, budget: 1800 },
+  ],
+  "cream biscuits": [
+    { campaign: "Cream Range — SP Exact", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "1.9%", roas: 3.1, budget: 2000 },
+    { campaign: "Bourbon Cream — SP Phrase", platform: "Amazon", spend: "₹30K", clicks: 1700, ctr: "2.0%", roas: 2.6, budget: 1800 },
+  ],
+  "glucose biscuits": [
+    { campaign: "Glucose Category — SP", platform: "Amazon", spend: "₹28K", clicks: 1400, ctr: "1.2%", roas: 1.8, budget: 1600 },
+  ],
+  "digestive biscuits": [
+    { campaign: "NutriChoice — Brand SP", platform: "Amazon", spend: "₹55K", clicks: 4100, ctr: "3.4%", roas: 6.1, budget: 3000 },
+    { campaign: "Digestive — SP Exact", platform: "Amazon", spend: "₹30K", clicks: 2200, ctr: "2.9%", roas: 5.0, budget: 2200 },
+  ],
+  "choco chip cookies": [
+    { campaign: "Bourbon Choco — SP", platform: "Flipkart", spend: "₹31K", clicks: 2800, ctr: "2.2%", roas: 4.0, budget: 2200 },
+  ],
+  "biscuit combo pack": [
+    { campaign: "Variety Pack — SP", platform: "Amazon", spend: "₹22K", clicks: 1100, ctr: "1.4%", roas: 2.0, budget: 1500 },
+  ],
+  "sugar free biscuits": [
+    { campaign: "NutriChoice SF — SP", platform: "Amazon", spend: "₹18K", clicks: 800, ctr: "0.9%", roas: 1.4, budget: 1400 },
+  ],
+  "kids biscuits": [
+    { campaign: "Tiger Kids — SP Exact", platform: "Amazon", spend: "₹16K", clicks: 1200, ctr: "2.4%", roas: 4.5, budget: 1600 },
+  ],
+};
+
 const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
 const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
 
@@ -443,13 +476,11 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
 
   if (!item) return null;
 
-  const matchingCampaigns = campaignKeywordPerf.filter(c =>
-    c.keyword === item.keyword && (item.source === "efficiency" || c.platform === item.platform)
-  );
-  const campaigns = matchingCampaigns.length ? matchingCampaigns : [{
-    keyword: item.keyword, campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Amazon" : item.platform,
-    spend: "₹—", clicks: 0, ctr: "—", roas: "—", rank: 0, action: item.recommendation,
+  const campaigns: CampaignRow[] = mockCampaignsByKeyword[item.keyword] ?? [{
+    campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Amazon" : item.platform,
+    spend: "₹—", clicks: 0, ctr: "—", roas: 0, budget: 2000,
   }];
+  const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const products = mockProductsByKeyword[item.keyword] ?? [];
   const currentBid = mockBidByKeyword[item.keyword] ?? 15;
   const suggestedBid = item.actionType.toLowerCase().includes("reduce") ? Math.max(5, Math.round(currentBid * 0.6)) : Math.round(currentBid * 1.25);
@@ -500,17 +531,22 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                 <tbody>
                   {campaigns.map((c, i) => {
                     const key = `${c.campaign}-${i}`;
-                    const defaultBudget = 2000 + i * 500;
+                    const isBest = campaigns.length > 1 && c.roas === bestCampaignRoas;
                     return (
-                      <tr key={key} className="border-t border-subtle">
-                        <td className="px-3 py-2 font-medium text-foreground">{c.campaign}</td>
+                      <tr key={key} className={`border-t border-subtle ${isBest ? "bg-sw-green/5" : ""}`}>
+                        <td className="px-3 py-2 font-medium text-foreground">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span>{c.campaign}</span>
+                            {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS Campaign</span>}
+                          </div>
+                        </td>
                         <td className="px-3 py-2">{c.platform}</td>
                         <td className="px-3 py-2 text-right font-mono">{c.spend}</td>
-                        <td className="px-3 py-2 text-right font-mono text-sw-green">{c.roas}</td>
+                        <td className={`px-3 py-2 text-right font-mono font-bold ${c.roas >= 4 ? "text-sw-green" : c.roas >= 2.5 ? "text-sw-amber" : "text-sw-red"}`}>{c.roas ? `${c.roas.toFixed(1)}x` : "—"}</td>
                         <td className="px-3 py-2 text-right">
                           <Input
                             type="number"
-                            value={budgets[key] ?? String(defaultBudget)}
+                            value={budgets[key] ?? String(c.budget)}
                             onChange={(e) => setBudgets(p => ({ ...p, [key]: e.target.value }))}
                             className="h-7 w-24 text-right font-mono text-[11px] ml-auto"
                           />
@@ -560,7 +596,6 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="text-[11px] text-foreground truncate">{p.title}</p>
-                          {isBest && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green whitespace-nowrap">★ Best ROAS</span>}
                         </div>
                         <p className="text-[10px] text-muted-foreground font-mono">{p.sku}</p>
                       </div>
@@ -596,7 +631,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                   <div><p className="text-muted-foreground">Spend</p><p className="font-mono text-foreground">{c.spend}</p></div>
                   <div><p className="text-muted-foreground">Clicks</p><p className="font-mono text-foreground">{c.clicks.toLocaleString()}</p></div>
                   <div><p className="text-muted-foreground">CTR</p><p className="font-mono text-foreground">{c.ctr}</p></div>
-                  <div><p className="text-muted-foreground">ROAS</p><p className="font-mono text-sw-green">{c.roas}</p></div>
+                  <div><p className="text-muted-foreground">ROAS</p><p className="font-mono text-sw-green">{c.roas ? `${c.roas.toFixed(1)}x` : "—"}</p></div>
                 </React.Fragment>
               ))}
             </div>
