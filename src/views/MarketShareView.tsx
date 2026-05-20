@@ -56,7 +56,7 @@ const darkStores: DarkStore[] = [
 
 const platformColorMap: Record<string, string> = {
   Talabat: "#FDDC2B",
-  Noon Minutes: "#833AB4",
+  "Noon Minutes": "#833AB4",
   "Talabat": "#FC8019",
 };
 

@@ -59,7 +59,7 @@ const searchDataByPlatform: Record<string, { kw: string; you: number; comp: numb
     { kw: "digestive beverages", you: 44, comp: 18, compName: "Masafi", status: "winning" },
     { kw: "kids beverages", you: 12, comp: 55, compName: "Coca-Cola", status: "losing", poaching: true },
   ],
-  Noon Minutes: [
+  "Noon Minutes": [
     { kw: "butter beverages", you: 31, comp: 33, compName: "Coca-Cola", status: "losing" },
     { kw: "cream beverages", you: 39, comp: 28, compName: "Almarai", status: "winning" },
     { kw: "glucose beverages", you: 22, comp: 35, compName: "Almarai", status: "losing" },

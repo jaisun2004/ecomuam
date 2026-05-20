@@ -10,7 +10,7 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 500ml", "Mountain Dew 1L", "Lipton Ice Tea 320ml"];
 const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", Noon Minutes: "#833AB4", Talabat: "#FC8019" };
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", Talabat: "#FC8019" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
@@ -81,7 +81,7 @@ const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
       { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Coca-Cola 1L", you: false, price: "AED 38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Noon Minutes: [
+    "Noon Minutes": [
       { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Coca-Cola 1L", you: false, price: "AED 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
@@ -123,7 +123,7 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
     { sku: "Pepsi 1L", yourPrice: "AED 42", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
     { sku: "Mountain Dew 1L", yourPrice: "AED 32", compPrice: "AED 30", parity: false, competitor: "Almarai" },
   ],
-  Noon Minutes: [
+  "Noon Minutes": [
     { sku: "Pepsi 1L", yourPrice: "AED 43", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
     { sku: "Lipton Ice Tea 320ml", yourPrice: "AED 22", compPrice: "AED 20", parity: false, competitor: "Almarai" },
   ],

@@ -28,7 +28,7 @@ const contestedKeywords = [
 ];
 
 const platformFilter = ["All Platforms", "Carrefour", "Noon", "Talabat", "Noon Minutes"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", Noon Minutes: "#833AB4" };
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4" };
 
 const keywordOptions = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks"];
 

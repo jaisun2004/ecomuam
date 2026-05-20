@@ -331,7 +331,7 @@ const ScenarioCard = ({ s, onSelect, selected }: { s: Scenario; onSelect: () => 
 
     <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground">
       <span>Talabat: {s.blinkitSplit}</span>
-      <span>Noon Minutes: {s.zeptoSplit}</span>
+      <span>"Noon Minutes": {s.zeptoSplit}</span>
       <span>Projected ROAS: {s.roasRange}</span>
       <span>Est. Impressions: {s.estImpressions}</span>
     </div>

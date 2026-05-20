@@ -97,7 +97,7 @@ const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
 };
 
 const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", Noon Minutes: "#833AB4", Talabat: "#FC8019" };
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", Talabat: "#FC8019" };
 
 type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
 
@@ -167,7 +167,7 @@ const keywordDataByPlatform: Record<string, KeywordRank[]> = {
     { keyword: "cream beverages", sponsoredRank: 3, organicRank: 6, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "12K", searchVolNum: 12, shareOfSearch: 12, trend: "down", action: "Boost campaign", canReduceSpend: false },
     { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Masafi", compRank: 2, searchVol: "8K", searchVolNum: 8, shareOfSearch: 42, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Noon Minutes: [
+  "Noon Minutes": [
     { keyword: "butter beverages", sponsoredRank: 2, organicRank: 4, topCompetitor: "Almarai", compRank: 1, searchVol: "14K", searchVolNum: 14, shareOfSearch: 20, trend: "flat", action: "Optimise bids", canReduceSpend: false },
     { keyword: "glucose beverages", sponsoredRank: 5, organicRank: 12, topCompetitor: "Almarai", compRank: 1, searchVol: "22K", searchVolNum: 22, shareOfSearch: 6, trend: "down", action: "New campaign needed", canReduceSpend: false },
   ],
