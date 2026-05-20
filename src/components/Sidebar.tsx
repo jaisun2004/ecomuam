@@ -6,40 +6,25 @@ const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", noti
 
 const navSections = [
   {
-    label: "PLANNING",
-    items: [
-      { id: "discovery", icon: Search, label: "Discovery", notify: false },
-      { id: "strategicplanning", icon: MapPin, label: "Strategic Planning", notify: false },
-      { id: "approvalflow", icon: ClipboardCheck, label: "Approval Flow", notify: true },
-      { id: "whitespace", icon: Lightbulb, label: "Category Whitespace", notify: false },
-    ],
-  },
-  {
     label: "INSIGHTS",
     items: [
       { id: "availability", icon: Package, label: "Availability", notify: false },
       { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
       { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
-      { id: "competitors", icon: Eye, label: "Competitor Ads Hub", notify: true },
-      { id: "marketshare", icon: PieChart, label: "Market Share", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
       { id: "categoryassortment", icon: LayoutList, label: "Category Assortment", notify: false },
-      { id: "bestseller", icon: Trophy, label: "Bestseller Intelligence", notify: false },
     ],
   },
   {
     label: "CAMPAIGNS",
     items: [
       { id: "campaigns", icon: ShoppingCart, label: "Campaign Manager", notify: true },
-      { id: "festival", icon: CalendarDays, label: "Festival Campaigns", notify: false },
     ],
   },
   {
     label: "OPTIMISATION",
     items: [
       { id: "budget", icon: Zap, label: "Budget Optimiser", notify: false },
-      { id: "recommendations", icon: Sparkles, label: "Recommendations", notify: true },
-      { id: "offline", icon: Tv, label: "Offline Ads", notify: false },
     ],
   },
   {
