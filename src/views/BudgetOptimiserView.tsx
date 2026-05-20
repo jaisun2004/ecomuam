@@ -222,6 +222,106 @@ const RuleEngine: React.FC = () => {
   );
 };
 
+interface StdRule {
+  id: string;
+  name: string;
+  why: string;
+  impact: string;
+  tone: "red" | "amber" | "green" | "purple";
+  defaultOn?: boolean;
+}
+const STD_RULES: StdRule[] = [
+  { id: "no-comp", name: "No competition on keyword → reduce bid 20%", why: "Saves spend when there's no contested auction (SoV competitors = 0 for 3d).", impact: "Affects 8 keywords · ~AED 1.4K/wk", tone: "amber", defaultOn: true },
+  { id: "comp-oos", name: "3+ competitors OOS → reduce both budget −30% and bid −15%", why: "Demand drops when shelf is thin — capture cheaper conversions, don't overpay.", impact: "Affects 4 campaigns · ~AED 2.1K/wk", tone: "red", defaultOn: true },
+  { id: "own-oos", name: "Own SKU OOS in pincode → pause campaign there", why: "Stop wasted clicks routed to an unbuyable PDP.", impact: "Affects 3 pincode campaigns", tone: "red" },
+  { id: "ctr-roas-up", name: "CTR > 2× cat avg AND ROAS > 3.5 → raise bid +15%, budget +20%", why: "High intent + efficient — buy more of it before auction normalises.", impact: "Affects 5 campaigns · +AED 3.6K/wk spend", tone: "green" },
+  { id: "cpc-down", name: "CPC drops 25% w/w → hold budget, raise bid +10%", why: "Auction got cheaper — claim more impressions at the same cost.", impact: "Affects 6 campaigns", tone: "purple" },
+  { id: "new-comp", name: "New competitor SKU in top 10 → defensive bid +25% on branded kws", why: "Protect branded SoS before they entrench rank.", impact: "Affects 2 brand campaigns", tone: "purple" },
+];
+
+const StandardisedRulesPanel: React.FC = () => {
+  const [on, setOn] = useState<Record<string, boolean>>(Object.fromEntries(STD_RULES.map(r => [r.id, !!r.defaultOn])));
+  return (
+    <PanelCard title="Standardised Optimisation Rules" badge="Always-On" badgeColor="purple" delay={0.32}>
+      <p className="text-[10px] text-muted-foreground mb-3">Pre-built rules that monitor competition & inventory signals and auto-adjust bid / budget on Talabat, Noon, Noon Minutes and Carrefour.</p>
+      <div className="grid grid-cols-2 gap-3">
+        {STD_RULES.map(r => {
+          const isOn = on[r.id];
+          return (
+            <div key={r.id} className={`p-3 rounded-xl border transition-colors ${isOn ? "bg-surface-2 border-primary/30" : "bg-surface-2 border-subtle"}`}>
+              <div className="flex items-start justify-between gap-2 mb-1.5">
+                <p className="text-xs font-medium text-foreground flex-1">{r.name}</p>
+                <Switch checked={isOn} onCheckedChange={(v) => { setOn(p => ({ ...p, [r.id]: v })); toast({ title: v ? "Rule enabled" : "Rule disabled", description: r.name }); }} />
+              </div>
+              <p className="text-[10px] text-muted-foreground mb-2">{r.why}</p>
+              <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-mono ${toneClasses[r.tone]}`}>{r.impact}</span>
+            </div>
+          );
+        })}
+      </div>
+    </PanelCard>
+  );
+};
+
+interface CampaignReco {
+  id: string;
+  campaign: string;
+  platform: string;
+  platformColor: string;
+  change: string;
+  changeTone: "red" | "amber" | "green" | "purple";
+  reason: string;
+}
+const CAMPAIGN_RECOS: CampaignReco[] = [
+  { id: "r1", campaign: "Pepsi 1L — Talabat SP", platform: "Talabat", platformColor: "#FF5A00", change: "↑ Budget +AED 800/day", changeTone: "green", reason: "ROAS 4.2x vs goal 3.0x — capacity headroom on top-10 keywords." },
+  { id: "r2", campaign: "Aquafina 1.5L — Carrefour", platform: "Carrefour", platformColor: "#0E4C92", change: "↓ Bid −12%", changeTone: "amber", reason: "CTR holding but CPC up 18% w/w — overpaying for same clicks." },
+  { id: "r3", campaign: "7UP 1L — Noon Minutes Riyadh", platform: "Noon Minutes", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
+  { id: "r4", campaign: "Mountain Dew — Noon SP", platform: "Noon", platformColor: "#FEEE00", change: "Shift AED 500 → Noon Minutes", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
+  { id: "r5", campaign: "Lipton Ice Tea Peach — Talabat Dubai", platform: "Talabat", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Coca-Cola OOS in 3 Dubai areas — capture defensive auctions now." },
+  { id: "r6", campaign: "Tropicana OJ — Carrefour Brand", platform: "Carrefour", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Almarai entered top-10 on brand keywords — defend before rank entrenches." },
+];
+const tonePill: Record<string, string> = { red: "bg-sw-red-dim text-sw-red", amber: "bg-sw-amber-dim text-sw-amber", green: "bg-sw-green-dim text-sw-green", purple: "bg-sw-purple-dim text-sw-purple" };
+
+const CampaignRecommendationsPanel: React.FC = () => {
+  const [applied, setApplied] = useState<Record<string, "applied" | "dismissed" | undefined>>({});
+  return (
+    <PanelCard title="Campaign Recommendations" badge={`${CAMPAIGN_RECOS.length} suggestions`} badgeColor="accent" delay={0.36}>
+      <p className="text-[10px] text-muted-foreground mb-3">Suggested campaign-level changes with a one-liner backing.</p>
+      <div className="space-y-2">
+        {CAMPAIGN_RECOS.map(r => {
+          const st = applied[r.id];
+          return (
+            <div key={r.id} className="p-3 rounded-xl bg-surface-2 border border-subtle flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-mono text-xs text-foreground truncate">{r.campaign}</span>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-surface-3 text-[9px] text-muted-foreground">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: r.platformColor }} />{r.platform}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono ${tonePill[r.changeTone]}`}>{r.change}</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground flex items-start gap-1"><Lightbulb size={10} className="mt-0.5 flex-shrink-0 text-sw-amber" />{r.reason}</p>
+              </div>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button onClick={() => { setApplied(p => ({ ...p, [r.id]: "applied" })); toast({ title: "Recommendation applied", description: r.campaign }); }}
+                  disabled={!!st}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${st === "applied" ? "bg-sw-green-dim text-sw-green" : st === "dismissed" ? "bg-surface-3 text-muted-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
+                  {st === "applied" ? "✓ Applied" : "Apply"}
+                </button>
+                <button onClick={() => setApplied(p => ({ ...p, [r.id]: "dismissed" }))}
+                  disabled={!!st}
+                  className="px-2 py-1 rounded-lg text-[10px] font-medium text-muted-foreground hover:bg-surface-3 disabled:opacity-50">
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </PanelCard>
+  );
+};
+
 const BudgetOptimiserView: React.FC = () => {
   const [samePlatformApplied, setSamePlatformApplied] = useState<Record<number, boolean>>({});
   const [crossPlatformApplied, setCrossPlatformApplied] = useState<Record<number, boolean>>({});
