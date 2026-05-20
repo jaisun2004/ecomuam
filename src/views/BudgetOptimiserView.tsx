@@ -250,27 +250,106 @@ const SHELF_VALUE_OPTIONS: Record<string, string[]> = {
 const SHELF_ACTION_OPTIONS = ["Reduce bid −10%", "Reduce bid −20%", "Reduce budget −20%", "Reduce budget −30% & bid −15%", "Pause campaign", "Raise bid +15%", "Raise bid +25% (defensive)"];
 const SHELF_SCOPE_OPTIONS = ["All platforms", "Talabat", "Noon", "Noon Minutes", "Carrefour"];
 
-const StandardisedRulesPanel: React.FC = () => {
+const ShelfMonitoringSection: React.FC = () => {
   const [on, setOn] = useState<Record<string, boolean>>(Object.fromEntries(STD_RULES.map(r => [r.id, !!r.defaultOn])));
+  const [signal, setSignal] = useState(SHELF_SIGNAL_OPTIONS[0]);
+  const [op, setOp] = useState(SHELF_OP_OPTIONS[0]);
+  const [val, setVal] = useState(SHELF_VALUE_OPTIONS[SHELF_SIGNAL_OPTIONS[0]][0]);
+  const [scope, setScope] = useState(SHELF_SCOPE_OPTIONS[0]);
+  const [shelfAction, setShelfAction] = useState(SHELF_ACTION_OPTIONS[0]);
+  const [customShelfRules, setCustomShelfRules] = useState<{ id: string; signal: string; op: string; val: string; scope: string; action: string }[]>([
+    { id: "s1", signal: "Competitors OOS", op: "≥", val: "3", scope: "Talabat", action: "Reduce budget −30% & bid −15%" },
+  ]);
+
+  const valueOpts = SHELF_VALUE_OPTIONS[signal] || ["0"];
+  const addShelfRule = () => {
+    const r = { id: `s${Date.now()}`, signal, op, val, scope, action: shelfAction };
+    setCustomShelfRules(p => [...p, r]);
+    toast({ title: "Shelf rule added", description: `IF ${signal} ${op} ${val} (${scope}) → ${shelfAction}` });
+  };
+  const removeShelfRule = (id: string) => setCustomShelfRules(p => p.filter(r => r.id !== id));
+
   return (
-    <PanelCard title="Standardised Optimisation Rules" badge="Always-On" badgeColor="purple" delay={0.32}>
-      <p className="text-[10px] text-muted-foreground mb-3">Pre-built rules that monitor competition & inventory signals and auto-adjust bid / budget on Talabat, Noon, Noon Minutes and Carrefour.</p>
-      <div className="grid grid-cols-2 gap-3">
-        {STD_RULES.map(r => {
-          const isOn = on[r.id];
-          return (
-            <div key={r.id} className={`p-3 rounded-xl border transition-colors ${isOn ? "bg-surface-2 border-primary/30" : "bg-surface-2 border-subtle"}`}>
-              <div className="flex items-start justify-between gap-2 mb-1.5">
-                <p className="text-xs font-medium text-foreground flex-1">{r.name}</p>
-                <Switch checked={isOn} onCheckedChange={(v) => { setOn(p => ({ ...p, [r.id]: v })); toast({ title: v ? "Rule enabled" : "Rule disabled", description: r.name }); }} />
+    <div className="space-y-4">
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3 font-medium">Shelf Monitoring KPI Rules</p>
+        <div className="grid grid-cols-2 gap-3">
+          {STD_RULES.map(r => {
+            const isOn = on[r.id];
+            return (
+              <div key={r.id} className={`p-3 rounded-xl border transition-colors ${isOn ? "bg-surface-2 border-primary/30" : "bg-surface-2 border-subtle"}`}>
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <p className="text-xs font-medium text-foreground flex-1">{r.name}</p>
+                  <Switch checked={isOn} onCheckedChange={(v) => { setOn(p => ({ ...p, [r.id]: v })); toast({ title: v ? "Rule enabled" : "Rule disabled", description: r.name }); }} />
+                </div>
+                <p className="text-[10px] text-muted-foreground mb-2">{r.why}</p>
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-mono ${toneClasses[r.tone]}`}>{r.impact}</span>
               </div>
-              <p className="text-[10px] text-muted-foreground mb-2">{r.why}</p>
-              <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-mono ${toneClasses[r.tone]}`}>{r.impact}</span>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </PanelCard>
+
+      <div className="border-t border-subtle pt-4">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3 font-medium">Build a Shelf Monitoring Rule</p>
+        <div className="grid grid-cols-12 gap-2 items-end">
+          <div className="col-span-3">
+            <label className="text-[10px] text-muted-foreground">Signal</label>
+            <Select value={signal} onValueChange={(v) => { setSignal(v); setVal(SHELF_VALUE_OPTIONS[v][0]); }}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{SHELF_SIGNAL_OPTIONS.map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <label className="text-[10px] text-muted-foreground">Op</label>
+            <Select value={op} onValueChange={setOp}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{SHELF_OP_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-2">
+            <label className="text-[10px] text-muted-foreground">Value</label>
+            <Select value={val} onValueChange={setVal}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{valueOpts.map(v => <SelectItem key={v} value={v} className="text-xs">{v}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-2">
+            <label className="text-[10px] text-muted-foreground">Scope</label>
+            <Select value={scope} onValueChange={setScope}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{SHELF_SCOPE_OPTIONS.map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-3">
+            <label className="text-[10px] text-muted-foreground">Action</label>
+            <Select value={shelfAction} onValueChange={setShelfAction}>
+              <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>{SHELF_ACTION_OPTIONS.map(a => <SelectItem key={a} value={a} className="text-xs">{a}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <button onClick={addShelfRule} className="w-full h-9 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 inline-flex items-center justify-center gap-1">
+              <Plus size={12} />
+            </button>
+          </div>
+        </div>
+
+        {customShelfRules.length > 0 && (
+          <div className="mt-3">
+            <p className="text-[10px] text-muted-foreground mb-2">Custom shelf rules ({customShelfRules.length})</p>
+            <div className="flex flex-wrap gap-2">
+              {customShelfRules.map(r => (
+                <span key={r.id} className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sw-amber-dim text-sw-amber text-[10px] font-mono">
+                  IF {r.signal} {r.op} {r.val} ({r.scope}) → {r.action}
+                  <button onClick={() => removeShelfRule(r.id)} className="hover:text-sw-red"><X size={10} /></button>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
