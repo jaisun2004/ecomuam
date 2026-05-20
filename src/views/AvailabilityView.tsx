@@ -3,7 +3,8 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ReferenceLine } from "recharts";
-import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
+import { AlertTriangle, Megaphone, MapPin, Store, Info, Truck, Zap } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
@@ -297,33 +298,49 @@ const AvailabilityView: React.FC = () => {
         </div>
       </PanelCard>
 
-      {/* Stock Forecast */}
-      <PanelCard title="Stock-out Forecast" badge="AI Prediction" badgeColor="purple" delay={0.45}>
-        <div className="grid grid-cols-2 gap-2">
-          {stockForecast.map((s, i) => (
-            <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${
-              s.trend === "critical" ? "bg-sw-red-dim/50 border-sw-red/20" : s.trend === "warning" ? "bg-sw-amber-dim/50 border-sw-amber/20" : "bg-surface-2 border-subtle"
-            }`}>
-              <div className="flex-1">
-                <p className="text-xs text-foreground font-medium">{s.sku}</p>
-                <p className="text-[10px] text-muted-foreground">{s.platform} · Stock: {s.currentStock}%</p>
-              </div>
-              <div className="text-right">
-                <p className={`font-mono text-sm font-bold ${
-                  s.trend === "critical" ? "text-sw-red" : s.trend === "warning" ? "text-sw-amber" : "text-sw-green"
-                }`}>{s.daysToOOS}d</p>
-                <p className="text-[9px] text-muted-foreground">to stock-out</p>
-              </div>
-              <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  actionStates[i] ? "bg-sw-green-dim text-sw-green" :
-                  s.trend === "critical" ? "bg-sw-red/20 text-sw-red hover:bg-sw-red/30" : "bg-surface-3 text-foreground hover:bg-primary/10"
-                }`}>
-                {actionStates[i] ? "✓ Ordered" : "Reorder"}
-              </button>
+      {/* Replenishment Lead-Time Heatmap (replaces Stock-out Forecast) */}
+      <PanelCard title="Replenishment Lead-Time Heatmap" badge="Days to restock" badgeColor="purple" delay={0.45}>
+        <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
+        {(() => {
+          const skus = ["Pepsi 1L", "7UP 1L", "Mountain Dew 1L", "Aquafina 1.5L", "Mirinda Orange 1L", "Lipton Ice Tea Peach 320ml"];
+          const plats = ["Talabat", "Noon", "Noon Minutes", "Carrefour"];
+          const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
+          const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
+          return (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-muted-foreground border-b border-subtle">
+                    <th className="text-left py-2 font-normal">SKU</th>
+                    {plats.map(p => <th key={p} className="text-center py-2 font-normal">{p}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {skus.map((sku, ri) => (
+                    <tr key={sku} className={ri % 2 === 0 ? "bg-surface-2/50" : ""}>
+                      <td className="py-2 text-foreground">{sku}</td>
+                      {plats.map(p => {
+                        const days = seed(sku, p);
+                        const tier = days <= 1 ? "green" : days <= 3 ? "amber" : "red";
+                        const bg = tier === "green" ? "bg-sw-green-dim text-sw-green" : tier === "amber" ? "bg-sw-amber-dim text-sw-amber" : "bg-sw-red-dim text-sw-red";
+                        return (
+                          <td key={p} className="py-1.5 text-center">
+                            <button
+                              onClick={() => toast({ title: "Restock task created", description: `${sku} on ${p} — ${days}d lead time` })}
+                              className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-1 rounded-md ${bg} hover:opacity-80 transition-opacity`}>
+                              {intransit(sku, p) && <Truck size={10} />}
+                              {days}d
+                            </button>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
-        </div>
+          );
+        })()}
       </PanelCard>
       </>) : (
         <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
