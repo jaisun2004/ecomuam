@@ -3,7 +3,7 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, PieChart, Pie, Cell } from "recharts";
-import { ArrowRight, ChevronDown, ChevronUp, X, Plus } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, X, Plus, Lightbulb, Wand2 } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -352,6 +352,9 @@ const BudgetOptimiserView: React.FC = () => {
             ))}
           </div>
         </PanelCard>
+
+        <StandardisedRulesPanel />
+        <CampaignRecommendationsPanel />
 
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
           <button onClick={() => setGuardrailOpen(!guardrailOpen)} className="w-full p-4 flex items-center justify-between hover:bg-surface-2 transition-colors">
