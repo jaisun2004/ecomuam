@@ -66,7 +66,7 @@ const searchDataByPlatform: Record<string, { kw: string; you: number; comp: numb
     { kw: "digestive beverages", you: 27, comp: 40, compName: "Masafi", status: "losing", poaching: true },
     { kw: "kids beverages", you: 18, comp: 47, compName: "Coca-Cola", status: "losing" },
   ],
-  Talabat: [
+  "Talabat Pro": [
     { kw: "butter beverages", you: 25, comp: 38, compName: "Coca-Cola", status: "losing" },
     { kw: "cream beverages", you: 33, comp: 41, compName: "Almarai", status: "losing", poaching: true },
     { kw: "glucose beverages", you: 11, comp: 52, compName: "Almarai", status: "losing" },

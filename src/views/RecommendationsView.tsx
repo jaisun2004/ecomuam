@@ -138,7 +138,7 @@ const HEALTH_META: Record<Health, { label: string; icon: React.ElementType; cls:
 
 const PLATFORM_TINT: Record<Platform, string> = {
   Talabat: "bg-sw-amber-dim text-sw-amber",
-  Talabat: "bg-sw-purple-dim text-sw-purple",
+  "Talabat Pro": "bg-sw-purple-dim text-sw-purple",
   "Noon Minutes": "bg-sw-cyan-dim text-sw-cyan",
 };
 

@@ -10,7 +10,7 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 500ml", "Mountain Dew 1L", "Lipton Ice Tea 320ml"];
 const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", Talabat: "#FC8019" };
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", "Talabat Pro": "#FC8019" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
@@ -127,7 +127,7 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
     { sku: "Pepsi 1L", yourPrice: "AED 43", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
     { sku: "Lipton Ice Tea 320ml", yourPrice: "AED 22", compPrice: "AED 20", parity: false, competitor: "Almarai" },
   ],
-  Talabat: [
+  "Talabat Pro": [
     { sku: "Pepsi 1L", yourPrice: "AED 44", compPrice: "AED 39", parity: false, competitor: "Coca-Cola" },
     { sku: "7UP 1L", yourPrice: "AED 38", compPrice: "AED 34", parity: false, competitor: "Coca-Cola" },
     { sku: "Aquafina 500ml", yourPrice: "AED 48", compPrice: "AED 44", parity: false, competitor: "Masafi" },
