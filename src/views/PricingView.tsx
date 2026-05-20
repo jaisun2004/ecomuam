@@ -314,77 +314,134 @@ const PricingView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <PanelCard title="Platform Price Index" badge="vs Competition" badgeColor="accent" delay={0.35}>
-          <div className="space-y-3">
-            {filteredPlatformPricing.map((p) => (
-              <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="flex items-center gap-2 text-xs text-foreground">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                    {p.platform}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
-                      {p.avgIndex.toFixed(2)}x
-                    </span>
-                    <button onClick={() => setViewThroughPlatform(viewThroughPlatform === p.platform ? null : p.platform)}
-                      className="px-2 py-0.5 rounded text-[9px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-0.5">
-                      <Eye size={9} /> View
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 text-[10px]">
-                  <span className="text-sw-green">{p.skusBelowComp} below comp</span>
-                  <span className="text-muted-foreground">{p.parity} at parity</span>
-                  <span className="text-sw-red">{p.skusAboveComp} above comp</span>
-                </div>
-                {/* View through detail */}
-                {viewThroughPlatform === p.platform && platformPricingDetail[p.platform] && (
-                  <div className="mt-3 pt-3 border-t border-subtle">
-                    <table className="w-full text-[10px]">
-                      <thead>
-                        <tr className="text-muted-foreground">
-                          <th className="text-left py-1 font-normal">SKU</th>
-                          <th className="text-right py-1 font-normal">You</th>
-                          <th className="text-right py-1 font-normal">Comp</th>
-                          <th className="text-center py-1 font-normal">Parity</th>
-                          <th className="text-right py-1 font-normal">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {platformPricingDetail[p.platform].map((row, ri) => (
-                          <tr key={ri}>
-                            <td className="py-1 text-foreground">{row.sku}</td>
-                            <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
-                            <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
-                            <td className="py-1 text-center">
-                              {row.parity ? (
-                                <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
-                              ) : (
-                                <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-red/15 text-sw-red">✗</span>
-                              )}
-                            </td>
-                            <td className="py-1 text-right">
-                              {!row.parity && (
-                                <button
-                                  onClick={() => setAlertTeamStates(pr => ({ ...pr, [`${p.platform}-${ri}`]: true }))}
-                                  className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
-                                    alertTeamStates[`${p.platform}-${ri}`] ? "bg-sw-green-dim text-sw-green" : "bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25"
-                                  }`}>
-                                  <Bell size={8} />
-                                  {alertTeamStates[`${p.platform}-${ri}`] ? "✓ Alerted" : "Alert Team"}
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            ))}
+        <PanelCard title="Platform Price Index" badge={ppiMode === "competitors" ? "vs Competition" : "Own SKU × Platforms"} badgeColor="accent" delay={0.35}>
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div className="inline-flex rounded-lg bg-surface-3 p-0.5">
+              <button onClick={() => setPpiMode("competitors")}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium ${ppiMode === "competitors" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
+                Competitors
+              </button>
+              <button onClick={() => setPpiMode("own")}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium ${ppiMode === "own" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
+                Own SKU × Platforms
+              </button>
+            </div>
+            {ppiMode === "own" && (
+              <Select value={ppiSku} onValueChange={setPpiSku}>
+                <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {skuOptions.map(s => <SelectItem key={s} value={s} className="text-[11px]">{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            )}
           </div>
+
+          {ppiMode === "competitors" ? (
+            <div className="space-y-3">
+              {filteredPlatformPricing.map((p) => (
+                <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="flex items-center gap-2 text-xs text-foreground">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                      {p.platform}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
+                        {p.avgIndex.toFixed(2)}x
+                      </span>
+                      <button onClick={() => setViewThroughPlatform(viewThroughPlatform === p.platform ? null : p.platform)}
+                        className="px-2 py-0.5 rounded text-[9px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-0.5">
+                        <Eye size={9} /> View
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px]">
+                    <span className="text-sw-green">{p.skusBelowComp} below comp</span>
+                    <span className="text-muted-foreground">{p.parity} at parity</span>
+                    <span className="text-sw-red">{p.skusAboveComp} above comp</span>
+                  </div>
+                  {viewThroughPlatform === p.platform && platformPricingDetail[p.platform] && (
+                    <div className="mt-3 pt-3 border-t border-subtle">
+                      <table className="w-full text-[10px]">
+                        <thead>
+                          <tr className="text-muted-foreground">
+                            <th className="text-left py-1 font-normal">SKU</th>
+                            <th className="text-right py-1 font-normal">You</th>
+                            <th className="text-right py-1 font-normal">Comp</th>
+                            <th className="text-center py-1 font-normal">Parity</th>
+                            <th className="text-right py-1 font-normal">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {platformPricingDetail[p.platform].map((row, ri) => (
+                            <tr key={ri}>
+                              <td className="py-1 text-foreground">{row.sku}</td>
+                              <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
+                              <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
+                              <td className="py-1 text-center">
+                                {row.parity ? (
+                                  <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
+                                ) : (
+                                  <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-red/15 text-sw-red">✗</span>
+                                )}
+                              </td>
+                              <td className="py-1 text-right">
+                                {!row.parity && (
+                                  <button
+                                    onClick={() => setAlertTeamStates(pr => ({ ...pr, [`${p.platform}-${ri}`]: true }))}
+                                    className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                                      alertTeamStates[`${p.platform}-${ri}`] ? "bg-sw-green-dim text-sw-green" : "bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25"
+                                    }`}>
+                                    <Bell size={8} />
+                                    {alertTeamStates[`${p.platform}-${ri}`] ? "✓ Alerted" : "Alert Team"}
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            (() => {
+              const plats = ["Talabat", "Noon", "Noon Minutes", "Carrefour"];
+              const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
+              const data = base.map((row: any, i: number) => ({
+                day: row.day,
+                Talabat: row.yours,
+                Noon: row.yours - 1 + (i % 3),
+                "Noon Minutes": row.yours + 2 - (i % 4),
+                Carrefour: row.yours - 2 + (i % 5),
+              }));
+              return (
+                <>
+                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <LineChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
+                      <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={5} />
+                      <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
+                      <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
+                      {plats.map(p => (
+                        <Line key={p} type="monotone" dataKey={p} stroke={platformColors[p] || "#888"} strokeWidth={2} dot={false} name={p} />
+                      ))}
+                    </LineChart>
+                  </ResponsiveContainer>
+                  <div className="flex items-center gap-3 mt-2 flex-wrap">
+                    {plats.map(p => (
+                      <span key={p} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="w-2.5 h-1 rounded" style={{ backgroundColor: platformColors[p] || "#888" }} />{p}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              );
+            })()
+          )}
         </PanelCard>
       </div>
 
