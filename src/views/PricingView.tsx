@@ -417,10 +417,15 @@ const PricingView: React.FC = () => {
                 "Noon Minutes": row.yours + 2 - (i % 4),
                 Carrefour: row.yours - 2 + (i % 5),
               }));
+              const latest: any = data[data.length - 1] || {};
+              const prev: any = data[data.length - 8] || latest;
+              const prices = plats.map(p => Number(latest[p] ?? 0));
+              const minP = Math.min(...prices);
+              const maxP = Math.max(...prices);
               return (
                 <>
                   <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
-                  <ResponsiveContainer width="100%" height={220}>
+                  <ResponsiveContainer width="100%" height={180}>
                     <LineChart data={data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
                       <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={5} />
@@ -431,12 +436,37 @@ const PricingView: React.FC = () => {
                       ))}
                     </LineChart>
                   </ResponsiveContainer>
-                  <div className="flex items-center gap-3 mt-2 flex-wrap">
-                    {plats.map(p => (
-                      <span key={p} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <span className="w-2.5 h-1 rounded" style={{ backgroundColor: platformColors[p] || "#888" }} />{p}
-                      </span>
-                    ))}
+                  <div className="mt-3 pt-3 border-t border-subtle">
+                    <p className="text-[10px] text-muted-foreground mb-1.5">Current prices · 7-day change</p>
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="text-muted-foreground">
+                          <th className="text-left py-1 font-normal">Platform</th>
+                          <th className="text-right py-1 font-normal">Price (AED)</th>
+                          <th className="text-right py-1 font-normal">Δ 7d</th>
+                          <th className="text-right py-1 font-normal">vs Min</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {plats.map(p => {
+                          const cur = Number(latest[p] ?? 0);
+                          const pr = Number(prev[p] ?? cur);
+                          const delta = cur - pr;
+                          return (
+                            <tr key={p} className="border-t border-subtle/50">
+                              <td className="py-1.5 text-foreground">
+                                <span className="inline-flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] || "#888" }} />{p}
+                                </span>
+                              </td>
+                              <td className={`py-1.5 text-right font-mono ${cur === minP ? "text-sw-green font-bold" : cur === maxP ? "text-sw-red" : "text-foreground"}`}>{cur.toFixed(2)}</td>
+                              <td className={`py-1.5 text-right font-mono ${delta < 0 ? "text-sw-green" : delta > 0 ? "text-sw-red" : "text-muted-foreground"}`}>{delta === 0 ? "0" : `${delta > 0 ? "+" : ""}${delta.toFixed(2)}`}</td>
+                              <td className="py-1.5 text-right font-mono text-muted-foreground">{cur === minP ? "—" : `+${(cur - minP).toFixed(2)}`}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </>
               );
@@ -445,83 +475,47 @@ const PricingView: React.FC = () => {
         </PanelCard>
       </div>
 
-      {/* Price History with SKU + Platform toggle */}
-      <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Price History — 30 Days" badge={`${selectedSku} · ${priceHistoryPlatform === "All" ? "All Platforms" : priceHistoryPlatform}`} badgeColor="accent" delay={0.4}>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[10px] text-muted-foreground">Toggle:</span>
-            <button onClick={() => setPriceHistoryToggle("sku")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "sku" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>SKU</button>
-            <button onClick={() => setPriceHistoryToggle("platform")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "platform" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>Platform</button>
+      {/* Price History */}
+      <PanelCard title="Price History — 30 Days" badge={`${selectedSku} · ${priceHistoryPlatform === "All" ? "All Platforms" : priceHistoryPlatform}`} badgeColor="accent" delay={0.4}>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[10px] text-muted-foreground">Toggle:</span>
+          <button onClick={() => setPriceHistoryToggle("sku")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "sku" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>SKU</button>
+          <button onClick={() => setPriceHistoryToggle("platform")} className={`px-2 py-1 rounded text-[10px] font-medium ${priceHistoryToggle === "platform" ? "bg-primary/20 text-primary" : "bg-surface-3 text-muted-foreground"}`}>Platform</button>
+        </div>
+        {priceHistoryToggle === "sku" ? (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] text-muted-foreground">SKU</span>
+            <Select value={selectedSku} onValueChange={setSelectedSku}>
+              <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {skuOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
-          {priceHistoryToggle === "sku" ? (
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] text-muted-foreground">SKU</span>
-              <Select value={selectedSku} onValueChange={setSelectedSku}>
-                <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {skuOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] text-muted-foreground">Platform</span>
-              <Select value={priceHistoryPlatform} onValueChange={setPriceHistoryPlatform}>
-                <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {["All", ...platformOptions].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={priceHistory}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
-              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={6} />
-              <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
-              <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
-              <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price" />
-              <Line type="monotone" dataKey="comp1" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name={compNames[0]} />
-              <Line type="monotone" dataKey="comp2" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[1]} />
-              <Line type="monotone" dataKey="comp3" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[2]} />
-            </LineChart>
-          </ResponsiveContainer>
-        </PanelCard>
-
-        <PanelCard title="Price Advantage — Keyword Attack" badge="Lower-Priced SKUs" badgeColor="green" delay={0.45}>
-          <p className="text-[10px] text-muted-foreground mb-3">SKUs where you're priced lower than a like-for-like competitor. Target their branded keywords with campaigns.</p>
-          <div className="space-y-2">
-            {priceAdvantageData.map((item, i) => (
-              <div key={i} className="p-3 rounded-xl border border-sw-green/20 bg-sw-green-dim/10">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs text-foreground font-medium">{item.sku}</span>
-                  <span className="font-mono text-[10px] text-sw-green px-1.5 py-0.5 rounded-full bg-sw-green-dim">{item.gap} cheaper</span>
-                </div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] text-muted-foreground">You <span className="font-mono text-foreground">{item.yourPrice}</span> vs {item.competitor} <span className="font-mono text-sw-red">{item.compPrice}</span> on {item.platform}</span>
-                </div>
-                <div className="mb-2">
-                  <span className="text-[10px] text-muted-foreground">Target keywords: </span>
-                  {item.keywords.map((kw, ki) => (
-                    <span key={ki} className="inline-block font-mono text-[9px] px-1.5 py-0.5 rounded bg-surface-3 text-foreground mr-1 mb-1">{kw}</span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setKeywordCampaignStates(p => ({ ...p, [i]: true }))}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      keywordCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}>
-                    <Megaphone size={10} />
-                    {keywordCampaignStates[i] ? "✓ Campaign Triggered" : "Attack Their Keywords"}
-                  </button>
-                  <span className="text-[9px] text-muted-foreground">Est. CPC: {item.estCpc} · Est. ROAS: {item.estRoas}</span>
-                </div>
-              </div>
-            ))}
+        ) : (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] text-muted-foreground">Platform</span>
+            <Select value={priceHistoryPlatform} onValueChange={setPriceHistoryPlatform}>
+              <SelectTrigger className="w-[160px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {["All", ...platformOptions].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
-        </PanelCard>
-      </div>
+        )}
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={priceHistory}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
+            <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={6} />
+            <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
+            <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
+            <Line type="monotone" dataKey="yours" stroke="hsl(228,90%,64%)" strokeWidth={2} dot={false} name="Your Price" />
+            <Line type="monotone" dataKey="comp1" stroke="hsl(0,76%,57%)" strokeWidth={2} strokeDasharray="5 5" dot={false} name={compNames[0]} />
+            <Line type="monotone" dataKey="comp2" stroke="hsl(38,92%,50%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[1]} />
+            <Line type="monotone" dataKey="comp3" stroke="hsl(160,70%,48%)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} name={compNames[2]} />
+          </LineChart>
+        </ResponsiveContainer>
+      </PanelCard>
       </>) : (
         <div className="space-y-5">
           <PanelCard title="Price Index Trend — 30 Days" badge="You vs Category Avg" badgeColor="accent" delay={0}>
