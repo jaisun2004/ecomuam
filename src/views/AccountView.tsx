@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
 const platforms = [
-  { name: "Amazon Seller Central", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
-  { name: "Blinkit Brand Portal", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
-  { name: "Flipkart Seller Hub", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
-  { name: "Zepto Brand Portal", status: "SYNCING", color: "text-sw-amber bg-sw-amber-dim" },
+  { name: "Carrefour Seller Central", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
+  { name: "Talabat Brand Portal", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
+  { name: "Noon Seller Hub", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
+  { name: "Noon Minutes Brand Portal", status: "SYNCING", color: "text-sw-amber bg-sw-amber-dim" },
   { name: "Meesho · Myntra", status: "connect", color: "" },
 ];
 
@@ -28,7 +28,7 @@ const AccountView: React.FC = () => {
           </div>
           <table className="w-full text-xs">
             <tbody>
-              <tr><td className="py-2 text-muted-foreground">Plan</td><td className="py-2 text-right"><span className="text-sw-green font-mono">Pro · ₹24,999/mo</span></td></tr>
+              <tr><td className="py-2 text-muted-foreground">Plan</td><td className="py-2 text-right"><span className="text-sw-green font-mono">Pro · AED 24,999/mo</span></td></tr>
               <tr><td className="py-2 text-muted-foreground">SKUs Tracked</td><td className="py-2 text-right font-mono text-foreground">48 / 100</td></tr>
               <tr><td className="py-2 text-muted-foreground">Team Members</td><td className="py-2 text-right text-foreground">6 users</td></tr>
               <tr><td className="py-2 text-muted-foreground">Data Refresh</td><td className="py-2 text-right"><span className="text-sw-green">Every 15 min</span></td></tr>

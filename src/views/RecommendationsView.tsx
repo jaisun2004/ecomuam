@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from "recharts";
 
-type Platform = "Blinkit" | "Instamart" | "Zepto";
+type Platform = "Talabat" | "Talabat" | "Noon Minutes";
 type Health = "high_competition" | "high_oos_risk" | "efficiency_winner";
 type Lens = "keyword" | "pincode" | "budget";
 
@@ -41,7 +41,7 @@ interface KeywordReco {
 
 const MOCK: KeywordReco[] = [
   {
-    id: "k1", platform: "Blinkit", category: "Breakfast Staples",
+    id: "k1", platform: "Talabat", category: "Breakfast Staples",
     target_keyword: "Organic Ghee",
     original_recommendation: "Increase bid by 15% to capture Top-of-Search",
     agency_insight_signal: "Reject. Competitor SOV is 70% in 560034.",
@@ -52,9 +52,9 @@ const MOCK: KeywordReco[] = [
     estimated_waste_avoided: 48000,
   },
   {
-    id: "k2", platform: "Blinkit", category: "Breakfast Staples",
+    id: "k2", platform: "Talabat", category: "Breakfast Staples",
     target_keyword: "Muesli 1kg",
-    original_recommendation: "Maintain bid at ₹14 — performing well",
+    original_recommendation: "Maintain bid at AED 14 — performing well",
     agency_insight_signal: "Bulk-verify. CVR 9.2% vs cat avg 4.1%.",
     agency_reasoning: "Efficiency winner. Apply +10% budget cap to capture incremental volume in 8 winning pincodes.",
     health: "efficiency_winner", risk_level: "low",
@@ -63,18 +63,18 @@ const MOCK: KeywordReco[] = [
     estimated_waste_avoided: 0,
   },
   {
-    id: "k3", platform: "Zepto", category: "Late Night Snacks",
+    id: "k3", platform: "Noon Minutes", category: "Late Night Snacks",
     target_keyword: "Instant Noodles",
     original_recommendation: "Increase bid +22% — slot available 11pm-2am",
     agency_insight_signal: "Pause. 4 dark stores OOS for top SKU.",
-    agency_reasoning: "ATC→Checkout fell 38% last 7d in Mumbai cluster. Resume after restock ETA 48h.",
+    agency_reasoning: "ATC→Checkout fell 38% last 7d in Abu Dhabi cluster. Resume after restock ETA 48h.",
     health: "high_oos_risk", risk_level: "high",
     current_sov: 28, suggested_bid: { current: 19, suggested: 0 },
     winning_pincodes: ["400076", "400053"],
     estimated_waste_avoided: 62000,
   },
   {
-    id: "k4", platform: "Zepto", category: "Late Night Snacks",
+    id: "k4", platform: "Noon Minutes", category: "Late Night Snacks",
     target_keyword: "Cold Coffee",
     original_recommendation: "Steady — no change suggested",
     agency_insight_signal: "Bulk-verify. CPC 22% below cat median.",
@@ -85,10 +85,10 @@ const MOCK: KeywordReco[] = [
     estimated_waste_avoided: 0,
   },
   {
-    id: "k5", platform: "Instamart", category: "Beverages",
+    id: "k5", platform: "Talabat", category: "Beverages",
     target_keyword: "Energy Drink",
     original_recommendation: "Increase bid +18% to defend rank #2",
-    agency_insight_signal: "Reject. Category margin can't sustain ₹/click ask.",
+    agency_insight_signal: "Reject. Category margin can't sustain AED /click ask.",
     agency_reasoning: "Re-allocate to 'sports drink 500ml' where SOV is 12% with headroom to 30%.",
     health: "high_competition", risk_level: "medium",
     current_sov: 31, suggested_bid: { current: 24, suggested: 18 },
@@ -96,7 +96,7 @@ const MOCK: KeywordReco[] = [
     estimated_waste_avoided: 31000,
   },
   {
-    id: "k6", platform: "Instamart", category: "Snacks",
+    id: "k6", platform: "Talabat", category: "Snacks",
     target_keyword: "Protein Bar",
     original_recommendation: "Maintain — strong ROAS",
     agency_insight_signal: "Bulk-verify. Pincode availability 92%.",
@@ -107,18 +107,18 @@ const MOCK: KeywordReco[] = [
     estimated_waste_avoided: 0,
   },
   {
-    id: "k7", platform: "Blinkit", category: "Beverages",
+    id: "k7", platform: "Talabat", category: "Beverages",
     target_keyword: "Cold Pressed Juice",
     original_recommendation: "Bid +25% — auction pressure rising",
     agency_insight_signal: "Hold. OOS risk in 3 of 7 winning pincodes.",
-    agency_reasoning: "Wait 24h — restock confirmed. Avoids ₹22k waste on dead clicks.",
+    agency_reasoning: "Wait 24h — restock confirmed. Avoids AED 22k waste on dead clicks.",
     health: "high_oos_risk", risk_level: "medium",
     current_sov: 19, suggested_bid: { current: 21, suggested: 21 },
     winning_pincodes: ["110024", "560066"],
     estimated_waste_avoided: 22000,
   },
   {
-    id: "k8", platform: "Zepto", category: "Late Night Snacks",
+    id: "k8", platform: "Noon Minutes", category: "Late Night Snacks",
     target_keyword: "Chips Combo Pack",
     original_recommendation: "Bid +12% to claim ToS",
     agency_insight_signal: "Reject. Competitor SOV 64% in late-night slot.",
@@ -137,25 +137,25 @@ const HEALTH_META: Record<Health, { label: string; icon: React.ElementType; cls:
 };
 
 const PLATFORM_TINT: Record<Platform, string> = {
-  Blinkit: "bg-sw-amber-dim text-sw-amber",
-  Instamart: "bg-sw-purple-dim text-sw-purple",
-  Zepto: "bg-sw-cyan-dim text-sw-cyan",
+  Talabat: "bg-sw-amber-dim text-sw-amber",
+  Talabat: "bg-sw-purple-dim text-sw-purple",
+  Noon Minutes: "bg-sw-cyan-dim text-sw-cyan",
 };
 
 const LEDGER = [
-  { date: "May 2", platform: "Zepto", decision: "Rejected", original: "Bid +30% on 'frozen paratha'", saved: 84000, why: "Competitor SOV 78% in target pincodes" },
-  { date: "Apr 28", platform: "Blinkit", decision: "Modified", original: "+20% budget on 'organic ghee'", saved: 48000, why: "Pivoted to long-tail variants" },
-  { date: "Apr 24", platform: "Instamart", decision: "Archived", original: "Audience expansion 'health-conscious'", saved: 36000, why: "Overlap with existing winning segment" },
-  { date: "Apr 19", platform: "Zepto", decision: "Rejected", original: "Bid +15% on 'instant noodles'", saved: 62000, why: "ATC→Checkout dropped on OOS" },
-  { date: "Apr 14", platform: "Blinkit", decision: "Modified", original: "Bid +25% on 'cold pressed juice'", saved: 22000, why: "Held 24h for restock" },
-  { date: "Apr 9", platform: "Instamart", decision: "Rejected", original: "+18% on 'energy drink'", saved: 31000, why: "Margin pressure unsustainable" },
+  { date: "May 2", platform: "Noon Minutes", decision: "Rejected", original: "Bid +30% on 'frozen paratha'", saved: 84000, why: "Competitor SOV 78% in target pincodes" },
+  { date: "Apr 28", platform: "Talabat", decision: "Modified", original: "+20% budget on 'organic ghee'", saved: 48000, why: "Pivoted to long-tail variants" },
+  { date: "Apr 24", platform: "Talabat", decision: "Archived", original: "Audience expansion 'health-conscious'", saved: 36000, why: "Overlap with existing winning segment" },
+  { date: "Apr 19", platform: "Noon Minutes", decision: "Rejected", original: "Bid +15% on 'instant noodles'", saved: 62000, why: "ATC→Checkout dropped on OOS" },
+  { date: "Apr 14", platform: "Talabat", decision: "Modified", original: "Bid +25% on 'cold pressed juice'", saved: 22000, why: "Held 24h for restock" },
+  { date: "Apr 9", platform: "Talabat", decision: "Rejected", original: "+18% on 'energy drink'", saved: 31000, why: "Margin pressure unsustainable" },
 ];
 
-const fmtINR = (n: number) => `₹${(n / 1000).toFixed(0)}k`;
-const fmtINRLarge = (n: number) => n >= 100000 ? `₹${(n / 100000).toFixed(2)}L` : fmtINR(n);
+const fmtINR = (n: number) => `AED ${(n / 1000).toFixed(0)}k`;
+const fmtINRLarge = (n: number) => n >= 100000 ? `AED ${(n / 100000).toFixed(2)}L` : fmtINR(n);
 
 const RecommendationsView: React.FC = () => {
-  const [platform, setPlatform] = useState<Platform>("Blinkit");
+  const [platform, setPlatform] = useState<Platform>("Talabat");
   const [lens, setLens] = useState<Lens>("keyword");
   const [policy, setPolicy] = useState<"convenience" | "expert">("expert");
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -229,7 +229,7 @@ const RecommendationsView: React.FC = () => {
       {/* Strategic Header KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <KPICard
-          title="Total Keyword Spend" value="₹6.84L" delta="MTD" deltaType="neutral"
+          title="Total Keyword Spend" value="AED 6.84L" delta="MTD" deltaType="neutral"
           sub="Across 142 active sponsored keywords" accentColor="bg-sw-purple" delay={0}
         />
         <KPICard
@@ -275,9 +275,9 @@ const RecommendationsView: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Tabs value={platform} onValueChange={(v) => setPlatform(v as Platform)}>
           <TabsList>
-            <TabsTrigger value="Blinkit">Blinkit</TabsTrigger>
-            <TabsTrigger value="Instamart">Instamart</TabsTrigger>
-            <TabsTrigger value="Zepto">Zepto</TabsTrigger>
+            <TabsTrigger value="Talabat">Talabat</TabsTrigger>
+            <TabsTrigger value="Talabat">Talabat</TabsTrigger>
+            <TabsTrigger value="Noon Minutes">Noon Minutes</TabsTrigger>
           </TabsList>
         </Tabs>
         <div className="flex items-center gap-3">
@@ -354,9 +354,9 @@ const RecommendationsView: React.FC = () => {
                     <div className="bg-surface-2 rounded-lg p-2">
                       <p className="text-[9px] uppercase text-muted-foreground">Sug. Bid</p>
                       <p className="font-mono text-sm text-foreground mt-0.5">
-                        <span className="line-through text-muted-foreground/70">₹{k.suggested_bid.current}</span>{" "}
+                        <span className="line-through text-muted-foreground/70">AED {k.suggested_bid.current}</span>{" "}
                         <span className={bidDelta < 0 ? "text-sw-red" : bidDelta > 0 ? "text-sw-green" : "text-foreground"}>
-                          ₹{k.suggested_bid.suggested}
+                          AED {k.suggested_bid.suggested}
                         </span>
                       </p>
                     </div>
@@ -385,7 +385,7 @@ const RecommendationsView: React.FC = () => {
                           type="number" value={editBid} onChange={(e) => setEditBid(e.target.value)}
                           className="h-8" placeholder={`${k.suggested_bid.suggested}`}
                         />
-                        <Button size="sm" onClick={() => { apply(k.id, `Bid set to ₹${editBid || k.suggested_bid.suggested}`); setEditing(null); }}>Save</Button>
+                        <Button size="sm" onClick={() => { apply(k.id, `Bid set to AED ${editBid || k.suggested_bid.suggested}`); setEditing(null); }}>Save</Button>
                         <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
                       </div>
                     </div>
@@ -413,7 +413,7 @@ const RecommendationsView: React.FC = () => {
                         <AlertDialogTitle>Archive recommendation?</AlertDialogTitle>
                         <AlertDialogDescription>
                           "{k.target_keyword}" will move to the savings ledger as rejected.
-                          {k.estimated_waste_avoided > 0 && ` Estimated ₹${fmtINR(k.estimated_waste_avoided)} of waste avoided.`}
+                          {k.estimated_waste_avoided > 0 && ` Estimated AED ${fmtINR(k.estimated_waste_avoided)} of waste avoided.`}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -449,7 +449,7 @@ const RecommendationsView: React.FC = () => {
           </PanelCard>
 
           <PanelCard title="Waste Prevention" badge="Keywords" badgeColor="green">
-            <p className="font-display font-bold text-3xl text-sw-green">₹2.84L</p>
+            <p className="font-display font-bold text-3xl text-sw-green">AED 2.84L</p>
             <p className="text-[11px] text-muted-foreground mt-1">
               Saved this month from pausing keywords where ATC→Checkout dropped due to dark-store stock-outs.
             </p>

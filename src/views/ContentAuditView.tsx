@@ -10,16 +10,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
 export const skuData = [
-  { id: "sku-001", sku: "Good Day Butter 200g", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Amazon", category: "Cookies", priceParity: "match", availability: 96 },
-  { id: "sku-002", sku: "Marie Gold 250g", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Flipkart", category: "Glucose", priceParity: "above", availability: 88 },
-  { id: "sku-003", sku: "50-50 Maska Chaska 120g", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Amazon", category: "Cream", priceParity: "below", availability: 72 },
-  { id: "sku-004", sku: "NutriChoice Digestive 100g", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health", priceParity: "match", availability: 94 },
-  { id: "sku-005", sku: "Bourbon Cream 150g", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream", priceParity: "below", availability: 98 },
-  { id: "sku-006", sku: "Milk Bikis 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Swiggy Instamart", category: "Kids", priceParity: "above", availability: 65 },
+  { id: "sku-001", sku: "Pepsi 1L", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Carrefour", category: "Drinks", priceParity: "match", availability: 96 },
+  { id: "sku-002", sku: "7UP 1L", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Noon", category: "Glucose", priceParity: "above", availability: 88 },
+  { id: "sku-003", sku: "Lipton Ice Tea Peach 320ml", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Carrefour", category: "Cream", priceParity: "below", availability: 72 },
+  { id: "sku-004", sku: "Aquafina 1.5L", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Talabat", category: "Health", priceParity: "match", availability: 94 },
+  { id: "sku-005", sku: "Mountain Dew 1L", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Noon Minutes", category: "Cream", priceParity: "below", availability: 98 },
+  { id: "sku-006", sku: "Mirinda 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Talabat", category: "Kids", priceParity: "above", availability: 65 },
 ];
 
 export const competitorScores: Record<string, Record<string, { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }>> = {
-  "Sunfeast": {
+  "Coca-Cola": {
     "sku-001": { title: 18, heroImage: 17, searchListing: 15, pageContent: 16, competitorAggression: 12 },
     "sku-002": { title: 16, heroImage: 14, searchListing: 12, pageContent: 15, competitorAggression: 14 },
     "sku-003": { title: 12, heroImage: 14, searchListing: 10, pageContent: 12, competitorAggression: 16 },
@@ -27,7 +27,7 @@ export const competitorScores: Record<string, Record<string, { title: number; he
     "sku-005": { title: 17, heroImage: 15, searchListing: 14, pageContent: 16, competitorAggression: 10 },
     "sku-006": { title: 14, heroImage: 13, searchListing: 11, pageContent: 13, competitorAggression: 13 },
   },
-  "Parle": {
+  "Almarai": {
     "sku-001": { title: 19, heroImage: 19, searchListing: 17, pageContent: 18, competitorAggression: 10 },
     "sku-002": { title: 18, heroImage: 17, searchListing: 14, pageContent: 17, competitorAggression: 12 },
     "sku-003": { title: 14, heroImage: 16, searchListing: 12, pageContent: 14, competitorAggression: 14 },
@@ -81,48 +81,48 @@ const FilterDropdown: React.FC<{
 };
 
 const titleIssues: Record<string, { issues: string[]; suggested: string }> = {
-  "50-50 Maska Chaska 120g": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Britannia 50-50 Maska Chaska 120g | Salted Butter Biscuits | Crunchy Snack | Family Pack" },
-  "Milk Bikis 150g": { issues: ["Missing keywords", "No brand name"], suggested: "Britannia Milk Bikis 150g | Milk Cream Biscuits | Kids Favourite | Rich in Calcium" },
-  "Marie Gold 250g": { issues: ["No size/variant"], suggested: "Britannia Marie Gold 250g | Lite Biscuits | 0% Trans Fat | Fibre Rich | Tea-time Snack" },
+  "Lipton Ice Tea Peach 320ml": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "PepsiCo Lipton Ice Tea Peach 320ml | Salted Butter Beverages | Crunchy Snack | Family Pack" },
+  "Mirinda 150g": { issues: ["Missing keywords", "No brand name"], suggested: "PepsiCo Mirinda 150g | Milk Cream Beverages | Kids Favourite | Rich in Calcium" },
+  "7UP 1L": { issues: ["No size/variant"], suggested: "PepsiCo 7UP 1L | Lite Beverages | 0% Trans Fat | Fibre Rich | Tea-time Snack" },
 };
 
 const heroImageIssues: Record<string, string[]> = {
-  "50-50 Maska Chaska 120g": ["Low resolution", "No product focus", "No size callout visible"],
-  "Milk Bikis 150g": ["Busy background", "No size callout visible"],
-  "NutriChoice Digestive 100g": ["No product focus"],
+  "Lipton Ice Tea Peach 320ml": ["Low resolution", "No product focus", "No size callout visible"],
+  "Mirinda 150g": ["Busy background", "No size callout visible"],
+  "Aquafina 1.5L": ["No product focus"],
 };
 
 const searchKeywords: Record<string, { kw: string; rank: number }[]> = {
-  "50-50 Maska Chaska 120g": [{ kw: "salted biscuits", rank: 14 }, { kw: "butter biscuits", rank: 22 }, { kw: "cream biscuits", rank: 8 }, { kw: "maska chaska", rank: 18 }, { kw: "50-50 biscuit", rank: 11 }],
-  "Marie Gold 250g": [{ kw: "marie biscuit", rank: 6 }, { kw: "glucose biscuits", rank: 12 }, { kw: "tea time biscuit", rank: 15 }],
+  "Lipton Ice Tea Peach 320ml": [{ kw: "salted beverages", rank: 14 }, { kw: "butter beverages", rank: 22 }, { kw: "cream beverages", rank: 8 }, { kw: "maska chaska", rank: 18 }, { kw: "Lipton Ice Tea beverage", rank: 11 }],
+  "7UP 1L": [{ kw: "marie beverage", rank: 6 }, { kw: "glucose beverages", rank: 12 }, { kw: "tea time beverage", rank: 15 }],
 };
 
 const competitorAggression = [
-  { brand: "Sunfeast", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter biscuits", "cream biscuits"], impact: "-2 rank" },
-  { brand: "Parle", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
-  { brand: "ITC", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive biscuits"], impact: "None" },
+  { brand: "Coca-Cola", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter beverages", "cream beverages"], impact: "-2 rank" },
+  { brand: "Almarai", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose beverages"], impact: "-1 rank" },
+  { brand: "Lacnor", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive beverages"], impact: "None" },
 ];
 
 const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket: `${i * 10}-${(i + 1) * 10}`, count }));
 
 // Cross-platform consistency data
 const crossPlatformData = [
-  { sku: "Good Day Butter 200g", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Amazon", gap: 29, issue: true },
-  { sku: "Marie Gold 250g", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Amazon", gap: 14, issue: true },
-  { sku: "50-50 Maska Chaska 120g", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Amazon", gap: 16, issue: true },
-  { sku: "NutriChoice Digestive 100g", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Amazon", gap: 5, issue: false },
-  { sku: "Bourbon Cream 150g", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Amazon", gap: 8, issue: false },
-  { sku: "Milk Bikis 150g", amazon: 56, flipkart: 44, blinkit: 38, zepto: 32, instamart: 28, bestPlatform: "Amazon", gap: 28, issue: true },
+  { sku: "Pepsi 1L", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Carrefour", gap: 29, issue: true },
+  { sku: "7UP 1L", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Carrefour", gap: 14, issue: true },
+  { sku: "Lipton Ice Tea Peach 320ml", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Carrefour", gap: 16, issue: true },
+  { sku: "Aquafina 1.5L", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Carrefour", gap: 5, issue: false },
+  { sku: "Mountain Dew 1L", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Carrefour", gap: 8, issue: false },
+  { sku: "Mirinda 150g", amazon: 56, flipkart: 44, blinkit: 38, zepto: 32, instamart: 28, bestPlatform: "Carrefour", gap: 28, issue: true },
 ];
 
 // Category benchmark + campaign performance data
 const benchmarkData = [
-  { sku: "Good Day Butter 200g", yourScore: 77, categoryAvg: 68, compAvg: 74, campaign: "Good Day SP", campaignActive: true, roas: "4.8x", campaignStatus: "Strong" },
-  { sku: "Marie Gold 250g", yourScore: 66, categoryAvg: 68, compAvg: 72, campaign: "Marie Range SP", campaignActive: true, roas: "2.9x", campaignStatus: "Underperforming" },
-  { sku: "50-50 Maska Chaska 120g", yourScore: 51, categoryAvg: 68, compAvg: 70, campaign: "50-50 Launch", campaignActive: false, roas: "—", campaignStatus: "Paused" },
-  { sku: "NutriChoice Digestive 100g", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "NutriChoice Brand SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
-  { sku: "Bourbon Cream 150g", yourScore: 82, categoryAvg: 68, compAvg: 71, campaign: "Bourbon Premium SP", campaignActive: true, roas: "6.1x", campaignStatus: "Excellent" },
-  { sku: "Milk Bikis 150g", yourScore: 56, categoryAvg: 68, compAvg: 66, campaign: "Milk Bikis Kids", campaignActive: true, roas: "1.6x", campaignStatus: "Poor — fix content first" },
+  { sku: "Pepsi 1L", yourScore: 77, categoryAvg: 68, compAvg: 74, campaign: "Pepsi SP", campaignActive: true, roas: "4.8x", campaignStatus: "Strong" },
+  { sku: "7UP 1L", yourScore: 66, categoryAvg: 68, compAvg: 72, campaign: "Marie Range SP", campaignActive: true, roas: "2.9x", campaignStatus: "Underperforming" },
+  { sku: "Lipton Ice Tea Peach 320ml", yourScore: 51, categoryAvg: 68, compAvg: 70, campaign: "Lipton Ice Tea Launch", campaignActive: false, roas: "—", campaignStatus: "Paused" },
+  { sku: "Aquafina 1.5L", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "Aquafina Brand SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
+  { sku: "Mountain Dew 1L", yourScore: 82, categoryAvg: 68, compAvg: 71, campaign: "Mountain Dew Premium SP", campaignActive: true, roas: "6.1x", campaignStatus: "Excellent" },
+  { sku: "Mirinda 150g", yourScore: 56, categoryAvg: 68, compAvg: 66, campaign: "Mirinda Kids", campaignActive: true, roas: "1.6x", campaignStatus: "Poor — fix content first" },
 ];
 
 type SortKey = "score" | "title" | "heroImage" | "searchListing" | "pageContent" | "competitorAggression" | "lastUpdated";
@@ -244,9 +244,9 @@ Strong SKUs (80+): ${skuData.filter(s => getOverall(s) >= 80).length}
 CHANGES SINCE LAST AUDIT (Mar 14)
 -----------------------------------
 • Average portfolio score: No significant change detected
-• Competitor aggression: Sunfeast increased content updates by 22%
+• Competitor aggression: Coca-Cola increased content updates by 22%
 • New keyword opportunities identified for 3 SKUs
-• Hero image compliance improved for NutriChoice Digestive
+• Hero image compliance improved for Aquafina 1.5L
 
 SKU-LEVEL RECOMMENDATIONS
 --------------------------
@@ -448,7 +448,7 @@ const ContentAuditView: React.FC = () => {
         {/* Filter bar */}
         <div className="flex items-center gap-3 flex-wrap">
           <FilterDropdown label="Platform" value={platformFilter}
-            options={[{ label: "All platforms", value: "All" }, { label: "Blinkit", value: "Blinkit" }, { label: "Zepto", value: "Zepto" }, { label: "Swiggy Instamart", value: "Swiggy Instamart" }, { label: "Amazon", value: "Amazon" }, { label: "Flipkart", value: "Flipkart" }]}
+            options={[{ label: "All platforms", value: "All" }, { label: "Talabat", value: "Talabat" }, { label: "Noon Minutes", value: "Noon Minutes" }, { label: "Talabat", value: "Talabat" }, { label: "Carrefour", value: "Carrefour" }, { label: "Noon", value: "Noon" }]}
             onChange={setPlatformFilter} />
           <FilterDropdown label="Score range" value={scoreFilter}
             options={[{ label: "All scores", value: "All" }, { label: "Critical (0–59)", value: "Critical" }, { label: "Needs work (60–79)", value: "NeedsWork" }, { label: "Strong (80–100)", value: "Strong" }]}
@@ -587,11 +587,11 @@ const ContentAuditView: React.FC = () => {
             <thead>
               <tr className="text-muted-foreground border-b border-subtle">
                 <th className="text-left py-2 font-normal">SKU</th>
-                <th className="text-center py-2 font-normal">Amazon</th>
-                <th className="text-center py-2 font-normal">Flipkart</th>
-                <th className="text-center py-2 font-normal">Blinkit</th>
-                <th className="text-center py-2 font-normal">Zepto</th>
-                <th className="text-center py-2 font-normal">Instamart</th>
+                <th className="text-center py-2 font-normal">Carrefour</th>
+                <th className="text-center py-2 font-normal">Noon</th>
+                <th className="text-center py-2 font-normal">Talabat</th>
+                <th className="text-center py-2 font-normal">Noon Minutes</th>
+                <th className="text-center py-2 font-normal">Talabat</th>
                 <th className="text-center py-2 font-normal">Gap</th>
                 <th className="text-center py-2 font-normal">Status</th>
               </tr>

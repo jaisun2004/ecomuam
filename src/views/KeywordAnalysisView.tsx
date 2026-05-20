@@ -21,83 +21,83 @@ type ReviewPayload = {
 };
 
 const mockProductsByKeyword: Record<string, { sku: string; title: string; rank: number; contentScore: number; roas: number }[]> = {
-  "butter biscuits": [
-    { sku: "B-GD-200", title: "Good Day Butter Cookies 200g", rank: 2, contentScore: 86, roas: 5.4 },
-    { sku: "B-GD-500", title: "Good Day Butter Cookies 500g Family Pack", rank: 5, contentScore: 78, roas: 4.1 },
-    { sku: "B-GD-CMB", title: "Good Day Butter Combo (3-Pack)", rank: 7, contentScore: 74, roas: 3.2 },
+  "butter beverages": [
+    { sku: "B-GD-200", title: "Pepsi 1L Drinks 200g", rank: 2, contentScore: 86, roas: 5.4 },
+    { sku: "B-GD-500", title: "Pepsi 1L Drinks 500g Family Pack", rank: 5, contentScore: 78, roas: 4.1 },
+    { sku: "B-GD-CMB", title: "Pepsi 1L Combo (3-Pack)", rank: 7, contentScore: 74, roas: 3.2 },
   ],
-  "cream biscuits": [
-    { sku: "B-BB-150", title: "Bourbon Cream Biscuits 150g", rank: 8, contentScore: 72, roas: 3.1 },
-    { sku: "B-BB-300", title: "Bourbon Cream Biscuits 300g Value", rank: 11, contentScore: 68, roas: 2.4 },
+  "cream beverages": [
+    { sku: "B-BB-150", title: "Mountain Dew Beverages 150g", rank: 8, contentScore: 72, roas: 3.1 },
+    { sku: "B-BB-300", title: "Mountain Dew Beverages 300g Value", rank: 11, contentScore: 68, roas: 2.4 },
     { sku: "B-LD-120", title: "Little Hearts Cream 120g", rank: 14, contentScore: 70, roas: 3.6 },
   ],
-  "glucose biscuits": [
-    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, contentScore: 42, roas: 1.8 },
-    { sku: "B-MG-100", title: "Marie Gold Glucose 100g", rank: 17, contentScore: 48, roas: 2.2 },
+  "glucose beverages": [
+    { sku: "B-MG-250", title: "7UP Glucose 250g", rank: 14, contentScore: 42, roas: 1.8 },
+    { sku: "B-MG-100", title: "7UP Glucose 100g", rank: 17, contentScore: 48, roas: 2.2 },
   ],
-  "digestive biscuits": [
-    { sku: "B-NC-100", title: "NutriChoice Digestive 100g", rank: 1, contentScore: 91, roas: 6.4 },
-    { sku: "B-NC-250", title: "NutriChoice Digestive 250g", rank: 1, contentScore: 88, roas: 5.9 },
-    { sku: "B-NC-MLT", title: "NutriChoice Multigrain Digestive 200g", rank: 4, contentScore: 84, roas: 4.7 },
+  "digestive beverages": [
+    { sku: "B-NC-100", title: "Aquafina 1.5L", rank: 1, contentScore: 91, roas: 6.4 },
+    { sku: "B-NC-250", title: "Aquafina 1.5L 250g", rank: 1, contentScore: 88, roas: 5.9 },
+    { sku: "B-NC-MLT", title: "Aquafina Multigrain Digestive 200g", rank: 4, contentScore: 84, roas: 4.7 },
   ],
-  "choco chip cookies": [
-    { sku: "B-DF-100", title: "Bourbon Choco Chip Cookies 100g", rank: 5, contentScore: 75, roas: 4.0 },
-    { sku: "B-DF-250", title: "Bourbon Choco Chip Cookies 250g", rank: 8, contentScore: 71, roas: 3.3 },
+  "choco chip drinks": [
+    { sku: "B-DF-100", title: "Mountain Dew Choco Chip Drinks 100g", rank: 5, contentScore: 75, roas: 4.0 },
+    { sku: "B-DF-250", title: "Mountain Dew Choco Chip Drinks 250g", rank: 8, contentScore: 71, roas: 3.3 },
   ],
-  "biscuit combo pack": [
-    { sku: "B-VP-500", title: "Britannia Variety Pack 500g", rank: 11, contentScore: 68, roas: 2.0 },
-    { sku: "B-VP-1KG", title: "Britannia Family Variety Pack 1Kg", rank: 13, contentScore: 64, roas: 1.6 },
+  "beverage combo pack": [
+    { sku: "B-VP-500", title: "PepsiCo Variety Pack 500g", rank: 11, contentScore: 68, roas: 2.0 },
+    { sku: "B-VP-1KG", title: "PepsiCo Family Variety Pack 1Kg", rank: 13, contentScore: 64, roas: 1.6 },
   ],
-  "sugar free biscuits": [
-    { sku: "B-NC-SF", title: "NutriChoice Sugar Free Digestive 100g", rank: 18, contentScore: 38, roas: 1.4 },
-    { sku: "B-NC-SF250", title: "NutriChoice Sugar Free Digestive 250g", rank: 21, contentScore: 41, roas: 1.7 },
+  "sugar free beverages": [
+    { sku: "B-NC-SF", title: "Aquafina Sugar Free Digestive 100g", rank: 18, contentScore: 38, roas: 1.4 },
+    { sku: "B-NC-SF250", title: "Aquafina Sugar Free Digestive 250g", rank: 21, contentScore: 41, roas: 1.7 },
   ],
-  "kids biscuits": [
-    { sku: "B-TG-120", title: "Tiger Krunch Kids Biscuits 120g", rank: 3, contentScore: 82, roas: 4.5 },
+  "kids beverages": [
+    { sku: "B-TG-120", title: "Tiger Krunch Kids Beverages 120g", rank: 3, contentScore: 82, roas: 4.5 },
     { sku: "B-TG-CMB", title: "Tiger Krunch Kids Combo 360g", rank: 6, contentScore: 76, roas: 3.7 },
   ],
 };
 
 const mockBidByKeyword: Record<string, number> = {
-  "butter biscuits": 14, "cream biscuits": 18, "glucose biscuits": 22, "digestive biscuits": 12,
-  "choco chip cookies": 16, "biscuit combo pack": 20, "sugar free biscuits": 24, "kids biscuits": 13,
+  "butter beverages": 14, "cream beverages": 18, "glucose beverages": 22, "digestive beverages": 12,
+  "choco chip drinks": 16, "beverage combo pack": 20, "sugar free beverages": 24, "kids beverages": 13,
 };
 
 type CampaignRow = { campaign: string; platform: string; spend: string; clicks: number; ctr: string; roas: number; budget: number };
 
 const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
-  "butter biscuits": [
-    { campaign: "Good Day Butter — SP Exact", platform: "Amazon", spend: "₹42K", clicks: 3200, ctr: "2.8%", roas: 5.2, budget: 2500 },
-    { campaign: "Good Day Butter — SP Broad", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "2.1%", roas: 4.1, budget: 2200 },
-    { campaign: "Butter Biscuits — SB Defence", platform: "Amazon", spend: "₹25K", clicks: 1400, ctr: "1.6%", roas: 3.4, budget: 1800 },
+  "butter beverages": [
+    { campaign: "Pepsi 1L — SP Exact", platform: "Carrefour", spend: "AED 42K", clicks: 3200, ctr: "2.8%", roas: 5.2, budget: 2500 },
+    { campaign: "Pepsi 1L — SP Broad", platform: "Carrefour", spend: "AED 38K", clicks: 2100, ctr: "2.1%", roas: 4.1, budget: 2200 },
+    { campaign: "Butter Beverages — SB Defence", platform: "Carrefour", spend: "AED 25K", clicks: 1400, ctr: "1.6%", roas: 3.4, budget: 1800 },
   ],
-  "cream biscuits": [
-    { campaign: "Cream Range — SP Exact", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "1.9%", roas: 3.1, budget: 2000 },
-    { campaign: "Bourbon Cream — SP Phrase", platform: "Amazon", spend: "₹30K", clicks: 1700, ctr: "2.0%", roas: 2.6, budget: 1800 },
+  "cream beverages": [
+    { campaign: "Cream Range — SP Exact", platform: "Carrefour", spend: "AED 38K", clicks: 2100, ctr: "1.9%", roas: 3.1, budget: 2000 },
+    { campaign: "Mountain Dew — SP Phrase", platform: "Carrefour", spend: "AED 30K", clicks: 1700, ctr: "2.0%", roas: 2.6, budget: 1800 },
   ],
-  "glucose biscuits": [
-    { campaign: "Glucose Category — SP", platform: "Amazon", spend: "₹28K", clicks: 1400, ctr: "1.2%", roas: 1.8, budget: 1600 },
+  "glucose beverages": [
+    { campaign: "Glucose Category — SP", platform: "Carrefour", spend: "AED 28K", clicks: 1400, ctr: "1.2%", roas: 1.8, budget: 1600 },
   ],
-  "digestive biscuits": [
-    { campaign: "NutriChoice — Brand SP", platform: "Amazon", spend: "₹55K", clicks: 4100, ctr: "3.4%", roas: 6.1, budget: 3000 },
-    { campaign: "Digestive — SP Exact", platform: "Amazon", spend: "₹30K", clicks: 2200, ctr: "2.9%", roas: 5.0, budget: 2200 },
+  "digestive beverages": [
+    { campaign: "Aquafina — Brand SP", platform: "Carrefour", spend: "AED 55K", clicks: 4100, ctr: "3.4%", roas: 6.1, budget: 3000 },
+    { campaign: "Digestive — SP Exact", platform: "Carrefour", spend: "AED 30K", clicks: 2200, ctr: "2.9%", roas: 5.0, budget: 2200 },
   ],
-  "choco chip cookies": [
-    { campaign: "Bourbon Choco — SP", platform: "Flipkart", spend: "₹31K", clicks: 2800, ctr: "2.2%", roas: 4.0, budget: 2200 },
+  "choco chip drinks": [
+    { campaign: "Mountain Dew Choco — SP", platform: "Noon", spend: "AED 31K", clicks: 2800, ctr: "2.2%", roas: 4.0, budget: 2200 },
   ],
-  "biscuit combo pack": [
-    { campaign: "Variety Pack — SP", platform: "Amazon", spend: "₹22K", clicks: 1100, ctr: "1.4%", roas: 2.0, budget: 1500 },
+  "beverage combo pack": [
+    { campaign: "Variety Pack — SP", platform: "Carrefour", spend: "AED 22K", clicks: 1100, ctr: "1.4%", roas: 2.0, budget: 1500 },
   ],
-  "sugar free biscuits": [
-    { campaign: "NutriChoice SF — SP", platform: "Amazon", spend: "₹18K", clicks: 800, ctr: "0.9%", roas: 1.4, budget: 1400 },
+  "sugar free beverages": [
+    { campaign: "Aquafina SF — SP", platform: "Carrefour", spend: "AED 18K", clicks: 800, ctr: "0.9%", roas: 1.4, budget: 1400 },
   ],
-  "kids biscuits": [
-    { campaign: "Tiger Kids — SP Exact", platform: "Amazon", spend: "₹16K", clicks: 1200, ctr: "2.4%", roas: 4.5, budget: 1600 },
+  "kids beverages": [
+    { campaign: "Tiger Kids — SP Exact", platform: "Carrefour", spend: "AED 16K", clicks: 1200, ctr: "2.4%", roas: 4.5, budget: 1600 },
   ],
 };
 
-const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
-const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
+const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", Noon Minutes: "#833AB4", Talabat: "#FC8019" };
 
 type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
 
@@ -107,14 +107,14 @@ const buildKeywordRows = (targetKeyword: string, action: string, campaignList: {
   const suggested = isReduce ? Math.max(5, Math.round(base * 0.6)) : Math.round(base * 1.25);
   const matches: ("Exact" | "Phrase" | "Broad")[] = ["Exact", "Phrase", "Broad"];
   const variantByKw: Record<string, string> = {
-    "butter biscuits": "butter cookies premium",
-    "cream biscuits": "cream filled biscuit",
-    "digestive biscuits": "digestive biscuit pack",
-    "glucose biscuits": "glucose biscuit value",
-    "choco chip cookies": "choco chip biscuit",
-    "biscuit combo pack": "biscuit family pack",
-    "sugar free biscuits": "no sugar biscuits",
-    "kids biscuits": "kids snack biscuits",
+    "butter beverages": "butter drinks premium",
+    "cream beverages": "cream filled beverage",
+    "digestive beverages": "digestive beverage pack",
+    "glucose beverages": "glucose beverage value",
+    "choco chip drinks": "choco chip beverage",
+    "beverage combo pack": "beverage family pack",
+    "sugar free beverages": "no sugar beverages",
+    "kids beverages": "kids snack beverages",
   };
   const rows: KwRow[] = campaignList.map((c, i) => ({
     campaign: c.campaign, keyword: targetKeyword, matchType: matches[i % 3], currentBid: base, suggestedBid: suggested,
@@ -146,71 +146,71 @@ interface KeywordRank {
 }
 
 const keywordDataByPlatform: Record<string, KeywordRank[]> = {
-  Amazon: [
-    { keyword: "butter biscuits", sponsoredRank: 1, organicRank: 2, topCompetitor: "Parle", compRank: 3, searchVol: "84K", searchVolNum: 84, shareOfSearch: 22, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "cream biscuits", sponsoredRank: 3, organicRank: 8, topCompetitor: "Sunfeast", compRank: 2, searchVol: "62K", searchVolNum: 62, shareOfSearch: 11, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "glucose biscuits", sponsoredRank: 6, organicRank: 14, topCompetitor: "Parle-G", compRank: 1, searchVol: "120K", searchVolNum: 120, shareOfSearch: 5, trend: "down", action: "New campaign needed", canReduceSpend: false },
-    { keyword: "digestive biscuits", sponsoredRank: 1, organicRank: 1, topCompetitor: "McVities", compRank: 2, searchVol: "45K", searchVolNum: 45, shareOfSearch: 28, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "choco chip cookies", sponsoredRank: 2, organicRank: 5, topCompetitor: "Sunfeast Dark Fantasy", compRank: 1, searchVol: "38K", searchVolNum: 38, shareOfSearch: 15, trend: "flat", action: "Optimise bids", canReduceSpend: false },
-    { keyword: "biscuit combo pack", sponsoredRank: 4, organicRank: 11, topCompetitor: "Britannia (Own)", compRank: 4, searchVol: "28K", searchVolNum: 28, shareOfSearch: 8, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "sugar free biscuits", sponsoredRank: 8, organicRank: 18, topCompetitor: "Unibic", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
-    { keyword: "kids biscuits", sponsoredRank: 2, organicRank: 3, topCompetitor: "Parle", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
+  Carrefour: [
+    { keyword: "butter beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Almarai", compRank: 3, searchVol: "84K", searchVolNum: 84, shareOfSearch: 22, trend: "up", action: "Reduce spend", canReduceSpend: true },
+    { keyword: "cream beverages", sponsoredRank: 3, organicRank: 8, topCompetitor: "Coca-Cola", compRank: 2, searchVol: "62K", searchVolNum: 62, shareOfSearch: 11, trend: "down", action: "Boost campaign", canReduceSpend: false },
+    { keyword: "glucose beverages", sponsoredRank: 6, organicRank: 14, topCompetitor: "Almarai", compRank: 1, searchVol: "120K", searchVolNum: 120, shareOfSearch: 5, trend: "down", action: "New campaign needed", canReduceSpend: false },
+    { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Masafi", compRank: 2, searchVol: "45K", searchVolNum: 45, shareOfSearch: 28, trend: "up", action: "Reduce spend", canReduceSpend: true },
+    { keyword: "choco chip drinks", sponsoredRank: 2, organicRank: 5, topCompetitor: "Coca-Cola Premium", compRank: 1, searchVol: "38K", searchVolNum: 38, shareOfSearch: 15, trend: "flat", action: "Optimise bids", canReduceSpend: false },
+    { keyword: "beverage combo pack", sponsoredRank: 4, organicRank: 11, topCompetitor: "PepsiCo (Own)", compRank: 4, searchVol: "28K", searchVolNum: 28, shareOfSearch: 8, trend: "down", action: "Boost campaign", canReduceSpend: false },
+    { keyword: "sugar free beverages", sponsoredRank: 8, organicRank: 18, topCompetitor: "Rauch", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
+    { keyword: "kids beverages", sponsoredRank: 2, organicRank: 3, topCompetitor: "Almarai", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Flipkart: [
-    { keyword: "butter biscuits", sponsoredRank: 2, organicRank: 5, topCompetitor: "Sunfeast", compRank: 1, searchVol: "52K", searchVolNum: 52, shareOfSearch: 16, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "cream biscuits", sponsoredRank: 1, organicRank: 2, topCompetitor: "Parle", compRank: 3, searchVol: "41K", searchVolNum: 41, shareOfSearch: 18, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "glucose biscuits", sponsoredRank: 4, organicRank: 9, topCompetitor: "Parle-G", compRank: 1, searchVol: "88K", searchVolNum: 88, shareOfSearch: 9, trend: "flat", action: "Optimise bids", canReduceSpend: false },
-    { keyword: "digestive biscuits", sponsoredRank: 1, organicRank: 2, topCompetitor: "McVities", compRank: 1, searchVol: "32K", searchVolNum: 32, shareOfSearch: 25, trend: "up", action: "Reduce spend", canReduceSpend: true },
+  Noon: [
+    { keyword: "butter beverages", sponsoredRank: 2, organicRank: 5, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "52K", searchVolNum: 52, shareOfSearch: 16, trend: "down", action: "Boost campaign", canReduceSpend: false },
+    { keyword: "cream beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Almarai", compRank: 3, searchVol: "41K", searchVolNum: 41, shareOfSearch: 18, trend: "up", action: "Reduce spend", canReduceSpend: true },
+    { keyword: "glucose beverages", sponsoredRank: 4, organicRank: 9, topCompetitor: "Almarai", compRank: 1, searchVol: "88K", searchVolNum: 88, shareOfSearch: 9, trend: "flat", action: "Optimise bids", canReduceSpend: false },
+    { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Masafi", compRank: 1, searchVol: "32K", searchVolNum: 32, shareOfSearch: 25, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Blinkit: [
-    { keyword: "butter biscuits", sponsoredRank: 1, organicRank: 1, topCompetitor: "Parle", compRank: 2, searchVol: "18K", searchVolNum: 18, shareOfSearch: 35, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "cream biscuits", sponsoredRank: 3, organicRank: 6, topCompetitor: "Sunfeast", compRank: 1, searchVol: "12K", searchVolNum: 12, shareOfSearch: 12, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "digestive biscuits", sponsoredRank: 1, organicRank: 1, topCompetitor: "McVities", compRank: 2, searchVol: "8K", searchVolNum: 8, shareOfSearch: 42, trend: "up", action: "Reduce spend", canReduceSpend: true },
+  Talabat: [
+    { keyword: "butter beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Almarai", compRank: 2, searchVol: "18K", searchVolNum: 18, shareOfSearch: 35, trend: "up", action: "Reduce spend", canReduceSpend: true },
+    { keyword: "cream beverages", sponsoredRank: 3, organicRank: 6, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "12K", searchVolNum: 12, shareOfSearch: 12, trend: "down", action: "Boost campaign", canReduceSpend: false },
+    { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Masafi", compRank: 2, searchVol: "8K", searchVolNum: 8, shareOfSearch: 42, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Zepto: [
-    { keyword: "butter biscuits", sponsoredRank: 2, organicRank: 4, topCompetitor: "Parle", compRank: 1, searchVol: "14K", searchVolNum: 14, shareOfSearch: 20, trend: "flat", action: "Optimise bids", canReduceSpend: false },
-    { keyword: "glucose biscuits", sponsoredRank: 5, organicRank: 12, topCompetitor: "Parle-G", compRank: 1, searchVol: "22K", searchVolNum: 22, shareOfSearch: 6, trend: "down", action: "New campaign needed", canReduceSpend: false },
+  Noon Minutes: [
+    { keyword: "butter beverages", sponsoredRank: 2, organicRank: 4, topCompetitor: "Almarai", compRank: 1, searchVol: "14K", searchVolNum: 14, shareOfSearch: 20, trend: "flat", action: "Optimise bids", canReduceSpend: false },
+    { keyword: "glucose beverages", sponsoredRank: 5, organicRank: 12, topCompetitor: "Almarai", compRank: 1, searchVol: "22K", searchVolNum: 22, shareOfSearch: 6, trend: "down", action: "New campaign needed", canReduceSpend: false },
   ],
-  Instamart: [
-    { keyword: "butter biscuits", sponsoredRank: 1, organicRank: 2, topCompetitor: "Sunfeast", compRank: 1, searchVol: "11K", searchVolNum: 11, shareOfSearch: 24, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "cream biscuits", sponsoredRank: 3, organicRank: 7, topCompetitor: "Parle", compRank: 2, searchVol: "9K", searchVolNum: 9, shareOfSearch: 10, trend: "down", action: "Boost campaign", canReduceSpend: false },
+  Talabat: [
+    { keyword: "butter beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "11K", searchVolNum: 11, shareOfSearch: 24, trend: "up", action: "Reduce spend", canReduceSpend: true },
+    { keyword: "cream beverages", sponsoredRank: 3, organicRank: 7, topCompetitor: "Almarai", compRank: 2, searchVol: "9K", searchVolNum: 9, shareOfSearch: 10, trend: "down", action: "Boost campaign", canReduceSpend: false },
   ],
 };
 
 const rankTrend = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
-  butterBiscuits: Math.round(4 - Math.sin(i / 5) * 2 + Math.random()),
-  creamBiscuits: Math.round(7 + Math.cos(i / 4) * 3 + Math.random()),
-  glucoseBiscuits: Math.round(12 + Math.sin(i / 6) * 4 + Math.random()),
+  butterBeverages: Math.round(4 - Math.sin(i / 5) * 2 + Math.random()),
+  creamBeverages: Math.round(7 + Math.cos(i / 4) * 3 + Math.random()),
+  glucoseBeverages: Math.round(12 + Math.sin(i / 6) * 4 + Math.random()),
 }));
 
 const campaignKeywordPerf = [
-  { keyword: "butter biscuits", campaign: "Butter Biscuits — SP", platform: "Amazon", spend: "₹42K", clicks: 3200, ctr: "2.8%", roas: "5.2x", rank: 2, action: "Reduce spend — organic rank strong" },
-  { keyword: "cream biscuits", campaign: "Cream Range — SP", platform: "Amazon", spend: "₹38K", clicks: 2100, ctr: "1.9%", roas: "3.1x", rank: 8, action: "Increase bid — off page 1 organically" },
-  { keyword: "glucose biscuits", campaign: "Glucose Category — SP", platform: "Amazon", spend: "₹28K", clicks: 1400, ctr: "1.2%", roas: "1.8x", rank: 14, action: "Restructure — poor ROAS, needs content fix first" },
-  { keyword: "digestive biscuits", campaign: "NutriChoice — Brand SP", platform: "Amazon", spend: "₹55K", clicks: 4100, ctr: "3.4%", roas: "6.1x", rank: 1, action: "Reduce spend — #1 organically" },
-  { keyword: "choco chip cookies", campaign: "Bourbon Choco — SP", platform: "Flipkart", spend: "₹31K", clicks: 2800, ctr: "2.2%", roas: "4.0x", rank: 5, action: "Hold — organic rank moderate" },
-  { keyword: "sugar free biscuits", campaign: "NutriChoice SF — SP", platform: "Amazon", spend: "₹18K", clicks: 800, ctr: "0.9%", roas: "1.4x", rank: 18, action: "Pause — content score too low, fix listing first" },
+  { keyword: "butter beverages", campaign: "Butter Beverages — SP", platform: "Carrefour", spend: "AED 42K", clicks: 3200, ctr: "2.8%", roas: "5.2x", rank: 2, action: "Reduce spend — organic rank strong" },
+  { keyword: "cream beverages", campaign: "Cream Range — SP", platform: "Carrefour", spend: "AED 38K", clicks: 2100, ctr: "1.9%", roas: "3.1x", rank: 8, action: "Increase bid — off page 1 organically" },
+  { keyword: "glucose beverages", campaign: "Glucose Category — SP", platform: "Carrefour", spend: "AED 28K", clicks: 1400, ctr: "1.2%", roas: "1.8x", rank: 14, action: "Restructure — poor ROAS, needs content fix first" },
+  { keyword: "digestive beverages", campaign: "Aquafina — Brand SP", platform: "Carrefour", spend: "AED 55K", clicks: 4100, ctr: "3.4%", roas: "6.1x", rank: 1, action: "Reduce spend — #1 organically" },
+  { keyword: "choco chip drinks", campaign: "Mountain Dew Choco — SP", platform: "Noon", spend: "AED 31K", clicks: 2800, ctr: "2.2%", roas: "4.0x", rank: 5, action: "Hold — organic rank moderate" },
+  { keyword: "sugar free beverages", campaign: "Aquafina SF — SP", platform: "Carrefour", spend: "AED 18K", clicks: 800, ctr: "0.9%", roas: "1.4x", rank: 18, action: "Pause — content score too low, fix listing first" },
 ];
 
 const keywordCampaignImpact = [
-  { keyword: "butter biscuits", activeCampaigns: 3, totalSpend: "₹1.2L", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
-  { keyword: "cream biscuits", activeCampaigns: 2, totalSpend: "₹68K", avgRoas: "3.1x", organicRank: 8, recommendation: "Increase bid on best-performing campaign, pause the other" },
-  { keyword: "glucose biscuits", activeCampaigns: 1, totalSpend: "₹28K", avgRoas: "1.8x", organicRank: 14, recommendation: "Fix content score (42/100) before spending more on ads" },
-  { keyword: "digestive biscuits", activeCampaigns: 2, totalSpend: "₹85K", avgRoas: "6.1x", organicRank: 1, recommendation: "Reduce to 1 campaign — #1 organically, save ₹40K/mo" },
-  { keyword: "kids biscuits", activeCampaigns: 1, totalSpend: "₹22K", avgRoas: "4.2x", organicRank: 3, recommendation: "Reduce spend gradually — organic rank strong at #3" },
+  { keyword: "butter beverages", activeCampaigns: 3, totalSpend: "AED 1.2L", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
+  { keyword: "cream beverages", activeCampaigns: 2, totalSpend: "AED 68K", avgRoas: "3.1x", organicRank: 8, recommendation: "Increase bid on best-performing campaign, pause the other" },
+  { keyword: "glucose beverages", activeCampaigns: 1, totalSpend: "AED 28K", avgRoas: "1.8x", organicRank: 14, recommendation: "Fix content score (42/100) before spending more on ads" },
+  { keyword: "digestive beverages", activeCampaigns: 2, totalSpend: "AED 85K", avgRoas: "6.1x", organicRank: 1, recommendation: "Reduce to 1 campaign — #1 organically, save AED 40K/mo" },
+  { keyword: "kids beverages", activeCampaigns: 1, totalSpend: "AED 22K", avgRoas: "4.2x", organicRank: 3, recommendation: "Reduce spend gradually — organic rank strong at #3" },
 ];
 
 // Keywords losing rank/share
 const losingKeywords = [
-  { keyword: "cream biscuits", yourProduct: "Good Day Butter 200g", lastWeekRank: 5, thisWeekRank: 8, sosLoss: "-4%", compProduct: "Sunfeast Cream Biscuit 200g", compRankChange: "3→2", reason: "Sunfeast increased bids by 40%" },
-  { keyword: "glucose biscuits", yourProduct: "Marie Gold 250g", lastWeekRank: 10, thisWeekRank: 14, sosLoss: "-3%", compProduct: "Parle-G Gold 200g", compRankChange: "2→1", reason: "Parle launched new campaign + listing update" },
-  { keyword: "sugar free biscuits", yourProduct: "NutriChoice Digestive 100g", lastWeekRank: 14, thisWeekRank: 18, sosLoss: "-2%", compProduct: "Unibic Sugar Free 150g", compRankChange: "3→2", reason: "Unibic improved content score to 84/100" },
-  { keyword: "biscuit combo pack", yourProduct: "Good Day Choco Chip", lastWeekRank: 8, thisWeekRank: 11, sosLoss: "-3%", compProduct: "Sunfeast Variety Pack", compRankChange: "4→3", reason: "Sunfeast price cut by 15%" },
+  { keyword: "cream beverages", yourProduct: "Pepsi 1L", lastWeekRank: 5, thisWeekRank: 8, sosLoss: "-4%", compProduct: "Coca-Cola Cream Beverage 200g", compRankChange: "3→2", reason: "Coca-Cola increased bids by 40%" },
+  { keyword: "glucose beverages", yourProduct: "7UP 1L", lastWeekRank: 10, thisWeekRank: 14, sosLoss: "-3%", compProduct: "Almarai Juice 1L", compRankChange: "2→1", reason: "Almarai launched new campaign + listing update" },
+  { keyword: "sugar free beverages", yourProduct: "Aquafina 1.5L", lastWeekRank: 14, thisWeekRank: 18, sosLoss: "-2%", compProduct: "Rauch Sugar Free 150g", compRankChange: "3→2", reason: "Rauch improved content score to 84/100" },
+  { keyword: "beverage combo pack", yourProduct: "Mirinda Orange 1L", lastWeekRank: 8, thisWeekRank: 11, sosLoss: "-3%", compProduct: "Coca-Cola Variety Pack", compRankChange: "4→3", reason: "Coca-Cola price cut by 15%" },
 ];
 
 const KeywordAnalysisView: React.FC = () => {
-  const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+  const [selectedPlatform, setSelectedPlatform] = useState("Carrefour");
   const [tab, setTab] = useState("overview");
   const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
   const [reviewItem, setReviewItem] = useState<ReviewPayload | null>(null);
@@ -414,9 +414,9 @@ const KeywordAnalysisView: React.FC = () => {
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis reversed tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
-                <Line type="monotone" dataKey="butterBiscuits" stroke="#2ECF8E" strokeWidth={2} dot={false} name="butter biscuits" />
-                <Line type="monotone" dataKey="creamBiscuits" stroke="#F5A623" strokeWidth={2} dot={false} name="cream biscuits" />
-                <Line type="monotone" dataKey="glucoseBiscuits" stroke="#FF5C5C" strokeWidth={2} dot={false} name="glucose biscuits" />
+                <Line type="monotone" dataKey="butterBeverages" stroke="#2ECF8E" strokeWidth={2} dot={false} name="butter beverages" />
+                <Line type="monotone" dataKey="creamBeverages" stroke="#F5A623" strokeWidth={2} dot={false} name="cream beverages" />
+                <Line type="monotone" dataKey="glucoseBeverages" stroke="#FF5C5C" strokeWidth={2} dot={false} name="glucose beverages" />
               </LineChart>
             </ResponsiveContainer>
           </PanelCard>
@@ -508,8 +508,8 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
   if (!item) return null;
 
   const campaigns: CampaignRow[] = mockCampaignsByKeyword[item.keyword] ?? [{
-    campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Amazon" : item.platform,
-    spend: "₹—", clicks: 0, ctr: "—", roas: 0, budget: 2000,
+    campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Carrefour" : item.platform,
+    spend: "AED —", clicks: 0, ctr: "—", roas: 0, budget: 2000,
   }];
   const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const products = mockProductsByKeyword[item.keyword] ?? [];
@@ -555,7 +555,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                     <th className="text-left px-3 py-2 font-normal">Platform</th>
                     <th className="text-right px-3 py-2 font-normal">Spend / mo</th>
                     <th className="text-right px-3 py-2 font-normal">ROAS</th>
-                    <th className="text-right px-3 py-2 font-normal">Daily Budget (₹)</th>
+                    <th className="text-right px-3 py-2 font-normal">Daily Budget (AED )</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -606,10 +606,10 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                       <p className="text-[10px] text-muted-foreground mt-0.5 truncate">Campaign: <span className="text-foreground">{r.campaign}</span></p>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] flex-shrink-0">
-                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">₹{r.currentBid}</span></span>
-                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">₹{r.suggestedBid}</span></span>
+                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">AED {r.currentBid}</span></span>
+                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">AED {r.suggestedBid}</span></span>
                       <label className="flex items-center gap-1.5">
-                        <span className="text-muted-foreground">New ₹</span>
+                        <span className="text-muted-foreground">New AED </span>
                         <Input
                           type="number"
                           value={bids[key] ?? String(r.suggestedBid)}

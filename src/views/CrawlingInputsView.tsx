@@ -109,18 +109,18 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(({ label, descr
 });
 TagInput.displayName = "TagInput";
 
-const availableKeywords = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip cookies", "biscuit combo", "health biscuits", "kids biscuits", "premium cookies", "rusk online"];
+const availableKeywords = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks", "beverage combo", "health beverages", "kids beverages", "premium drinks", "rusk online"];
 const availableProducts = ["SKU-GD200", "SKU-GD100", "SKU-MG250", "SKU-5050", "SKU-NC100", "SKU-MF150", "SKU-TREAT75", "SKU-BOURBON", "SKU-JIM100", "SKU-TIGER250"];
 const availablePincodes = ["110001", "110020", "110045", "400001", "400050", "560001", "560034", "500001", "600001", "700001", "411001", "380001", "302001", "226001", "144001"];
-const availablePlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Swiggy Instamart", "JioMart", "BigBasket"];
+const availablePlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat", "JioMart", "BigBasket"];
 
 const campaignKeywords = [
-  { value: "butter biscuits", volume: "142K" },
-  { value: "cream biscuits", volume: "498K" },
-  { value: "glucose biscuits", volume: "87K" },
-  { value: "digestive biscuits", volume: "63K" },
-  { value: "choco chip cookies", volume: "211K" },
-  { value: "biscuit combo", volume: null },
+  { value: "butter beverages", volume: "142K" },
+  { value: "cream beverages", volume: "498K" },
+  { value: "glucose beverages", volume: "87K" },
+  { value: "digestive beverages", volume: "63K" },
+  { value: "choco chip drinks", volume: "211K" },
+  { value: "beverage combo", volume: null },
   { value: "healthy snacks", volume: "321K" },
 ];
 
@@ -140,17 +140,17 @@ const campaignPincodes = [
 ];
 
 const campaignPlatforms = [
-  { value: "Amazon", volume: null },
-  { value: "Flipkart", volume: null },
-  { value: "Blinkit", volume: null },
-  { value: "Zepto", volume: null },
+  { value: "Carrefour", volume: null },
+  { value: "Noon", volume: null },
+  { value: "Talabat", volume: null },
+  { value: "Noon Minutes", volume: null },
 ];
 
 const CrawlingInputsView: React.FC = () => {
-  const [keywords, setKeywords] = useState<string[]>(["butter biscuits", "cream biscuits", "glucose biscuits"]);
+  const [keywords, setKeywords] = useState<string[]>(["butter beverages", "cream beverages", "glucose beverages"]);
   const [products, setProducts] = useState<string[]>(["SKU-GD200", "SKU-MG250"]);
   const [pincodes, setPincodes] = useState<string[]>(["110001", "400001", "560001"]);
-  const [platforms, setPlatforms] = useState<string[]>(["Amazon", "Flipkart", "Blinkit"]);
+  const [platforms, setPlatforms] = useState<string[]>(["Carrefour", "Noon", "Talabat"]);
   const [linkToCampaign, setLinkToCampaign] = useState(false);
   const [crawlsPerDay, setCrawlsPerDay] = useState(3);
 

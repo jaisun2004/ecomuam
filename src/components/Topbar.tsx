@@ -15,9 +15,9 @@ interface TopbarProps {
 const presets: TimePreset[] = ["7D", "30D", "90D"];
 
 const platformFilters = [
-  { name: "Amazon", color: "#FF9900" },
-  { name: "Blinkit", color: "#FDDC2B" },
-  { name: "Flipkart", color: "#2F77FF" },
+  { name: "Carrefour", color: "#FF9900" },
+  { name: "Talabat", color: "#FDDC2B" },
+  { name: "Noon", color: "#2F77FF" },
 ];
 
 const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {

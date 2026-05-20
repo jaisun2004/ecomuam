@@ -28,8 +28,8 @@ const elasticityData: Record<string, { price: number; volume: number; confidence
 };
 
 const priceDistribution = [
-  { range: "₹0-100", own: 12, competitor: 18 }, { range: "₹100-300", own: 28, competitor: 22 },
-  { range: "₹300-500", own: 35, competitor: 30 }, { range: "₹500-1K", own: 18, competitor: 20 }, { range: "₹1K+", own: 7, competitor: 10 },
+  { range: "AED 0-100", own: 12, competitor: 18 }, { range: "AED 100-300", own: 28, competitor: 22 },
+  { range: "AED 300-500", own: 35, competitor: 30 }, { range: "AED 500-1K", own: 18, competitor: 20 }, { range: "AED 1K+", own: 7, competitor: 10 },
 ];
 
 const priceTrend = [
@@ -37,8 +37,8 @@ const priceTrend = [
 ];
 
 const priceActionItems: ActionItem[] = [
-  { id: "1", severity: "critical", title: "MAP violations on 14 SKUs", description: "Sellers undercutting minimum advertised price on Amazon", metric: "₹2.8L impact", action: "Enforce MAP" },
-  { id: "2", severity: "critical", title: "Competitor undercut on top 5 SKUs", description: "Avg 12% lower pricing detected on Flipkart", metric: "-12% avg", action: "Review" },
+  { id: "1", severity: "critical", title: "MAP violations on 14 SKUs", description: "Sellers undercutting minimum advertised price on Carrefour", metric: "AED 2.8L impact", action: "Enforce MAP" },
+  { id: "2", severity: "critical", title: "Competitor undercut on top 5 SKUs", description: "Avg 12% lower pricing detected on Noon", metric: "-12% avg", action: "Review" },
   { id: "3", severity: "warning", title: "Price erosion in Personal Care", description: "Consistent 5% MoM price drop across category", metric: "-5% MoM", action: "Analyze" },
   { id: "4", severity: "info", title: "Price premium opportunity", description: "8 SKUs priced 20% below category avg", metric: "+20% headroom", action: "Optimize" },
   { id: "5", severity: "success", title: "Price parity achieved", description: "All Beverages SKUs now within 2% across platforms", metric: "±2%", action: "Monitor" },
@@ -47,33 +47,33 @@ const priceActionItems: ActionItem[] = [
 const campaignTriggers: CampaignTrigger[] = [
   {
     id: "price-1", signal: "Competitor A slashed prices 15% on Hydration",
-    signalDetail: "Comp A dropped prices on 4 hydration SKUs across Amazon & Flipkart",
+    signalDetail: "Comp A dropped prices on 4 hydration SKUs across Carrefour & Noon",
     strategy: "Defensive Brand Protection", campaignType: "Sponsored Brand + Video Ads",
-    platforms: ["Amazon", "Flipkart", "Blinkit"],
+    platforms: ["Carrefour", "Noon", "Talabat"],
     keywords: ["electrolyte water", "hydration drink", "sports drink", "ORS drink"],
-    estimatedImpact: "Protect ₹5.2L weekly revenue", urgency: "critical",
+    estimatedImpact: "Protect AED 5.2L weekly revenue", urgency: "critical",
     icon: <Shield className="h-4 w-4 text-destructive" />,
   },
   {
     id: "price-2", signal: "Your SKUs 15% cheaper than competition",
     signalDetail: "Energy drink range priced significantly below market",
     strategy: "Price Advantage Amplification", campaignType: "Keyword Bidding + Display Ads",
-    platforms: ["Amazon", "Flipkart", "Zepto"],
+    platforms: ["Carrefour", "Noon", "Noon Minutes"],
     keywords: ["cheap energy drink", "affordable caffeine", "energy drink deal"],
-    estimatedImpact: "+22% conversion rate, ₹4.8L incremental revenue", urgency: "high",
+    estimatedImpact: "+22% conversion rate, AED 4.8L incremental revenue", urgency: "high",
     icon: <Target className="h-4 w-4 text-warning" />,
   },
 ];
 
 const ownSkuPricing = [
-  { sku: "SKU-101 (Energy Drink)", platform: "Amazon", currentPrice: 199, competitorPrice: 175, margin: "32%", stock: "Healthy" },
-  { sku: "SKU-101 (Energy Drink)", platform: "Flipkart", currentPrice: 195, competitorPrice: 178, margin: "31%", stock: "Healthy" },
-  { sku: "SKU-205 (Electrolyte)", platform: "Amazon", currentPrice: 159, competitorPrice: 122, margin: "28%", stock: "Low" },
-  { sku: "SKU-205 (Electrolyte)", platform: "Flipkart", currentPrice: 155, competitorPrice: 118, margin: "27%", stock: "Healthy" },
-  { sku: "SKU-300 (Green Tea)", platform: "Amazon", currentPrice: 450, competitorPrice: 420, margin: "35%", stock: "Healthy" },
-  { sku: "SKU-300 (Green Tea)", platform: "Blinkit", currentPrice: 460, competitorPrice: 430, margin: "34%", stock: "Low" },
-  { sku: "SKU-404 (Protein Bar)", platform: "Amazon", currentPrice: 299, competitorPrice: 275, margin: "30%", stock: "Healthy" },
-  { sku: "SKU-505 (Energy Mix)", platform: "Zepto", currentPrice: 189, competitorPrice: 165, margin: "25%", stock: "Healthy" },
+  { sku: "SKU-101 (Energy Drink)", platform: "Carrefour", currentPrice: 199, competitorPrice: 175, margin: "32%", stock: "Healthy" },
+  { sku: "SKU-101 (Energy Drink)", platform: "Noon", currentPrice: 195, competitorPrice: 178, margin: "31%", stock: "Healthy" },
+  { sku: "SKU-205 (Electrolyte)", platform: "Carrefour", currentPrice: 159, competitorPrice: 122, margin: "28%", stock: "Low" },
+  { sku: "SKU-205 (Electrolyte)", platform: "Noon", currentPrice: 155, competitorPrice: 118, margin: "27%", stock: "Healthy" },
+  { sku: "SKU-300 (Green Tea)", platform: "Carrefour", currentPrice: 450, competitorPrice: 420, margin: "35%", stock: "Healthy" },
+  { sku: "SKU-300 (Green Tea)", platform: "Talabat", currentPrice: 460, competitorPrice: 430, margin: "34%", stock: "Low" },
+  { sku: "SKU-404 (Protein Bar)", platform: "Carrefour", currentPrice: 299, competitorPrice: 275, margin: "30%", stock: "Healthy" },
+  { sku: "SKU-505 (Energy Mix)", platform: "Noon Minutes", currentPrice: 189, competitorPrice: 165, margin: "25%", stock: "Healthy" },
 ];
 
 const PricingSection = () => {
@@ -95,10 +95,10 @@ const PricingSection = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Avg Selling Price" value="₹345" change={1.8} changeLabel="vs last month" icon={<DollarSign className="h-5 w-5" />} variant="primary" />
+        <KPICard title="Avg Selling Price" value="AED 345" change={1.8} changeLabel="vs last month" icon={<DollarSign className="h-5 w-5" />} variant="primary" />
         <KPICard title="MAP Violations" value="14" change={-40} changeLabel="down from 23" icon={<TrendingDown className="h-5 w-5" />} variant="destructive" />
         <KPICard title="Price Competitiveness" value="87%" change={3} changeLabel="within 5% of competition" icon={<BarChart3 className="h-5 w-5" />} variant="success" />
-        <KPICard title="Margin Opportunity" value="₹8.2L" change={12} changeLabel="monthly potential" icon={<TrendingUp className="h-5 w-5" />} variant="warning" />
+        <KPICard title="Margin Opportunity" value="AED 8.2L" change={12} changeLabel="monthly potential" icon={<TrendingUp className="h-5 w-5" />} variant="warning" />
       </div>
 
       {!deepDive ? (
@@ -165,10 +165,10 @@ const PricingSection = () => {
                       <tr key={i} className="hover:bg-muted/30 transition-colors">
                         <td className="p-2.5 font-mono font-medium text-foreground">{row.sku}</td>
                         <td className="p-2.5 text-foreground">{row.platform}</td>
-                        <td className="p-2.5 font-mono font-bold text-foreground">₹{row.currentPrice}</td>
-                        <td className="p-2.5 font-mono text-muted-foreground">₹{row.competitorPrice}</td>
+                        <td className="p-2.5 font-mono font-bold text-foreground">AED {row.currentPrice}</td>
+                        <td className="p-2.5 font-mono text-muted-foreground">AED {row.competitorPrice}</td>
                         <td className={`p-2.5 font-bold ${gap > 20 ? 'text-destructive' : gap > 0 ? 'text-warning' : 'text-success'}`}>
-                          {gap > 0 ? `+₹${gap} (${gapPct}%)` : `₹${gap}`}
+                          {gap > 0 ? `+AED ${gap} (${gapPct}%)` : `AED ${gap}`}
                         </td>
                         <td className="p-2.5 text-foreground">{row.margin}</td>
                         <td className="p-2.5">
@@ -209,11 +209,11 @@ const PricingSection = () => {
                     <div className="grid grid-cols-3 gap-3">
                       <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
                         <p className="text-[10px] text-muted-foreground uppercase font-bold">Current</p>
-                        <p className="text-lg font-bold text-foreground">₹{priceReductionModal.currentPrice}</p>
+                        <p className="text-lg font-bold text-foreground">AED {priceReductionModal.currentPrice}</p>
                       </div>
                       <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-center">
                         <p className="text-[10px] text-destructive uppercase font-bold">Competitor</p>
-                        <p className="text-lg font-bold text-destructive">₹{priceReductionModal.competitorPrice}</p>
+                        <p className="text-lg font-bold text-destructive">AED {priceReductionModal.competitorPrice}</p>
                       </div>
                       <div className="p-3 rounded-lg bg-success/5 border border-success/20 text-center">
                         <p className="text-[10px] text-success uppercase font-bold">New Price</p>
@@ -230,7 +230,7 @@ const PricingSection = () => {
                         <p className="text-xs font-bold text-warning">Margin Impact</p>
                         <p className="text-xs text-foreground">
                           New margin: ~{Math.max(0, parseInt(priceReductionModal.margin) - Math.round((priceReductionModal.currentPrice - parseInt(priceReductionForm.newPrice || "0")) / priceReductionModal.currentPrice * 100))}% (from {priceReductionModal.margin})
-                          • Revenue delta: ₹{Math.abs(priceReductionModal.currentPrice - parseInt(priceReductionForm.newPrice || "0"))}/unit
+                          • Revenue delta: AED {Math.abs(priceReductionModal.currentPrice - parseInt(priceReductionForm.newPrice || "0"))}/unit
                         </p>
                       </div>
                     </div>
@@ -261,7 +261,7 @@ const PricingSection = () => {
 
                     <button onClick={() => setPriceSubmitted(true)}
                       className="w-full py-3 bg-destructive text-destructive-foreground rounded-lg font-bold shadow-card hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 text-sm">
-                      <TrendingDown className="h-4 w-4" /> Confirm Price Reduction to ₹{priceReductionForm.newPrice}
+                      <TrendingDown className="h-4 w-4" /> Confirm Price Reduction to AED {priceReductionForm.newPrice}
                     </button>
                   </div>
                 ) : (
@@ -270,7 +270,7 @@ const PricingSection = () => {
                       <Check className="h-8 w-8 text-success" />
                     </div>
                     <h3 className="font-heading font-bold text-foreground text-lg">Price Updated!</h3>
-                    <p className="text-sm text-muted-foreground">{priceReductionModal.sku} on {priceReductionModal.platform} updated from ₹{priceReductionModal.currentPrice} → ₹{priceReductionForm.newPrice}</p>
+                    <p className="text-sm text-muted-foreground">{priceReductionModal.sku} on {priceReductionModal.platform} updated from AED {priceReductionModal.currentPrice} → AED {priceReductionForm.newPrice}</p>
                     <button onClick={() => setPriceReductionModal(null)} className="w-full py-2.5 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-muted transition-colors">Close</button>
                   </div>
                 )}

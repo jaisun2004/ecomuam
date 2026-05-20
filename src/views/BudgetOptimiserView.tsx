@@ -40,11 +40,11 @@ const toneClasses: Record<string, string> = {
 };
 
 const budgetUtilData = [
-  { name: "Good Day Butter", ratio: 82, color: "hsl(160,70%,48%)" },
+  { name: "Pepsi 1L", ratio: 82, color: "hsl(160,70%,48%)" },
   { name: "Q-Commerce Push", ratio: 91, color: "hsl(38,92%,50%)" },
-  { name: "Bourbon Cream RT", ratio: 98, color: "hsl(0,76%,57%)" },
-  { name: "NutriChoice Brand", ratio: 67, color: "hsl(160,70%,48%)" },
-  { name: "Marie Gold SP", ratio: 88, color: "hsl(38,92%,50%)" },
+  { name: "Mountain Dew RT", ratio: 98, color: "hsl(0,76%,57%)" },
+  { name: "Aquafina Brand", ratio: 67, color: "hsl(160,70%,48%)" },
+  { name: "7UP SP", ratio: 88, color: "hsl(38,92%,50%)" },
 ];
 
 const wastedSpendData = [
@@ -55,52 +55,52 @@ const wastedSpendData = [
 
 const samePlatformShifts = [
   {
-    platform: "Amazon", color: "#FF9900",
-    from: { campaign: "50-50 Maska Chaska — SP", roas: "2.1x", currentSpend: "₹1.2L" },
-    to: { campaign: "Good Day Butter — SP", roas: "5.1x", currentSpend: "₹3.8L" },
-    amount: "₹40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
+    platform: "Carrefour", color: "#FF9900",
+    from: { campaign: "Lipton Ice Tea Peach — SP", roas: "2.1x", currentSpend: "AED 1.2L" },
+    to: { campaign: "Pepsi 1L — SP", roas: "5.1x", currentSpend: "AED 3.8L" },
+    amount: "AED 40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
   },
   {
-    platform: "Flipkart", color: "#2F77FF",
-    from: { campaign: "Milk Bikis Retargeting", roas: "2.1x", currentSpend: "₹2.5L" },
-    to: { campaign: "Bourbon Cream Push", roas: "4.2x", currentSpend: "₹1.0L" },
-    amount: "₹60K", projImpact: "+800 conversions, campaign ROAS → 4.5x",
+    platform: "Noon", color: "#2F77FF",
+    from: { campaign: "Mirinda Retargeting", roas: "2.1x", currentSpend: "AED 2.5L" },
+    to: { campaign: "Mountain Dew Push", roas: "4.2x", currentSpend: "AED 1.0L" },
+    amount: "AED 60K", projImpact: "+800 conversions, campaign ROAS → 4.5x",
   },
   {
-    platform: "Blinkit", color: "#FDDC2B",
-    from: { campaign: "Generic Biscuit Ads", roas: "2.8x", currentSpend: "₹1.2L" },
-    to: { campaign: "Good Day Q-Commerce Push", roas: "3.8x", currentSpend: "₹2.4L" },
-    amount: "₹25K", projImpact: "+500 conversions, better geo-targeting",
+    platform: "Talabat", color: "#FDDC2B",
+    from: { campaign: "Generic Beverage Ads", roas: "2.8x", currentSpend: "AED 1.2L" },
+    to: { campaign: "Pepsi Q-Commerce Push", roas: "3.8x", currentSpend: "AED 2.4L" },
+    amount: "AED 25K", projImpact: "+500 conversions, better geo-targeting",
   },
 ];
 
 const crossPlatformShifts = [
   {
-    from: { platform: "Flipkart", color: "#2F77FF", campaign: "Milk Bikis Retargeting", roas: "2.1x", spend: "₹2.5L" },
-    to: { platform: "Amazon", color: "#FF9900", campaign: "Good Day Butter — SP", roas: "5.1x", spend: "₹3.8L" },
-    amount: "₹80K", projImpact: "Incremental conversions +2,100, blended portfolio ROAS +0.5x",
+    from: { platform: "Noon", color: "#2F77FF", campaign: "Mirinda Retargeting", roas: "2.1x", spend: "AED 2.5L" },
+    to: { platform: "Carrefour", color: "#FF9900", campaign: "Pepsi 1L — SP", roas: "5.1x", spend: "AED 3.8L" },
+    amount: "AED 80K", projImpact: "Incremental conversions +2,100, blended portfolio ROAS +0.5x",
     confidence: 92,
   },
   {
-    from: { platform: "Flipkart", color: "#2F77FF", campaign: "Various underperformers", roas: "2.1x", spend: "₹1.8L" },
-    to: { platform: "Instagram", color: "#E1306C", campaign: "Bourbon Brand Awareness", roas: "4.4x", spend: "₹40K" },
-    amount: "₹40K", projImpact: "Expand brand reach +180K impressions, ROAS 4.4x vs 2.1x",
+    from: { platform: "Noon", color: "#2F77FF", campaign: "Various underperformers", roas: "2.1x", spend: "AED 1.8L" },
+    to: { platform: "Noon", color: "#E1306C", campaign: "Mountain Dew Brand Awareness", roas: "4.4x", spend: "AED 40K" },
+    amount: "AED 40K", projImpact: "Expand brand reach +180K impressions, ROAS 4.4x vs 2.1x",
     confidence: 85,
   },
   {
-    from: { platform: "Zepto", color: "#833AB4", campaign: "Low-stock geo campaigns", roas: "1.8x", spend: "₹60K" },
-    to: { platform: "Blinkit", color: "#FDDC2B", campaign: "Good Day Q-Commerce Push", roas: "3.8x", spend: "₹2.4L" },
-    amount: "₹30K", projImpact: "Better dark-store coverage + higher ROAS",
+    from: { platform: "Noon Minutes", color: "#833AB4", campaign: "Low-stock geo campaigns", roas: "1.8x", spend: "AED 60K" },
+    to: { platform: "Talabat", color: "#FDDC2B", campaign: "Pepsi Q-Commerce Push", roas: "3.8x", spend: "AED 2.4L" },
+    amount: "AED 30K", projImpact: "Better dark-store coverage + higher ROAS",
     confidence: 78,
   },
 ];
 
 const platformSummary = [
-  { platform: "Amazon", color: "#FF9900", spend: 6.5, roas: 5.1, optSpend: 7.3, optRoas: 5.4 },
-  { platform: "Instagram", color: "#E1306C", spend: 3.2, roas: 4.4, optSpend: 3.6, optRoas: 4.5 },
-  { platform: "Blinkit", color: "#FDDC2B", spend: 2.8, roas: 3.8, optSpend: 3.1, optRoas: 4.0 },
-  { platform: "Flipkart", color: "#2F77FF", spend: 4.3, roas: 2.1, optSpend: 2.5, optRoas: 3.0 },
-  { platform: "Zepto", color: "#833AB4", spend: 1.4, roas: 3.2, optSpend: 1.1, optRoas: 3.5 },
+  { platform: "Carrefour", color: "#FF9900", spend: 6.5, roas: 5.1, optSpend: 7.3, optRoas: 5.4 },
+  { platform: "Noon", color: "#E1306C", spend: 3.2, roas: 4.4, optSpend: 3.6, optRoas: 4.5 },
+  { platform: "Talabat", color: "#FDDC2B", spend: 2.8, roas: 3.8, optSpend: 3.1, optRoas: 4.0 },
+  { platform: "Noon", color: "#2F77FF", spend: 4.3, roas: 2.1, optSpend: 2.5, optRoas: 3.0 },
+  { platform: "Noon Minutes", color: "#833AB4", spend: 1.4, roas: 3.2, optSpend: 1.1, optRoas: 3.5 },
 ];
 
 const chartData = platformSummary.map(p => ({ name: p.platform, current: p.roas, optimised: p.optRoas }));
@@ -247,7 +247,7 @@ const BudgetOptimiserView: React.FC = () => {
           <KPICard title="Optimisations carried out yesterday" value="12 actions" delta="Auto + manual" deltaType="positive" sub="Budget shifts applied across portfolio" accentColor="bg-primary" delay={0} />
           <KPICard title="ROAS increment from yesterday" value="+0.3x" delta="vs prior day" deltaType="positive" sub="Blended portfolio gain" accentColor="bg-sw-green" delay={0.05} />
           <KPICard title="Underperforming campaigns" value="7 campaigns" delta="Below brand avg 3.4x" deltaType="negative" sub="Click to review reduction candidates" accentColor="bg-sw-red" delay={0.1} />
-          <KPICard title="Lowest avg ROAS platform" value="Flipkart · 2.1x" delta="-1.3x vs brand avg" deltaType="negative" sub="Reallocation opportunity flagged" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Lowest avg ROAS platform" value="Noon · 2.1x" delta="-1.3x vs brand avg" deltaType="negative" sub="Reallocation opportunity flagged" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <PanelCard title="Rule Engine" badge="Automation" badgeColor="purple" delay={0.18}>
@@ -418,9 +418,9 @@ const BudgetOptimiserView: React.FC = () => {
             <h3 className="text-sm font-medium text-foreground mb-1">Budget Shift Impact Simulator</h3>
             <p className="text-[11px] text-muted-foreground mb-3">Estimate the ROAS impact of moving budget between campaigns (read-only)</p>
             <div className="grid grid-cols-3 gap-4">
-              <div><label className="text-[10px] text-muted-foreground">From Campaign</label><p className="text-xs text-foreground mt-1">Milk Bikis Retargeting (2.1x ROAS)</p></div>
-              <div><label className="text-[10px] text-muted-foreground">To Campaign</label><p className="text-xs text-foreground mt-1">Good Day Butter — SP (5.1x ROAS)</p></div>
-              <div><label className="text-[10px] text-muted-foreground">Amount</label><p className="text-xs text-foreground mt-1">₹40,000</p></div>
+              <div><label className="text-[10px] text-muted-foreground">From Campaign</label><p className="text-xs text-foreground mt-1">Mirinda Retargeting (2.1x ROAS)</p></div>
+              <div><label className="text-[10px] text-muted-foreground">To Campaign</label><p className="text-xs text-foreground mt-1">Pepsi 1L — SP (5.1x ROAS)</p></div>
+              <div><label className="text-[10px] text-muted-foreground">Amount</label><p className="text-xs text-foreground mt-1">AED 40,000</p></div>
             </div>
             <div className="mt-3 p-3 rounded-xl bg-sw-green-dim border border-sw-green/20">
               <p className="text-[11px] text-foreground">Estimated impact: Blended ROAS +0.4x, incremental conversions +1,200</p>

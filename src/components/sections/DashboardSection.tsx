@@ -19,7 +19,7 @@ const sectionSummaries = [
     change: 2.1,
     alerts: 3,
     status: "warning" as const,
-    summary: "47 OOS SKUs, ₹12.4L daily revenue at risk",
+    summary: "47 OOS SKUs, AED 12.4L daily revenue at risk",
   },
   {
     id: "pricing",
@@ -30,7 +30,7 @@ const sectionSummaries = [
     change: 3,
     alerts: 2,
     status: "success" as const,
-    summary: "14 MAP violations, ₹8.2L margin opportunity",
+    summary: "14 MAP violations, AED 8.2L margin opportunity",
   },
   {
     id: "shelf",
@@ -74,7 +74,7 @@ const sectionSummaries = [
     change: 12,
     alerts: 1,
     status: "success" as const,
-    summary: "₹5L monthly spend, 45.2K est. clicks",
+    summary: "AED 5L monthly spend, 45.2K est. clicks",
   },
   {
     id: "category",
@@ -91,84 +91,84 @@ const sectionSummaries = [
 
 const anomalies = [
   {
-    id: 1, time: "12 min ago", severity: "critical" as const, location: "Mumbai", kpi: "Availability", brand: "FitCrunch", sku: "SKU-404 (Protein Bar)",
-    detail: "OOS on Amazon & Flipkart for 48+ hrs. ₹1.8L/day revenue loss.",
+    id: 1, time: "12 min ago", severity: "critical" as const, location: "Abu Dhabi", kpi: "Availability", brand: "FitCrunch", sku: "SKU-404 (Protein Bar)",
+    detail: "OOS on Carrefour & Noon for 48+ hrs. AED 1.8L/day revenue loss.",
     investigation: {
       platforms: [
-        { name: "Amazon", status: "Out of Stock", since: "2 days", lastPrice: "₹299", fulfillment: "FBA — warehouse empty" },
-        { name: "Flipkart", status: "Out of Stock", since: "2 days", lastPrice: "₹289", fulfillment: "Seller-fulfilled — no dispatch" },
-        { name: "Blinkit", status: "In Stock", since: "—", lastPrice: "₹310", fulfillment: "Dark store: 42 units left" },
+        { name: "Carrefour", status: "Out of Stock", since: "2 days", lastPrice: "AED 299", fulfillment: "FBA — warehouse empty" },
+        { name: "Noon", status: "Out of Stock", since: "2 days", lastPrice: "AED 289", fulfillment: "Seller-fulfilled — no dispatch" },
+        { name: "Talabat", status: "In Stock", since: "—", lastPrice: "AED 310", fulfillment: "Dark store: 42 units left" },
       ],
-      rootCause: "Warehouse Mumbai-W3 ran out of stock. Replenishment PO raised but ETA is 5 days.",
-      revenueImpact: "₹1.8L/day lost across Amazon + Flipkart. Competitor B gaining +6% organic rank on 'protein bar'.",
-      recommendation: "Redirect Blinkit inventory to FBA. Trigger 'Back in Stock' campaign on email/push for 12K waitlisted customers.",
+      rootCause: "Warehouse Abu Dhabi-W3 ran out of stock. Replenishment PO raised but ETA is 5 days.",
+      revenueImpact: "AED 1.8L/day lost across Carrefour + Noon. Competitor B gaining +6% organic rank on 'protein bar'.",
+      recommendation: "Redirect Talabat inventory to FBA. Trigger 'Back in Stock' campaign on email/push for 12K waitlisted customers.",
     },
   },
   {
-    id: 2, time: "34 min ago", severity: "critical" as const, location: "Delhi NCR", kpi: "Pricing", brand: "HydraMax", sku: "SKU-205 (Electrolyte)",
+    id: 2, time: "34 min ago", severity: "critical" as const, location: "Dubai", kpi: "Pricing", brand: "HydraMax", sku: "SKU-205 (Electrolyte)",
     detail: "Competitor A slashed price 18%. Market share at risk.",
     investigation: {
       platforms: [
-        { name: "Amazon", status: "Competitor: ₹149 → ₹122", since: "6 hrs", lastPrice: "Your price: ₹159", fulfillment: "FBA" },
-        { name: "Flipkart", status: "Competitor: ₹145 → ₹118", since: "6 hrs", lastPrice: "Your price: ₹155", fulfillment: "Smart fulfillment" },
-        { name: "Zepto", status: "Competitor: ₹155 → ₹130", since: "4 hrs", lastPrice: "Your price: ₹165", fulfillment: "Dark store" },
+        { name: "Carrefour", status: "Competitor: AED 149 → AED 122", since: "6 hrs", lastPrice: "Your price: AED 159", fulfillment: "FBA" },
+        { name: "Noon", status: "Competitor: AED 145 → AED 118", since: "6 hrs", lastPrice: "Your price: AED 155", fulfillment: "Smart fulfillment" },
+        { name: "Noon Minutes", status: "Competitor: AED 155 → AED 130", since: "4 hrs", lastPrice: "Your price: AED 165", fulfillment: "Dark store" },
       ],
       rootCause: "Competitor A (ElectroFuel) launched a 7-day flash sale across all platforms, reducing Electrolyte 500ml by 18%.",
-      revenueImpact: "Estimated 22% unit shift to competitor. ₹4.2L weekly revenue at risk in Delhi NCR.",
-      recommendation: "Option 1: Match price at ₹125 (margin drops 8%). Option 2: Run bundled offer 'Buy 2 Get 1' to protect margin. Option 3: Increase ad spend on brand keywords to defend visibility.",
+      revenueImpact: "Estimated 22% unit shift to competitor. AED 4.2L weekly revenue at risk in Dubai.",
+      recommendation: "Option 1: Match price at AED 125 (margin drops 8%). Option 2: Run bundled offer 'Buy 2 Get 1' to protect margin. Option 3: Increase ad spend on brand keywords to defend visibility.",
     },
   },
   {
-    id: 3, time: "1 hr ago", severity: "warning" as const, location: "Bangalore", kpi: "Market Share", brand: "ZapDrink", sku: "SKU-101 (Energy)",
+    id: 3, time: "1 hr ago", severity: "warning" as const, location: "Riyadh", kpi: "Market Share", brand: "ZapDrink", sku: "SKU-101 (Energy)",
     detail: "Lost #1 organic rank on 'energy drink' to Competitor B.",
     investigation: {
       platforms: [
-        { name: "Amazon", status: "Rank: #1 → #3", since: "18 hrs", lastPrice: "₹199", fulfillment: "FBA" },
-        { name: "Blinkit", status: "Rank: #2 → #4", since: "12 hrs", lastPrice: "₹210", fulfillment: "Dark store" },
+        { name: "Carrefour", status: "Rank: #1 → #3", since: "18 hrs", lastPrice: "AED 199", fulfillment: "FBA" },
+        { name: "Talabat", status: "Rank: #2 → #4", since: "12 hrs", lastPrice: "AED 210", fulfillment: "Dark store" },
       ],
       rootCause: "Competitor B (BoltEnergy) launched a new variant with 50+ seeded reviews and aggressive sponsored placement on 'energy drink' keyword.",
-      revenueImpact: "Organic traffic down 31% in last 24 hrs. Estimated ₹2.1L/week loss if rank not recovered.",
+      revenueImpact: "Organic traffic down 31% in last 24 hrs. Estimated AED 2.1L/week loss if rank not recovered.",
       recommendation: "Boost sponsored bid on 'energy drink' by 40%. Launch review generation campaign. Consider A+ content refresh with comparison charts.",
     },
   },
   {
-    id: 4, time: "1.5 hrs ago", severity: "warning" as const, location: "Chennai", kpi: "Content", brand: "FitCrunch", sku: "SKU-404 (Protein Bar)",
+    id: 4, time: "1.5 hrs ago", severity: "warning" as const, location: "Doha", kpi: "Content", brand: "FitCrunch", sku: "SKU-404 (Protein Bar)",
     detail: "Rating dropped to 3.2 — below 3.5 threshold. Conversion impact expected.",
     investigation: {
       platforms: [
-        { name: "Amazon", status: "Rating: 3.8 → 3.2", since: "3 days", lastPrice: "₹299", fulfillment: "FBA" },
-        { name: "Flipkart", status: "Rating: 3.9 → 3.4", since: "2 days", lastPrice: "₹289", fulfillment: "Smart fulfillment" },
+        { name: "Carrefour", status: "Rating: 3.8 → 3.2", since: "3 days", lastPrice: "AED 299", fulfillment: "FBA" },
+        { name: "Noon", status: "Rating: 3.9 → 3.4", since: "2 days", lastPrice: "AED 289", fulfillment: "Smart fulfillment" },
       ],
       rootCause: "Batch #FC-2024-Q1 had packaging defect — 14 negative reviews in 72 hrs mentioning 'broken seal' and 'stale taste'.",
-      revenueImpact: "Conversion rate dropped 18% on Amazon. Below 3.5 triggers suppression from 'Recommended' placements.",
-      recommendation: "Respond to all negative reviews within 24 hrs. Offer replacements. Escalate to QA team for batch recall. Request Amazon to flag reviews tied to defective batch.",
+      revenueImpact: "Conversion rate dropped 18% on Carrefour. Below 3.5 triggers suppression from 'Recommended' placements.",
+      recommendation: "Respond to all negative reviews within 24 hrs. Offer replacements. Escalate to QA team for batch recall. Request Carrefour to flag reviews tied to defective batch.",
     },
   },
   {
-    id: 5, time: "2 hrs ago", severity: "info" as const, location: "Pune", kpi: "SoS", brand: "PureLeaf", sku: "SKU-300 (Green Tea)",
+    id: 5, time: "2 hrs ago", severity: "info" as const, location: "Khalifa City", kpi: "SoS", brand: "PureLeaf", sku: "SKU-300 (Green Tea)",
     detail: "Competitor reduced ad spend on 'green tea' — conquesting opportunity.",
     investigation: {
       platforms: [
-        { name: "Amazon", status: "Comp ad share: 35% → 18%", since: "48 hrs", lastPrice: "₹450", fulfillment: "FBA" },
-        { name: "Flipkart", status: "Comp ad share: 28% → 12%", since: "24 hrs", lastPrice: "₹440", fulfillment: "Seller-fulfilled" },
+        { name: "Carrefour", status: "Comp ad share: 35% → 18%", since: "48 hrs", lastPrice: "AED 450", fulfillment: "FBA" },
+        { name: "Noon", status: "Comp ad share: 28% → 12%", since: "24 hrs", lastPrice: "AED 440", fulfillment: "Seller-fulfilled" },
       ],
       rootCause: "Competitor C (TeaVerde) paused campaigns — likely budget exhaustion or quarter-end cutback.",
-      revenueImpact: "Opportunity to capture 15-20% additional SoS. Estimated ₹1.5L incremental revenue if acted within 48 hrs.",
+      revenueImpact: "Opportunity to capture 15-20% additional SoS. Estimated AED 1.5L incremental revenue if acted within 48 hrs.",
       recommendation: "Increase bid on 'green tea', 'organic tea', 'healthy tea' by 25%. Activate conquesting campaign targeting TeaVerde branded keywords.",
     },
   },
   {
-    id: 6, time: "3 hrs ago", severity: "warning" as const, location: "Hyderabad", kpi: "Availability", brand: "ZapDrink", sku: "SKU-101 (Energy)",
-    detail: "Low stock on Blinkit — 2-day inventory remaining.",
+    id: 6, time: "3 hrs ago", severity: "warning" as const, location: "Jeddah", kpi: "Availability", brand: "ZapDrink", sku: "SKU-101 (Energy)",
+    detail: "Low stock on Talabat — 2-day inventory remaining.",
     investigation: {
       platforms: [
-        { name: "Blinkit", status: "42 units left (2-day stock)", since: "Now", lastPrice: "₹210", fulfillment: "Dark store HYD-04" },
-        { name: "Zepto", status: "In Stock — 180 units", since: "—", lastPrice: "₹215", fulfillment: "Dark store" },
-        { name: "Amazon", status: "In Stock — healthy", since: "—", lastPrice: "₹199", fulfillment: "FBA" },
+        { name: "Talabat", status: "42 units left (2-day stock)", since: "Now", lastPrice: "AED 210", fulfillment: "Dark store HYD-04" },
+        { name: "Noon Minutes", status: "In Stock — 180 units", since: "—", lastPrice: "AED 215", fulfillment: "Dark store" },
+        { name: "Carrefour", status: "In Stock — healthy", since: "—", lastPrice: "AED 199", fulfillment: "FBA" },
       ],
-      rootCause: "Blinkit Hyderabad dark store HYD-04 reorder trigger set too low. Demand spike from weekend sales not accounted for.",
-      revenueImpact: "If OOS: ₹45K/day lost on Blinkit Hyderabad. Competitor D currently #2 — will auto-promote to #1.",
-      recommendation: "Emergency replenishment to HYD-04. Raise reorder threshold from 30 to 80 units. Notify Blinkit ops team.",
+      rootCause: "Talabat Jeddah dark store HYD-04 reorder trigger set too low. Demand spike from weekend sales not accounted for.",
+      revenueImpact: "If OOS: AED 45K/day lost on Talabat Jeddah. Competitor D currently #2 — will auto-promote to #1.",
+      recommendation: "Emergency replenishment to HYD-04. Raise reorder threshold from 30 to 80 units. Notify Talabat ops team.",
     },
   },
 ];
@@ -182,7 +182,7 @@ const DashboardSection = ({ onNavigate }: DashboardProps) => {
   const [campaignForm, setCampaignForm] = useState({
     budget: "25000",
     duration: "7",
-    platforms: ["Amazon", "Flipkart"] as string[],
+    platforms: ["Carrefour", "Noon"] as string[],
     bidStrategy: "aggressive",
   });
 
@@ -427,7 +427,7 @@ const CampaignLaunchModal = ({
   setLaunched: (v: boolean) => void;
   onClose: () => void;
 }) => {
-  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "BigBasket"];
+  const allPlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "BigBasket"];
   const togglePlatform = (p: string) => {
     setForm({ ...form, platforms: form.platforms.includes(p) ? form.platforms.filter((x: string) => x !== p) : [...form.platforms, p] });
   };
@@ -490,7 +490,7 @@ const CampaignLaunchModal = ({
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Daily Budget (₹)</label>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Daily Budget (AED )</label>
                 <input type="number" value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
               </div>
@@ -513,7 +513,7 @@ const CampaignLaunchModal = ({
             </div>
             <div className="p-3 rounded-lg bg-success/5 border border-success/20">
               <p className="text-[10px] text-success uppercase font-bold tracking-wider mb-1">Estimated Impact</p>
-              <p className="text-sm font-bold text-foreground">₹{(parseInt(form.budget) * parseInt(form.duration) * 3.7 / 1000).toFixed(1)}L projected revenue • {parseInt(form.duration)}-day campaign across {form.platforms.length} platforms</p>
+              <p className="text-sm font-bold text-foreground">AED {(parseInt(form.budget) * parseInt(form.duration) * 3.7 / 1000).toFixed(1)}L projected revenue • {parseInt(form.duration)}-day campaign across {form.platforms.length} platforms</p>
             </div>
             <button onClick={() => setLaunched(true)}
               className="w-full py-3 gradient-primary text-primary-foreground rounded-lg font-bold shadow-card hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
@@ -530,7 +530,7 @@ const CampaignLaunchModal = ({
             <div className="grid grid-cols-3 gap-3">
               <div className="p-2 bg-muted/50 rounded-lg border border-border text-center">
                 <p className="text-[10px] text-muted-foreground uppercase font-bold">Budget</p>
-                <p className="text-sm font-bold text-foreground">₹{form.budget}/day</p>
+                <p className="text-sm font-bold text-foreground">AED {form.budget}/day</p>
               </div>
               <div className="p-2 bg-muted/50 rounded-lg border border-border text-center">
                 <p className="text-[10px] text-muted-foreground uppercase font-bold">Duration</p>
