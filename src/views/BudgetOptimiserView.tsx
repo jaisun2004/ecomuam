@@ -441,8 +441,13 @@ const BudgetOptimiserView: React.FC = () => {
         </div>
 
         <PanelCard title="Rule Engine" badge="Automation" badgeColor="purple" delay={0.18}>
-          <p className="text-[11px] text-muted-foreground mb-4">Pre-built rule templates and a custom builder that monitor live metrics and apply bid/budget actions automatically.</p>
-          <RuleEngine />
+          <p className="text-[11px] text-muted-foreground mb-4">Shelf monitoring KPI rules plus performance-driven templates and a custom builder. All apply bid / budget actions automatically across Talabat, Noon, Noon Minutes and Carrefour.</p>
+          <div className="space-y-6">
+            <ShelfMonitoringSection />
+            <div className="border-t border-subtle pt-5">
+              <RuleEngine />
+            </div>
+          </div>
         </PanelCard>
 
         <PanelCard title="Current vs Optimised ROAS by Platform" badge="AI Recommendation" badgeColor="purple" delay={0.2}>
