@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from "recharts";
 
-type Platform = "Talabat" | "Talabat" | "Noon Minutes";
+type Platform = "Talabat" | "Talabat Pro" | "Noon Minutes";
 type Health = "high_competition" | "high_oos_risk" | "efficiency_winner";
 type Lens = "keyword" | "pincode" | "budget";
 
