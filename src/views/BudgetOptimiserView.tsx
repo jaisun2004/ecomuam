@@ -548,7 +548,6 @@ const BudgetOptimiserView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <StandardisedRulesPanel />
         <CampaignRecommendationsPanel />
 
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
