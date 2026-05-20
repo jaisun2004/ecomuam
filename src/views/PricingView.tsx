@@ -278,38 +278,37 @@ const PricingView: React.FC = () => {
 
       {/* Price Alerts + Platform Pricing Index */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Active Price Alerts" badge={`${priceAlerts.length} alerts`} badgeColor="red" delay={0.3}>
+        <PanelCard title="Price-Driven Campaign Opportunities" badge="Action-ready" badgeColor="green" delay={0.3}>
+          <p className="text-[10px] text-muted-foreground mb-3">Pricing signals that translate directly to a campaign-level action.</p>
           <div className="space-y-2">
-            {priceAlerts.map((a, i) => (
-              <div key={i} className={`p-3 rounded-xl border ${
-                a.severity === "high" ? "bg-sw-red-dim/30 border-sw-red/20" : a.severity === "medium" ? "bg-sw-amber-dim/30 border-sw-amber/20" : "bg-surface-2 border-subtle"
-              }`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-foreground font-medium">{a.sku}</span>
-                  <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
-                    a.severity === "high" ? "bg-sw-red-dim text-sw-red" : "bg-sw-amber-dim text-sw-amber"
-                  }`}>{a.gap}</span>
+            {[
+              { insight: "Pepsi 1L is 12% cheaper than Coca-Cola on Noon Minutes", delta: "−12%", platform: "Noon Minutes", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
+              { insight: "Lacnor raised price 8% on Talabat — defensive window open on cola keywords", delta: "+8%", platform: "Talabat", action: "Raise bid on competing keywords", icon: TrendingUp, tone: "amber" },
+              { insight: "Aquafina 1.5L underpriced vs market by 15% on Carrefour — margin leaking", delta: "−15%", platform: "Carrefour", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
+              { insight: "Tropicana OJ at parity with Almarai on Noon — hold pricing, push share-of-shelf", delta: "0%", platform: "Noon", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
+            ].map((row, i) => {
+              const Icon = row.icon;
+              const toneBg = row.tone === "green" ? "bg-sw-green-dim text-sw-green" : row.tone === "amber" ? "bg-sw-amber-dim text-sw-amber" : row.tone === "red" ? "bg-sw-red-dim text-sw-red" : "bg-sw-purple-dim text-sw-purple";
+              const done = !!campaignStates[i];
+              return (
+                <div key={i} className="p-3 rounded-xl bg-surface-2 border border-subtle">
+                  <div className="flex items-start gap-2 mb-2">
+                    <Icon size={12} className="text-sw-amber mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-foreground flex-1">{row.insight}</p>
+                    <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${toneBg} flex-shrink-0`}>{row.delta}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-muted-foreground">{row.platform}</span>
+                    <button
+                      onClick={() => { setCampaignStates(p => ({ ...p, [i]: true })); toast({ title: "Campaign action queued", description: row.action }); }}
+                      disabled={done}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-medium inline-flex items-center gap-1 ${done ? "bg-sw-green-dim text-sw-green" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
+                      <Megaphone size={10} /> {done ? "✓ Triggered" : row.action}
+                    </button>
+                  </div>
                 </div>
-                <p className="text-[10px] text-muted-foreground">
-                  {a.competitor} on {a.platform}: {a.compPrice} vs your {a.yourPrice} · {a.impact}
-                </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      actionStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
-                    }`}>
-                    {actionStates[i] ? "✓ Price Matched" : "Match Price"}
-                  </button>
-                  <button onClick={() => setCampaignStates(p => ({ ...p, [i]: true }))}
-                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      campaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}>
-                    <Megaphone size={10} />
-                    {campaignStates[i] ? "✓ Campaign Live" : "Value Campaign"}
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </PanelCard>
 
