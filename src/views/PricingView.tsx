@@ -189,6 +189,8 @@ const PricingView: React.FC = () => {
   const [viewThroughPlatform, setViewThroughPlatform] = useState<string | null>(null);
   const [alertTeamStates, setAlertTeamStates] = useState<Record<string, boolean>>({});
   const [analyticsSkuFilter, setAnalyticsSkuFilter] = useState("All SKUs");
+  const [ppiMode, setPpiMode] = useState<"competitors" | "own">("competitors");
+  const [ppiSku, setPpiSku] = useState(skuOptions[0]);
 
   const compNames = compNamesBySku[selectedSku] || compNamesBySku["Pepsi 1L"];
   const competitorMatrix = (competitorMatrixByGroup["All SKUs"] || {})[selectedPlatform] || [];
