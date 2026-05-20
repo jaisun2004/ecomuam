@@ -462,42 +462,62 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         </ResponsiveContainer>
       </PanelCard>
 
-      {/* Competition Availability */}
-      <PanelCard title="Competition Availability vs Yours" badge="Opportunity" badgeColor="green" delay={0.15}>
-        <p className="text-[10px] text-muted-foreground mb-3">Competitors with higher availability — trigger campaigns to target their products when you're available and they're not.</p>
+      {/* Competitor Low-Availability — Auto Campaign Triggers (replaces Competition Availability vs Yours) */}
+      <PanelCard title="Competitor Low-Availability — Auto Campaign Triggers" badge="Capture demand" badgeColor="green" delay={0.15}>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] text-muted-foreground">Cities where competitor availability is low and own SKU coverage is healthy — campaigns auto-trigger to capture the demand.</p>
+          <button
+            onClick={() => toast({ title: "All pending triggers fired", description: "5 city-level campaigns queued" })}
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1">
+            <Zap size={11} /> Trigger All Pending
+          </button>
+        </div>
         <table className="w-full text-xs">
           <thead>
             <tr className="text-muted-foreground border-b border-subtle">
-              <th className="text-left py-2 font-normal">Competitor</th>
-              <th className="text-left py-2 font-normal">Platform</th>
-              <th className="text-center py-2 font-normal">Their Avail.</th>
-              <th className="text-center py-2 font-normal">Your Avail.</th>
-              <th className="text-center py-2 font-normal">Gap</th>
-              <th className="text-left py-2 font-normal">Top Product</th>
-              <th className="text-right py-2 font-normal">Action</th>
+              <th className="text-left py-2 font-normal">City</th>
+              <th className="text-center py-2 font-normal">Competitor SKUs OOS</th>
+              <th className="text-center py-2 font-normal">Your Availability</th>
+              <th className="text-left py-2 font-normal">Suggested Campaign</th>
+              <th className="text-right py-2 font-normal">Status</th>
             </tr>
           </thead>
           <tbody>
-            {competitionAvailData.map((c, i) => (
-              <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                <td className="py-2.5 text-foreground font-medium">{c.competitor}</td>
-                <td className="py-2.5 text-muted-foreground">{c.platform}</td>
-                <td className="py-2.5 text-center font-mono text-sw-green">{c.compAvail}%</td>
-                <td className="py-2.5 text-center font-mono" style={{ color: c.yourAvail >= 70 ? "#2ECF8E" : c.yourAvail >= 50 ? "#F5A623" : "#FF5C5C" }}>{c.yourAvail}%</td>
-                <td className="py-2.5 text-center font-mono text-sw-red">{c.compAvail > c.yourAvail ? `+${c.compAvail - c.yourAvail}%` : `${c.compAvail - c.yourAvail}%`}</td>
-                <td className="py-2.5 text-foreground text-[10px]">{c.product}</td>
-                <td className="py-2.5 text-right">
-                  <button
-                    onClick={() => setCompCampaignStates(p => ({ ...p, [i]: true }))}
-                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      compCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}>
-                    <Megaphone size={10} />
-                    {compCampaignStates[i] ? "✓ Campaign Triggered" : "Target Competition"}
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {[
+              { city: "Dubai Marina", platform: "Talabat", compOos: 4, yourAvail: 96, campaign: "Boost Pepsi 1L — Dubai Marina", auto: true },
+              { city: "Downtown Dubai", platform: "Noon Minutes", compOos: 3, yourAvail: 92, campaign: "Conquest Mountain Dew vs Coca-Cola", auto: true },
+              { city: "Riyadh Olaya", platform: "Talabat", compOos: 5, yourAvail: 88, campaign: "Aquafina 1.5L Share Capture", auto: true },
+              { city: "Jeddah Al Hamra", platform: "Noon Minutes", compOos: 2, yourAvail: 84, campaign: "7UP — Almarai Conquest", auto: false },
+              { city: "Doha West Bay", platform: "Talabat", compOos: 3, yourAvail: 78, campaign: "Lipton Ice Tea Push", auto: false },
+              { city: "Abu Dhabi Khalifa", platform: "Carrefour", compOos: 4, yourAvail: 91, campaign: "Mirinda — Rauch Defensive", auto: true },
+            ].map((r, i) => {
+              const triggered = r.auto || !!compCampaignStates[i];
+              return (
+                <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
+                    <MapPin size={11} className="text-muted-foreground" />
+                    <span className="font-medium">{r.city}</span>
+                    <span className="text-[9px] text-muted-foreground">· {r.platform}</span>
+                  </td>
+                  <td className="py-2.5 text-center font-mono text-sw-red">{r.compOos}</td>
+                  <td className="py-2.5 text-center font-mono" style={{ color: r.yourAvail >= 85 ? "#2ECF8E" : "#F5A623" }}>{r.yourAvail}%</td>
+                  <td className="py-2.5 text-foreground text-[11px]">{r.campaign}</td>
+                  <td className="py-2.5 text-right">
+                    {triggered ? (
+                      <span className="inline-flex items-center gap-1 font-mono text-[9px] px-2 py-0.5 rounded-full bg-sw-green-dim text-sw-green">
+                        <Zap size={9} /> {r.auto ? "Auto-triggered" : "Triggered"}
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => { setCompCampaignStates(p => ({ ...p, [i]: true })); toast({ title: "Campaign triggered", description: `${r.campaign} in ${r.city}` }); }}
+                        className="px-2 py-1 rounded-lg text-[10px] font-medium bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1">
+                        <Megaphone size={10} /> Trigger
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </PanelCard>
