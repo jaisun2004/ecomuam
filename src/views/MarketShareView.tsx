@@ -13,7 +13,7 @@ interface DarkStore {
   name: string;
   pincode: string;
   city: string;
-  platform: "Blinkit" | "Zepto" | "Swiggy Instamart";
+  platform: "Talabat" | "Noon Minutes" | "Talabat";
   lat: number; // mapped to SVG Y
   lng: number; // mapped to SVG X
   marketShare: number;
@@ -28,40 +28,40 @@ interface DarkStore {
 }
 
 const darkStores: DarkStore[] = [
-  { id: "ds-1", name: "Blinkit Connaught Place", pincode: "110001", city: "Delhi", platform: "Blinkit", lat: 148, lng: 192, marketShare: 34, availability: 96, avgDeliveryMin: 11, ordersPerDay: 142, revenue: "₹1.8L", topSku: "Good Day Butter 200g", oosRate: 4, competitorPresence: 5, slotShare: 42 },
-  { id: "ds-2", name: "Zepto Hauz Khas", pincode: "110016", city: "Delhi", platform: "Zepto", lat: 153, lng: 188, marketShare: 28, availability: 91, avgDeliveryMin: 14, ordersPerDay: 98, revenue: "₹1.2L", topSku: "Marie Gold 250g", oosRate: 9, competitorPresence: 4, slotShare: 31 },
-  { id: "ds-3", name: "Blinkit Noida Sec 18", pincode: "201301", city: "Noida", platform: "Blinkit", lat: 156, lng: 200, marketShare: 31, availability: 93, avgDeliveryMin: 12, ordersPerDay: 110, revenue: "₹1.4L", topSku: "Bourbon Cream 150g", oosRate: 7, competitorPresence: 3, slotShare: 38 },
-  { id: "ds-4", name: "Instamart Dwarka", pincode: "110075", city: "Delhi", platform: "Swiggy Instamart", lat: 150, lng: 182, marketShare: 22, availability: 88, avgDeliveryMin: 18, ordersPerDay: 65, revenue: "₹82K", topSku: "NutriChoice Digestive 100g", oosRate: 12, competitorPresence: 6, slotShare: 24 },
-  { id: "ds-5", name: "Zepto Gurugram DLF", pincode: "122002", city: "Gurugram", platform: "Zepto", lat: 155, lng: 178, marketShare: 26, availability: 90, avgDeliveryMin: 15, ordersPerDay: 88, revenue: "₹1.1L", topSku: "Good Day Butter 200g", oosRate: 10, competitorPresence: 4, slotShare: 29 },
-  { id: "ds-6", name: "Blinkit Andheri West", pincode: "400058", city: "Mumbai", platform: "Blinkit", lat: 285, lng: 155, marketShare: 38, availability: 97, avgDeliveryMin: 10, ordersPerDay: 168, revenue: "₹2.1L", topSku: "Good Day Butter 200g", oosRate: 3, competitorPresence: 6, slotShare: 45 },
-  { id: "ds-7", name: "Zepto Bandra", pincode: "400050", city: "Mumbai", platform: "Zepto", lat: 288, lng: 160, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 125, revenue: "₹1.6L", topSku: "Marie Gold 250g", oosRate: 8, competitorPresence: 5, slotShare: 33 },
-  { id: "ds-8", name: "Instamart Powai", pincode: "400076", city: "Mumbai", platform: "Swiggy Instamart", lat: 282, lng: 165, marketShare: 24, availability: 86, avgDeliveryMin: 16, ordersPerDay: 72, revenue: "₹92K", topSku: "Bourbon Cream 150g", oosRate: 14, competitorPresence: 4, slotShare: 22 },
-  { id: "ds-9", name: "Blinkit Koramangala", pincode: "560034", city: "Bangalore", platform: "Blinkit", lat: 340, lng: 185, marketShare: 36, availability: 95, avgDeliveryMin: 11, ordersPerDay: 155, revenue: "₹1.9L", topSku: "Good Day Butter 200g", oosRate: 5, competitorPresence: 5, slotShare: 40 },
-  { id: "ds-10", name: "Zepto HSR Layout", pincode: "560102", city: "Bangalore", platform: "Zepto", lat: 345, lng: 190, marketShare: 29, availability: 90, avgDeliveryMin: 14, ordersPerDay: 102, revenue: "₹1.3L", topSku: "NutriChoice Digestive 100g", oosRate: 10, competitorPresence: 4, slotShare: 30 },
-  { id: "ds-11", name: "Blinkit Whitefield", pincode: "560066", city: "Bangalore", platform: "Blinkit", lat: 338, lng: 196, marketShare: 32, availability: 93, avgDeliveryMin: 13, ordersPerDay: 120, revenue: "₹1.5L", topSku: "Marie Gold 250g", oosRate: 7, competitorPresence: 3, slotShare: 35 },
-  { id: "ds-12", name: "Blinkit Hinjewadi", pincode: "411057", city: "Pune", platform: "Blinkit", lat: 295, lng: 170, marketShare: 33, availability: 94, avgDeliveryMin: 12, ordersPerDay: 95, revenue: "₹1.2L", topSku: "Good Day Butter 200g", oosRate: 6, competitorPresence: 3, slotShare: 37 },
-  { id: "ds-13", name: "Zepto Kothrud", pincode: "411038", city: "Pune", platform: "Zepto", lat: 298, lng: 175, marketShare: 25, availability: 89, avgDeliveryMin: 15, ordersPerDay: 78, revenue: "₹98K", topSku: "Bourbon Cream 150g", oosRate: 11, competitorPresence: 4, slotShare: 26 },
-  { id: "ds-14", name: "Blinkit Madhapur", pincode: "500081", city: "Hyderabad", platform: "Blinkit", lat: 305, lng: 215, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 118, revenue: "₹1.5L", topSku: "Good Day Butter 200g", oosRate: 8, competitorPresence: 4, slotShare: 34 },
-  { id: "ds-15", name: "Instamart Gachibowli", pincode: "500032", city: "Hyderabad", platform: "Swiggy Instamart", lat: 308, lng: 210, marketShare: 20, availability: 84, avgDeliveryMin: 19, ordersPerDay: 55, revenue: "₹70K", topSku: "NutriChoice Digestive 100g", oosRate: 16, competitorPresence: 5, slotShare: 20 },
-  { id: "ds-16", name: "Blinkit T. Nagar", pincode: "600017", city: "Chennai", platform: "Blinkit", lat: 370, lng: 215, marketShare: 27, availability: 91, avgDeliveryMin: 14, ordersPerDay: 85, revenue: "₹1.1L", topSku: "Good Day Butter 200g", oosRate: 9, competitorPresence: 3, slotShare: 30 },
-  { id: "ds-17", name: "Zepto Anna Nagar", pincode: "600040", city: "Chennai", platform: "Zepto", lat: 375, lng: 220, marketShare: 23, availability: 87, avgDeliveryMin: 16, ordersPerDay: 68, revenue: "₹86K", topSku: "Marie Gold 250g", oosRate: 13, competitorPresence: 4, slotShare: 25 },
-  { id: "ds-18", name: "Blinkit Salt Lake", pincode: "700091", city: "Kolkata", platform: "Blinkit", lat: 230, lng: 282, marketShare: 22, availability: 85, avgDeliveryMin: 17, ordersPerDay: 62, revenue: "₹78K", topSku: "Good Day Butter 200g", oosRate: 15, competitorPresence: 3, slotShare: 24 },
-  { id: "ds-19", name: "Blinkit Malviya Nagar", pincode: "302017", city: "Jaipur", platform: "Blinkit", lat: 182, lng: 152, marketShare: 18, availability: 80, avgDeliveryMin: 20, ordersPerDay: 42, revenue: "₹52K", topSku: "Bourbon Cream 150g", oosRate: 20, competitorPresence: 2, slotShare: 18 },
-  { id: "ds-20", name: "Zepto SG Highway", pincode: "380054", city: "Ahmedabad", platform: "Zepto", lat: 230, lng: 140, marketShare: 20, availability: 82, avgDeliveryMin: 18, ordersPerDay: 48, revenue: "₹60K", topSku: "Good Day Butter 200g", oosRate: 18, competitorPresence: 2, slotShare: 20 },
-  { id: "ds-21", name: "Blinkit Gomti Nagar", pincode: "226010", city: "Lucknow", platform: "Blinkit", lat: 180, lng: 230, marketShare: 16, availability: 78, avgDeliveryMin: 22, ordersPerDay: 35, revenue: "₹44K", topSku: "Marie Gold 250g", oosRate: 22, competitorPresence: 2, slotShare: 16 },
-  { id: "ds-22", name: "Blinkit Sector 17", pincode: "160017", city: "Chandigarh", platform: "Blinkit", lat: 120, lng: 176, marketShare: 25, availability: 90, avgDeliveryMin: 14, ordersPerDay: 72, revenue: "₹90K", topSku: "Good Day Butter 200g", oosRate: 10, competitorPresence: 3, slotShare: 28 },
-  { id: "ds-23", name: "Zepto Vijay Nagar", pincode: "452010", city: "Indore", platform: "Zepto", lat: 238, lng: 175, marketShare: 14, availability: 76, avgDeliveryMin: 24, ordersPerDay: 28, revenue: "₹35K", topSku: "NutriChoice Digestive 100g", oosRate: 24, competitorPresence: 2, slotShare: 14 },
-  { id: "ds-24", name: "Blinkit Edappally", pincode: "682024", city: "Kochi", platform: "Blinkit", lat: 395, lng: 192, marketShare: 21, availability: 88, avgDeliveryMin: 16, ordersPerDay: 58, revenue: "₹72K", topSku: "Good Day Butter 200g", oosRate: 12, competitorPresence: 2, slotShare: 22 },
+  { id: "ds-1", name: "Talabat Downtown Dubai", pincode: "110001", city: "Dubai", platform: "Talabat", lat: 148, lng: 192, marketShare: 34, availability: 96, avgDeliveryMin: 11, ordersPerDay: 142, revenue: "AED 1.8L", topSku: "Pepsi 1L", oosRate: 4, competitorPresence: 5, slotShare: 42 },
+  { id: "ds-2", name: "Noon Minutes JLT", pincode: "110016", city: "Dubai", platform: "Noon Minutes", lat: 153, lng: 188, marketShare: 28, availability: 91, avgDeliveryMin: 14, ordersPerDay: 98, revenue: "AED 1.2L", topSku: "7UP 1L", oosRate: 9, competitorPresence: 4, slotShare: 31 },
+  { id: "ds-3", name: "Talabat Dubai Marina Sec 18", pincode: "201301", city: "Dubai Marina", platform: "Talabat", lat: 156, lng: 200, marketShare: 31, availability: 93, avgDeliveryMin: 12, ordersPerDay: 110, revenue: "AED 1.4L", topSku: "Mountain Dew 1L", oosRate: 7, competitorPresence: 3, slotShare: 38 },
+  { id: "ds-4", name: "Talabat Deira", pincode: "110075", city: "Dubai", platform: "Talabat", lat: 150, lng: 182, marketShare: 22, availability: 88, avgDeliveryMin: 18, ordersPerDay: 65, revenue: "AED 82K", topSku: "Aquafina 1.5L", oosRate: 12, competitorPresence: 6, slotShare: 24 },
+  { id: "ds-5", name: "Noon Minutes Al Reem DLF", pincode: "122002", city: "Al Reem", platform: "Noon Minutes", lat: 155, lng: 178, marketShare: 26, availability: 90, avgDeliveryMin: 15, ordersPerDay: 88, revenue: "AED 1.1L", topSku: "Pepsi 1L", oosRate: 10, competitorPresence: 4, slotShare: 29 },
+  { id: "ds-6", name: "Talabat Al Reem", pincode: "400058", city: "Abu Dhabi", platform: "Talabat", lat: 285, lng: 155, marketShare: 38, availability: 97, avgDeliveryMin: 10, ordersPerDay: 168, revenue: "AED 2.1L", topSku: "Pepsi 1L", oosRate: 3, competitorPresence: 6, slotShare: 45 },
+  { id: "ds-7", name: "Noon Minutes Khalifa City", pincode: "400050", city: "Abu Dhabi", platform: "Noon Minutes", lat: 288, lng: 160, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 125, revenue: "AED 1.6L", topSku: "7UP 1L", oosRate: 8, competitorPresence: 5, slotShare: 33 },
+  { id: "ds-8", name: "Talabat Al Nahda", pincode: "400076", city: "Abu Dhabi", platform: "Talabat", lat: 282, lng: 165, marketShare: 24, availability: 86, avgDeliveryMin: 16, ordersPerDay: 72, revenue: "AED 92K", topSku: "Mountain Dew 1L", oosRate: 14, competitorPresence: 4, slotShare: 22 },
+  { id: "ds-9", name: "Talabat Olaya", pincode: "560034", city: "Riyadh", platform: "Talabat", lat: 340, lng: 185, marketShare: 36, availability: 95, avgDeliveryMin: 11, ordersPerDay: 155, revenue: "AED 1.9L", topSku: "Pepsi 1L", oosRate: 5, competitorPresence: 5, slotShare: 40 },
+  { id: "ds-10", name: "Noon Minutes Al Malqa", pincode: "560102", city: "Riyadh", platform: "Noon Minutes", lat: 345, lng: 190, marketShare: 29, availability: 90, avgDeliveryMin: 14, ordersPerDay: 102, revenue: "AED 1.3L", topSku: "Aquafina 1.5L", oosRate: 10, competitorPresence: 4, slotShare: 30 },
+  { id: "ds-11", name: "Talabat Al Hamra", pincode: "560066", city: "Riyadh", platform: "Talabat", lat: 338, lng: 196, marketShare: 32, availability: 93, avgDeliveryMin: 13, ordersPerDay: 120, revenue: "AED 1.5L", topSku: "7UP 1L", oosRate: 7, competitorPresence: 3, slotShare: 35 },
+  { id: "ds-12", name: "Talabat West Bay", pincode: "411057", city: "Khalifa City", platform: "Talabat", lat: 295, lng: 170, marketShare: 33, availability: 94, avgDeliveryMin: 12, ordersPerDay: 95, revenue: "AED 1.2L", topSku: "Pepsi 1L", oosRate: 6, competitorPresence: 3, slotShare: 37 },
+  { id: "ds-13", name: "Noon Minutes Salmiya", pincode: "411038", city: "Khalifa City", platform: "Noon Minutes", lat: 298, lng: 175, marketShare: 25, availability: 89, avgDeliveryMin: 15, ordersPerDay: 78, revenue: "AED 98K", topSku: "Mountain Dew 1L", oosRate: 11, competitorPresence: 4, slotShare: 26 },
+  { id: "ds-14", name: "Talabat Olaya", pincode: "500081", city: "Jeddah", platform: "Talabat", lat: 305, lng: 215, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 118, revenue: "AED 1.5L", topSku: "Pepsi 1L", oosRate: 8, competitorPresence: 4, slotShare: 34 },
+  { id: "ds-15", name: "Talabat Al Malqa", pincode: "500032", city: "Jeddah", platform: "Talabat", lat: 308, lng: 210, marketShare: 20, availability: 84, avgDeliveryMin: 19, ordersPerDay: 55, revenue: "AED 70K", topSku: "Aquafina 1.5L", oosRate: 16, competitorPresence: 5, slotShare: 20 },
+  { id: "ds-16", name: "Talabat Al Hamra", pincode: "600017", city: "Doha", platform: "Talabat", lat: 370, lng: 215, marketShare: 27, availability: 91, avgDeliveryMin: 14, ordersPerDay: 85, revenue: "AED 1.1L", topSku: "Pepsi 1L", oosRate: 9, competitorPresence: 3, slotShare: 30 },
+  { id: "ds-17", name: "Noon Minutes West Bay", pincode: "600040", city: "Doha", platform: "Noon Minutes", lat: 375, lng: 220, marketShare: 23, availability: 87, avgDeliveryMin: 16, ordersPerDay: 68, revenue: "AED 86K", topSku: "7UP 1L", oosRate: 13, competitorPresence: 4, slotShare: 25 },
+  { id: "ds-18", name: "Talabat Salmiya", pincode: "700091", city: "Sharjah", platform: "Talabat", lat: 230, lng: 282, marketShare: 22, availability: 85, avgDeliveryMin: 17, ordersPerDay: 62, revenue: "AED 78K", topSku: "Pepsi 1L", oosRate: 15, competitorPresence: 3, slotShare: 24 },
+  { id: "ds-19", name: "Talabat Deira", pincode: "302017", city: "Al Hamra", platform: "Talabat", lat: 182, lng: 152, marketShare: 18, availability: 80, avgDeliveryMin: 20, ordersPerDay: 42, revenue: "AED 52K", topSku: "Mountain Dew 1L", oosRate: 20, competitorPresence: 2, slotShare: 18 },
+  { id: "ds-20", name: "Noon Minutes Sharjah", pincode: "380054", city: "Sharjah", platform: "Noon Minutes", lat: 230, lng: 140, marketShare: 20, availability: 82, avgDeliveryMin: 18, ordersPerDay: 48, revenue: "AED 60K", topSku: "Pepsi 1L", oosRate: 18, competitorPresence: 2, slotShare: 20 },
+  { id: "ds-21", name: "Talabat Manama", pincode: "226010", city: "Manama", platform: "Talabat", lat: 180, lng: 230, marketShare: 16, availability: 78, avgDeliveryMin: 22, ordersPerDay: 35, revenue: "AED 44K", topSku: "7UP 1L", oosRate: 22, competitorPresence: 2, slotShare: 16 },
+  { id: "ds-22", name: "Talabat Sector 7", pincode: "160017", city: "Salmiya", platform: "Talabat", lat: 120, lng: 176, marketShare: 25, availability: 90, avgDeliveryMin: 14, ordersPerDay: 72, revenue: "AED 90K", topSku: "Pepsi 1L", oosRate: 10, competitorPresence: 3, slotShare: 28 },
+  { id: "ds-23", name: "Noon Minutes Kuwait City", pincode: "452010", city: "Kuwait City", platform: "Noon Minutes", lat: 238, lng: 175, marketShare: 14, availability: 76, avgDeliveryMin: 24, ordersPerDay: 28, revenue: "AED 35K", topSku: "Aquafina 1.5L", oosRate: 24, competitorPresence: 2, slotShare: 14 },
+  { id: "ds-24", name: "Talabat Doha", pincode: "682024", city: "JLT", platform: "Talabat", lat: 395, lng: 192, marketShare: 21, availability: 88, avgDeliveryMin: 16, ordersPerDay: 58, revenue: "AED 72K", topSku: "Pepsi 1L", oosRate: 12, competitorPresence: 2, slotShare: 22 },
 ];
 
 const platformColorMap: Record<string, string> = {
-  Blinkit: "#FDDC2B",
-  Zepto: "#833AB4",
-  "Swiggy Instamart": "#FC8019",
+  Talabat: "#FDDC2B",
+  "Noon Minutes": "#833AB4",
+  "Talabat Pro": "#FC8019",
 };
 
-const platforms = ["Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"];
-const competitors = ["Sunfeast", "Parle", "Unibic", "McVities", "ITC"];
+const platforms = ["Talabat", "Noon Minutes", "Talabat", "Carrefour", "Noon"];
+const competitors = ["Coca-Cola", "Almarai", "Rauch", "Masafi", "Lacnor"];
 
 const platformShareData = platforms.map(p => ({
   platform: p,
@@ -73,11 +73,11 @@ const platformShareData = platforms.map(p => ({
 }));
 
 const subcategoryMovers = [
-  { name: "Butter Cookies", thisWeek: 28, lastWeek: 24, change: 4, leader: "Sunfeast" },
-  { name: "Glucose Biscuits", thisWeek: 18, lastWeek: 22, change: -4, leader: "Parle" },
-  { name: "Cream Biscuits", thisWeek: 31, lastWeek: 29, change: 2, leader: "You" },
-  { name: "Digestive/Health", thisWeek: 15, lastWeek: 14, change: 1, leader: "McVities" },
-  { name: "Kids Biscuits", thisWeek: 12, lastWeek: 15, change: -3, leader: "Parle" },
+  { name: "Butter Drinks", thisWeek: 28, lastWeek: 24, change: 4, leader: "Coca-Cola" },
+  { name: "Glucose Beverages", thisWeek: 18, lastWeek: 22, change: -4, leader: "Almarai" },
+  { name: "Cream Beverages", thisWeek: 31, lastWeek: 29, change: 2, leader: "You" },
+  { name: "Digestive/Health", thisWeek: 15, lastWeek: 14, change: 1, leader: "Masafi" },
+  { name: "Kids Beverages", thisWeek: 12, lastWeek: 15, change: -3, leader: "Almarai" },
 ];
 
 // Analytics data
@@ -102,8 +102,8 @@ const velocityData = ["You", ...competitors.slice(0, 4)].map(brand => ({
 }));
 
 const newEntrants = [
-  { brand: "Cremica", firstSeen: "Mar 2, 2026", platforms: ["Blinkit", "Zepto"], share: "1.2%", keywords: ["butter cookies budget", "cream biscuits india", "tea snack"] },
-  { brand: "Karachi Bakery", firstSeen: "Mar 8, 2026", platforms: ["Amazon"], share: "0.8%", keywords: ["premium cookies", "fruit biscuits"] },
+  { brand: "Masafi", firstSeen: "Mar 2, 2026", platforms: ["Talabat", "Noon Minutes"], share: "1.2%", keywords: ["butter drinks budget", "cream beverages india", "tea snack"] },
+  { brand: "Karachi Bakery", firstSeen: "Mar 8, 2026", platforms: ["Carrefour"], share: "0.8%", keywords: ["premium drinks", "fruit beverages"] },
 ];
 
 const MarketShareView: React.FC = () => {
@@ -113,7 +113,7 @@ const MarketShareView: React.FC = () => {
   const [selectedStore, setSelectedStore] = useState<DarkStore | null>(null);
   const [expandedSubcategories, setExpandedSubcategories] = useState<Record<string, boolean>>({});
   const [expandedEntrants, setExpandedEntrants] = useState<Record<string, boolean>>({});
-  const [storeFilter, setStoreFilter] = useState<"All" | "Blinkit" | "Zepto" | "Swiggy Instamart">("All");
+  const [storeFilter, setStoreFilter] = useState<"All" | "Talabat" | "Noon Minutes" | "Talabat">("All");
 
   const filteredStores = useMemo(() =>
     storeFilter === "All" ? darkStores : darkStores.filter(s => s.platform === storeFilter),
@@ -132,9 +132,9 @@ const MarketShareView: React.FC = () => {
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
           <KPICard title="Overall Category Share" value="22%" delta="▲ 1.4% vs last wk" deltaType="positive" sub="Across all platforms" accentColor="bg-primary" delay={0} />
-          <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" sub="Behind Parle at 26%" accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Fastest Growing Competitor" value="ITC" delta="+3.2% share gain" deltaType="negative" sub="Aggressive Q-commerce push" accentColor="bg-sw-red" delay={0.1} />
-          <KPICard title="Platform Where You Lead" value="Flipkart" delta="Highest share: 31%" deltaType="positive" sub="2.1x vs nearest rival" accentColor="bg-sw-purple" delay={0.15} />
+          <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" sub="Behind Almarai at 26%" accentColor="bg-sw-green" delay={0.05} />
+          <KPICard title="Fastest Growing Competitor" value="Lacnor" delta="+3.2% share gain" deltaType="negative" sub="Aggressive Q-commerce push" accentColor="bg-sw-red" delay={0.1} />
+          <KPICard title="Platform Where You Lead" value="Noon" delta="Highest share: 31%" deltaType="positive" sub="2.1x vs nearest rival" accentColor="bg-sw-purple" delay={0.15} />
         </div>
 
         {/* Share by platform */}
@@ -146,17 +146,17 @@ const MarketShareView: React.FC = () => {
               <YAxis type="category" dataKey="platform" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} width={120} />
               <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
               <Bar dataKey="you" stackId="a" fill="#A78BFA" radius={[0, 0, 0, 0]} name="You" />
-              <Bar dataKey="rival1" stackId="a" fill="#FF5C5C" name="Sunfeast" />
-              <Bar dataKey="rival2" stackId="a" fill="#FF8A80" name="Parle" />
-              <Bar dataKey="rival3" stackId="a" fill="#FFAB91" name="Unibic" />
+              <Bar dataKey="rival1" stackId="a" fill="#FF5C5C" name="Coca-Cola" />
+              <Bar dataKey="rival2" stackId="a" fill="#FF8A80" name="Almarai" />
+              <Bar dataKey="rival3" stackId="a" fill="#FFAB91" name="Rauch" />
               <Bar dataKey="others" stackId="a" fill="rgba(85,90,110,0.4)" radius={[0, 4, 4, 0]} name="Others" />
             </BarChart>
           </ResponsiveContainer>
           <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
             <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Sunfeast</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Parle</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Unibic</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Coca-Cola</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Almarai</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Rauch</span>
           </div>
         </PanelCard>
 
@@ -236,17 +236,17 @@ const MarketShareView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
-                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Sunfeast" />
-                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Parle" />
-                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Unibic" />
-                <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="ITC" />
+                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Coca-Cola" />
+                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Almarai" />
+                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Rauch" />
+                <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Lacnor" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Sunfeast</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Parle</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Unibic</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Coca-Cola</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Almarai</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Rauch</span>
             </div>
           </PanelCard>
 
@@ -372,7 +372,7 @@ const MarketShareView: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {(["All", "Blinkit", "Zepto", "Swiggy Instamart"] as const).map(p => (
+                  {(["All", "Talabat", "Noon Minutes", "Talabat"] as const).map(p => (
                     <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
                   ))}
                 </SelectContent>
@@ -524,7 +524,7 @@ const MarketShareView: React.FC = () => {
               </div>
               <div className="p-4 rounded-xl bg-surface-2 border border-subtle">
                 <p className="text-[10px] text-muted-foreground">Platform Exclusivity Score</p>
-                <p className="font-mono text-sm font-bold text-foreground mt-1">Rival A: 2.1x on Zepto only</p>
+                <p className="font-mono text-sm font-bold text-foreground mt-1">Rival A: 2.1x on Noon Minutes only</p>
                 <p className="text-[9px] text-muted-foreground mt-0.5">Where competitors dominate exclusively</p>
               </div>
               <div className="p-4 rounded-xl bg-surface-2 border border-subtle">

@@ -13,69 +13,69 @@ const searchTrendData = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const demandForecast = [
-  { category: "Cream Biscuits", current: 85, forecast: 102 },
+  { category: "Cream Beverages", current: 85, forecast: 102 },
   { category: "Glucose", current: 42, forecast: 38 },
   { category: "Digestive", current: 55, forecast: 78 },
-  { category: "Cookies", current: 30, forecast: 35 },
+  { category: "Drinks", current: 30, forecast: 35 },
   { category: "Health & Fibre", current: 48, forecast: 62 },
 ];
 
-const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
-const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
-const categoryFilter = ["All Categories", "Cream Biscuits", "Glucose", "Digestive", "Cookies", "Health & Fibre"];
+const platformFilter = ["All Platforms", "Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", "Talabat Pro": "#FC8019" };
+const categoryFilter = ["All Categories", "Cream Beverages", "Glucose", "Digestive", "Drinks", "Health & Fibre"];
 
 const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: string; opp: string; oppColor: string; platform?: string }[]> = {
   "All Categories": [
-    { kw: "butter biscuits online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Blinkit" },
-    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
-    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
-    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
-    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
-    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Flipkart" },
-    { kw: "biscuit gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", platform: "Amazon" },
+    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Talabat" },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Carrefour" },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon Minutes" },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Carrefour" },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Talabat" },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon" },
+    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", platform: "Carrefour" },
   ],
-  "Cream Biscuits": [
-    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Amazon" },
-    { kw: "bourbon cream biscuit", vol: "18.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
+  "Cream Beverages": [
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Carrefour" },
+    { kw: "bourbon cream beverage", vol: "18.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Carrefour" },
   ],
   Glucose: [
-    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Flipkart" },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon" },
   ],
   Digestive: [
-    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Amazon" },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Carrefour" },
   ],
-  Cookies: [
-    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
+  Drinks: [
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Talabat" },
   ],
   "Health & Fibre": [
-    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon Minutes" },
   ],
 };
 
 // SoS data
 const sosData = {
-  yourSos: 28, sosChange: 2.4, topGainer: "Parle", topGainerGain: 3.1, leader: "Parle", leaderSos: 32,
+  yourSos: 28, sosChange: 2.4, topGainer: "Almarai", topGainerGain: 3.1, leader: "Almarai", leaderSos: 32,
 };
 
 const poachingIncidents = [
-  { keyword: "britannia good day", competitor: "Sunfeast", platforms: ["Amazon", "Flipkart"], firstDetected: "Mar 12", severity: "High" },
-  { keyword: "britannia biscuits", competitor: "Parle", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
-  { keyword: "britannia bourbon", competitor: "ITC", platforms: ["Zepto", "Amazon"], firstDetected: "Mar 15", severity: "Low" },
+  { keyword: "britannia good day", competitor: "Coca-Cola", platforms: ["Carrefour", "Noon"], firstDetected: "Mar 12", severity: "High" },
+  { keyword: "britannia beverages", competitor: "Almarai", platforms: ["Talabat"], firstDetected: "Mar 14", severity: "Medium" },
+  { keyword: "britannia bourbon", competitor: "Lacnor", platforms: ["Noon Minutes", "Carrefour"], firstDetected: "Mar 15", severity: "Low" },
 ];
 
 const retailerIssues = [
-  { platform: "Zepto", desc: "SoS on Zepto down 12% WoW for Brand Search terms", keywords: 8 },
-  { platform: "Blinkit", desc: "Not appearing in top 10 on Blinkit for 8 category keywords", keywords: 8 },
+  { platform: "Noon Minutes", desc: "SoS on Noon Minutes down 12% WoW for Brand Search terms", keywords: 8 },
+  { platform: "Talabat", desc: "Not appearing in top 10 on Talabat for 8 category keywords", keywords: 8 },
 ];
 
 // Competition rank improvements
 const compRankImprovements = [
-  { product: "Sunfeast Butter Cookies 200g", brand: "Sunfeast", platform: "Amazon", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
-  { product: "Parle-G Gold 200g", brand: "Parle", platform: "Flipkart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
-  { product: "Unibic Butter Cookies 150g", brand: "Unibic", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
-  { product: "McVities Digestive 200g", brand: "McVities", platform: "Amazon", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
-  { product: "Sunfeast Dark Fantasy 75g", brand: "Sunfeast", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
-  { product: "Parle Hide & Seek 100g", brand: "Parle", platform: "Instamart", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
+  { product: "Coca-Cola Butter Drinks 200g", brand: "Coca-Cola", platform: "Carrefour", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
+  { product: "Almarai Juice 1L", brand: "Almarai", platform: "Noon", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
+  { product: "Rauch Butter Drinks 150g", brand: "Rauch", platform: "Talabat", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
+  { product: "Masafi Digestive 200g", brand: "Masafi", platform: "Carrefour", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
+  { product: "Coca-Cola Premium 75g", brand: "Coca-Cola", platform: "Noon Minutes", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
+  { product: "Almarai Hide & Seek 100g", brand: "Almarai", platform: "Talabat", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
 ];
 
 // SoS analytics data
@@ -88,15 +88,15 @@ const sosOverTime = Array.from({ length: 30 }, (_, i) => ({
   categoryAvg: Math.round(20 + Math.random() * 2),
 }));
 
-const sosRetailerHeatmap = ["Blinkit", "Zepto", "Instamart", "Amazon", "Flipkart"].map(r => ({
+const sosRetailerHeatmap = ["Talabat", "Noon Minutes", "Talabat", "Carrefour", "Noon"].map(r => ({
   retailer: r,
   weeks: Array.from({ length: 8 }, () => Math.round(15 + Math.random() * 25)),
 }));
 
 const poachingHistory = [
-  { keyword: "britannia good day", competitor: "Sunfeast", platform: "Amazon", duration: 12, impact: "-3% SoS", status: "Active" },
-  { keyword: "britannia biscuits", competitor: "Parle", platform: "Blinkit", duration: 5, impact: "-1% SoS", status: "Active" },
-  { keyword: "britannia bourbon", competitor: "ITC", platform: "Flipkart", duration: 18, impact: "-2% SoS", status: "Resolved" },
+  { keyword: "britannia good day", competitor: "Coca-Cola", platform: "Carrefour", duration: 12, impact: "-3% SoS", status: "Active" },
+  { keyword: "britannia beverages", competitor: "Almarai", platform: "Talabat", duration: 5, impact: "-1% SoS", status: "Active" },
+  { keyword: "britannia bourbon", competitor: "Lacnor", platform: "Noon", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
 /* ── Merged keyword + shelf coverage data with binary + avg rank ── */
@@ -106,35 +106,35 @@ const shelfCoverageData: Record<string, {
   wow: string;
   opp: string;
   oppColor: string;
-  Amazon: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Flipkart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Blinkit: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Zepto: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Instamart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Carrefour: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Noon: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Talabat: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  "Noon Minutes": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  "Talabat Pro": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
 }[]> = {
   "All Categories": [
-    { kw: "butter biscuits online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Flipkart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Flipkart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
-    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "biscuit gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Amazon: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Flipkart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Carrefour: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Noon: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Noon: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Carrefour: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Noon: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
-  "Cream Biscuits": [
-    { kw: "cream biscuits combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Flipkart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+  "Cream Beverages": [
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Noon: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Glucose: [
-    { kw: "glucose biscuits bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Flipkart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Noon: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
   ],
   Digestive: [
-    { kw: "digestive biscuits fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
-  Cookies: [
-    { kw: "choco chip cookies pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Amazon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+  Drinks: [
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   "Health & Fibre": [
-    { kw: "sugar free biscuits", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Amazon: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Flipkart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Zepto: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
 };
 
@@ -145,7 +145,7 @@ const DiscoveryView: React.FC = () => {
   const [sosPlatformFilter, setSosPlatformFilter] = useState("All");
   const [showCompRankDetail, setShowCompRankDetail] = useState(false);
 
-  const allPlatforms = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"] as const;
+  const allPlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"] as const;
   const visiblePlatforms = selectedPlatform === "All Platforms"
     ? allPlatforms
     : allPlatforms.filter(p => p === selectedPlatform);
@@ -423,7 +423,7 @@ const DiscoveryView: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["All", "Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"].map(p => (
+                  {["All", "Talabat", "Noon Minutes", "Talabat", "Carrefour", "Noon"].map(p => (
                     <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
                   ))}
                 </SelectContent>
@@ -436,16 +436,16 @@ const DiscoveryView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
-                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Parle" />
-                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Sunfeast" />
-                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="ITC" />
+                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Almarai" />
+                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Coca-Cola" />
+                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Lacnor" />
                 <Line type="monotone" dataKey="categoryAvg" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Parle</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Sunfeast</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Almarai</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Coca-Cola</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Category Avg</span>
             </div>
           </PanelCard>

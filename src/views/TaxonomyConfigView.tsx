@@ -18,11 +18,11 @@ const availableSegments: TaxonomySegment[] = [
 ];
 
 const sampleValues: Record<string, string> = {
-  platform: "Amazon",
+  platform: "Carrefour",
   objective: "Conversion",
   sku_name: "GoodDay_Butter_200g",
   month_year: "Mar2026",
-  city: "Delhi",
+  city: "Dubai",
   custom: "Wave1",
 };
 

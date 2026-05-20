@@ -20,17 +20,17 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const heatmapGrid = daysOfWeek.map(() => Array.from({ length: 24 }, () => Math.round(Math.random() * 100)));
 
 const contestedKeywords = [
-  { keyword: "butter biscuits", yourPos: "#2", topComp: "Parle", compBidIndex: "1.4x", overlap: 28, yourShare: "28%", action: "Raise bid" },
-  { keyword: "cream biscuits", yourPos: "#5", topComp: "Sunfeast", compBidIndex: "1.6x", overlap: 30, yourShare: "18%", action: "Add to defence" },
-  { keyword: "glucose biscuits", yourPos: "#4", topComp: "Parle-G", compBidIndex: "1.2x", overlap: 22, yourShare: "19%", action: "Monitor" },
-  { keyword: "digestive biscuits", yourPos: "#1", topComp: "McVities", compBidIndex: "0.9x", overlap: 18, yourShare: "33%", action: "Monitor" },
-  { keyword: "choco chip cookies", yourPos: "#6", topComp: "Sunfeast Dark Fantasy", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
+  { keyword: "butter beverages", yourPos: "#2", topComp: "Almarai", compBidIndex: "1.4x", overlap: 28, yourShare: "28%", action: "Raise bid" },
+  { keyword: "cream beverages", yourPos: "#5", topComp: "Coca-Cola", compBidIndex: "1.6x", overlap: 30, yourShare: "18%", action: "Add to defence" },
+  { keyword: "glucose beverages", yourPos: "#4", topComp: "Almarai", compBidIndex: "1.2x", overlap: 22, yourShare: "19%", action: "Monitor" },
+  { keyword: "digestive beverages", yourPos: "#1", topComp: "Masafi", compBidIndex: "0.9x", overlap: 18, yourShare: "33%", action: "Monitor" },
+  { keyword: "choco chip drinks", yourPos: "#6", topComp: "Coca-Cola Premium", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
 ];
 
-const platformFilter = ["All Platforms", "Amazon", "Flipkart", "Blinkit", "Zepto"];
-const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
+const platformFilter = ["All Platforms", "Carrefour", "Noon", "Talabat", "Noon Minutes"];
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4" };
 
-const keywordOptions = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip cookies"];
+const keywordOptions = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks"];
 
 const competitorHourlyData = Array.from({ length: 24 }, (_, h) => ({
   hour: `${h}:00`,
@@ -47,43 +47,43 @@ const competitorSpendTrend = [
 ];
 
 const competitorAdProfiles = [
-  { name: "Sunfeast", color: "#FF5722", estSpend: "₹5.5L/wk", platforms: ["Amazon", "Flipkart", "Blinkit"], topKeywords: ["butter biscuits", "cream biscuits", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
-  { name: "Parle", color: "#FF9800", estSpend: "₹2.8L/wk", platforms: ["Amazon", "Flipkart"], topKeywords: ["glucose biscuits", "parle-g", "butter biscuits"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
-  { name: "Unibic", color: "#4CAF50", estSpend: "₹1.5L/wk", platforms: ["Amazon", "Flipkart", "Zepto"], topKeywords: ["cookies", "choco chip", "sugar free biscuits"], keywordCount: 22, pattern: "Value play — aggressive on premium cookies segment.", budgetExhausted: false, sponsoredActive: true },
-  { name: "McVities", color: "#9C27B0", estSpend: "₹1.8L/wk", platforms: ["Amazon", "Blinkit"], topKeywords: ["digestive biscuits", "whole wheat biscuits", "healthy biscuits"], keywordCount: 18, pattern: "Health segment focus — targeting NutriChoice directly.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Coca-Cola", color: "#FF5722", estSpend: "AED 5.5L/wk", platforms: ["Carrefour", "Noon", "Talabat"], topKeywords: ["butter beverages", "cream beverages", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Almarai", color: "#FF9800", estSpend: "AED 2.8L/wk", platforms: ["Carrefour", "Noon"], topKeywords: ["glucose beverages", "parle-g", "butter beverages"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Rauch", color: "#4CAF50", estSpend: "AED 1.5L/wk", platforms: ["Carrefour", "Noon", "Noon Minutes"], topKeywords: ["drinks", "choco chip", "sugar free beverages"], keywordCount: 22, pattern: "Value play — aggressive on premium drinks segment.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Masafi", color: "#9C27B0", estSpend: "AED 1.8L/wk", platforms: ["Carrefour", "Talabat"], topKeywords: ["digestive beverages", "whole wheat beverages", "healthy beverages"], keywordCount: 18, pattern: "Health segment focus — targeting Aquafina directly.", budgetExhausted: true, sponsoredActive: false },
 ];
 
 const budgetExhaustionByKeyword: Record<string, { competitor: string; platform: string; keyword: string; lastSeen: string; sponsoredRank: string; opportunity: string }[]> = {
-  "butter biscuits": [
-    { competitor: "Parle", platform: "Amazon", keyword: "butter biscuits", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid ₹18→₹12, maintain position at lower cost" },
-    { competitor: "McVities", platform: "Blinkit", keyword: "butter biscuits", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹22→₹15, capture their traffic" },
+  "butter beverages": [
+    { competitor: "Almarai", platform: "Carrefour", keyword: "butter beverages", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid AED 18→AED 12, maintain position at lower cost" },
+    { competitor: "Masafi", platform: "Talabat", keyword: "butter beverages", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid AED 22→AED 15, capture their traffic" },
   ],
-  "cream biscuits": [
-    { competitor: "Unibic", platform: "Amazon", keyword: "cream biscuits", lastSeen: "1h ago", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
+  "cream beverages": [
+    { competitor: "Rauch", platform: "Carrefour", keyword: "cream beverages", lastSeen: "1h ago", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
   ],
-  "glucose biscuits": [
-    { competitor: "Parle-G", platform: "Flipkart", keyword: "glucose biscuits", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid ₹30→₹20, save ₹8K/day" },
+  "glucose beverages": [
+    { competitor: "Almarai", platform: "Noon", keyword: "glucose beverages", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid AED 30→AED 20, save AED 8K/day" },
   ],
-  "digestive biscuits": [
-    { competitor: "McVities", platform: "Amazon", keyword: "digestive biscuits", lastSeen: "1h ago", sponsoredRank: "Flickering", opportunity: "Hold bid — McVities running out mid-day" },
+  "digestive beverages": [
+    { competitor: "Masafi", platform: "Carrefour", keyword: "digestive beverages", lastSeen: "1h ago", sponsoredRank: "Flickering", opportunity: "Hold bid — Masafi running out mid-day" },
   ],
-  "choco chip cookies": [
-    { competitor: "Unibic", platform: "Flipkart", keyword: "choco chip cookies", lastSeen: "5h ago", sponsoredRank: "Absent", opportunity: "Reduce bid ₹20→₹12" },
+  "choco chip drinks": [
+    { competitor: "Rauch", platform: "Noon", keyword: "choco chip drinks", lastSeen: "5h ago", sponsoredRank: "Absent", opportunity: "Reduce bid AED 20→AED 12" },
   ],
 };
 
 const keywordConquestOpps = [
-  { keyword: "sunfeast dark fantasy", volume: "28K", competition: "Sunfeast", compSoS: "62%", yourSoS: "0%", bidEst: "₹18", projROAS: "4.2x" },
-  { keyword: "parle g biscuits", volume: "44K", competition: "Parle", compSoS: "72%", yourSoS: "0%", bidEst: "₹12", projROAS: "3.8x" },
-  { keyword: "best butter cookies india", volume: "32K", competition: "Multiple", compSoS: "41%", yourSoS: "12%", bidEst: "₹15", projROAS: "5.1x" },
-  { keyword: "healthy biscuits for kids", volume: "18K", competition: "Parle", compSoS: "34%", yourSoS: "8%", bidEst: "₹10", projROAS: "4.4x" },
+  { keyword: "sunfeast dark fantasy", volume: "28K", competition: "Coca-Cola", compSoS: "62%", yourSoS: "0%", bidEst: "AED 18", projROAS: "4.2x" },
+  { keyword: "parle g beverages", volume: "44K", competition: "Almarai", compSoS: "72%", yourSoS: "0%", bidEst: "AED 12", projROAS: "3.8x" },
+  { keyword: "best butter drinks india", volume: "32K", competition: "Multiple", compSoS: "41%", yourSoS: "12%", bidEst: "AED 15", projROAS: "5.1x" },
+  { keyword: "healthy beverages for kids", volume: "18K", competition: "Almarai", compSoS: "34%", yourSoS: "8%", bidEst: "AED 10", projROAS: "4.4x" },
 ];
 
 const CompetitorAdsView: React.FC = () => {
   const [bidActions, setBidActions] = useState<Record<number, boolean>>({});
   const [conquestActions, setConquestActions] = useState<Record<number, boolean>>({});
   const [selectedPlatform, setSelectedPlatform] = useState("All Platforms");
-  const [selectedKeyword, setSelectedKeyword] = useState("butter biscuits");
+  const [selectedKeyword, setSelectedKeyword] = useState("butter beverages");
   const g = useGuardrails();
   const defenseBlocked = g.hasDefenseBlocked();
   const defenseActive = g.hasDefenseActive();
@@ -118,7 +118,7 @@ const CompetitorAdsView: React.FC = () => {
           </div>
           <div className="rounded-xl border border-subtle bg-surface-1 p-3">
             <p className="text-[10px] text-muted-foreground mb-1">Competitor Spend Index</p>
-            <p className="font-mono text-sm font-bold text-foreground">Sunfeast: ~1.4x</p>
+            <p className="font-mono text-sm font-bold text-foreground">Coca-Cola: ~1.4x</p>
             <p className="text-[9px] text-sw-red flex items-center gap-0.5"><TrendingUp size={9} /> spending more</p>
           </div>
           <div className="rounded-xl border border-subtle bg-surface-1 p-3">
@@ -139,7 +139,7 @@ const CompetitorAdsView: React.FC = () => {
           <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Real-time sponsored rank tracking" accentColor="bg-sw-red" delay={0} />
           <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Competitors out of budget today" accentColor="bg-sw-green" delay={0.05} />
           <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" sub="Available for conquest campaigns" accentColor="bg-sw-purple" delay={0.1} />
-          <KPICard title="Est. Competitor Spend" value="₹11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Est. Competitor Spend" value="AED 11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <PanelCard title="Competitor Ad Profiles" badge="Real-time monitoring" badgeColor="red" delay={0.2}>
@@ -229,15 +229,15 @@ const CompetitorAdsView: React.FC = () => {
                 <XAxis dataKey="hour" tick={{ fontSize: 8, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
-                <Bar dataKey="sunfeast" fill="#FF5722" opacity={0.7} radius={[2, 2, 0, 0]} name="Sunfeast" />
-                <Bar dataKey="parle" fill="#FF9800" opacity={0.7} radius={[2, 2, 0, 0]} name="Parle" />
-                <Bar dataKey="unibic" fill="#4CAF50" opacity={0.7} radius={[2, 2, 0, 0]} name="Unibic" />
+                <Bar dataKey="sunfeast" fill="#FF5722" opacity={0.7} radius={[2, 2, 0, 0]} name="Coca-Cola" />
+                <Bar dataKey="parle" fill="#FF9800" opacity={0.7} radius={[2, 2, 0, 0]} name="Almarai" />
+                <Bar dataKey="unibic" fill="#4CAF50" opacity={0.7} radius={[2, 2, 0, 0]} name="Rauch" />
               </BarChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Sunfeast</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Parle</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> Unibic</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Coca-Cola</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Almarai</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> Rauch</span>
             </div>
           </PanelCard>
         </div>
@@ -250,13 +250,13 @@ const CompetitorAdsView: React.FC = () => {
                 <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
-                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Sunfeast" />
-                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Parle" />
-                <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Unibic" />
+                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Coca-Cola" />
+                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Almarai" />
+                <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Rauch" />
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">
-              <p className="text-[11px] text-foreground">⚠ Sunfeast increasing spend 40% MoM — aggressive biscuit category capture. Consider defensive bidding on top 5 keywords.</p>
+              <p className="text-[11px] text-foreground">⚠ Coca-Cola increasing spend 40% MoM — aggressive beverage category capture. Consider defensive bidding on top 5 keywords.</p>
             </div>
           </PanelCard>
 
@@ -295,16 +295,16 @@ const CompetitorAdsView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} unit="%" />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="hsl(var(--sw-purple))" strokeWidth={2} dot={false} name="Your Brand" />
-                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} dot={false} name="Sunfeast" />
-                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} dot={false} name="Parle" />
-                <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} dot={false} name="Unibic" />
+                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} dot={false} name="Coca-Cola" />
+                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} dot={false} name="Almarai" />
+                <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} dot={false} name="Rauch" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-purple" /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Sunfeast</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Parle</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> Unibic</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Coca-Cola</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Almarai</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> Rauch</span>
             </div>
           </PanelCard>
 

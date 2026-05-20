@@ -4,11 +4,11 @@ import PanelCard from "@/components/sw/PanelCard";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ReferenceDot } from "recharts";
 
 const matrixRows = [
-  { brand: "Your Brand Whey 1kg", you: true, price: "₹2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "MuscleBlaze Whey 1kg", you: false, price: "₹2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Optimum Nutrition 1kg", you: false, price: "₹3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "₹1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-  { brand: "Dymatize ISO 100", you: false, price: "₹4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+  { brand: "Your Brand Whey 1kg", you: true, price: "AED 2,499", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "MuscleBlaze Whey 1kg", you: false, price: "AED 2,199 ↓", priceColor: "text-sw-red", rating: "4.5★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "Optimum Nutrition 1kg", you: false, price: "AED 3,499", priceColor: "text-sw-amber", rating: "4.6★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "AS-IT-IS Nutrition 1kg", you: false, price: "AED 1,899", priceColor: "text-sw-green", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "9,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+  { brand: "Dymatize ISO 100", you: false, price: "AED 4,199", priceColor: "text-sw-amber", rating: "4.5★", ratingColor: "text-sw-green", reviews: "6,210", pos: "#4", posColor: "text-sw-amber", sos: "5%", sosColor: "text-muted-foreground", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
 ];
 
 const contentGaps = [
@@ -34,7 +34,7 @@ const CompetitorsView: React.FC = () => {
         <KPICard title="Your Price Position" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0.15} />
       </div>
 
-      <PanelCard title="Competitor Intelligence Matrix — Whey Protein 1kg · Amazon" badge="Real-time" badgeColor="red" delay={0.2}>
+      <PanelCard title="Competitor Intelligence Matrix — Whey Protein 1kg · Carrefour" badge="Real-time" badgeColor="red" delay={0.2}>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -71,7 +71,7 @@ const CompetitorsView: React.FC = () => {
       </PanelCard>
 
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Content Gap vs MuscleBlaze" badge="Amazon" badgeColor="amber" delay={0.3}>
+        <PanelCard title="Content Gap vs MuscleBlaze" badge="Carrefour" badgeColor="amber" delay={0.3}>
           <div className="space-y-4">
             {contentGaps.map((g) => (
               <div key={g.label}>
@@ -91,7 +91,7 @@ const CompetitorsView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <PanelCard title="Price History — 30 Days" badge="Whey 1kg · Amazon" badgeColor="accent" delay={0.35}>
+        <PanelCard title="Price History — 30 Days" badge="Whey 1kg · Carrefour" badgeColor="accent" delay={0.35}>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={priceHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />

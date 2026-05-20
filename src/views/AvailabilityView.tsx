@@ -3,7 +3,8 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, ReferenceLine } from "recharts";
-import { AlertTriangle, Megaphone, MapPin, Store, Info } from "lucide-react";
+import { AlertTriangle, Megaphone, MapPin, Store, Info, Truck, Zap } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
@@ -13,83 +14,83 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const oosProductsToday = [
-  { sku: "50-50 Maska Chaska 120g", platform: "Flipkart", since: "6h ago" },
-  { sku: "Marie Gold 250g", platform: "Instamart", since: "3h ago" },
-  { sku: "Marie Gold 250g", platform: "Blinkit", since: "1h ago" },
-  { sku: "Milk Bikis 100g", platform: "Zepto", since: "4h ago" },
-  { sku: "NutriChoice Digestive", platform: "Flipkart", since: "2h ago" },
+  { sku: "Lipton Ice Tea Peach 320ml", platform: "Noon", since: "6h ago" },
+  { sku: "7UP 1L", platform: "Talabat", since: "3h ago" },
+  { sku: "7UP 1L", platform: "Talabat", since: "1h ago" },
+  { sku: "Mirinda Orange 1L", platform: "Noon Minutes", since: "4h ago" },
+  { sku: "Aquafina 1.5L", platform: "Noon", since: "2h ago" },
 ];
 
 const platformAvailability = [
-  { name: "Amazon", overall: 86, color: "#FF9900", skus: [
-    { sku: "Good Day Butter 200g", avail: 97 }, { sku: "Marie Gold 250g", avail: 100 }, { sku: "NutriChoice Digestive", avail: 72 },
-    { sku: "Good Day Choco Chip", avail: 95 }, { sku: "50-50 Maska Chaska", avail: 54 }, { sku: "Milk Bikis 100g", avail: 98 },
+  { name: "Carrefour", overall: 86, color: "#FF9900", skus: [
+    { sku: "Pepsi 1L", avail: 97 }, { sku: "7UP 1L", avail: 100 }, { sku: "Aquafina 1.5L", avail: 72 },
+    { sku: "Mirinda Orange 1L", avail: 95 }, { sku: "Lipton Ice Tea Peach", avail: 54 }, { sku: "Mirinda Orange 1L", avail: 98 },
   ]},
-  { name: "Flipkart", overall: 68, color: "#2F77FF", skus: [
-    { sku: "Good Day Butter 200g", avail: 74 }, { sku: "Marie Gold 250g", avail: 92 }, { sku: "NutriChoice Digestive", avail: 61 },
-    { sku: "Good Day Choco Chip", avail: 88 }, { sku: "50-50 Maska Chaska", avail: 12 }, { sku: "Milk Bikis 100g", avail: 78 },
+  { name: "Noon", overall: 68, color: "#2F77FF", skus: [
+    { sku: "Pepsi 1L", avail: 74 }, { sku: "7UP 1L", avail: 92 }, { sku: "Aquafina 1.5L", avail: 61 },
+    { sku: "Mirinda Orange 1L", avail: 88 }, { sku: "Lipton Ice Tea Peach", avail: 12 }, { sku: "Mirinda Orange 1L", avail: 78 },
   ]},
-  { name: "Blinkit", overall: 41, color: "#FDDC2B", skus: [
-    { sku: "Good Day Butter 200g", avail: 55 }, { sku: "Marie Gold 250g", avail: 38 }, { sku: "Milk Bikis 100g", avail: 71 },
+  { name: "Talabat", overall: 41, color: "#FDDC2B", skus: [
+    { sku: "Pepsi 1L", avail: 55 }, { sku: "7UP 1L", avail: 38 }, { sku: "Mirinda Orange 1L", avail: 71 },
   ]},
-  { name: "Zepto", overall: 56, color: "#833AB4", skus: [
-    { sku: "Good Day Butter 200g", avail: 93 }, { sku: "Marie Gold 250g", avail: 77 }, { sku: "Milk Bikis 100g", avail: 52 },
+  { name: "Noon Minutes", overall: 56, color: "#833AB4", skus: [
+    { sku: "Pepsi 1L", avail: 93 }, { sku: "7UP 1L", avail: 77 }, { sku: "Mirinda Orange 1L", avail: 52 },
   ]},
-  { name: "Instamart", overall: 21, color: "#FC8019", skus: [
-    { sku: "Good Day Butter 200g", avail: 34 }, { sku: "Marie Gold 250g", avail: 9 }, { sku: "Milk Bikis 100g", avail: 41 },
+  { name: "Talabat", overall: 21, color: "#FC8019", skus: [
+    { sku: "Pepsi 1L", avail: 34 }, { sku: "7UP 1L", avail: 9 }, { sku: "Mirinda Orange 1L", avail: 41 },
   ]},
 ];
 
 const stockForecast = [
-  { sku: "50-50 Maska Chaska 120g", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
-  { sku: "Milk Bikis 100g", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
-  { sku: "Marie Gold 250g", platform: "Instamart", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
-  { sku: "NutriChoice Digestive", platform: "Flipkart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
-  { sku: "Good Day Choco Chip", platform: "Amazon", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
+  { sku: "Lipton Ice Tea Peach 320ml", platform: "Talabat", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
+  { sku: "Mirinda Orange 1L", platform: "Noon Minutes", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
+  { sku: "7UP 1L", platform: "Talabat", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
+  { sku: "Aquafina 1.5L", platform: "Noon", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
+  { sku: "Mirinda Orange 1L", platform: "Carrefour", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
 ];
 
 const darkstoreGaps = [
   {
-    city: "Delhi NCR", totalDarkstores: 142,
+    city: "Dubai", totalDarkstores: 142,
     products: [
-      { sku: "Good Day Butter 200g", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
-      { sku: "Marie Gold 250g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
-      { sku: "50-50 Maska Chaska", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
-      { sku: "NutriChoice Digestive", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Good Day Choco Chip", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
-      { sku: "Milk Bikis 100g", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Pepsi 1L", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
+      { sku: "7UP 1L", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
+      { sku: "Lipton Ice Tea Peach", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
+      { sku: "Aquafina 1.5L", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Mirinda Orange 1L", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
+      { sku: "Mirinda Orange 1L", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
-    city: "Mumbai", totalDarkstores: 98,
+    city: "Abu Dhabi", totalDarkstores: 98,
     products: [
-      { sku: "Good Day Butter 200g", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 250g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
-      { sku: "50-50 Maska Chaska", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
-      { sku: "NutriChoice Digestive", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Good Day Choco Chip", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
-      { sku: "Milk Bikis 100g", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Pepsi 1L", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
+      { sku: "7UP 1L", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
+      { sku: "Lipton Ice Tea Peach", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
+      { sku: "Aquafina 1.5L", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Mirinda Orange 1L", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
+      { sku: "Mirinda Orange 1L", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
-    city: "Bangalore", totalDarkstores: 76,
+    city: "Riyadh", totalDarkstores: 76,
     products: [
-      { sku: "Good Day Butter 200g", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 250g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
-      { sku: "50-50 Maska Chaska", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
-      { sku: "NutriChoice Digestive", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
+      { sku: "Pepsi 1L", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
+      { sku: "7UP 1L", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
+      { sku: "Lipton Ice Tea Peach", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
+      { sku: "Aquafina 1.5L", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
     ],
   },
 ];
 
 /* Competition availability data */
 const competitionAvailability = [
-  { competitor: "Sunfeast", platform: "Amazon", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Sunfeast Butter 200g", trend: "stable" },
-  { competitor: "Sunfeast", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Sunfeast Cream 150g", trend: "improving" },
-  { competitor: "Parle", platform: "Flipkart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Parle-G Gold 200g", trend: "stable" },
-  { competitor: "Parle", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Parle Krackjack 120g", trend: "declining" },
-  { competitor: "ITC", platform: "Instamart", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Sunfeast Dark Fantasy", trend: "improving" },
-  { competitor: "Unibic", platform: "Amazon", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Unibic Butter 200g", trend: "stable" },
+  { competitor: "Coca-Cola", platform: "Carrefour", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Coca-Cola 1L", trend: "stable" },
+  { competitor: "Coca-Cola", platform: "Talabat", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Coca-Cola Zero 330ml", trend: "improving" },
+  { competitor: "Almarai", platform: "Noon", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Almarai Juice 1L", trend: "stable" },
+  { competitor: "Almarai", platform: "Noon Minutes", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Almarai Laban 250ml", trend: "declining" },
+  { competitor: "Lacnor", platform: "Talabat", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Coca-Cola Premium", trend: "improving" },
+  { competitor: "Rauch", platform: "Carrefour", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 1L", trend: "stable" },
 ];
 
 const AvailabilityView: React.FC = () => {
@@ -101,7 +102,7 @@ const AvailabilityView: React.FC = () => {
 
   const [tab, setTab] = useState("overview");
 
-  const allSkus = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
+  const allSkus = ["Pepsi 1L", "7UP 1L", "Aquafina 1.5L", "Mirinda Orange 1L", "Lipton Ice Tea Peach", "Mirinda Orange 1L"];
 
   return (
     <div className="space-y-6 pb-20">
@@ -130,7 +131,7 @@ const AvailabilityView: React.FC = () => {
         <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 5 platforms · 6 SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="OOS Products Today" value={String(oosProductsToday.length)} delta="▲ 2 vs yesterday" deltaType="negative" sub="Products currently out of stock" accentColor="bg-sw-red" delay={0.05} />
         <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Across 3 cities · Q-Commerce" accentColor="bg-sw-amber" delay={0.1} />
-        <KPICard title="Ad Budget Wasted" value="₹2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
+        <KPICard title="Ad Budget Wasted" value="AED 2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
       {/* OOS Products Today */}
@@ -297,33 +298,49 @@ const AvailabilityView: React.FC = () => {
         </div>
       </PanelCard>
 
-      {/* Stock Forecast */}
-      <PanelCard title="Stock-out Forecast" badge="AI Prediction" badgeColor="purple" delay={0.45}>
-        <div className="grid grid-cols-2 gap-2">
-          {stockForecast.map((s, i) => (
-            <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${
-              s.trend === "critical" ? "bg-sw-red-dim/50 border-sw-red/20" : s.trend === "warning" ? "bg-sw-amber-dim/50 border-sw-amber/20" : "bg-surface-2 border-subtle"
-            }`}>
-              <div className="flex-1">
-                <p className="text-xs text-foreground font-medium">{s.sku}</p>
-                <p className="text-[10px] text-muted-foreground">{s.platform} · Stock: {s.currentStock}%</p>
-              </div>
-              <div className="text-right">
-                <p className={`font-mono text-sm font-bold ${
-                  s.trend === "critical" ? "text-sw-red" : s.trend === "warning" ? "text-sw-amber" : "text-sw-green"
-                }`}>{s.daysToOOS}d</p>
-                <p className="text-[9px] text-muted-foreground">to stock-out</p>
-              </div>
-              <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
-                className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                  actionStates[i] ? "bg-sw-green-dim text-sw-green" :
-                  s.trend === "critical" ? "bg-sw-red/20 text-sw-red hover:bg-sw-red/30" : "bg-surface-3 text-foreground hover:bg-primary/10"
-                }`}>
-                {actionStates[i] ? "✓ Ordered" : "Reorder"}
-              </button>
+      {/* Replenishment Lead-Time Heatmap (replaces Stock-out Forecast) */}
+      <PanelCard title="Replenishment Lead-Time Heatmap" badge="Days to restock" badgeColor="purple" delay={0.45}>
+        <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
+        {(() => {
+          const skus = ["Pepsi 1L", "7UP 1L", "Mountain Dew 1L", "Aquafina 1.5L", "Mirinda Orange 1L", "Lipton Ice Tea Peach 320ml"];
+          const plats = ["Talabat", "Noon", "Noon Minutes", "Carrefour"];
+          const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
+          const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
+          return (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-muted-foreground border-b border-subtle">
+                    <th className="text-left py-2 font-normal">SKU</th>
+                    {plats.map(p => <th key={p} className="text-center py-2 font-normal">{p}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {skus.map((sku, ri) => (
+                    <tr key={sku} className={ri % 2 === 0 ? "bg-surface-2/50" : ""}>
+                      <td className="py-2 text-foreground">{sku}</td>
+                      {plats.map(p => {
+                        const days = seed(sku, p);
+                        const tier = days <= 1 ? "green" : days <= 3 ? "amber" : "red";
+                        const bg = tier === "green" ? "bg-sw-green-dim text-sw-green" : tier === "amber" ? "bg-sw-amber-dim text-sw-amber" : "bg-sw-red-dim text-sw-red";
+                        return (
+                          <td key={p} className="py-1.5 text-center">
+                            <button
+                              onClick={() => toast({ title: "Restock task created", description: `${sku} on ${p} — ${days}d lead time` })}
+                              className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-1 rounded-md ${bg} hover:opacity-80 transition-opacity`}>
+                              {intransit(sku, p) && <Truck size={10} />}
+                              {days}d
+                            </button>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
-        </div>
+          );
+        })()}
       </PanelCard>
       </>) : (
         <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
@@ -335,7 +352,7 @@ const AvailabilityView: React.FC = () => {
 const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
-  const skuNames = ["Good Day Butter 200g", "Marie Gold 250g", "NutriChoice Digestive", "Good Day Choco Chip", "50-50 Maska Chaska", "Milk Bikis 100g"];
+  const skuNames = ["Pepsi 1L", "7UP 1L", "Aquafina 1.5L", "Mirinda Orange 1L", "Lipton Ice Tea Peach", "Mirinda Orange 1L"];
   const heatmapData = useMemo(() => skuNames.map(sku => ({
     sku,
     days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
@@ -347,16 +364,16 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
     return "rgba(46,207,142,0.5)";
   };
 
-  const affectedCampaigns = ["Good Day — Sponsored", "Q-Commerce Biscuit Push"];
-  const tier2Locks = ["Manual pause — NutriChoice Retargeting"];
+  const affectedCampaigns = ["Pepsi — Sponsored", "Q-Commerce Beverage Push"];
+  const tier2Locks = ["Manual pause — Aquafina Retargeting"];
 
   const competitionAvailData = [
-    { competitor: "Sunfeast", platform: "Amazon", compAvail: 96, yourAvail: 86, product: "Sunfeast Butter 200g", keywords: ["sunfeast butter cookies", "sunfeast biscuits"], trend: "stable" },
-    { competitor: "Sunfeast", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Sunfeast Cream 150g", keywords: ["sunfeast cream biscuits", "cream cookies"], trend: "improving" },
-    { competitor: "Parle", platform: "Flipkart", compAvail: 92, yourAvail: 68, product: "Parle-G Gold 200g", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
-    { competitor: "Parle", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Parle Krackjack 120g", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
-    { competitor: "ITC", platform: "Instamart", compAvail: 72, yourAvail: 21, product: "Sunfeast Dark Fantasy", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
-    { competitor: "Unibic", platform: "Amazon", compAvail: 84, yourAvail: 86, product: "Unibic Butter 200g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
+    { competitor: "Coca-Cola", platform: "Carrefour", compAvail: 96, yourAvail: 86, product: "Coca-Cola 1L", keywords: ["sunfeast butter drinks", "sunfeast beverages"], trend: "stable" },
+    { competitor: "Coca-Cola", platform: "Talabat", compAvail: 88, yourAvail: 41, product: "Coca-Cola Zero 330ml", keywords: ["sunfeast cream beverages", "cream drinks"], trend: "improving" },
+    { competitor: "Almarai", platform: "Noon", compAvail: 92, yourAvail: 68, product: "Almarai Juice 1L", keywords: ["parle beverages", "parle-g gold"], trend: "stable" },
+    { competitor: "Almarai", platform: "Noon Minutes", compAvail: 78, yourAvail: 56, product: "Almarai Laban 250ml", keywords: ["parle krackjack", "salted beverages"], trend: "declining" },
+    { competitor: "Lacnor", platform: "Talabat", compAvail: 72, yourAvail: 21, product: "Coca-Cola Premium", keywords: ["dark fantasy", "chocolate beverages"], trend: "improving" },
+    { competitor: "Rauch", platform: "Carrefour", compAvail: 84, yourAvail: 86, product: "Rauch Multivit 1L", keywords: ["unibic butter", "premium beverages"], trend: "stable" },
   ];
 
   return (
@@ -445,42 +462,62 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         </ResponsiveContainer>
       </PanelCard>
 
-      {/* Competition Availability */}
-      <PanelCard title="Competition Availability vs Yours" badge="Opportunity" badgeColor="green" delay={0.15}>
-        <p className="text-[10px] text-muted-foreground mb-3">Competitors with higher availability — trigger campaigns to target their products when you're available and they're not.</p>
+      {/* Competitor Low-Availability — Auto Campaign Triggers (replaces Competition Availability vs Yours) */}
+      <PanelCard title="Competitor Low-Availability — Auto Campaign Triggers" badge="Capture demand" badgeColor="green" delay={0.15}>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] text-muted-foreground">Cities where competitor availability is low and own SKU coverage is healthy — campaigns auto-trigger to capture the demand.</p>
+          <button
+            onClick={() => toast({ title: "All pending triggers fired", description: "5 city-level campaigns queued" })}
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1">
+            <Zap size={11} /> Trigger All Pending
+          </button>
+        </div>
         <table className="w-full text-xs">
           <thead>
             <tr className="text-muted-foreground border-b border-subtle">
-              <th className="text-left py-2 font-normal">Competitor</th>
-              <th className="text-left py-2 font-normal">Platform</th>
-              <th className="text-center py-2 font-normal">Their Avail.</th>
-              <th className="text-center py-2 font-normal">Your Avail.</th>
-              <th className="text-center py-2 font-normal">Gap</th>
-              <th className="text-left py-2 font-normal">Top Product</th>
-              <th className="text-right py-2 font-normal">Action</th>
+              <th className="text-left py-2 font-normal">City</th>
+              <th className="text-center py-2 font-normal">Competitor SKUs OOS</th>
+              <th className="text-center py-2 font-normal">Your Availability</th>
+              <th className="text-left py-2 font-normal">Suggested Campaign</th>
+              <th className="text-right py-2 font-normal">Status</th>
             </tr>
           </thead>
           <tbody>
-            {competitionAvailData.map((c, i) => (
-              <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                <td className="py-2.5 text-foreground font-medium">{c.competitor}</td>
-                <td className="py-2.5 text-muted-foreground">{c.platform}</td>
-                <td className="py-2.5 text-center font-mono text-sw-green">{c.compAvail}%</td>
-                <td className="py-2.5 text-center font-mono" style={{ color: c.yourAvail >= 70 ? "#2ECF8E" : c.yourAvail >= 50 ? "#F5A623" : "#FF5C5C" }}>{c.yourAvail}%</td>
-                <td className="py-2.5 text-center font-mono text-sw-red">{c.compAvail > c.yourAvail ? `+${c.compAvail - c.yourAvail}%` : `${c.compAvail - c.yourAvail}%`}</td>
-                <td className="py-2.5 text-foreground text-[10px]">{c.product}</td>
-                <td className="py-2.5 text-right">
-                  <button
-                    onClick={() => setCompCampaignStates(p => ({ ...p, [i]: true }))}
-                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      compCampaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}>
-                    <Megaphone size={10} />
-                    {compCampaignStates[i] ? "✓ Campaign Triggered" : "Target Competition"}
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {[
+              { city: "Dubai Marina", platform: "Talabat", compOos: 4, yourAvail: 96, campaign: "Boost Pepsi 1L — Dubai Marina", auto: true },
+              { city: "Downtown Dubai", platform: "Noon Minutes", compOos: 3, yourAvail: 92, campaign: "Conquest Mountain Dew vs Coca-Cola", auto: true },
+              { city: "Riyadh Olaya", platform: "Talabat", compOos: 5, yourAvail: 88, campaign: "Aquafina 1.5L Share Capture", auto: true },
+              { city: "Jeddah Al Hamra", platform: "Noon Minutes", compOos: 2, yourAvail: 84, campaign: "7UP — Almarai Conquest", auto: false },
+              { city: "Doha West Bay", platform: "Talabat", compOos: 3, yourAvail: 78, campaign: "Lipton Ice Tea Push", auto: false },
+              { city: "Abu Dhabi Khalifa", platform: "Carrefour", compOos: 4, yourAvail: 91, campaign: "Mirinda — Rauch Defensive", auto: true },
+            ].map((r, i) => {
+              const triggered = r.auto || !!compCampaignStates[i];
+              return (
+                <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
+                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
+                    <MapPin size={11} className="text-muted-foreground" />
+                    <span className="font-medium">{r.city}</span>
+                    <span className="text-[9px] text-muted-foreground">· {r.platform}</span>
+                  </td>
+                  <td className="py-2.5 text-center font-mono text-sw-red">{r.compOos}</td>
+                  <td className="py-2.5 text-center font-mono" style={{ color: r.yourAvail >= 85 ? "#2ECF8E" : "#F5A623" }}>{r.yourAvail}%</td>
+                  <td className="py-2.5 text-foreground text-[11px]">{r.campaign}</td>
+                  <td className="py-2.5 text-right">
+                    {triggered ? (
+                      <span className="inline-flex items-center gap-1 font-mono text-[9px] px-2 py-0.5 rounded-full bg-sw-green-dim text-sw-green">
+                        <Zap size={9} /> {r.auto ? "Auto-triggered" : "Triggered"}
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => { setCompCampaignStates(p => ({ ...p, [i]: true })); toast({ title: "Campaign triggered", description: `${r.campaign} in ${r.city}` }); }}
+                        className="px-2 py-1 rounded-lg text-[10px] font-medium bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1">
+                        <Megaphone size={10} /> Trigger
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </PanelCard>
@@ -490,9 +527,9 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
         <div className="space-y-2">
           {[
-            { competitor: "Sunfeast", product: "Sunfeast Cream 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
-            { competitor: "Parle", product: "Parle-G Gold 200g", platform: "Instamart", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
-            { competitor: "ITC", product: "Sunfeast Dark Fantasy", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+            { competitor: "Coca-Cola", product: "Coca-Cola Zero 330ml", platform: "Noon Minutes", since: "12h", keywords: ["cream beverages", "sunfeast cream"], estDemand: "4.2K searches/day" },
+            { competitor: "Almarai", product: "Almarai Juice 1L", platform: "Talabat", since: "6h", keywords: ["parle beverages", "glucose beverages"], estDemand: "8.1K searches/day" },
+            { competitor: "Lacnor", product: "Coca-Cola Premium", platform: "Talabat", since: "3h", keywords: ["dark fantasy", "chocolate beverages premium"], estDemand: "3.8K searches/day" },
           ].map((item, i) => (
             <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
               <div className="flex items-center justify-between mb-1">

@@ -18,18 +18,18 @@ interface RuleCondition { metric: string; direction: "increases" | "decreases"; 
 interface RuleAction { action: string; value: string; }
 interface Rule { id: string; conditions: RuleCondition[]; actions: RuleAction[]; enabled: boolean; }
 
-/* ── Biscuits SKU catalogue ── */
+/* ── Beverages SKU catalogue ── */
 const skuCatalogue: SkuOption[] = [
-  { id: "sku-gd200", name: "Good Day Butter 200g", contentScore: 82, availability: 96, platform: "Amazon" },
-  { id: "sku-gd100", name: "Good Day Butter 100g", contentScore: 78, availability: 91, platform: "Flipkart" },
-  { id: "sku-mg250", name: "Marie Gold 250g", contentScore: 45, availability: 42, platform: "Amazon" },
-  { id: "sku-5050", name: "50-50 Maska Chaska 120g", contentScore: 38, availability: 55, platform: "Blinkit" },
-  { id: "sku-nc", name: "NutriChoice Digestive 100g", contentScore: 88, availability: 94, platform: "Zepto" },
-  { id: "sku-mf", name: "Milk Bikis 150g", contentScore: 72, availability: 89, platform: "Instamart" },
-  { id: "sku-treat", name: "Good Day Choco Chip 75g", contentScore: 91, availability: 97, platform: "Blinkit" },
-  { id: "sku-bourbon", name: "Bourbon Cream 150g", contentScore: 65, availability: 80, platform: "Amazon" },
-  { id: "sku-jim", name: "Jim Jam Cream 100g", contentScore: 52, availability: 68, platform: "Flipkart" },
-  { id: "sku-tiger", name: "Tiger Glucose 250g", contentScore: 34, availability: 38, platform: "Zepto" },
+  { id: "sku-gd200", name: "Pepsi 1L", contentScore: 82, availability: 96, platform: "Carrefour" },
+  { id: "sku-gd100", name: "Pepsi 1L 100g", contentScore: 78, availability: 91, platform: "Noon" },
+  { id: "sku-mg250", name: "7UP 1L", contentScore: 45, availability: 42, platform: "Carrefour" },
+  { id: "sku-5050", name: "Lipton Ice Tea Peach 320ml", contentScore: 38, availability: 55, platform: "Talabat" },
+  { id: "sku-nc", name: "Aquafina 1.5L", contentScore: 88, availability: 94, platform: "Noon Minutes" },
+  { id: "sku-mf", name: "Mirinda 150g", contentScore: 72, availability: 89, platform: "Talabat" },
+  { id: "sku-treat", name: "Mirinda Orange 1L 75g", contentScore: 91, availability: 97, platform: "Talabat" },
+  { id: "sku-bourbon", name: "Mountain Dew 1L", contentScore: 65, availability: 80, platform: "Carrefour" },
+  { id: "sku-jim", name: "Jim Jam Cream 100g", contentScore: 52, availability: 68, platform: "Noon" },
+  { id: "sku-tiger", name: "Tiger Glucose 250g", contentScore: 34, availability: 38, platform: "Noon Minutes" },
 ];
 
 const buildCards = (selectedSkus: string[]): Record<PhaseId, CampaignCard[]> => {
@@ -42,16 +42,16 @@ const buildCards = (selectedSkus: string[]): Record<PhaseId, CampaignCard[]> => 
     const hasAvailIssue = sku.availability < 70;
     const alternatives = skuCatalogue.filter(s => s.id !== sku.id && s.contentScore >= 70 && s.availability >= 80).slice(0, 3).map(s => ({ skuId: s.id, name: s.name, contentScore: s.contentScore, availability: s.availability }));
     if (hasContentIssue || hasAvailIssue) {
-      prelaunch.push({ id: `fix-${sku.id}`, name: `Content/Availability Fix — ${sku.name}`, budget: "₹5K", platform: sku.platform, status: hasContentIssue ? "Content gap" : "Shelf gap", source: hasContentIssue ? `Content score: ${sku.contentScore}/100` : `Availability: ${sku.availability}%`, skuId: sku.id, warning: hasContentIssue ? `⚠ ${sku.name} has content score ${sku.contentScore}/100.` : `⚠ ${sku.name} has ${sku.availability}% availability.`, alternatives });
+      prelaunch.push({ id: `fix-${sku.id}`, name: `Content/Availability Fix — ${sku.name}`, budget: "AED 5K", platform: sku.platform, status: hasContentIssue ? "Content gap" : "Shelf gap", source: hasContentIssue ? `Content score: ${sku.contentScore}/100` : `Availability: ${sku.availability}%`, skuId: sku.id, warning: hasContentIssue ? `⚠ ${sku.name} has content score ${sku.contentScore}/100.` : `⚠ ${sku.name} has ${sku.availability}% availability.`, alternatives });
     }
-    live.push({ id: `live-${sku.id}`, name: `Boost — ${sku.name}`, budget: "₹30K", platform: sku.platform, status: (hasContentIssue || hasAvailIssue) ? "Conditional" : "Auto-configured", source: (hasContentIssue || hasAvailIssue) ? "Requires pre-launch clearance" : "Discovery trending", skuId: sku.id, warning: (hasContentIssue || hasAvailIssue) ? `Conditional on pre-launch clearance.` : undefined, alternatives: (hasContentIssue || hasAvailIssue) ? alternatives : undefined });
+    live.push({ id: `live-${sku.id}`, name: `Boost — ${sku.name}`, budget: "AED 30K", platform: sku.platform, status: (hasContentIssue || hasAvailIssue) ? "Conditional" : "Auto-configured", source: (hasContentIssue || hasAvailIssue) ? "Requires pre-launch clearance" : "Discovery trending", skuId: sku.id, warning: (hasContentIssue || hasAvailIssue) ? `Conditional on pre-launch clearance.` : undefined, alternatives: (hasContentIssue || hasAvailIssue) ? alternatives : undefined });
   });
   // Optimise cards are specific to the campaigns being created
   selected.forEach(sku => {
-    optimise.push({ id: `opt-bid-${sku.id}`, name: `Bid Optimisation — ${sku.name}`, budget: "₹10K", platform: sku.platform, status: "Auto-configured", source: `ROAS optimisation for ${sku.name} campaign` });
+    optimise.push({ id: `opt-bid-${sku.id}`, name: `Bid Optimisation — ${sku.name}`, budget: "AED 10K", platform: sku.platform, status: "Auto-configured", source: `ROAS optimisation for ${sku.name} campaign` });
   });
   if (selected.length > 1) {
-    optimise.push({ id: "opt-daypart", name: `Daypart Shift — ${selected.map(s => s.name.split(" ")[0]).join(" & ")} Campaigns`, budget: "₹8K", platform: selected.map(s => s.platform).filter((v, i, a) => a.indexOf(v) === i).join(", "), status: "Conditional", source: "Conversion pattern analysis across selected campaigns" });
+    optimise.push({ id: "opt-daypart", name: `Daypart Shift — ${selected.map(s => s.name.split(" ")[0]).join(" & ")} Campaigns`, budget: "AED 8K", platform: selected.map(s => s.platform).filter((v, i, a) => a.indexOf(v) === i).join(", "), status: "Conditional", source: "Conversion pattern analysis across selected campaigns" });
   }
   return { prelaunch, live, optimise };
 };
@@ -107,9 +107,9 @@ const WarRoomView: React.FC = () => {
   const totalCards = Object.values(phases).flat().length;
 
   const diffs: StrategyDiff[] = [
-    { type: "add", desc: "Shelf gap fix for Marie Gold on Amazon", impact: "+₹5K budget" },
-    { type: "change", desc: "50-50 content fix prioritised in pre-launch", impact: "₹5K reallocated" },
-    { type: "remove", desc: "Low-availability Tiger Glucose campaign deferred", impact: "−₹30K deferred" },
+    { type: "add", desc: "Shelf gap fix for 7UP on Carrefour", impact: "+AED 5K budget" },
+    { type: "change", desc: "Lipton Ice Tea content fix prioritised in pre-launch", impact: "AED 5K reallocated" },
+    { type: "remove", desc: "Low-availability Tiger Glucose campaign deferred", impact: "−AED 30K deferred" },
   ];
 
   const guardrailHealth = [
@@ -120,9 +120,9 @@ const WarRoomView: React.FC = () => {
   ];
 
   const budgetSplitData = [
-    { phase: "Pre-launch", amount: "₹10,000", pct: "20%", rationale: "Content fixes for Marie Gold (₹5K) + Availability fix for 50-50 (₹5K)" },
-    { phase: "Live", amount: "₹30,000", pct: "60%", rationale: "Good Day Boost (₹15K) + NutriChoice Boost (₹15K) — highest ROAS products" },
-    { phase: "Optimise", amount: "₹10,000", pct: "20%", rationale: "Bid optimisation (₹6K) + Daypart shift (₹4K) based on conversion patterns" },
+    { phase: "Pre-launch", amount: "AED 10,000", pct: "20%", rationale: "Content fixes for 7UP (AED 5K) + Availability fix for Lipton Ice Tea (AED 5K)" },
+    { phase: "Live", amount: "AED 30,000", pct: "60%", rationale: "Pepsi Boost (AED 15K) + Aquafina Boost (AED 15K) — highest ROAS products" },
+    { phase: "Optimise", amount: "AED 10,000", pct: "20%", rationale: "Bid optimisation (AED 6K) + Daypart shift (AED 4K) based on conversion patterns" },
   ];
 
   const handleSetGoal = () => {
@@ -289,7 +289,7 @@ const WarRoomView: React.FC = () => {
           {/* Messages */}
           <div className="flex-1 space-y-3 max-h-[350px] overflow-y-auto py-3">
             {chatMessages.length === 0 && (
-              <p className="text-[11px] text-muted-foreground italic">Describe your goal — e.g. "I want to increase ROAS by 20% for Good Day products in 2 weeks"</p>
+              <p className="text-[11px] text-muted-foreground italic">Describe your goal — e.g. "I want to increase ROAS by 20% for Pepsi products in 2 weeks"</p>
             )}
             {chatMessages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -457,7 +457,7 @@ const WarRoomView: React.FC = () => {
               {inputMode === "absolute" && (
                 <div className="space-y-3">
                   <div>
-                    <label className="text-[11px] text-muted-foreground block mb-1">Campaign budget (₹)</label>
+                    <label className="text-[11px] text-muted-foreground block mb-1">Campaign budget (AED )</label>
                     <input value={budgetAlloc} onChange={e => setBudgetAlloc(e.target.value)}
                       className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground font-mono" placeholder="50000" />
                   </div>
@@ -536,7 +536,7 @@ const WarRoomView: React.FC = () => {
               <Target size={16} className="text-primary flex-shrink-0" />
               <span className="text-sm text-foreground font-medium">{goalType}: +{goalValue}{inputMode === "percentage" ? "%" : ""}</span>
               <span className="text-[11px] text-muted-foreground">
-                {inputMode === "absolute" ? `Budget: ₹${Number(budgetAlloc).toLocaleString()} · ` : ""}by {goalDate}
+                {inputMode === "absolute" ? `Budget: AED ${Number(budgetAlloc).toLocaleString()} · ` : ""}by {goalDate}
               </span>
               <span className="ml-auto font-mono text-[10px] px-2 py-0.5 rounded-full bg-sw-green-dim text-sw-green">{totalCards} campaigns · {selectedSkus.length} SKUs</span>
               <button onClick={() => { setGoalSet(false); setPrelaunchCleared(false); }} className="text-[10px] text-muted-foreground hover:text-foreground">Edit goal</button>
@@ -680,7 +680,7 @@ const WarRoomView: React.FC = () => {
         <div className="fixed bottom-0 left-[68px] right-0 bg-surface-1 border-t border-subtle p-4 z-50 flex items-center justify-between">
           <div className="text-[11px] text-muted-foreground">
             {totalCards} campaigns · {selectedSkus.length} SKUs
-            {inputMode === "absolute" && ` · Budget: ₹${Number(budgetAlloc).toLocaleString()}`}
+            {inputMode === "absolute" && ` · Budget: AED ${Number(budgetAlloc).toLocaleString()}`}
             {prelaunchHasIssues && !prelaunchCleared && <span className="text-sw-red ml-2">· Pre-launch gate: LOCKED</span>}
           </div>
           <button onClick={handleActivate}

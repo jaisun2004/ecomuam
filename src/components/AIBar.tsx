@@ -24,7 +24,7 @@ const AIBar: React.FC = () => {
           ref={inputRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Ask anything — 'Why did Blinkit sales drop last Tuesday?'"
+          placeholder="Ask anything — 'Why did Talabat sales drop last Tuesday?'"
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
         />
         <kbd className="flex-shrink-0 px-1.5 py-0.5 rounded bg-surface-3 text-[10px] font-mono text-muted-foreground">⌘K</kbd>

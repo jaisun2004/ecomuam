@@ -5,139 +5,140 @@ import ScreenTabs from "@/components/ScreenTabs";
 import DateRangeSubtitle from "@/components/DateRangeSubtitle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
-import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell } from "lucide-react";
+import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell, ShieldAlert, Tag } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
-const skuOptions = ["Good Day 200g", "Marie Gold 250g", "NutriChoice 100g", "Bourbon 150g", "50-50 120g"];
-const platformOptions = ["Amazon", "Flipkart", "Blinkit", "Zepto", "Instamart"];
-const platformColors: Record<string, string> = { Amazon: "#FF9900", Flipkart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Instamart: "#FC8019" };
+const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 500ml", "Mountain Dew 1L", "Lipton Ice Tea 320ml"];
+const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
+const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", "Talabat Pro": "#FC8019" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
 const priceHistoryBySku: Record<string, Record<string, any[]>> = {
-  "Good Day 200g": {
+  "Pepsi 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
-    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
-    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
-    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 43, comp1: i >= 15 ? 38 : 41, comp2: 45, comp3: 34 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
+    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
+    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
+    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
+    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 43, comp1: i >= 15 ? 38 : 41, comp2: 45, comp3: 34 })),
+    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
   },
-  "Marie Gold 250g": {
+  "7UP 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
-    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
-    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
-    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 41, comp3: 30 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
+    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
+    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
+    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
+    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 41, comp3: 30 })),
+    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
   },
-  "NutriChoice 100g": {
+  "Aquafina 500ml": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
-    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
-    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
-    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 43, comp2: 51, comp3: 40 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
+    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
+    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
+    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
+    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 43, comp2: 51, comp3: 40 })),
+    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
   },
-  "Bourbon 150g": {
+  "Mountain Dew 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
-    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
-    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
-    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
+    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
+    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
+    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
+    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
+    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
   },
-  "50-50 120g": {
+  "Lipton Ice Tea 320ml": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
-    "Amazon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
-    "Flipkart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
-    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 23, comp1: 21, comp2: 25, comp3: 18 })),
+    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
+    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
+    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
+    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
+    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 23, comp1: 21, comp2: 25, comp3: 18 })),
   },
 };
 
 const compNamesBySku: Record<string, string[]> = {
-  "Good Day 200g": ["Sunfeast", "Parle", "Unibic"],
-  "Marie Gold 250g": ["Sunfeast", "Parle-G", "ITC"],
-  "NutriChoice 100g": ["McVities", "Unibic", "Sunfeast"],
-  "Bourbon 150g": ["Parle", "Sunfeast", "ITC"],
-  "50-50 120g": ["Parle", "Sunfeast", "ITC"],
+  "Pepsi 1L": ["Coca-Cola", "Almarai", "Rauch"],
+  "7UP 1L": ["Coca-Cola", "Almarai", "Lacnor"],
+  "Aquafina 500ml": ["Masafi", "Rauch", "Coca-Cola"],
+  "Mountain Dew 1L": ["Almarai", "Coca-Cola", "Lacnor"],
+  "Lipton Ice Tea 320ml": ["Almarai", "Coca-Cola", "Lacnor"],
 };
 
 const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
   "All SKUs": {
-    Amazon: [
-      { brand: "Britannia Good Day 200g", you: true, price: "₹40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Sunfeast Butter 200g", you: false, price: "₹35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Parle-G Gold 200g", you: false, price: "₹25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Unibic Butter 200g", you: false, price: "₹45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    Carrefour: [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "AED 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Almarai Juice 1L", you: false, price: "AED 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Rauch Multivit 1L", you: false, price: "AED 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Flipkart: [
-      { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Sunfeast Butter 200g", you: false, price: "₹36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    Noon: [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "AED 36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Blinkit: [
-      { brand: "Britannia Good Day 200g", you: true, price: "₹42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    Talabat: [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "AED 38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Zepto: [
-      { brand: "Britannia Good Day 200g", you: true, price: "₹43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Sunfeast Butter 200g", you: false, price: "₹38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    "Noon Minutes": [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "AED 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Instamart: [
-      { brand: "Britannia Good Day 200g", you: true, price: "₹44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
-      { brand: "Sunfeast Butter 200g", you: false, price: "₹39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    "Talabat Pro": [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "AED 39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
   },
 };
 
 const priceAlerts = [
-  { sku: "Marie Gold 250g", competitor: "Sunfeast", platform: "Amazon", yourPrice: "₹35", compPrice: "₹30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
-  { sku: "NutriChoice 100g", competitor: "McVities", platform: "Amazon", yourPrice: "₹45", compPrice: "₹40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
-  { sku: "Bourbon 150g", competitor: "Parle", platform: "Flipkart", yourPrice: "₹30", compPrice: "₹28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
-  { sku: "50-50 120g", competitor: "Parle", platform: "Zepto", yourPrice: "₹20", compPrice: "₹18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
+  { sku: "7UP 1L", competitor: "Coca-Cola", platform: "Carrefour", yourPrice: "AED 35", compPrice: "AED 30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
+  { sku: "Aquafina 500ml", competitor: "Masafi", platform: "Carrefour", yourPrice: "AED 45", compPrice: "AED 40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
+  { sku: "Mountain Dew 1L", competitor: "Almarai", platform: "Noon", yourPrice: "AED 30", compPrice: "AED 28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "Lipton Ice Tea 320ml", competitor: "Almarai", platform: "Noon Minutes", yourPrice: "AED 20", compPrice: "AED 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
 ];
 
 const platformPricing = [
-  { platform: "Amazon", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1, needsAttention: false },
-  { platform: "Flipkart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
-  { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
-  { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
-  { platform: "Instamart", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
+  { platform: "Carrefour", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1, needsAttention: false },
+  { platform: "Noon", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
+  { platform: "Talabat", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
+  { platform: "Noon Minutes", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
+  { platform: "Talabat", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
 ];
 
 const platformPricingDetail: Record<string, { sku: string; yourPrice: string; compPrice: string; parity: boolean; competitor: string }[]> = {
-  Amazon: [
-    { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹35", parity: false, competitor: "Sunfeast" },
-    { sku: "Marie Gold 250g", yourPrice: "₹35", compPrice: "₹30", parity: false, competitor: "Sunfeast" },
-    { sku: "NutriChoice 100g", yourPrice: "₹45", compPrice: "₹45", parity: true, competitor: "McVities" },
-    { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹32", parity: true, competitor: "Parle" },
+  Carrefour: [
+    { sku: "Pepsi 1L", yourPrice: "AED 40", compPrice: "AED 35", parity: false, competitor: "Coca-Cola" },
+    { sku: "7UP 1L", yourPrice: "AED 35", compPrice: "AED 30", parity: false, competitor: "Coca-Cola" },
+    { sku: "Aquafina 500ml", yourPrice: "AED 45", compPrice: "AED 45", parity: true, competitor: "Masafi" },
+    { sku: "Mountain Dew 1L", yourPrice: "AED 30", compPrice: "AED 32", parity: true, competitor: "Almarai" },
   ],
-  Flipkart: [
-    { sku: "Good Day 200g", yourPrice: "₹42", compPrice: "₹36", parity: false, competitor: "Sunfeast" },
-    { sku: "Marie Gold 250g", yourPrice: "₹36", compPrice: "₹31", parity: false, competitor: "Sunfeast" },
-    { sku: "NutriChoice 100g", yourPrice: "₹46", compPrice: "₹41", parity: false, competitor: "McVities" },
+  Noon: [
+    { sku: "Pepsi 1L", yourPrice: "AED 42", compPrice: "AED 36", parity: false, competitor: "Coca-Cola" },
+    { sku: "7UP 1L", yourPrice: "AED 36", compPrice: "AED 31", parity: false, competitor: "Coca-Cola" },
+    { sku: "Aquafina 500ml", yourPrice: "AED 46", compPrice: "AED 41", parity: false, competitor: "Masafi" },
   ],
-  Blinkit: [
-    { sku: "Good Day 200g", yourPrice: "₹42", compPrice: "₹38", parity: false, competitor: "Sunfeast" },
-    { sku: "Bourbon 150g", yourPrice: "₹32", compPrice: "₹30", parity: false, competitor: "Parle" },
+  Talabat: [
+    { sku: "Pepsi 1L", yourPrice: "AED 42", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
+    { sku: "Mountain Dew 1L", yourPrice: "AED 32", compPrice: "AED 30", parity: false, competitor: "Almarai" },
   ],
-  Zepto: [
-    { sku: "Good Day 200g", yourPrice: "₹43", compPrice: "₹38", parity: false, competitor: "Sunfeast" },
-    { sku: "50-50 120g", yourPrice: "₹22", compPrice: "₹20", parity: false, competitor: "Parle" },
+  "Noon Minutes": [
+    { sku: "Pepsi 1L", yourPrice: "AED 43", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
+    { sku: "Lipton Ice Tea 320ml", yourPrice: "AED 22", compPrice: "AED 20", parity: false, competitor: "Almarai" },
   ],
-  Instamart: [
-    { sku: "Good Day 200g", yourPrice: "₹44", compPrice: "₹39", parity: false, competitor: "Sunfeast" },
-    { sku: "Marie Gold 250g", yourPrice: "₹38", compPrice: "₹34", parity: false, competitor: "Sunfeast" },
-    { sku: "NutriChoice 100g", yourPrice: "₹48", compPrice: "₹44", parity: false, competitor: "McVities" },
+  "Talabat Pro": [
+    { sku: "Pepsi 1L", yourPrice: "AED 44", compPrice: "AED 39", parity: false, competitor: "Coca-Cola" },
+    { sku: "7UP 1L", yourPrice: "AED 38", compPrice: "AED 34", parity: false, competitor: "Coca-Cola" },
+    { sku: "Aquafina 500ml", yourPrice: "AED 48", compPrice: "AED 44", parity: false, competitor: "Masafi" },
   ],
 };
 
 const priceAdvantageData = [
-  { sku: "Good Day 200g", yourPrice: "₹40", compPrice: "₹45", competitor: "Unibic", platform: "Amazon", gap: "−12.5%", keywords: ["unibic butter cookies", "unibic biscuits", "premium butter cookies"], estCpc: "₹3.20", estRoas: "5.2x" },
-  { sku: "Bourbon 150g", yourPrice: "₹30", compPrice: "₹34", competitor: "Sunfeast", platform: "Flipkart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹2.80", estRoas: "4.6x" },
-  { sku: "50-50 120g", yourPrice: "₹20", compPrice: "₹24", competitor: "Parle", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹1.90", estRoas: "6.1x" },
+  { sku: "Pepsi 1L", yourPrice: "AED 40", compPrice: "AED 45", competitor: "Rauch", platform: "Carrefour", gap: "−12.5%", keywords: ["unibic butter drinks", "unibic beverages", "premium butter drinks"], estCpc: "AED 3.20", estRoas: "5.2x" },
+  { sku: "Mountain Dew 1L", yourPrice: "AED 30", compPrice: "AED 34", competitor: "Coca-Cola", platform: "Noon", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream beverages", "sunfeast dark fantasy"], estCpc: "AED 2.80", estRoas: "4.6x" },
+  { sku: "Lipton Ice Tea 320ml", yourPrice: "AED 20", compPrice: "AED 24", competitor: "Almarai", platform: "Talabat", gap: "−16.7%", keywords: ["parle krackjack", "salted beverages online", "parle snack beverages"], estCpc: "AED 1.90", estRoas: "6.1x" },
 ];
 
 const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
@@ -147,19 +148,19 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const elasticityData = [
-  { sku: "Good Day 200g", sensitivity: 0.82 },
-  { sku: "Marie Gold 250g", sensitivity: 0.65 },
-  { sku: "NutriChoice 100g", sensitivity: 0.91 },
-  { sku: "Bourbon 150g", sensitivity: 0.48 },
-  { sku: "50-50 120g", sensitivity: 0.35 },
+  { sku: "Pepsi 1L", sensitivity: 0.82 },
+  { sku: "7UP 1L", sensitivity: 0.65 },
+  { sku: "Aquafina 500ml", sensitivity: 0.91 },
+  { sku: "Mountain Dew 1L", sensitivity: 0.48 },
+  { sku: "Lipton Ice Tea 320ml", sensitivity: 0.35 },
 ];
 
 const priceGapTable = [
-  { sku: "Marie Gold 250g", yours: "₹35", lowest: "₹30", gap: "+16.7%", action: "Match Price" },
-  { sku: "NutriChoice 100g", yours: "₹45", lowest: "₹40", gap: "+12.5%", action: "Match Price" },
-  { sku: "Bourbon 150g", yours: "₹30", lowest: "₹28", gap: "+7.1%", action: "Monitor" },
-  { sku: "50-50 120g", yours: "₹20", lowest: "₹18", gap: "+11.1%", action: "Monitor" },
-  { sku: "Good Day 200g", yours: "₹40", lowest: "₹35", gap: "+14.3%", action: "Match Price" },
+  { sku: "7UP 1L", yours: "AED 35", lowest: "AED 30", gap: "+16.7%", action: "Match Price" },
+  { sku: "Aquafina 500ml", yours: "AED 45", lowest: "AED 40", gap: "+12.5%", action: "Match Price" },
+  { sku: "Mountain Dew 1L", yours: "AED 30", lowest: "AED 28", gap: "+7.1%", action: "Monitor" },
+  { sku: "Lipton Ice Tea 320ml", yours: "AED 20", lowest: "AED 18", gap: "+11.1%", action: "Monitor" },
+  { sku: "Pepsi 1L", yours: "AED 40", lowest: "AED 35", gap: "+14.3%", action: "Match Price" },
 ];
 
 // Price index trend by SKU for analytics filter
@@ -179,8 +180,8 @@ const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
-  const [selectedSku, setSelectedSku] = useState("Good Day 200g");
-  const [selectedPlatform, setSelectedPlatform] = useState("Amazon");
+  const [selectedSku, setSelectedSku] = useState("Pepsi 1L");
+  const [selectedPlatform, setSelectedPlatform] = useState("Carrefour");
   const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
   const [priceHistoryToggle, setPriceHistoryToggle] = useState<"sku" | "platform">("sku");
   const [priceHistoryPlatform, setPriceHistoryPlatform] = useState("All");
@@ -188,10 +189,12 @@ const PricingView: React.FC = () => {
   const [viewThroughPlatform, setViewThroughPlatform] = useState<string | null>(null);
   const [alertTeamStates, setAlertTeamStates] = useState<Record<string, boolean>>({});
   const [analyticsSkuFilter, setAnalyticsSkuFilter] = useState("All SKUs");
+  const [ppiMode, setPpiMode] = useState<"competitors" | "own">("competitors");
+  const [ppiSku, setPpiSku] = useState(skuOptions[0]);
 
-  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Good Day 200g"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Pepsi 1L"];
   const competitorMatrix = (competitorMatrixByGroup["All SKUs"] || {})[selectedPlatform] || [];
-  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Good Day 200g"])["All"];
+  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Pepsi 1L"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Pepsi 1L"])["All"];
 
   const filteredPlatformPricing = showNeedAttention ? platformPricing.filter(p => p.needsAttention) : platformPricing;
 
@@ -235,7 +238,7 @@ const PricingView: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
-          <button onClick={() => { setShowNeedAttention(true); setSelectedPlatform("Flipkart"); }}
+          <button onClick={() => { setShowNeedAttention(true); setSelectedPlatform("Noon"); }}
             className="ml-auto px-3 py-1.5 rounded-lg text-[10px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center gap-1">
             <AlertTriangle size={10} /> Need Attention
           </button>
@@ -277,112 +280,168 @@ const PricingView: React.FC = () => {
 
       {/* Price Alerts + Platform Pricing Index */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Active Price Alerts" badge={`${priceAlerts.length} alerts`} badgeColor="red" delay={0.3}>
+        <PanelCard title="Price-Driven Campaign Opportunities" badge="Action-ready" badgeColor="green" delay={0.3}>
+          <p className="text-[10px] text-muted-foreground mb-3">Pricing signals that translate directly to a campaign-level action.</p>
           <div className="space-y-2">
-            {priceAlerts.map((a, i) => (
-              <div key={i} className={`p-3 rounded-xl border ${
-                a.severity === "high" ? "bg-sw-red-dim/30 border-sw-red/20" : a.severity === "medium" ? "bg-sw-amber-dim/30 border-sw-amber/20" : "bg-surface-2 border-subtle"
-              }`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-foreground font-medium">{a.sku}</span>
-                  <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
-                    a.severity === "high" ? "bg-sw-red-dim text-sw-red" : "bg-sw-amber-dim text-sw-amber"
-                  }`}>{a.gap}</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground">
-                  {a.competitor} on {a.platform}: {a.compPrice} vs your {a.yourPrice} · {a.impact}
-                </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <button onClick={() => setActionStates(p => ({ ...p, [i]: true }))}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      actionStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-sw-red/20 text-sw-red hover:bg-sw-red/30"
-                    }`}>
-                    {actionStates[i] ? "✓ Price Matched" : "Match Price"}
-                  </button>
-                  <button onClick={() => setCampaignStates(p => ({ ...p, [i]: true }))}
-                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      campaignStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}>
-                    <Megaphone size={10} />
-                    {campaignStates[i] ? "✓ Campaign Live" : "Value Campaign"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </PanelCard>
-
-        <PanelCard title="Platform Price Index" badge="vs Competition" badgeColor="accent" delay={0.35}>
-          <div className="space-y-3">
-            {filteredPlatformPricing.map((p) => (
-              <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="flex items-center gap-2 text-xs text-foreground">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                    {p.platform}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
-                      {p.avgIndex.toFixed(2)}x
-                    </span>
-                    <button onClick={() => setViewThroughPlatform(viewThroughPlatform === p.platform ? null : p.platform)}
-                      className="px-2 py-0.5 rounded text-[9px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-0.5">
-                      <Eye size={9} /> View
+            {[
+              { insight: "Pepsi 1L is 12% cheaper than Coca-Cola on Noon Minutes", delta: "−12%", platform: "Noon Minutes", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
+              { insight: "Lacnor raised price 8% on Talabat — defensive window open on cola keywords", delta: "+8%", platform: "Talabat", action: "Raise bid on competing keywords", icon: TrendingUp, tone: "amber" },
+              { insight: "Aquafina 1.5L underpriced vs market by 15% on Carrefour — margin leaking", delta: "−15%", platform: "Carrefour", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
+              { insight: "Tropicana OJ at parity with Almarai on Noon — hold pricing, push share-of-shelf", delta: "0%", platform: "Noon", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
+            ].map((row, i) => {
+              const Icon = row.icon;
+              const toneBg = row.tone === "green" ? "bg-sw-green-dim text-sw-green" : row.tone === "amber" ? "bg-sw-amber-dim text-sw-amber" : row.tone === "red" ? "bg-sw-red-dim text-sw-red" : "bg-sw-purple-dim text-sw-purple";
+              const done = !!campaignStates[i];
+              return (
+                <div key={i} className="p-3 rounded-xl bg-surface-2 border border-subtle">
+                  <div className="flex items-start gap-2 mb-2">
+                    <Icon size={12} className="text-sw-amber mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-foreground flex-1">{row.insight}</p>
+                    <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${toneBg} flex-shrink-0`}>{row.delta}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-muted-foreground">{row.platform}</span>
+                    <button
+                      onClick={() => { setCampaignStates(p => ({ ...p, [i]: true })); toast({ title: "Campaign action queued", description: row.action }); }}
+                      disabled={done}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-medium inline-flex items-center gap-1 ${done ? "bg-sw-green-dim text-sw-green" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
+                      <Megaphone size={10} /> {done ? "✓ Triggered" : row.action}
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 text-[10px]">
-                  <span className="text-sw-green">{p.skusBelowComp} below comp</span>
-                  <span className="text-muted-foreground">{p.parity} at parity</span>
-                  <span className="text-sw-red">{p.skusAboveComp} above comp</span>
-                </div>
-                {/* View through detail */}
-                {viewThroughPlatform === p.platform && platformPricingDetail[p.platform] && (
-                  <div className="mt-3 pt-3 border-t border-subtle">
-                    <table className="w-full text-[10px]">
-                      <thead>
-                        <tr className="text-muted-foreground">
-                          <th className="text-left py-1 font-normal">SKU</th>
-                          <th className="text-right py-1 font-normal">You</th>
-                          <th className="text-right py-1 font-normal">Comp</th>
-                          <th className="text-center py-1 font-normal">Parity</th>
-                          <th className="text-right py-1 font-normal">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {platformPricingDetail[p.platform].map((row, ri) => (
-                          <tr key={ri}>
-                            <td className="py-1 text-foreground">{row.sku}</td>
-                            <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
-                            <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
-                            <td className="py-1 text-center">
-                              {row.parity ? (
-                                <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
-                              ) : (
-                                <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-red/15 text-sw-red">✗</span>
-                              )}
-                            </td>
-                            <td className="py-1 text-right">
-                              {!row.parity && (
-                                <button
-                                  onClick={() => setAlertTeamStates(pr => ({ ...pr, [`${p.platform}-${ri}`]: true }))}
-                                  className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
-                                    alertTeamStates[`${p.platform}-${ri}`] ? "bg-sw-green-dim text-sw-green" : "bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25"
-                                  }`}>
-                                  <Bell size={8} />
-                                  {alertTeamStates[`${p.platform}-${ri}`] ? "✓ Alerted" : "Alert Team"}
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
+        </PanelCard>
+
+        <PanelCard title="Platform Price Index" badge={ppiMode === "competitors" ? "vs Competition" : "Own SKU × Platforms"} badgeColor="accent" delay={0.35}>
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div className="inline-flex rounded-lg bg-surface-3 p-0.5">
+              <button onClick={() => setPpiMode("competitors")}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium ${ppiMode === "competitors" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
+                Competitors
+              </button>
+              <button onClick={() => setPpiMode("own")}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium ${ppiMode === "own" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
+                Own SKU × Platforms
+              </button>
+            </div>
+            {ppiMode === "own" && (
+              <Select value={ppiSku} onValueChange={setPpiSku}>
+                <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {skuOptions.map(s => <SelectItem key={s} value={s} className="text-[11px]">{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
+          {ppiMode === "competitors" ? (
+            <div className="space-y-3">
+              {filteredPlatformPricing.map((p) => (
+                <div key={p.platform} className="p-3 bg-surface-2 rounded-xl border border-subtle">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="flex items-center gap-2 text-xs text-foreground">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                      {p.platform}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-mono text-sm font-bold ${p.avgIndex <= 1 ? "text-sw-green" : p.avgIndex <= 1.05 ? "text-sw-amber" : "text-sw-red"}`}>
+                        {p.avgIndex.toFixed(2)}x
+                      </span>
+                      <button onClick={() => setViewThroughPlatform(viewThroughPlatform === p.platform ? null : p.platform)}
+                        className="px-2 py-0.5 rounded text-[9px] font-medium bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-0.5">
+                        <Eye size={9} /> View
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px]">
+                    <span className="text-sw-green">{p.skusBelowComp} below comp</span>
+                    <span className="text-muted-foreground">{p.parity} at parity</span>
+                    <span className="text-sw-red">{p.skusAboveComp} above comp</span>
+                  </div>
+                  {viewThroughPlatform === p.platform && platformPricingDetail[p.platform] && (
+                    <div className="mt-3 pt-3 border-t border-subtle">
+                      <table className="w-full text-[10px]">
+                        <thead>
+                          <tr className="text-muted-foreground">
+                            <th className="text-left py-1 font-normal">SKU</th>
+                            <th className="text-right py-1 font-normal">You</th>
+                            <th className="text-right py-1 font-normal">Comp</th>
+                            <th className="text-center py-1 font-normal">Parity</th>
+                            <th className="text-right py-1 font-normal">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {platformPricingDetail[p.platform].map((row, ri) => (
+                            <tr key={ri}>
+                              <td className="py-1 text-foreground">{row.sku}</td>
+                              <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
+                              <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
+                              <td className="py-1 text-center">
+                                {row.parity ? (
+                                  <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
+                                ) : (
+                                  <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-red/15 text-sw-red">✗</span>
+                                )}
+                              </td>
+                              <td className="py-1 text-right">
+                                {!row.parity && (
+                                  <button
+                                    onClick={() => setAlertTeamStates(pr => ({ ...pr, [`${p.platform}-${ri}`]: true }))}
+                                    className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-medium transition-all ${
+                                      alertTeamStates[`${p.platform}-${ri}`] ? "bg-sw-green-dim text-sw-green" : "bg-sw-amber/15 text-sw-amber hover:bg-sw-amber/25"
+                                    }`}>
+                                    <Bell size={8} />
+                                    {alertTeamStates[`${p.platform}-${ri}`] ? "✓ Alerted" : "Alert Team"}
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            (() => {
+              const plats = ["Talabat", "Noon", "Noon Minutes", "Carrefour"];
+              const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
+              const data = base.map((row: any, i: number) => ({
+                day: row.day,
+                Talabat: row.yours,
+                Noon: row.yours - 1 + (i % 3),
+                "Noon Minutes": row.yours + 2 - (i % 4),
+                Carrefour: row.yours - 2 + (i % 5),
+              }));
+              return (
+                <>
+                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <LineChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
+                      <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={5} />
+                      <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
+                      <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
+                      {plats.map(p => (
+                        <Line key={p} type="monotone" dataKey={p} stroke={platformColors[p] || "#888"} strokeWidth={2} dot={false} name={p} />
+                      ))}
+                    </LineChart>
+                  </ResponsiveContainer>
+                  <div className="flex items-center gap-3 mt-2 flex-wrap">
+                    {plats.map(p => (
+                      <span key={p} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="w-2.5 h-1 rounded" style={{ backgroundColor: platformColors[p] || "#888" }} />{p}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              );
+            })()
+          )}
         </PanelCard>
       </div>
 

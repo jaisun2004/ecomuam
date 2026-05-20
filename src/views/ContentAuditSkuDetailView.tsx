@@ -119,7 +119,7 @@ const ContentAuditSkuDetailView: React.FC<ContentAuditSkuDetailViewProps> = ({ s
     else { setCopiedPage(true); setTimeout(() => setCopiedPage(false), 2000); }
   };
 
-  const platforms = ["All", "Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "Flipkart"];
+  const platforms = ["All", "Talabat", "Noon Minutes", "Talabat", "Carrefour", "Noon"];
 
   return (
     <div className="space-y-6 pb-20 max-w-4xl">

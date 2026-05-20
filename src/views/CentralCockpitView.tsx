@@ -5,9 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 
 const urgentIssues = [
   { id: 1, tier: "T1" as const, desc: "Availability below 20% — 4 campaigns paused", source: "Availability", sourceId: "availability", target: "avail-dedup-banner" },
-  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Good Day Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
+  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Pepsi Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
   { id: 3, tier: "T2" as const, desc: "Competitor bidding on 12 brand keywords", source: "Competitor Hub", sourceId: "competitors", target: "defense-insight" },
-  { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift ₹50K", source: "Budget Opt.", sourceId: "budget", confidence: 4 },
+  { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift AED 50K", source: "Budget Opt.", sourceId: "budget", confidence: 4 },
   { id: 5, tier: "T3" as const, desc: "Daypart budget shift projected +18% conversion", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-digest", confidence: 4 },
   { id: 6, tier: "T3" as const, desc: "New keyword opportunities detected — 8 terms", source: "Discovery", sourceId: "discovery", confidence: 3 },
 ];
@@ -24,7 +24,7 @@ const engagementData = [
   { label: "Clicks", value: "24.7K", delta: "+8%" },
   { label: "CTR", value: "2.0%", delta: "-0.1%" },
   { label: "Orders", value: "842", delta: "+15%" },
-  { label: "AOV", value: "₹875", delta: "-3%" },
+  { label: "AOV", value: "AED 875", delta: "-3%" },
   { label: "Conversion Rate", value: "3.4%", delta: "+0.2%" },
 ];
 
