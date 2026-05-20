@@ -417,10 +417,15 @@ const PricingView: React.FC = () => {
                 "Noon Minutes": row.yours + 2 - (i % 4),
                 Carrefour: row.yours - 2 + (i % 5),
               }));
+              const latest: any = data[data.length - 1] || {};
+              const prev: any = data[data.length - 8] || latest;
+              const prices = plats.map(p => Number(latest[p] ?? 0));
+              const minP = Math.min(...prices);
+              const maxP = Math.max(...prices);
               return (
                 <>
                   <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
-                  <ResponsiveContainer width="100%" height={220}>
+                  <ResponsiveContainer width="100%" height={180}>
                     <LineChart data={data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
                       <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} interval={5} />
@@ -431,12 +436,37 @@ const PricingView: React.FC = () => {
                       ))}
                     </LineChart>
                   </ResponsiveContainer>
-                  <div className="flex items-center gap-3 mt-2 flex-wrap">
-                    {plats.map(p => (
-                      <span key={p} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <span className="w-2.5 h-1 rounded" style={{ backgroundColor: platformColors[p] || "#888" }} />{p}
-                      </span>
-                    ))}
+                  <div className="mt-3 pt-3 border-t border-subtle">
+                    <p className="text-[10px] text-muted-foreground mb-1.5">Current prices · 7-day change</p>
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="text-muted-foreground">
+                          <th className="text-left py-1 font-normal">Platform</th>
+                          <th className="text-right py-1 font-normal">Price (AED)</th>
+                          <th className="text-right py-1 font-normal">Δ 7d</th>
+                          <th className="text-right py-1 font-normal">vs Min</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {plats.map(p => {
+                          const cur = Number(latest[p] ?? 0);
+                          const pr = Number(prev[p] ?? cur);
+                          const delta = cur - pr;
+                          return (
+                            <tr key={p} className="border-t border-subtle/50">
+                              <td className="py-1.5 text-foreground">
+                                <span className="inline-flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: platformColors[p] || "#888" }} />{p}
+                                </span>
+                              </td>
+                              <td className={`py-1.5 text-right font-mono ${cur === minP ? "text-sw-green font-bold" : cur === maxP ? "text-sw-red" : "text-foreground"}`}>{cur.toFixed(2)}</td>
+                              <td className={`py-1.5 text-right font-mono ${delta < 0 ? "text-sw-green" : delta > 0 ? "text-sw-red" : "text-muted-foreground"}`}>{delta === 0 ? "0" : `${delta > 0 ? "+" : ""}${delta.toFixed(2)}`}</td>
+                              <td className="py-1.5 text-right font-mono text-muted-foreground">{cur === minP ? "—" : `+${(cur - minP).toFixed(2)}`}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </>
               );
