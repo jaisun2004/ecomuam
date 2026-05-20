@@ -234,10 +234,21 @@ const STD_RULES: StdRule[] = [
   { id: "no-comp", name: "No competition on keyword → reduce bid 20%", why: "Saves spend when there's no contested auction (SoV competitors = 0 for 3d).", impact: "Affects 8 keywords · ~AED 1.4K/wk", tone: "amber", defaultOn: true },
   { id: "comp-oos", name: "3+ competitors OOS → reduce both budget −30% and bid −15%", why: "Demand drops when shelf is thin — capture cheaper conversions, don't overpay.", impact: "Affects 4 campaigns · ~AED 2.1K/wk", tone: "red", defaultOn: true },
   { id: "own-oos", name: "Own SKU OOS in pincode → pause campaign there", why: "Stop wasted clicks routed to an unbuyable PDP.", impact: "Affects 3 pincode campaigns", tone: "red" },
-  { id: "ctr-roas-up", name: "CTR > 2× cat avg AND ROAS > 3.5 → raise bid +15%, budget +20%", why: "High intent + efficient — buy more of it before auction normalises.", impact: "Affects 5 campaigns · +AED 3.6K/wk spend", tone: "green" },
-  { id: "cpc-down", name: "CPC drops 25% w/w → hold budget, raise bid +10%", why: "Auction got cheaper — claim more impressions at the same cost.", impact: "Affects 6 campaigns", tone: "purple" },
-  { id: "new-comp", name: "New competitor SKU in top 10 → defensive bid +25% on branded kws", why: "Protect branded SoS before they entrench rank.", impact: "Affects 2 brand campaigns", tone: "purple" },
 ];
+
+// Shelf custom rule builder options
+const SHELF_SIGNAL_OPTIONS = ["Competitors on keyword", "Competitors OOS", "Own SKU stock", "Own SoS", "Shelf rank", "Competitor price gap"];
+const SHELF_OP_OPTIONS = ["=", "<", ">", "≤", "≥"];
+const SHELF_VALUE_OPTIONS: Record<string, string[]> = {
+  "Competitors on keyword": ["0", "1", "2", "3+"],
+  "Competitors OOS": ["1", "2", "3", "4+"],
+  "Own SKU stock": ["OOS", "Low", "In stock"],
+  "Own SoS": ["10%", "20%", "30%", "40%"],
+  "Shelf rank": ["1", "3", "5", "10"],
+  "Competitor price gap": ["+5%", "+10%", "+15%", "−10%"],
+};
+const SHELF_ACTION_OPTIONS = ["Reduce bid −10%", "Reduce bid −20%", "Reduce budget −20%", "Reduce budget −30% & bid −15%", "Pause campaign", "Raise bid +15%", "Raise bid +25% (defensive)"];
+const SHELF_SCOPE_OPTIONS = ["All platforms", "Talabat", "Noon", "Noon Minutes", "Carrefour"];
 
 const StandardisedRulesPanel: React.FC = () => {
   const [on, setOn] = useState<Record<string, boolean>>(Object.fromEntries(STD_RULES.map(r => [r.id, !!r.defaultOn])));
