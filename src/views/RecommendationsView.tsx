@@ -1,483 +1,490 @@
 import React, { useMemo, useState } from "react";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
 import {
-  Search, Zap, ShieldAlert, Sparkles, Lightbulb, PackageX, TrendingUp,
-  Archive, Edit3, CheckCircle2, BookOpen, MapPin,
+  Sparkles, Bell, AlertTriangle, Package, DollarSign, Eye,
+  CheckCircle2, X, TrendingUp, TrendingDown, BarChart3, Target,
 } from "lucide-react";
 import { toast } from "sonner";
-import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from "recharts";
+import {
+  BarChart, Bar, LineChart, Line, ResponsiveContainer, XAxis, Tooltip as RTooltip,
+} from "recharts";
 
-type Platform = "Talabat" | "Talabat Pro" | "Noon Minutes";
-type Health = "high_competition" | "high_oos_risk" | "efficiency_winner";
-type Lens = "keyword" | "pincode" | "budget";
-
-interface KeywordReco {
-  id: string;
-  platform: Platform;
-  category: string;
-  target_keyword: string;
-  original_recommendation: string;
-  agency_insight_signal: string;
-  agency_reasoning: string;
-  health: Health;
-  risk_level: "low" | "medium" | "high";
-  current_sov: number;
-  suggested_bid: { current: number; suggested: number };
-  winning_pincodes: string[];
-  estimated_waste_avoided: number;
-}
-
-const MOCK: KeywordReco[] = [
-  {
-    id: "k1", platform: "Talabat", category: "Breakfast Staples",
-    target_keyword: "Organic Ghee",
-    original_recommendation: "Increase bid by 15% to capture Top-of-Search",
-    agency_insight_signal: "Reject. Competitor SOV is 70% in 560034.",
-    agency_reasoning: "Pivot budget to long-tail 'cow ghee 1L jar' — 40% lower CPC, +18% CVR observed last 14d.",
-    health: "high_competition", risk_level: "high",
-    current_sov: 22, suggested_bid: { current: 38, suggested: 26 },
-    winning_pincodes: ["110092", "560066", "400076"],
-    estimated_waste_avoided: 48000,
-  },
-  {
-    id: "k2", platform: "Talabat", category: "Breakfast Staples",
-    target_keyword: "Muesli 1kg",
-    original_recommendation: "Maintain bid at AED 14 — performing well",
-    agency_insight_signal: "Bulk-verify. CVR 9.2% vs cat avg 4.1%.",
-    agency_reasoning: "Efficiency winner. Apply +10% budget cap to capture incremental volume in 8 winning pincodes.",
-    health: "efficiency_winner", risk_level: "low",
-    current_sov: 41, suggested_bid: { current: 14, suggested: 15 },
-    winning_pincodes: ["110001", "110024", "560034", "560066", "400001"],
-    estimated_waste_avoided: 0,
-  },
-  {
-    id: "k3", platform: "Noon Minutes", category: "Late Night Snacks",
-    target_keyword: "Instant Noodles",
-    original_recommendation: "Increase bid +22% — slot available 11pm-2am",
-    agency_insight_signal: "Pause. 4 dark stores OOS for top SKU.",
-    agency_reasoning: "ATC→Checkout fell 38% last 7d in Abu Dhabi cluster. Resume after restock ETA 48h.",
-    health: "high_oos_risk", risk_level: "high",
-    current_sov: 28, suggested_bid: { current: 19, suggested: 0 },
-    winning_pincodes: ["400076", "400053"],
-    estimated_waste_avoided: 62000,
-  },
-  {
-    id: "k4", platform: "Noon Minutes", category: "Late Night Snacks",
-    target_keyword: "Cold Coffee",
-    original_recommendation: "Steady — no change suggested",
-    agency_insight_signal: "Bulk-verify. CPC 22% below cat median.",
-    agency_reasoning: "Efficiency winner in 5 metros. Recommend +15% budget shift from 'iced tea' which is over-bid.",
-    health: "efficiency_winner", risk_level: "low",
-    current_sov: 36, suggested_bid: { current: 11, suggested: 12 },
-    winning_pincodes: ["560034", "560066", "110092", "400076", "411014"],
-    estimated_waste_avoided: 0,
-  },
-  {
-    id: "k5", platform: "Talabat", category: "Beverages",
-    target_keyword: "Energy Drink",
-    original_recommendation: "Increase bid +18% to defend rank #2",
-    agency_insight_signal: "Reject. Category margin can't sustain AED /click ask.",
-    agency_reasoning: "Re-allocate to 'sports drink 500ml' where SOV is 12% with headroom to 30%.",
-    health: "high_competition", risk_level: "medium",
-    current_sov: 31, suggested_bid: { current: 24, suggested: 18 },
-    winning_pincodes: ["560066", "110024"],
-    estimated_waste_avoided: 31000,
-  },
-  {
-    id: "k6", platform: "Talabat", category: "Snacks",
-    target_keyword: "Protein Bar",
-    original_recommendation: "Maintain — strong ROAS",
-    agency_insight_signal: "Bulk-verify. Pincode availability 92%.",
-    agency_reasoning: "Efficiency winner. Stable performance across 6 pincodes; safe to enable auto-bid.",
-    health: "efficiency_winner", risk_level: "low",
-    current_sov: 38, suggested_bid: { current: 16, suggested: 17 },
-    winning_pincodes: ["110092", "400076", "560034"],
-    estimated_waste_avoided: 0,
-  },
-  {
-    id: "k7", platform: "Talabat", category: "Beverages",
-    target_keyword: "Cold Pressed Juice",
-    original_recommendation: "Bid +25% — auction pressure rising",
-    agency_insight_signal: "Hold. OOS risk in 3 of 7 winning pincodes.",
-    agency_reasoning: "Wait 24h — restock confirmed. Avoids AED 22k waste on dead clicks.",
-    health: "high_oos_risk", risk_level: "medium",
-    current_sov: 19, suggested_bid: { current: 21, suggested: 21 },
-    winning_pincodes: ["110024", "560066"],
-    estimated_waste_avoided: 22000,
-  },
-  {
-    id: "k8", platform: "Noon Minutes", category: "Late Night Snacks",
-    target_keyword: "Chips Combo Pack",
-    original_recommendation: "Bid +12% to claim ToS",
-    agency_insight_signal: "Reject. Competitor SOV 64% in late-night slot.",
-    agency_reasoning: "Pivot to 'desi namkeen pack' where SOV opportunity is 40% with 30% lower CPC.",
-    health: "high_competition", risk_level: "high",
-    current_sov: 14, suggested_bid: { current: 17, suggested: 12 },
-    winning_pincodes: ["400053", "411014"],
-    estimated_waste_avoided: 29000,
-  },
-];
-
-const HEALTH_META: Record<Health, { label: string; icon: React.ElementType; cls: string }> = {
-  high_competition: { label: "High Competition", icon: ShieldAlert, cls: "text-sw-red bg-sw-red-dim border-sw-red/30" },
-  high_oos_risk: { label: "High OOS Risk", icon: PackageX, cls: "text-sw-amber bg-sw-amber-dim border-sw-amber/30" },
-  efficiency_winner: { label: "Efficiency Winner", icon: TrendingUp, cls: "text-sw-green bg-sw-green-dim border-sw-green/30" },
-};
+type Platform = "Talabat" | "Talabat Pro" | "Noon" | "Noon Minutes" | "Carrefour";
 
 const PLATFORM_TINT: Record<Platform, string> = {
   Talabat: "bg-sw-amber-dim text-sw-amber",
   "Talabat Pro": "bg-sw-purple-dim text-sw-purple",
-  "Noon Minutes": "bg-sw-cyan-dim text-sw-cyan",
+  Noon: "bg-sw-cyan-dim text-sw-cyan",
+  "Noon Minutes": "bg-primary/15 text-primary",
+  Carrefour: "bg-sw-green-dim text-sw-green",
 };
 
-const LEDGER = [
-  { date: "May 2", platform: "Noon Minutes", decision: "Rejected", original: "Bid +30% on 'frozen paratha'", saved: 84000, why: "Competitor SOV 78% in target pincodes" },
-  { date: "Apr 28", platform: "Talabat", decision: "Modified", original: "+20% budget on 'organic ghee'", saved: 48000, why: "Pivoted to long-tail variants" },
-  { date: "Apr 24", platform: "Talabat", decision: "Archived", original: "Audience expansion 'health-conscious'", saved: 36000, why: "Overlap with existing winning segment" },
-  { date: "Apr 19", platform: "Noon Minutes", decision: "Rejected", original: "Bid +15% on 'instant noodles'", saved: 62000, why: "ATC→Checkout dropped on OOS" },
-  { date: "Apr 14", platform: "Talabat", decision: "Modified", original: "Bid +25% on 'cold pressed juice'", saved: 22000, why: "Held 24h for restock" },
-  { date: "Apr 9", platform: "Talabat", decision: "Rejected", original: "+18% on 'energy drink'", saved: 31000, why: "Margin pressure unsustainable" },
+interface Warning {
+  kind: "availability" | "pricing" | "sos";
+  label: string;
+  detail: string;
+}
+
+interface ChangeRow {
+  field: string;
+  current: string;
+  recommended: string;
+}
+
+interface Reco {
+  id: string;
+  campaign: string;
+  platform: Platform;
+  sku: string;
+  confidence: number; // 1-5
+  headline: string;
+  rationale: string;
+  chart: { type: "bar" | "line"; data: { x: string; v: number }[]; color: string };
+  changes: ChangeRow[];
+  warnings: Warning[];
+}
+
+const MOCK: Reco[] = [
+  {
+    id: "r1",
+    campaign: "Pepsi 1L — Hydration Hour Boost",
+    platform: "Talabat",
+    sku: "Pepsi 1L PET",
+    confidence: 5,
+    headline: "Raise bid by +12% on Pepsi 1L (Dubai Marina cluster)",
+    rationale: "Coca-Cola dropped bid 18% over last 48h. ROAS headroom available without breaching ACoS target.",
+    chart: {
+      type: "bar",
+      color: "hsl(var(--primary))",
+      data: [
+        { x: "T-6", v: 3.1 }, { x: "T-5", v: 3.4 }, { x: "T-4", v: 3.6 },
+        { x: "T-3", v: 3.9 }, { x: "T-2", v: 4.2 }, { x: "T-1", v: 4.5 }, { x: "Now", v: 4.7 },
+      ],
+    },
+    changes: [
+      { field: "Bid (AED)", current: "2.40", recommended: "2.69" },
+      { field: "Daily Budget (AED)", current: "850", recommended: "950" },
+      { field: "Dayparting", current: "10:00 – 22:00", recommended: "09:00 – 23:00" },
+      { field: "Target Keywords", current: "12", recommended: "15 (+ cola, soft drink 1L)" },
+      { field: "Placement", current: "Search only", recommended: "Search + Category banner" },
+    ],
+    warnings: [
+      { kind: "sos", label: "SoS 14%", detail: "Share of Shelf 14% on Talabat — below 20% threshold for Beverages category in Dubai." },
+    ],
+  },
+  {
+    id: "r2",
+    campaign: "Pepsi 1.5L — Family Pack Defender",
+    platform: "Noon",
+    sku: "Pepsi 1.5L PET",
+    confidence: 4,
+    headline: "Pause bid hike — restock first",
+    rationale: "3 dark stores are OOS for Pepsi 1.5L. Spending on impressions that won't convert. Resume after 48h restock.",
+    chart: {
+      type: "line",
+      color: "hsl(var(--sw-red))",
+      data: [
+        { x: "Mon", v: 92 }, { x: "Tue", v: 88 }, { x: "Wed", v: 80 },
+        { x: "Thu", v: 71 }, { x: "Fri", v: 64 }, { x: "Sat", v: 58 }, { x: "Sun", v: 52 },
+      ],
+    },
+    changes: [
+      { field: "Bid (AED)", current: "3.10", recommended: "0 (pause)" },
+      { field: "Daily Budget (AED)", current: "1,200", recommended: "0" },
+      { field: "Status", current: "Active", recommended: "Paused 48h" },
+    ],
+    warnings: [
+      { kind: "availability", label: "3 stores OOS", detail: "Pepsi 1.5L out of stock at 3 dark stores: Downtown Dubai, Al Barsha, JLT." },
+      { kind: "pricing", label: "+8% vs Coke", detail: "Pepsi 1.5L priced AED 5.50 vs Coca-Cola 1.5L at AED 5.10 on Noon — 8% gap." },
+    ],
+  },
+  {
+    id: "r3",
+    campaign: "7UP 330ml — Quick Commerce Push",
+    platform: "Noon Minutes",
+    sku: "7UP 330ml Can",
+    confidence: 5,
+    headline: "Reallocate AED 320/day from generic 'soda' to '7up lemon'",
+    rationale: "CPC on long-tail keyword 38% lower with 2.1x conversion. Saves ~AED 9.6k/month at constant volume.",
+    chart: {
+      type: "bar",
+      color: "hsl(var(--sw-green))",
+      data: [
+        { x: "soda", v: 1.8 }, { x: "lime", v: 2.4 }, { x: "lemon", v: 3.8 }, { x: "7up", v: 4.1 },
+      ],
+    },
+    changes: [
+      { field: "Bid (AED)", current: "1.85", recommended: "1.40" },
+      { field: "Keyword Allocation", current: "soda 60% / 7up 40%", recommended: "soda 20% / 7up lemon 80%" },
+      { field: "Daily Budget (AED)", current: "780", recommended: "780 (re-mixed)" },
+    ],
+    warnings: [],
+  },
+  {
+    id: "r4",
+    campaign: "Mountain Dew 500ml — Carrefour Weekend",
+    platform: "Carrefour",
+    sku: "Mountain Dew 500ml",
+    confidence: 3,
+    headline: "Hold bid — auction softening, no action needed",
+    rationale: "Competitor spend index dropped 22% WoW. Current ROAS 4.8x already exceeds target. Re-evaluate in 7d.",
+    chart: {
+      type: "line",
+      color: "hsl(var(--sw-amber))",
+      data: [
+        { x: "W-4", v: 100 }, { x: "W-3", v: 96 }, { x: "W-2", v: 88 }, { x: "W-1", v: 78 },
+      ],
+    },
+    changes: [
+      { field: "Bid (AED)", current: "2.10", recommended: "2.10 (hold)" },
+      { field: "Daily Budget (AED)", current: "640", recommended: "640" },
+    ],
+    warnings: [
+      { kind: "pricing", label: "+5% vs Sprite", detail: "Mountain Dew 500ml priced AED 3.75 vs Sprite at AED 3.55 on Carrefour." },
+    ],
+  },
+  {
+    id: "r5",
+    campaign: "Lay's Classic 150g — Snack Hour",
+    platform: "Talabat Pro",
+    sku: "Lay's Classic 150g",
+    confidence: 4,
+    headline: "Extend dayparting into 22:00 – 01:00 slot",
+    rationale: "Late-night snack queries up 41% WoW. Zero PepsiCo presence in this slot. Competitor SoV ~0%.",
+    chart: {
+      type: "bar",
+      color: "hsl(var(--sw-purple))",
+      data: [
+        { x: "18h", v: 24 }, { x: "20h", v: 38 }, { x: "22h", v: 52 }, { x: "00h", v: 61 }, { x: "02h", v: 18 },
+      ],
+    },
+    changes: [
+      { field: "Dayparting", current: "12:00 – 22:00", recommended: "12:00 – 01:00" },
+      { field: "Bid (AED) — Late Slot", current: "—", recommended: "1.80" },
+      { field: "Daily Budget (AED)", current: "520", recommended: "680" },
+    ],
+    warnings: [
+      { kind: "sos", label: "SoS 18%", detail: "Share of Shelf 18% in late-night snack queries — below 25% target." },
+    ],
+  },
 ];
 
-const fmtINR = (n: number) => `AED ${(n / 1000).toFixed(0)}k`;
-const fmtINRLarge = (n: number) => n >= 100000 ? `AED ${(n / 100000).toFixed(2)}L` : fmtINR(n);
+const WARN_META: Record<Warning["kind"], { icon: React.ElementType; cls: string; label: string }> = {
+  availability: { icon: Package, cls: "text-sw-red bg-sw-red-dim border-sw-red/30", label: "Availability" },
+  pricing: { icon: DollarSign, cls: "text-sw-amber bg-sw-amber-dim border-sw-amber/30", label: "Pricing Gap" },
+  sos: { icon: BarChart3, cls: "text-sw-purple bg-sw-purple-dim border-sw-purple/30", label: "Share of Shelf" },
+};
+
+const ConfidenceDots: React.FC<{ n: number }> = ({ n }) => (
+  <span className="inline-flex items-center gap-0.5">
+    {[0, 1, 2, 3, 4].map(i => (
+      <span key={i} className={`w-1.5 h-1.5 rounded-full ${i < n ? "bg-primary" : "bg-surface-3"}`} />
+    ))}
+  </span>
+);
+
+const TARGETS = [
+  { key: "roas", label: "ROAS", current: 4.2, target: 3.5, unit: "x", higherIsBetter: true, note: "Above target — efficient spend" },
+  { key: "acos", label: "ACoS", current: 22, target: 18, unit: "%", higherIsBetter: false, note: "Above target — trim low-CVR keywords" },
+  { key: "spend", label: "Spend (MTD)", current: 684000, target: 900000, unit: "AED", higherIsBetter: true, note: "On pace — 76% of monthly budget" },
+];
+
+const fmtAED = (n: number) => `AED ${n.toLocaleString("en-AE")}`;
 
 const RecommendationsView: React.FC = () => {
-  const [platform, setPlatform] = useState<Platform>("Talabat");
-  const [lens, setLens] = useState<Lens>("keyword");
-  const [policy, setPolicy] = useState<"convenience" | "expert">("expert");
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
-  const [editing, setEditing] = useState<string | null>(null);
-  const [editBid, setEditBid] = useState<string>("");
+  const [applied, setApplied] = useState<Set<string>>(new Set());
+  const [openChanges, setOpenChanges] = useState<string | null>(null);
+  const [openWarn, setOpenWarn] = useState<{ recoId: string; warnIdx: number } | null>(null);
 
-  const visible = useMemo(() => {
-    const base = MOCK.filter(k => k.platform === platform && !dismissed.has(k.id));
-    if (lens === "budget") return [...base].sort((a, b) => b.estimated_waste_avoided - a.estimated_waste_avoided);
-    if (lens === "pincode") return [...base].sort((a, b) => b.winning_pincodes.length - a.winning_pincodes.length);
-    return base;
-  }, [platform, lens, dismissed]);
+  const visible = useMemo(
+    () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
+    [dismissed, applied]
+  );
 
-  const winners = visible.filter(k => k.health === "efficiency_winner");
-  const totalWaste = MOCK.reduce((s, k) => s + k.estimated_waste_avoided, 0) + 196000;
-  const pending = MOCK.filter(k => !dismissed.has(k.id)).length;
+  const activeReco = openChanges ? MOCK.find(r => r.id === openChanges) : null;
+  const activeWarn = openWarn ? MOCK.find(r => r.id === openWarn.recoId)?.warnings[openWarn.warnIdx] : null;
 
-  const apply = (id: string, label = "Verified & applied") => {
-    setDismissed(prev => new Set(prev).add(id));
-    toast.success(label);
+  const scrollToFeed = () => {
+    document.getElementById("reco-feed")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
-  const bulkVerify = () => {
-    const ids = winners.map(w => w.id);
-    setDismissed(prev => { const n = new Set(prev); ids.forEach(i => n.add(i)); return n; });
-    toast.success(`${ids.length} efficiency winners verified & applied`);
-  };
-
-  const aggressionData = [{ name: "agg", value: 1.4, fill: "hsl(var(--sw-amber))" }];
 
   return (
     <div className="space-y-6">
-      <header className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display font-bold text-2xl text-foreground">Recommendations</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Keyword aggression vs operational reality across Q-Commerce platforms
-          </p>
-        </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <BookOpen size={14} /> Savings Ledger
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-[480px] sm:max-w-[480px]">
-            <SheetHeader>
-              <SheetTitle className="font-display">Savings Attribution Ledger</SheetTitle>
-            </SheetHeader>
-            <div className="mt-2 mb-5">
-              <p className="text-xs text-muted-foreground">Losses avoided YTD</p>
-              <p className="font-display font-bold text-3xl text-sw-green">{fmtINRLarge(totalWaste + 1240000)}</p>
-            </div>
-            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-200px)] pr-2">
-              {LEDGER.map((l, i) => (
-                <div key={i} className="border border-subtle rounded-xl p-3 bg-surface-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-mono text-muted-foreground">{l.date} · {l.platform}</span>
-                    <Badge variant="outline" className="text-[10px]">{l.decision}</Badge>
-                  </div>
-                  <p className="text-sm text-foreground">{l.original}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{l.why}</p>
-                  <p className="text-sm font-mono text-sw-green mt-2">Saved {fmtINR(l.saved)}</p>
-                </div>
-              ))}
-            </div>
-          </SheetContent>
-        </Sheet>
+      <header>
+        <h1 className="font-display font-bold text-2xl text-foreground">Recommendations</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          AI-generated campaign actions grounded in live shelf, price, and competitor signals
+        </p>
       </header>
 
-      {/* Strategic Header KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <KPICard
-          title="Total Keyword Spend" value="AED 6.84L" delta="MTD" deltaType="neutral"
-          sub="Across 142 active sponsored keywords" accentColor="bg-sw-purple" delay={0}
-        />
-        <KPICard
-          title="Weighted Avg SOV" value="32.4%" delta="+3.1pt vs last wk" deltaType="positive"
-          sub="Volume-weighted across all live keywords" accentColor="bg-sw-green" delay={0.05}
-        />
-        <KPICard
-          title="Pincode Availability" value="84%" delta="-4pt WoW" deltaType="warning"
-          sub="16% of dark stores OOS for top-bid SKUs" accentColor="bg-sw-amber" delay={0.1}
-        />
-        <KPICard
-          title="Pending Verifications" value={`${pending}`} delta={`${winners.length} winners`} deltaType="positive"
-          sub="Keyword recos awaiting agency triage" accentColor="bg-primary" delay={0.15}
-        />
-      </div>
+      {/* Section A — Top KPIs + Notification */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+        <KPICard title="Spend (MTD)" value="AED 6.84L" delta="+8% WoW" deltaType="neutral"
+          sub="Across 42 active campaigns" accentColor="bg-sw-purple" delay={0} />
+        <KPICard title="ROAS" value="4.2x" delta="vs 3.5x target" deltaType="positive"
+          sub="Weighted avg, all platforms" accentColor="bg-sw-green" delay={0.05} />
+        <KPICard title="ACoS" value="22%" delta="vs 18% target" deltaType="warning"
+          sub="4pt above target — needs trim" accentColor="bg-sw-amber" delay={0.1} />
+        <KPICard title="CTR" value="3.8%" delta="+0.4pt WoW" deltaType="positive"
+          sub="Strongest on Noon Minutes" accentColor="bg-sw-cyan" delay={0.15} />
 
-      {/* Policy toggle */}
-      <div className="bg-surface-1 border border-subtle rounded-2xl p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Sparkles size={16} className="text-primary" />
-          <div>
-            <p className="text-sm font-medium text-foreground">Triage Policy</p>
-            <p className="text-[11px] text-muted-foreground">
-              {policy === "convenience"
-                ? "Auto-verifying low-risk efficiency winners"
-                : "Manual agency triage on every recommendation"}
-            </p>
+        <button
+          onClick={scrollToFeed}
+          className="relative text-left bg-gradient-to-br from-primary/15 via-primary/8 to-surface-1 border border-primary/40 rounded-2xl p-5 hover:border-primary/70 transition-all overflow-hidden opacity-0 animate-fade-slide-in"
+          style={{ animationDelay: "0.2s" }}
+        >
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary" />
+          <span className="absolute top-3 right-3 flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <Bell size={14} className="text-primary" />
+            <p className="text-xs text-primary font-medium">New Recommendations</p>
           </div>
-        </div>
-        <div className="inline-flex border border-subtle rounded-lg overflow-hidden">
-          <button
-            onClick={() => { setPolicy("convenience"); toast("Convenience mode on"); }}
-            className={`px-3 py-1.5 text-xs font-medium transition-colors ${policy === "convenience" ? "bg-primary text-primary-foreground" : "bg-surface-2 text-muted-foreground hover:text-foreground"}`}
-          >High Convenience</button>
-          <button
-            onClick={() => { setPolicy("expert"); toast("Expert mode on"); }}
-            className={`px-3 py-1.5 text-xs font-medium transition-colors ${policy === "expert" ? "bg-primary text-primary-foreground" : "bg-surface-2 text-muted-foreground hover:text-foreground"}`}
-          >Expert Triage</button>
-        </div>
+          <p className="font-display font-bold text-2xl text-foreground">{visible.length} <span className="text-sm font-normal text-muted-foreground">new</span></p>
+          <p className="text-[11px] text-muted-foreground mt-1.5">Generated by AI since yesterday · click to review</p>
+        </button>
       </div>
 
-      {/* Tabs + lens + bulk */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Tabs value={platform} onValueChange={(v) => setPlatform(v as Platform)}>
-          <TabsList>
-            <TabsTrigger value="Talabat">Talabat</TabsTrigger>
-            <TabsTrigger value="Talabat">Talabat</TabsTrigger>
-            <TabsTrigger value="Noon Minutes">Noon Minutes</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <div className="flex items-center gap-3">
-          <Select value={lens} onValueChange={(v) => setLens(v as Lens)}>
-            <SelectTrigger className="h-9 w-[180px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="keyword">Keyword Focus</SelectItem>
-              <SelectItem value="pincode">Pincode Focus</SelectItem>
-              <SelectItem value="budget">Budget Focus</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            size="sm" className="gap-2" disabled={winners.length === 0}
-            onClick={bulkVerify}
-          >
-            <CheckCircle2 size={14} /> Bulk Verify Winners ({winners.length})
-          </Button>
-        </div>
-      </div>
-
-      {/* Body grid: feed + war-room */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          {visible.length === 0 && (
-            <div className="col-span-full bg-surface-1 border border-subtle rounded-2xl p-10 text-center text-sm text-muted-foreground">
-              No pending recommendations for {platform}. All caught up.
-            </div>
-          )}
-          {visible.map((k) => {
-            const HM = HEALTH_META[k.health];
-            const HIcon = HM.icon;
-            const bidDelta = k.suggested_bid.suggested - k.suggested_bid.current;
+      {/* Section B — Target Pacing */}
+      <PanelCard title="Target Pacing — Month to Date" badge="3 KPIs" badgeColor="accent" delay={0.25}>
+        <div className="space-y-5">
+          {TARGETS.map(t => {
+            const pct = t.higherIsBetter
+              ? Math.min(100, (t.current / t.target) * 100)
+              : Math.min(100, (t.target / t.current) * 100);
+            const met = t.higherIsBetter ? t.current >= t.target : t.current <= t.target;
+            const statusCls = met ? "text-sw-green bg-sw-green-dim" : pct >= 70 ? "text-sw-amber bg-sw-amber-dim" : "text-sw-red bg-sw-red-dim";
+            const statusLabel = met ? "Met" : pct >= 70 ? "At Risk" : "Behind";
+            const fmtVal = (v: number) => t.unit === "AED" ? fmtAED(v) : `${v}${t.unit}`;
             return (
-              <div key={k.id} className="bg-surface-1 border border-subtle rounded-2xl overflow-hidden flex flex-col">
-                <div className="px-4 py-3 border-b border-subtle flex items-center justify-between">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${PLATFORM_TINT[k.platform]}`}>{k.platform}</span>
-                    <Search size={14} className="text-muted-foreground flex-shrink-0" />
-                    <span className="font-display font-semibold text-sm text-foreground truncate">{k.target_keyword}</span>
+              <div key={t.key}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <Target size={13} className="text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">{t.label}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${statusCls}`}>{statusLabel}</span>
                   </div>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] border ${HM.cls}`}>
-                    <HIcon size={10} /> {HM.label}
+                  <span className="text-xs font-mono text-muted-foreground">
+                    <span className="text-foreground font-semibold">{fmtVal(t.current)}</span> / target {fmtVal(t.target)}
                   </span>
                 </div>
-
-                <div className="px-4 py-3 space-y-3 flex-1">
-                  <p className="text-[11px] text-muted-foreground">{k.category}</p>
-
-                  <div className="bg-surface-2 rounded-lg p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
-                      <Zap size={10} /> Platform Tip
-                    </p>
-                    <p className="text-sm text-foreground">{k.original_recommendation}</p>
-                  </div>
-
-                  <div className="bg-sw-amber-dim border-l-4 border-sw-amber rounded-r-lg p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-sw-amber mb-1 flex items-center gap-1">
-                      <Lightbulb size={10} /> Agency Keyword Pivot
-                    </p>
-                    <p className="text-sm font-medium text-foreground">{k.agency_insight_signal}</p>
-                    <p className="text-[12px] text-foreground/80 mt-1">{k.agency_reasoning}</p>
-                    {k.estimated_waste_avoided > 0 && (
-                      <span className="inline-block mt-2 px-2 py-0.5 bg-sw-green-dim text-sw-green text-[10px] font-mono rounded-full">
-                        Saves ~{fmtINR(k.estimated_waste_avoided)}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-surface-2 rounded-lg p-2">
-                      <p className="text-[9px] uppercase text-muted-foreground">Current SOV</p>
-                      <p className="font-mono text-sm text-foreground mt-0.5">{k.current_sov}%</p>
-                    </div>
-                    <div className="bg-surface-2 rounded-lg p-2">
-                      <p className="text-[9px] uppercase text-muted-foreground">Sug. Bid</p>
-                      <p className="font-mono text-sm text-foreground mt-0.5">
-                        <span className="line-through text-muted-foreground/70">AED {k.suggested_bid.current}</span>{" "}
-                        <span className={bidDelta < 0 ? "text-sw-red" : bidDelta > 0 ? "text-sw-green" : "text-foreground"}>
-                          AED {k.suggested_bid.suggested}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="bg-surface-2 rounded-lg p-2">
-                      <p className="text-[9px] uppercase text-muted-foreground">Win PIN</p>
-                      <p className="font-mono text-sm text-foreground mt-0.5">{k.winning_pincodes.length}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1">
-                    {k.winning_pincodes.slice(0, 3).map(p => (
-                      <span key={p} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-surface-3 rounded text-[10px] font-mono text-muted-foreground">
-                        <MapPin size={9} />{p}
-                      </span>
-                    ))}
-                    {k.winning_pincodes.length > 3 && (
-                      <span className="px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">+{k.winning_pincodes.length - 3} more</span>
-                    )}
-                  </div>
-
-                  {editing === k.id && (
-                    <div className="bg-surface-2 border border-subtle rounded-lg p-3 space-y-2">
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Modify bid</p>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="number" value={editBid} onChange={(e) => setEditBid(e.target.value)}
-                          className="h-8" placeholder={`${k.suggested_bid.suggested}`}
-                        />
-                        <Button size="sm" onClick={() => { apply(k.id, `Bid set to AED ${editBid || k.suggested_bid.suggested}`); setEditing(null); }}>Save</Button>
-                        <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="px-4 py-3 border-t border-subtle flex items-center gap-2">
-                  <Button size="sm" className="flex-1 gap-1" onClick={() => apply(k.id)}>
-                    <CheckCircle2 size={13} /> Verify & Apply
-                  </Button>
-                  <Button
-                    size="sm" variant="outline" className="gap-1"
-                    onClick={() => { setEditing(k.id); setEditBid(String(k.suggested_bid.suggested)); }}
-                  >
-                    <Edit3 size={13} /> Modify
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="ghost" className="gap-1 text-sw-red hover:text-sw-red">
-                        <Archive size={13} />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Archive recommendation?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          "{k.target_keyword}" will move to the savings ledger as rejected.
-                          {k.estimated_waste_avoided > 0 && ` Estimated AED ${fmtINR(k.estimated_waste_avoided)} of waste avoided.`}
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => apply(k.id, "Archived to ledger")}>Archive</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
+                <Progress value={pct} className="h-2" />
+                <p className="text-[11px] text-muted-foreground mt-1.5">{t.note}</p>
               </div>
             );
           })}
         </div>
+      </PanelCard>
 
-        {/* War-Room sidebar */}
-        <div className="space-y-4">
-          <PanelCard title="Aggression Index" badge="vs category" badgeColor="purple">
-            <div className="h-[140px] -mt-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart innerRadius="65%" outerRadius="100%" data={aggressionData} startAngle={180} endAngle={0}>
-                  <PolarAngleAxis type="number" domain={[0, 2]} tick={false} />
-                  <RadialBar dataKey="value" cornerRadius={10} background={{ fill: "hsl(var(--surface-3))" }} />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div className="text-center -mt-16">
-                <p className="font-display font-bold text-2xl text-foreground">1.4x</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Aggressive</p>
+      {/* Section C — Recommendations Feed */}
+      <div id="reco-feed" className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display font-semibold text-base text-foreground flex items-center gap-2">
+            <Sparkles size={16} className="text-primary" /> AI Recommendations for Active Campaigns
+          </h2>
+          <span className="text-xs text-muted-foreground font-mono">{visible.length} pending</span>
+        </div>
+
+        {visible.length === 0 && (
+          <div className="bg-surface-1 border border-subtle rounded-2xl p-10 text-center text-sm text-muted-foreground">
+            All caught up — no pending recommendations.
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          {visible.map((r, i) => (
+            <div
+              key={r.id}
+              className="bg-surface-1 border border-subtle rounded-2xl overflow-hidden opacity-0 animate-fade-slide-in"
+              style={{ animationDelay: `${0.3 + i * 0.04}s` }}
+            >
+              <div className="px-4 py-3 border-b border-subtle flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${PLATFORM_TINT[r.platform]}`}>{r.platform}</span>
+                    <span className="text-[10px] text-muted-foreground font-mono">{r.sku}</span>
+                  </div>
+                  <p className="font-display font-semibold text-sm text-foreground truncate">{r.campaign}</p>
+                </div>
+                <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] bg-primary/15 text-primary border border-primary/30">
+                    <Sparkles size={9} /> AI
+                  </span>
+                  <ConfidenceDots n={r.confidence} />
+                </div>
+              </div>
+
+              <div className="px-4 py-3 space-y-3">
+                <p className="text-sm font-medium text-foreground">{r.headline}</p>
+                <p className="text-[12px] text-muted-foreground leading-relaxed">{r.rationale}</p>
+
+                {/* Infographic */}
+                <div className="bg-surface-2 rounded-lg p-2 h-[80px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    {r.chart.type === "bar" ? (
+                      <BarChart data={r.chart.data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+                        <XAxis dataKey="x" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                        <RTooltip cursor={{ fill: "hsl(var(--surface-3))" }} contentStyle={{ fontSize: 11, background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                        <Bar dataKey="v" fill={r.chart.color} radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    ) : (
+                      <LineChart data={r.chart.data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+                        <XAxis dataKey="x" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                        <RTooltip contentStyle={{ fontSize: 11, background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                        <Line type="monotone" dataKey="v" stroke={r.chart.color} strokeWidth={2} dot={false} />
+                      </LineChart>
+                    )}
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Warnings */}
+                {r.warnings.length > 0 && (
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                      <AlertTriangle size={10} className="text-sw-amber" /> E-commerce KPI Warnings
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {r.warnings.map((w, wi) => {
+                        const WM = WARN_META[w.kind];
+                        const WIcon = WM.icon;
+                        return (
+                          <div key={wi} className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[11px] ${WM.cls}`}>
+                            <WIcon size={11} />
+                            <span className="font-medium">{WM.label}:</span>
+                            <span className="font-mono">{w.label}</span>
+                            <button
+                              onClick={() => setOpenWarn({ recoId: r.id, warnIdx: wi })}
+                              className="ml-1 px-1.5 py-0.5 rounded bg-background/60 hover:bg-background text-[10px] font-medium border border-current/20"
+                            >
+                              Alert
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="px-4 py-3 border-t border-subtle flex items-center gap-2 bg-surface-2">
+                <Button size="sm" className="gap-1.5 flex-1" onClick={() => setOpenChanges(r.id)}>
+                  <Eye size={13} /> View Changes
+                </Button>
+                <Button
+                  size="sm" variant="outline" className="gap-1.5"
+                  onClick={() => { setApplied(p => new Set(p).add(r.id)); toast.success("Recommendation applied"); }}
+                >
+                  <CheckCircle2 size={13} /> Apply
+                </Button>
+                <Button
+                  size="sm" variant="ghost"
+                  onClick={() => { setDismissed(p => new Set(p).add(r.id)); toast("Dismissed"); }}
+                >
+                  <X size={13} />
+                </Button>
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground text-center mt-6">
-              Bid intensity is 40% above category median. Selectively pull back on high-comp keywords.
-            </p>
-          </PanelCard>
-
-          <PanelCard title="Waste Prevention" badge="Keywords" badgeColor="green">
-            <p className="font-display font-bold text-3xl text-sw-green">AED 2.84L</p>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              Saved this month from pausing keywords where ATC→Checkout dropped due to dark-store stock-outs.
-            </p>
-            <div className="mt-3 pt-3 border-t border-subtle space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Top saving keywords</p>
-              {[
-                { k: "instant noodles", v: 62000 },
-                { k: "organic ghee", v: 48000 },
-                { k: "energy drink", v: 31000 },
-              ].map(r => (
-                <div key={r.k} className="flex items-center justify-between text-xs">
-                  <span className="text-foreground truncate">{r.k}</span>
-                  <span className="font-mono text-sw-green">{fmtINR(r.v)}</span>
-                </div>
-              ))}
-            </div>
-          </PanelCard>
-
-          <PanelCard title="Quick Stats" badgeColor="grey">
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between"><span className="text-muted-foreground">Keywords paused (7d)</span><span className="font-mono">12</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Restored after restock</span><span className="font-mono">7</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Pivots applied</span><span className="font-mono">23</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Avg CPC reduction</span><span className="font-mono text-sw-green">-18%</span></div>
-            </div>
-          </PanelCard>
+          ))}
         </div>
       </div>
+
+      {/* View Changes Dialog */}
+      <Dialog open={!!openChanges} onOpenChange={(o) => !o && setOpenChanges(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              Proposed Changes
+            </DialogTitle>
+          </DialogHeader>
+          {activeReco && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${PLATFORM_TINT[activeReco.platform]}`}>{activeReco.platform}</span>
+                <span className="text-sm font-medium text-foreground">{activeReco.campaign}</span>
+              </div>
+              <div className="rounded-xl border border-subtle overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-surface-2">
+                    <tr className="text-left text-[11px] uppercase tracking-wider text-muted-foreground">
+                      <th className="px-3 py-2 font-medium">Field</th>
+                      <th className="px-3 py-2 font-medium">Current</th>
+                      <th className="px-3 py-2 font-medium">Recommended</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeReco.changes.map((c, i) => {
+                      const changed = c.current !== c.recommended;
+                      return (
+                        <tr key={i} className={`border-t border-subtle ${changed ? "bg-sw-amber-dim/40" : ""}`}>
+                          <td className="px-3 py-2 text-foreground font-medium">{c.field}</td>
+                          <td className="px-3 py-2 text-muted-foreground font-mono text-[12px]">{c.current}</td>
+                          <td className="px-3 py-2 text-foreground font-mono text-[12px] flex items-center gap-1.5">
+                            {changed && <TrendingUp size={11} className="text-sw-amber" />}
+                            {c.recommended}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Confidence: <ConfidenceDots n={activeReco.confidence} /> · Generated by AI from live shelf + competitor signals
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenChanges(null)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                if (activeReco) {
+                  setApplied(p => new Set(p).add(activeReco.id));
+                  toast.success("Changes applied to campaign");
+                }
+                setOpenChanges(null);
+              }}
+            >
+              Confirm & Apply
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Warning Alert Dialog */}
+      <AlertDialog open={!!openWarn} onOpenChange={(o) => !o && setOpenWarn(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display flex items-center gap-2">
+              <AlertTriangle size={16} className="text-sw-amber" />
+              {activeWarn ? WARN_META[activeWarn.kind].label : ""} Alert
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {activeWarn?.detail}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+            <AlertDialogAction onClick={() => toast.success("Alert routed to ops team")}>
+              Acknowledge & Route
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
