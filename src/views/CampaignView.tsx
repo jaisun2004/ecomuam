@@ -768,8 +768,8 @@ const CampaignView: React.FC = () => {
   const [showDayParting, setShowDayParting] = useState(false);
   const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
-  const [showDeleteDayPart, setShowDeleteDayPart] = useState(false);
-  const [configsToDelete, setConfigsToDelete] = useState<string[]>([]);
+  const [showEditDayPart, setShowEditDayPart] = useState(false);
+  const [replaceTarget, setReplaceTarget] = useState<DayPartPreset | null>(null);
   const [existingDayPartConfigs, setExistingDayPartConfigs] = useState(dayPartingSlots);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
