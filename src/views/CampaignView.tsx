@@ -415,6 +415,65 @@ const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allC
   );
 };
 
+/* ── Delete Day Parting Modal ── */
+interface DeleteDayPartingModalProps {
+  open: boolean;
+  onClose: () => void;
+  configs: typeof dayPartingSlots;
+  selected: string[];
+  onToggle: (slot: string) => void;
+  onDelete: () => void;
+}
+
+const DeleteDayPartingModal: React.FC<DeleteDayPartingModalProps> = ({ open, onClose, configs, selected, onToggle, onDelete }) => {
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="max-w-xl bg-surface-1 border-border-visible">
+        <DialogHeader>
+          <DialogTitle className="font-display text-foreground">Delete Day Parting Configs</DialogTitle>
+          <DialogDescription>Select existing configs to remove. This action cannot be undone.</DialogDescription>
+        </DialogHeader>
+
+        <div className="min-h-[200px] max-h-[400px] overflow-y-auto space-y-2">
+          {configs.length === 0 && (
+            <div className="text-center py-8 text-xs text-muted-foreground">No day parting configs found.</div>
+          )}
+          {configs.map((c, i) => {
+            const isOn = selected.includes(c.slot);
+            return (
+              <button key={i} onClick={() => onToggle(c.slot)}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
+                  isOn ? "bg-sw-red-dim border-sw-red/30" : "bg-surface-2 border-subtle hover:bg-surface-3"
+                }`}>
+                <span className={`w-4 h-4 rounded border flex items-center justify-center ${isOn ? "bg-sw-red border-sw-red" : "border-subtle"}`}>
+                  {isOn && <span className="text-[10px] text-white">✓</span>}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-medium text-foreground">{c.slot}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
+                </div>
+                <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <DialogFooter className="flex !justify-between items-center gap-2">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button
+            variant="destructive"
+            onClick={onDelete}
+            disabled={selected.length === 0}
+            className="bg-sw-red hover:bg-sw-red/80"
+          >
+            Delete {selected.length > 0 ? `(${selected.length})` : ""}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 
 
 /* ── Campaign Creator Modal ── */
@@ -628,6 +687,9 @@ const CampaignView: React.FC = () => {
   const [showDayParting, setShowDayParting] = useState(false);
   const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
+  const [showDeleteDayPart, setShowDeleteDayPart] = useState(false);
+  const [configsToDelete, setConfigsToDelete] = useState<string[]>([]);
+  const [existingDayPartConfigs, setExistingDayPartConfigs] = useState(dayPartingSlots);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
@@ -713,6 +775,19 @@ const CampaignView: React.FC = () => {
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
       <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
+      <DeleteDayPartingModal
+        open={showDeleteDayPart}
+        onClose={() => { setShowDeleteDayPart(false); setConfigsToDelete([]); }}
+        configs={existingDayPartConfigs}
+        selected={configsToDelete}
+        onToggle={(slot) => setConfigsToDelete(prev => prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot])}
+        onDelete={() => {
+          setExistingDayPartConfigs(prev => prev.filter(c => !configsToDelete.includes(c.slot)));
+          toast.success(`${configsToDelete.length} day parting config(s) deleted`, { description: "Configs removed successfully." });
+          setConfigsToDelete([]);
+          setShowDeleteDayPart(false);
+        }}
+      />
 
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
 
@@ -970,18 +1045,24 @@ const CampaignView: React.FC = () => {
         <PanelCard title="Day Parting Configuration" badge="6 time slots" badgeColor="amber" delay={0.05}>
           <div className="flex items-center justify-between mb-4 gap-3">
             <p className="text-[10px] text-muted-foreground">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
-            <button onClick={() => setShowCreateDayPart(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
-              <Plus size={12} /> Create Day Parting
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowDeleteDayPart(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red-dim text-sw-red hover:bg-sw-red/20 transition-all whitespace-nowrap border border-sw-red/20">
+                <X size={12} /> Delete Config
+              </button>
+              <button onClick={() => setShowCreateDayPart(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
+                <Plus size={12} /> Create Day Parting
+              </button>
+            </div>
           </div>
           {/* Visual timeline bar */}
           <div className="mb-5">
             <div className="flex h-8 rounded-xl overflow-hidden border border-subtle">
-              {dayPartingSlots.map((s, i) => {
+              {existingDayPartConfigs.map((s, i) => {
                 const colors = ["bg-primary/40", "bg-sw-green/40", "bg-sw-amber/40", "bg-sw-purple/40", "bg-sw-cyan/40", "bg-surface-3"];
                 return (
-                  <div key={i} className={`${colors[i]} flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity`}
+                  <div key={i} className={`${colors[i % colors.length]} flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity`}
                     style={{ width: `${s.budgetPct}%` }}
                     onClick={() => setExpandedSlots(p => ({ ...p, [i]: !p[i] }))}>
                     <span className="text-[8px] font-mono text-foreground truncate px-1">{s.budgetPct}%</span>
@@ -990,7 +1071,7 @@ const CampaignView: React.FC = () => {
               })}
             </div>
             <div className="flex mt-1">
-              {dayPartingSlots.map((s, i) => (
+              {existingDayPartConfigs.map((s, i) => (
                 <div key={i} className="text-center" style={{ width: `${s.budgetPct}%` }}>
                   <span className="text-[7px] text-muted-foreground">{s.time.split("–")[0].trim()}</span>
                 </div>
@@ -998,7 +1079,7 @@ const CampaignView: React.FC = () => {
             </div>
           </div>
           <div className="space-y-2">
-            {dayPartingSlots.map((s, si) => (
+            {existingDayPartConfigs.map((s, si) => (
               <div key={si} className="border border-subtle rounded-xl overflow-hidden">
                 <button onClick={() => setExpandedSlots(p => ({ ...p, [si]: !p[si] }))}
                   className="w-full flex items-center gap-3 p-3 hover:bg-surface-2 transition-colors">
