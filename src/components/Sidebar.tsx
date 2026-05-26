@@ -13,7 +13,6 @@ const navSections = [
       { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
       { id: "categoryassortment", icon: LayoutList, label: "Category Assortment", notify: false },
-      { id: "recommendations", icon: Sparkles, label: "Recommendations", notify: true },
     ],
   },
   {
@@ -25,6 +24,7 @@ const navSections = [
   {
     label: "OPTIMISATION",
     items: [
+      { id: "recommendations", icon: Sparkles, label: "Recommendations", notify: true },
       { id: "budget", icon: Zap, label: "Budget Optimiser", notify: false },
     ],
   },
