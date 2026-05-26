@@ -712,6 +712,7 @@ const CampaignView: React.FC = () => {
   return (
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
+      <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
 
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
 
