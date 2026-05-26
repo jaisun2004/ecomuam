@@ -628,7 +628,6 @@ const CampaignView: React.FC = () => {
   const [showDayParting, setShowDayParting] = useState(false);
   const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
-  const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showDeleteDayPart, setShowDeleteDayPart] = useState(false);
   const [configsToDelete, setConfigsToDelete] = useState<string[]>([]);
   const [existingDayPartConfigs, setExistingDayPartConfigs] = useState(dayPartingSlots);
