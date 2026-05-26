@@ -258,19 +258,55 @@ const dayPartingSlots = [
 const DAYPART_PLATFORMS = ["Carrefour", "Noon", "Noon Minutes", "Talabat", "Amazon UAE", "Lulu"];
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allCampaigns: { name: string; platform: string }[] }>
-  = ({ open, onClose, allCampaigns }) => {
+interface DayPartPreset {
+  slot: string;
+  platforms?: string[];
+  campaigns: string[];
+  days?: string[];
+  hours?: number[];
+}
+
+interface CreateDayPartingModalProps {
+  open: boolean;
+  onClose: () => void;
+  allCampaigns: { name: string; platform: string }[];
+  preset?: DayPartPreset | null;
+  mode?: "create" | "replace";
+  onReplace?: (slot: string, campaigns: string[]) => void;
+}
+
+const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onClose, allCampaigns, preset = null, mode = "create", onReplace }) => {
+  const isReplace = mode === "replace";
+  const defaults = {
+    platforms: preset?.platforms ?? [],
+    campaigns: preset?.campaigns ?? [],
+    days: preset?.days ?? ["Mon","Tue","Wed","Thu","Fri"],
+    hours: preset?.hours ?? [9,10,11,12,13,16,17,18,19,20],
+  };
+
   const [step, setStep] = useState(1);
-  const [platforms, setPlatforms] = useState<string[]>([]);
+  const [platforms, setPlatforms] = useState<string[]>(defaults.platforms);
   const [search, setSearch] = useState("");
-  const [selCampaigns, setSelCampaigns] = useState<string[]>([]);
-  const [days, setDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+  const [selCampaigns, setSelCampaigns] = useState<string[]>(defaults.campaigns);
+  const [days, setDays] = useState<string[]>(defaults.days);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [hours, setHours] = useState<number[]>([9, 10, 11, 12, 13, 16, 17, 18, 19, 20]);
+  const [hours, setHours] = useState<number[]>(defaults.hours);
+
+  // Re-seed when preset changes (e.g., opened for a different config)
+  React.useEffect(() => {
+    if (open) {
+      setStep(1);
+      setPlatforms(preset?.platforms ?? []);
+      setSelCampaigns(preset?.campaigns ?? []);
+      setDays(preset?.days ?? ["Mon","Tue","Wed","Thu","Fri"]);
+      setHours(preset?.hours ?? [9,10,11,12,13,16,17,18,19,20]);
+      setSearch(""); setFrom(""); setTo("");
+    }
+  }, [open, preset]);
 
   const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); };
-  const close = () => { reset(); onClose(); };
+  const close = () => { if (!isReplace) reset(); onClose(); };
 
   const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
     set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
@@ -283,9 +319,16 @@ const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allC
   const canNext = step === 1 ? platforms.length > 0 : step === 2 ? selCampaigns.length > 0 : step === 3 ? days.length > 0 : hours.length > 0;
 
   const submit = () => {
-    toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
-      description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)`,
-    });
+    if (isReplace && preset && onReplace) {
+      onReplace(preset.slot, selCampaigns);
+      toast.success(`Campaigns updated for "${preset.slot}"`, {
+        description: `${selCampaigns.length} campaign(s) now active in this slot.`,
+      });
+    } else {
+      toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
+        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)`,
+      });
+    }
     close();
   };
 
@@ -293,7 +336,9 @@ const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allC
     <Dialog open={open} onOpenChange={(o) => { if (!o) close(); }}>
       <DialogContent className="max-w-2xl bg-surface-1 border-border-visible">
         <DialogHeader>
-          <DialogTitle className="font-display text-foreground">Create Day Parting Config</DialogTitle>
+          <DialogTitle className="font-display text-foreground">
+            {isReplace ? `Replace Campaigns — ${preset?.slot}` : "Create Day Parting Config"}
+          </DialogTitle>
           <DialogDescription>Step {step} of 4 — {["Platforms","Campaigns","Schedule","Active hours"][step-1]}</DialogDescription>
         </DialogHeader>
 
@@ -407,7 +452,7 @@ const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allC
           <div className="flex gap-2">
             {step > 1 && <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button>}
             {step < 4 && <Button onClick={() => setStep(step + 1)} disabled={!canNext}>Next</Button>}
-            {step === 4 && <Button onClick={submit} disabled={!canNext}>Create config</Button>}
+            {step === 4 && <Button onClick={submit} disabled={!canNext}>{isReplace ? "Save changes" : "Create config"}</Button>}
           </div>
         </DialogFooter>
       </DialogContent>
@@ -415,59 +460,95 @@ const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allC
   );
 };
 
-/* ── Delete Day Parting Modal ── */
-interface DeleteDayPartingModalProps {
+/* ── Edit Day Parting Modal ── */
+interface EditDayPartingModalProps {
   open: boolean;
   onClose: () => void;
   configs: typeof dayPartingSlots;
-  selected: string[];
-  onToggle: (slot: string) => void;
-  onDelete: () => void;
+  onDeleteConfig: (slot: string) => void;
+  onReplaceCampaigns: (slot: string) => void;
 }
 
-const DeleteDayPartingModal: React.FC<DeleteDayPartingModalProps> = ({ open, onClose, configs, selected, onToggle, onDelete }) => {
+const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, onDeleteConfig, onReplaceCampaigns }) => {
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); } }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <DialogContent className="max-w-xl bg-surface-1 border-border-visible">
+      <DialogContent className="max-w-2xl bg-surface-1 border-border-visible">
         <DialogHeader>
-          <DialogTitle className="font-display text-foreground">Delete Day Parting Configs</DialogTitle>
-          <DialogDescription>Select existing configs to remove. This action cannot be undone.</DialogDescription>
+          <DialogTitle className="font-display text-foreground">Edit Day Parting Configs</DialogTitle>
+          <DialogDescription>Expand a config to view its campaigns. Replace the campaign list or delete the entire config.</DialogDescription>
         </DialogHeader>
 
-        <div className="min-h-[200px] max-h-[400px] overflow-y-auto space-y-2">
+        <div className="min-h-[200px] max-h-[480px] overflow-y-auto space-y-2">
           {configs.length === 0 && (
             <div className="text-center py-8 text-xs text-muted-foreground">No day parting configs found.</div>
           )}
-          {configs.map((c, i) => {
-            const isOn = selected.includes(c.slot);
+          {configs.map((c) => {
+            const isOpen = expanded === c.slot;
+            const isConfirming = confirmDelete === c.slot;
             return (
-              <button key={i} onClick={() => onToggle(c.slot)}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
-                  isOn ? "bg-sw-red-dim border-sw-red/30" : "bg-surface-2 border-subtle hover:bg-surface-3"
-                }`}>
-                <span className={`w-4 h-4 rounded border flex items-center justify-center ${isOn ? "bg-sw-red border-sw-red" : "border-subtle"}`}>
-                  {isOn && <span className="text-[10px] text-white">✓</span>}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <span className="text-xs font-medium text-foreground">{c.slot}</span>
-                  <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
-                </div>
-                <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
-              </button>
+              <div key={c.slot} className="rounded-lg border border-subtle bg-surface-2 overflow-hidden">
+                <button onClick={() => setExpanded(isOpen ? null : c.slot)}
+                  className="w-full flex items-center gap-3 p-3 text-left hover:bg-surface-3 transition-all">
+                  {isOpen ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronRight size={14} className="text-muted-foreground" />}
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-medium text-foreground">{c.slot}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
+                </button>
+
+                {isOpen && (
+                  <div className="px-3 pb-3 pt-1 border-t border-subtle">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 mt-2">Campaigns in this config</p>
+                    <div className="space-y-1 mb-3">
+                      {c.campaigns.map((name, i) => (
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
+                          <span className="w-1 h-1 rounded-full bg-primary" />
+                          <span className="text-[11px] text-foreground">{name}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {!isConfirming ? (
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => onReplaceCampaigns(c.slot)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 transition-all">
+                          <FileEdit size={12} /> Replace campaigns
+                        </button>
+                        <button onClick={() => setConfirmDelete(c.slot)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red-dim text-sw-red border border-sw-red/20 hover:bg-sw-red/20 transition-all">
+                          <X size={12} /> Delete whole config
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-sw-red-dim border border-sw-red/30">
+                        <span className="text-[11px] text-sw-red">Delete "{c.slot}"? This cannot be undone.</span>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setConfirmDelete(null)}
+                            className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-surface-2 border border-subtle text-foreground hover:bg-surface-3">
+                            Cancel
+                          </button>
+                          <button onClick={() => { onDeleteConfig(c.slot); setConfirmDelete(null); }}
+                            className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-sw-red text-white hover:bg-sw-red/80">
+                            Confirm delete
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
 
-        <DialogFooter className="flex !justify-between items-center gap-2">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button
-            variant="destructive"
-            onClick={onDelete}
-            disabled={selected.length === 0}
-            className="bg-sw-red hover:bg-sw-red/80"
-          >
-            Delete {selected.length > 0 ? `(${selected.length})` : ""}
-          </Button>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>Close</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -687,8 +768,8 @@ const CampaignView: React.FC = () => {
   const [showDayParting, setShowDayParting] = useState(false);
   const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
-  const [showDeleteDayPart, setShowDeleteDayPart] = useState(false);
-  const [configsToDelete, setConfigsToDelete] = useState<string[]>([]);
+  const [showEditDayPart, setShowEditDayPart] = useState(false);
+  const [replaceTarget, setReplaceTarget] = useState<DayPartPreset | null>(null);
   const [existingDayPartConfigs, setExistingDayPartConfigs] = useState(dayPartingSlots);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
@@ -775,17 +856,29 @@ const CampaignView: React.FC = () => {
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
       <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
-      <DeleteDayPartingModal
-        open={showDeleteDayPart}
-        onClose={() => { setShowDeleteDayPart(false); setConfigsToDelete([]); }}
+      <CreateDayPartingModal
+        open={showCreateDayPart || !!replaceTarget}
+        mode={replaceTarget ? "replace" : "create"}
+        preset={replaceTarget}
+        onClose={() => { setShowCreateDayPart(false); if (replaceTarget) { setReplaceTarget(null); setShowEditDayPart(true); } }}
+        allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))}
+        onReplace={(slot, newCampaigns) => {
+          setExistingDayPartConfigs(prev => prev.map(c => c.slot === slot ? { ...c, campaigns: newCampaigns } : c));
+        }}
+      />
+      <EditDayPartingModal
+        open={showEditDayPart}
+        onClose={() => setShowEditDayPart(false)}
         configs={existingDayPartConfigs}
-        selected={configsToDelete}
-        onToggle={(slot) => setConfigsToDelete(prev => prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot])}
-        onDelete={() => {
-          setExistingDayPartConfigs(prev => prev.filter(c => !configsToDelete.includes(c.slot)));
-          toast.success(`${configsToDelete.length} day parting config(s) deleted`, { description: "Configs removed successfully." });
-          setConfigsToDelete([]);
-          setShowDeleteDayPart(false);
+        onDeleteConfig={(slot) => {
+          setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
+          toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
+        }}
+        onReplaceCampaigns={(slot) => {
+          const cfg = existingDayPartConfigs.find(c => c.slot === slot);
+          if (!cfg) return;
+          setShowEditDayPart(false);
+          setReplaceTarget({ slot: cfg.slot, campaigns: cfg.campaigns });
         }}
       />
 
@@ -1046,9 +1139,9 @@ const CampaignView: React.FC = () => {
           <div className="flex items-center justify-between mb-4 gap-3">
             <p className="text-[10px] text-muted-foreground">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowDeleteDayPart(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red-dim text-sw-red hover:bg-sw-red/20 transition-all whitespace-nowrap border border-sw-red/20">
-                <X size={12} /> Delete Config
+              <button onClick={() => setShowEditDayPart(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-2 border border-subtle text-foreground hover:bg-surface-3 transition-all whitespace-nowrap">
+                <FileEdit size={12} /> Edit Config
               </button>
               <button onClick={() => setShowCreateDayPart(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
