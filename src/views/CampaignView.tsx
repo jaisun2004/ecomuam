@@ -967,7 +967,13 @@ const CampaignView: React.FC = () => {
       {/* ── DAY PARTING SECTION ── */}
       {showDayParting && (
         <PanelCard title="Day Parting Configuration" badge="6 time slots" badgeColor="amber" delay={0.05}>
-          <p className="text-[10px] text-muted-foreground mb-4">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <p className="text-[10px] text-muted-foreground">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
+            <button onClick={() => setShowCreateDayPart(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
+              <Plus size={12} /> Create Day Parting
+            </button>
+          </div>
           {/* Visual timeline bar */}
           <div className="mb-5">
             <div className="flex h-8 rounded-xl overflow-hidden border border-subtle">
