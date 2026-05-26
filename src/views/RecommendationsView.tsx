@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -13,22 +14,17 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Sparkles, Bell, AlertTriangle, Package, DollarSign, BarChart3,
-  CheckCircle2, X, Search, ChevronLeft, ChevronRight,
+  Sparkles, AlertTriangle, Package, DollarSign, BarChart3,
+  CheckCircle2, X, Search, ChevronLeft, ChevronRight, ChevronDown,
+  Wallet, MapPin, KeyRound, Gauge, Info, Target as TargetIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
 type Platform = "Talabat" | "Talabat Pro" | "Noon" | "Noon Minutes" | "Carrefour";
-type RecoType =
-  | "Dayparting" | "Keyword Mix" | "Pause (OOS)" | "Creative"
-  | "Pricing Action" | "Targeting"
-  | "New City Campaign" | "Switch Off City" | "Budget Increase";
+type RecoCategory = "Budget" | "City" | "Remove Keywords" | "Bid Changes";
 
 const PLATFORMS: Platform[] = ["Talabat", "Talabat Pro", "Noon", "Noon Minutes", "Carrefour"];
-const TYPES: RecoType[] = [
-  "New City Campaign", "Switch Off City", "Budget Increase",
-  "Dayparting", "Keyword Mix", "Pause (OOS)", "Creative", "Pricing Action", "Targeting",
-];
+const CATEGORIES: RecoCategory[] = ["Budget", "City", "Remove Keywords", "Bid Changes"];
 
 const CITIES = ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Al Ain", "Ras Al Khaimah", "Fujairah"];
 
@@ -40,19 +36,28 @@ const PLATFORM_TINT: Record<Platform, string> = {
   Carrefour: "bg-sw-green-dim text-sw-green",
 };
 
+const CATEGORY_META: Record<RecoCategory, { icon: React.ElementType; tint: string; accent: string; desc: string }> = {
+  "Budget":          { icon: Wallet,   tint: "bg-sw-green-dim text-sw-green",   accent: "border-sw-green/30",   desc: "Reallocate or scale daily spend on under/over-pacing campaigns" },
+  "City":            { icon: MapPin,   tint: "bg-sw-cyan-dim text-sw-cyan",     accent: "border-sw-cyan/30",    desc: "Pause or expand existing campaigns to new pincodes / cities" },
+  "Remove Keywords": { icon: KeyRound, tint: "bg-sw-amber-dim text-sw-amber",   accent: "border-sw-amber/30",   desc: "Prune wasted-spend, low-relevance or negative-intent keywords" },
+  "Bid Changes":     { icon: Gauge,    tint: "bg-sw-purple-dim text-sw-purple", accent: "border-sw-purple/30",  desc: "Tune keyword / SKU bids based on rank, ROAS and conversion velocity" },
+};
+
 interface Warning { kind: "availability" | "pricing" | "sos"; label: string; detail: string; }
 interface ChangeRow { field: string; current: string; recommended: string; }
+interface Signal { label: string; value: string; }
 
 interface Reco {
   id: string;
+  category: RecoCategory;
   campaign: string;
   platform: Platform;
   sku: string;
   city?: string;
-  type: RecoType;
   confidence: number;
   headline: string;
   rationale: string;
+  signals: Signal[];          // glass-box: the inputs driving this reco
   estImpact: string;
   changes: ChangeRow[];
   warnings: Warning[];
@@ -66,35 +71,13 @@ const SKUS = [
   "Cheetos Crunchy 130g", "Quaker Oats 1kg", "Tropicana Orange 1L",
 ];
 
-const HEADLINES: Record<RecoType, (i: number, sku: string, platform: Platform, city?: string) => string> = {
-  "Dayparting": () => "Extend dayparting into the 22:00 – 01:00 slot",
-  "Keyword Mix": () => "Shift weight from generic to branded long-tail",
-  "Pause (OOS)": (_i, sku) => `Pause campaign — ${sku} OOS at dark stores`,
-  "Creative": () => "Refresh creative — CTR decayed 28% in 14d",
-  "Pricing Action": () => "Reduce listed price 4% to close competitor gap",
-  "Targeting": () => "Tighten audience to 'Repeat Buyer 30d'",
-  "New City Campaign": (_i, sku, platform, city) => `Launch new campaign in ${city} for ${sku.split(" ")[0]}`,
-  "Switch Off City": (_i, _sku, _p, city) => `Switch off ${city} — sustained underperformance`,
-  "Budget Increase": (i) => `Increase daily budget by +${15 + (i % 25)}%`,
-};
-
-const RATIONALES: Record<RecoType, string> = {
-  "Dayparting": "Query volume peaks outside your current schedule. Reallocating slots improves visibility at no extra spend.",
-  "Keyword Mix": "Long-tail terms show 2.1x conversion at 38% lower CPC versus generic seed keywords.",
-  "Pause (OOS)": "Inventory feed shows out-of-stock at multiple dark stores. Continued spend wastes impressions.",
-  "Creative": "Creative fatigue detected — frequency above 6, CTR trending down 4 weeks in a row.",
-  "Pricing Action": "Listed price gap vs nearest competitor exceeds 6%. Conversion drop correlates with the widening gap.",
-  "Targeting": "Audience overlap analysis shows wasted reach. A tighter high-intent cohort lifts ROAS.",
-  "New City Campaign": "Strong organic demand signal in this city with no active campaign coverage. Search volume up 34% MoM.",
-  "Switch Off City": "ROAS in this city has stayed below 1.8x for 21 days with no SoS recovery. Spend is better deployed elsewhere.",
-  "Budget Increase": "Campaign is budget-capped before 14:00 daily. ROAS at 5.1x leaves clear headroom to scale.",
-};
+const KEYWORDS = ["cola drink", "soft drink 1l", "diet pepsi", "energy soda", "fizzy juice", "lemon soda 500ml", "party pack soda", "midnight snack chips"];
 
 function makeReco(i: number): Reco {
   const sku = SKUS[i % SKUS.length];
   const platform = PLATFORMS[i % PLATFORMS.length];
-  const type = TYPES[i % TYPES.length];
-  const city = (type === "New City Campaign" || type === "Switch Off City") ? CITIES[i % CITIES.length] : undefined;
+  const category = CATEGORIES[i % CATEGORIES.length];
+  const city = (category === "City") ? CITIES[i % CITIES.length] : undefined;
   const conf = 3 + ((i * 7) % 3);
   const hasWarn = i % 4 === 0;
   const warn: Warning | null = !hasWarn ? null
@@ -102,62 +85,116 @@ function makeReco(i: number): Reco {
     : i % 8 === 0 ? { kind: "pricing", label: `+${5 + (i % 5)}% vs comp`, detail: `${sku} priced ${5 + (i % 5)}% above nearest competitor on ${platform}.` }
     : { kind: "sos", label: `SoS ${10 + (i % 12)}%`, detail: `Share of Shelf ${10 + (i % 12)}% on ${platform} — below 20% threshold.` };
 
-  let changes: ChangeRow[];
-  switch (type) {
-    case "Dayparting":
-      changes = [{ field: "Schedule", current: "12:00 – 22:00", recommended: "12:00 – 01:00" }]; break;
-    case "Keyword Mix":
-      changes = [
-        { field: "Keyword Allocation", current: "generic 60% / branded 40%", recommended: "generic 25% / branded 75%" },
-        { field: "Negative Keywords", current: "12", recommended: "18" },
-      ]; break;
-    case "Pause (OOS)":
-      changes = [{ field: "Status", current: "Active", recommended: "Paused 48h" }]; break;
-    case "Creative":
-      changes = [{ field: "Creative Set", current: "v3 (run 47d)", recommended: "v4 (festival cut)" }]; break;
-    case "Pricing Action":
-      changes = [{ field: "Listed Price (AED)", current: "5.50", recommended: "5.25" }]; break;
-    case "Targeting":
-      changes = [{ field: "Audience", current: "Broad — Beverage Buyers", recommended: "Repeat Buyer 30d + Cart Abandoners" }]; break;
-    case "New City Campaign":
-      changes = [
-        { field: "Status", current: "No campaign", recommended: `New campaign — ${city}` },
-        { field: "Daily Budget (AED)", current: "—", recommended: `${250 + (i % 6) * 50}` },
-        { field: "Geo Targeting", current: "—", recommended: `${city} (5 km radius)` },
-      ]; break;
-    case "Switch Off City":
-      changes = [
-        { field: "Geo: " + city, current: "Active", recommended: "Disabled" },
-        { field: "Reallocated To", current: "—", recommended: "Top 3 cities pro-rata" },
-      ]; break;
-    case "Budget Increase": {
+  let headline = "";
+  let rationale = "";
+  let signals: Signal[] = [];
+  let changes: ChangeRow[] = [];
+  let estImpact = "";
+
+  switch (category) {
+    case "Budget": {
       const cur = 400 + (i % 8) * 75;
       const pct = 15 + (i % 25);
+      const isUp = i % 3 !== 0;
+      headline = isUp
+        ? `Increase daily budget by +${pct}% — campaign is capped before peak hours`
+        : `Trim daily budget by -${pct}% — diminishing returns past 16:00`;
+      rationale = isUp
+        ? "Spend exhausts hours before the evening conversion peak. ROAS headroom suggests scaling is safe."
+        : "Last 14 days show ROAS dropping below target after budget pacing reaches 80%. Trim to protect efficiency.";
+      signals = [
+        { label: "Pacing today",     value: isUp ? "100% by 13:42" : "92% by 16:10" },
+        { label: "ROAS (14d)",       value: isUp ? "5.1x · target 3.5x" : "2.6x · target 3.5x" },
+        { label: "Lost impr. share", value: isUp ? "31% (budget)" : "4%" },
+      ];
       changes = [
-        { field: "Daily Budget (AED)", current: `${cur}`, recommended: `${Math.round(cur * (1 + pct / 100))}` },
-        { field: "Pacing", current: "Capped 14:00", recommended: "Even — full day" },
-      ]; break;
+        { field: "Daily Budget (AED)", current: `${cur}`, recommended: `${Math.round(cur * (1 + (isUp ? 1 : -1) * pct / 100))}` },
+        { field: "Pacing", current: isUp ? "Capped 13:42" : "Even", recommended: isUp ? "Even — full day" : "Even — protected" },
+      ];
+      estImpact = isUp
+        ? `+${8 + (i % 14)}% incremental orders at current ROAS`
+        : `Recover AED ${(2 + (i % 4)) * 800}/wk of inefficient spend`;
+      break;
+    }
+    case "City": {
+      const isSwitchOff = i % 2 === 0;
+      headline = isSwitchOff
+        ? `Switch off ${city} — sustained underperformance`
+        : `Expand existing campaign into ${city} — strong unmet demand`;
+      rationale = isSwitchOff
+        ? `ROAS in ${city} stayed below 1.8x for 21 days with no SoS recovery. Spend is better deployed elsewhere.`
+        : `${city} shows 34% MoM organic demand growth for this SKU on ${platform} with no active geo coverage.`;
+      signals = [
+        { label: `${city} ROAS (21d)`,  value: isSwitchOff ? "1.6x · target 3.5x" : "—" },
+        { label: `${city} SoS`,         value: isSwitchOff ? "8% · benchmark 20%" : "Demand +34% MoM" },
+        { label: "Spend last 21d",      value: isSwitchOff ? `AED ${(3 + (i % 4)) * 1200}` : "AED 0" },
+      ];
+      changes = isSwitchOff
+        ? [
+            { field: `Geo: ${city}`, current: "Active", recommended: "Disabled" },
+            { field: "Reallocated to", current: "—", recommended: "Top 3 cities (pro-rata)" },
+          ]
+        : [
+            { field: "Geo Targeting", current: city ? `Excludes ${city}` : "—", recommended: `${city} added (5 km radius)` },
+            { field: "Daily Budget (AED)", current: `${300 + (i % 6) * 50}`, recommended: `${400 + (i % 6) * 50}` },
+          ];
+      estImpact = isSwitchOff
+        ? `Reclaim AED ${(3 + (i % 6)) * 1000}/wk for higher-ROAS cities`
+        : `Capture est. ${600 + (i % 5) * 200} new orders/mo`;
+      break;
+    }
+    case "Remove Keywords": {
+      const k1 = KEYWORDS[i % KEYWORDS.length];
+      const k2 = KEYWORDS[(i + 3) % KEYWORDS.length];
+      headline = `Remove ${1 + (i % 3) + 1} low-intent keywords draining spend`;
+      rationale = "These keywords consume budget without converting. Search-term analysis confirms intent mismatch vs the SKU.";
+      signals = [
+        { label: `"${k1}"`,    value: `AED ${120 + (i % 5) * 30} spend · 0 orders 30d` },
+        { label: `"${k2}"`,    value: `CTR 0.4% · ROAS 0.3x` },
+        { label: "Combined drag", value: `~AED ${(2 + (i % 5)) * 600}/mo` },
+      ];
+      changes = [
+        { field: "Keywords removed", current: "Active", recommended: `${k1}, ${k2}` },
+        { field: "Negative list", current: `${10 + (i % 8)}`, recommended: `${12 + (i % 8)}` },
+      ];
+      estImpact = `Save AED ${(2 + (i % 5)) * 600}/mo · ROAS +${3 + (i % 4)}%`;
+      break;
+    }
+    case "Bid Changes": {
+      const cur = 1.2 + (i % 7) * 0.15;
+      const isUp = i % 3 !== 0;
+      const rec = isUp ? cur * (1 + (8 + (i % 12)) / 100) : cur * (1 - (8 + (i % 12)) / 100);
+      headline = isUp
+        ? `Raise bid on top SKU keywords — rank slipping outside top 3`
+        : `Lower bid on saturated keywords — ROAS healthy but CPC inflated`;
+      rationale = isUp
+        ? "Lost auction share is correlated with rank drop from 2 → 5. A modest bid lift restores prime real estate."
+        : "Win rate is high but CPC has crept above the efficient zone. A small bid trim preserves volume at better ROAS.";
+      signals = [
+        { label: "Avg rank (14d)",  value: isUp ? "2.1 → 4.6" : "1.3 (stable)" },
+        { label: "Auction win %",   value: isUp ? "38% (was 71%)" : "84%" },
+        { label: "CPC vs target",   value: isUp ? "AED 0.9 / target 1.2" : `AED ${cur.toFixed(2)} / target 1.0` },
+      ];
+      changes = [
+        { field: "Keyword bid (AED)", current: cur.toFixed(2), recommended: rec.toFixed(2) },
+        { field: "Bid strategy", current: "Manual CPC", recommended: isUp ? "Manual CPC (+lift)" : "Target ROAS 3.5x" },
+      ];
+      estImpact = isUp
+        ? `Recover rank 2 · +${10 + (i % 8)}% impressions`
+        : `Hold volume · ROAS +${4 + (i % 6)}%`;
+      break;
     }
   }
 
   return {
     id: `r${i + 1}`,
+    category,
     campaign: city
-      ? `${sku.split(" ")[0]} — ${type} ${city} #${100 + i}`
-      : `${sku.split(" ")[0]} — ${type} ${platform.split(" ")[0]} #${100 + i}`,
-    platform, sku, city, type,
+      ? `${sku.split(" ")[0]} — ${category} ${city} #${100 + i}`
+      : `${sku.split(" ")[0]} — ${category} ${platform.split(" ")[0]} #${100 + i}`,
+    platform, sku, city,
     confidence: conf,
-    headline: HEADLINES[type](i, sku, platform, city),
-    rationale: RATIONALES[type],
-    estImpact:
-      type === "Pause (OOS)" ? `Save AED ${(2 + (i % 5)) * 1000}/wk wasted spend`
-      : type === "Pricing Action" ? `+${4 + (i % 6)}% conversion lift expected`
-      : type === "Creative" ? `+${15 + (i % 20)}% CTR projected`
-      : type === "New City Campaign" ? `Capture est. ${800 + (i % 5) * 200} new orders/mo`
-      : type === "Switch Off City" ? `Reclaim AED ${(3 + (i % 6)) * 1000}/wk for higher-ROAS cities`
-      : type === "Budget Increase" ? `+${8 + (i % 14)}% incremental orders at current ROAS`
-      : `+${5 + (i % 12)}% ROAS projected, no spend increase`,
-    changes,
+    headline, rationale, signals, estImpact, changes,
     warnings: warn ? [warn] : [],
     isNew: i < 17,
   };
@@ -179,7 +216,55 @@ const ConfidenceDots: React.FC<{ n: number }> = ({ n }) => (
   </span>
 );
 
-const PAGE_SIZE = 20;
+/* ===== Monthly target pacing ===== */
+interface MonthTarget {
+  key: string; label: string;
+  current: number; target: number;
+  unit: string; format: (n: number) => string;
+  direction: "up" | "down"; // up = higher is better
+}
+const MONTH_TARGETS: MonthTarget[] = [
+  { key: "spend",  label: "Spend (MTD)", current: 684_000, target: 900_000, unit: "AED", format: n => `AED ${(n/1000).toFixed(0)}K`, direction: "up" },
+  { key: "roas",   label: "ROAS",        current: 4.2,     target: 3.5,     unit: "x",   format: n => `${n.toFixed(1)}x`,            direction: "up" },
+  { key: "acos",   label: "ACoS",        current: 22,      target: 18,      unit: "%",   format: n => `${n.toFixed(0)}%`,            direction: "down" },
+  { key: "orders", label: "Orders (MTD)",current: 142_300, target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },
+];
+
+const MONTH_ELAPSED_PCT = 76; // ~day 23 of 30 — used as the pacing baseline
+
+const TargetCard: React.FC<{ t: MonthTarget }> = ({ t }) => {
+  const pct = t.direction === "up"
+    ? Math.min(100, (t.current / t.target) * 100)
+    : Math.min(100, (t.target / t.current) * 100);
+  const onPace = t.direction === "up" ? pct >= MONTH_ELAPSED_PCT : t.current <= t.target * 1.05;
+  const met = t.direction === "up" ? t.current >= t.target : t.current <= t.target;
+  const status = met ? "Met" : onPace ? "On Pace" : "Behind";
+  const statusCls = met ? "text-sw-green bg-sw-green-dim"
+                  : onPace ? "text-primary bg-primary/10"
+                  : "text-sw-amber bg-sw-amber-dim";
+  const barCls = met ? "[&>div]:bg-sw-green"
+               : onPace ? "[&>div]:bg-primary"
+               : "[&>div]:bg-sw-amber";
+  return (
+    <div className="p-4 rounded-xl border border-subtle bg-surface-1">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-mono">{t.label}</span>
+        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${statusCls}`}>{status}</span>
+      </div>
+      <div className="flex items-baseline gap-2 mb-2">
+        <span className="text-xl font-display font-bold text-foreground tabular-nums">{t.format(t.current)}</span>
+        <span className="text-[11px] text-muted-foreground">/ {t.format(t.target)}</span>
+      </div>
+      <Progress value={pct} className={`h-1.5 ${barCls}`} />
+      <div className="flex items-center justify-between mt-1.5 text-[10.5px] text-muted-foreground">
+        <span>{pct.toFixed(0)}% of target</span>
+        <span>{MONTH_ELAPSED_PCT}% of month elapsed</span>
+      </div>
+    </div>
+  );
+};
+
+const PAGE_SIZE = 30;
 
 const RecommendationsView: React.FC = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -187,75 +272,47 @@ const RecommendationsView: React.FC = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [openApply, setOpenApply] = useState<string[] | null>(null);
   const [openWarn, setOpenWarn] = useState<{ recoId: string; warnIdx: number } | null>(null);
+  const [openGlass, setOpenGlass] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<RecoCategory>>(new Set(CATEGORIES));
 
-  const [tab, setTab] = useState<"cross" | "single">("cross");
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
-  const [type, setType] = useState<string>("all");
-  const [page, setPage] = useState(1);
+  const [category, setCategory] = useState<string>("all");
+  const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
 
   const livePool = useMemo(
     () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
     [dismissed, applied]
   );
 
-  const skuPlatformCount = useMemo(() => {
-    const m = new Map<string, Set<Platform>>();
-    livePool.forEach(r => {
-      if (!m.has(r.sku)) m.set(r.sku, new Set());
-      m.get(r.sku)!.add(r.platform);
-    });
-    return m;
-  }, [livePool]);
-
-  const tabFiltered = useMemo(() => livePool.filter(r => {
-    const platforms = skuPlatformCount.get(r.sku)?.size ?? 1;
-    return tab === "cross" ? platforms >= 2 : platforms < 2;
-  }), [livePool, skuPlatformCount, tab]);
-
-  const filtered = useMemo(() => tabFiltered.filter(r => {
+  const filtered = useMemo(() => livePool.filter(r => {
     if (platform !== "all" && r.platform !== platform) return false;
-    if (type !== "all" && r.type !== type) return false;
+    if (category !== "all" && r.category !== category) return false;
     if (q) {
       const s = q.toLowerCase();
       if (!r.campaign.toLowerCase().includes(s) && !r.sku.toLowerCase().includes(s) && !r.headline.toLowerCase().includes(s)) return false;
     }
     return true;
-  }), [tabFiltered, platform, type, q]);
+  }), [livePool, platform, category, q]);
 
-  React.useEffect(() => { setPage(1); }, [tab, platform, type, q]);
+  const byCategory = useMemo(() => {
+    const m: Record<RecoCategory, Reco[]> = { "Budget": [], "City": [], "Remove Keywords": [], "Bid Changes": [] };
+    filtered.forEach(r => m[r.category].push(r));
+    return m;
+  }, [filtered]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const crossCount = useMemo(() => livePool.filter(r => (skuPlatformCount.get(r.sku)?.size ?? 1) >= 2).length, [livePool, skuPlatformCount]);
-  const singleCount = livePool.length - crossCount;
   const newCount = livePool.filter(r => r.isNew).length;
-
-  const groupedBySku = useMemo(() => {
-    if (tab !== "cross") return null;
-    const groups = new Map<string, Reco[]>();
-    pageItems.forEach(r => {
-      if (!groups.has(r.sku)) groups.set(r.sku, []);
-      groups.get(r.sku)!.push(r);
-    });
-    return Array.from(groups.entries());
-  }, [pageItems, tab]);
 
   const toggleSel = (id: string) => setSelected(p => {
     const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n;
   });
-  const toggleAllPage = () => {
-    const allOn = pageItems.every(r => selected.has(r.id));
-    setSelected(p => {
-      const n = new Set(p);
-      pageItems.forEach(r => allOn ? n.delete(r.id) : n.add(r.id));
-      return n;
-    });
-  };
+  const toggleCat = (c: RecoCategory) => setExpanded(p => {
+    const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n;
+  });
 
   const activeWarn = openWarn ? MOCK.find(r => r.id === openWarn.recoId)?.warnings[openWarn.warnIdx] : null;
   const applyTargets = openApply ? MOCK.filter(r => openApply.includes(r.id)) : [];
+  const glassReco = openGlass ? MOCK.find(r => r.id === openGlass) : null;
 
   const confirmApply = () => {
     if (!openApply) return;
@@ -266,16 +323,16 @@ const RecommendationsView: React.FC = () => {
   };
 
   const RecoRow: React.FC<{ r: Reco }> = ({ r }) => (
-    <div className="group grid grid-cols-[20px_1fr_120px_64px_60px_140px] items-center gap-4 px-5 py-3 border-t border-subtle hover:bg-surface-2/40 transition-colors">
+    <div className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors">
       <Checkbox checked={selected.has(r.id)} onCheckedChange={() => toggleSel(r.id)} aria-label="Select" />
       <div className="min-w-0">
         <p className="text-[13px] font-medium text-foreground truncate leading-tight">{r.headline}</p>
         <p className="text-[11px] text-muted-foreground truncate mt-0.5">
           <span className={`inline-block px-1.5 py-0 rounded text-[10px] font-mono mr-1.5 align-middle ${PLATFORM_TINT[r.platform]}`}>{r.platform}</span>
-          {r.campaign}
+          {r.sku}{r.city ? ` · ${r.city}` : ""} · {r.campaign}
         </p>
       </div>
-      <span className="text-[11px] text-muted-foreground truncate">{r.type}</span>
+      <span className="text-[11px] text-sw-green truncate" title={r.estImpact}>{r.estImpact}</span>
       <ConfidenceDots n={r.confidence} />
       <div className="flex items-center gap-1">
         {r.warnings.map((w, wi) => {
@@ -289,13 +346,17 @@ const RecommendationsView: React.FC = () => {
           );
         })}
       </div>
-      <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+        <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] gap-1 text-muted-foreground"
+          onClick={() => setOpenGlass(r.id)} title="Why this recommendation?">
+          <Info size={12} /> Why
+        </Button>
         <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground"
           onClick={() => { setDismissed(p => new Set(p).add(r.id)); toast("Dismissed"); }}
           title="Dismiss">
           <X size={13} />
         </Button>
-        <Button size="sm" className="h-7 px-3 text-[11px] gap-1"
+        <Button size="sm" className="h-7 px-3 text-[11px]"
           onClick={() => setOpenApply([r.id])}>
           Apply
         </Button>
@@ -304,8 +365,8 @@ const RecommendationsView: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 max-w-6xl">
-      {/* Calm header with inline notification */}
+    <div className="space-y-6 max-w-7xl">
+      {/* Header */}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display font-bold text-2xl text-foreground">Recommendations</h1>
@@ -329,27 +390,26 @@ const RecommendationsView: React.FC = () => {
         )}
       </header>
 
-      {/* Cleaner tabs */}
-      <div className="flex items-center gap-6 border-b border-subtle">
-        {([
-          ["cross", "Cross-Platform SKUs", crossCount],
-          ["single", "Single-Platform SKUs", singleCount],
-        ] as const).map(([id, label, count]) => (
-          <button key={id} onClick={() => setTab(id as any)}
-            className={`pb-3 -mb-px border-b-2 transition-colors flex items-center gap-2 text-[13px] ${
-              tab === id ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}>
-            {label}
-            <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${tab === id ? "bg-primary/10 text-primary" : "bg-surface-2 text-muted-foreground"}`}>{count}</span>
-          </button>
-        ))}
-      </div>
+      {/* Section A — Monthly Target Pacing */}
+      <section className="rounded-2xl border border-subtle bg-surface-1 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <TargetIcon size={15} className="text-primary" />
+            <h2 className="font-display font-semibold text-[14px] text-foreground">Monthly Target Pacing</h2>
+            <span className="text-[11px] text-muted-foreground">— current performance vs target for this month</span>
+          </div>
+          <span className="text-[11px] text-muted-foreground font-mono">Day 23 / 30 · {MONTH_ELAPSED_PCT}% elapsed</span>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {MONTH_TARGETS.map(t => <TargetCard key={t.key} t={t} />)}
+        </div>
+      </section>
 
-      {/* Filter bar — single line, minimal */}
+      {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[260px] max-w-md">
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search SKU, city or action…" className="h-9 pl-9 text-[13px]" />
+          <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search SKU, city, keyword…" className="h-9 pl-9 text-[13px]" />
         </div>
         <Select value={platform} onValueChange={setPlatform}>
           <SelectTrigger className="h-9 w-[150px] text-[12px]"><SelectValue /></SelectTrigger>
@@ -358,69 +418,103 @@ const RecommendationsView: React.FC = () => {
             {PLATFORMS.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Select value={type} onValueChange={setType}>
-          <SelectTrigger className="h-9 w-[170px] text-[12px]"><SelectValue /></SelectTrigger>
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger className="h-9 w-[180px] text-[12px]"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All action types</SelectItem>
-            {TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            <SelectItem value="all">All categories</SelectItem>
+            {CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
         <span className="text-[11px] text-muted-foreground ml-auto">
-          {filtered.length} of {tabFiltered.length}
+          {filtered.length} of {livePool.length}
         </span>
       </div>
 
-      {/* List card */}
-      <div className="bg-surface-1 border border-subtle rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-[20px_1fr_120px_64px_60px_140px] items-center gap-4 px-5 py-2.5 bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
-          <Checkbox
-            checked={pageItems.length > 0 && pageItems.every(r => selected.has(r.id))}
-            onCheckedChange={toggleAllPage} aria-label="Select page"
-          />
-          <span>Recommendation</span>
-          <span>Type</span>
-          <span>Conf.</span>
-          <span>Risks</span>
-          <span />
-        </div>
+      {/* Section B — Grouped by recommendation category (hierarchy) */}
+      <div className="space-y-3">
+        {CATEGORIES.map(cat => {
+          const items = byCategory[cat];
+          if (items.length === 0 && category !== "all" && category !== cat) return null;
+          const meta = CATEGORY_META[cat];
+          const Icon = meta.icon;
+          const isOpen = expanded.has(cat);
+          const p = page[cat] ?? 1;
+          const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+          const pageItems = items.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+          const allSelected = pageItems.length > 0 && pageItems.every(r => selected.has(r.id));
 
-        {filtered.length === 0 ? (
-          <div className="p-14 text-center text-sm text-muted-foreground">
-            <CheckCircle2 size={22} className="mx-auto mb-2 text-sw-green" />
-            No recommendations match your filters.
-          </div>
-        ) : tab === "cross" && groupedBySku ? (
-          groupedBySku.map(([sku, items]) => {
-            const platformsForSku = skuPlatformCount.get(sku)!;
-            return (
-              <div key={sku}>
-                <div className="px-5 py-2 border-t border-subtle flex items-center gap-2">
-                  <span className="text-[12px] font-medium text-foreground">{sku}</span>
-                  <span className="text-[10.5px] text-muted-foreground">
-                    · {platformsForSku.size} platforms · {items.length} action{items.length > 1 ? "s" : ""}
-                  </span>
+          return (
+            <section key={cat} className={`bg-surface-1 border ${meta.accent} rounded-2xl overflow-hidden`}>
+              <button
+                onClick={() => toggleCat(cat)}
+                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-surface-2/40 transition-colors text-left"
+              >
+                <ChevronDown size={15} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg ${meta.tint}`}>
+                  <Icon size={14} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display font-semibold text-[14px] text-foreground">{cat}</span>
+                    <span className="text-[11px] text-muted-foreground">— {meta.desc}</span>
+                  </div>
                 </div>
-                {items.map(r => <RecoRow key={r.id} r={r} />)}
-              </div>
-            );
-          })
-        ) : (
-          pageItems.map(r => <RecoRow key={r.id} r={r} />)
-        )}
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
+                  {items.length} {items.length === 1 ? "action" : "actions"}
+                </span>
+                {items.some(r => selected.has(r.id)) && (
+                  <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-primary/10 text-primary">
+                    {items.filter(r => selected.has(r.id)).length} selected
+                  </span>
+                )}
+              </button>
 
-        {filtered.length > PAGE_SIZE && (
-          <div className="flex items-center justify-between px-5 py-2.5 border-t border-subtle text-[11px] text-muted-foreground">
-            <span>Page {page} of {totalPages}</span>
-            <div className="flex items-center gap-1">
-              <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))}>
-                <ChevronLeft size={13} />
-              </Button>
-              <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>
-                <ChevronRight size={13} />
-              </Button>
-            </div>
-          </div>
-        )}
+              {isOpen && (
+                items.length === 0 ? (
+                  <div className="px-5 py-6 text-center text-[12px] text-muted-foreground border-t border-subtle">
+                    <CheckCircle2 size={16} className="mx-auto mb-1.5 text-sw-green" />
+                    No {cat.toLowerCase()} recommendations right now.
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2 border-t border-subtle bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <Checkbox
+                        checked={allSelected}
+                        onCheckedChange={() => setSelected(pp => {
+                          const n = new Set(pp);
+                          pageItems.forEach(r => allSelected ? n.delete(r.id) : n.add(r.id));
+                          return n;
+                        })}
+                        aria-label="Select page"
+                      />
+                      <span>Recommendation</span>
+                      <span>Est. Impact</span>
+                      <span>Conf.</span>
+                      <span>Risks</span>
+                      <span />
+                    </div>
+                    {pageItems.map(r => <RecoRow key={r.id} r={r} />)}
+                    {items.length > PAGE_SIZE && (
+                      <div className="flex items-center justify-between px-5 py-2 border-t border-subtle text-[11px] text-muted-foreground">
+                        <span>Page {p} of {totalPages} · showing {pageItems.length} of {items.length}</span>
+                        <div className="flex items-center gap-1">
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p === 1}
+                            onClick={() => setPage(pp => ({ ...pp, [cat]: Math.max(1, p - 1) }))}>
+                            <ChevronLeft size={13} />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p >= totalPages}
+                            onClick={() => setPage(pp => ({ ...pp, [cat]: Math.min(totalPages, p + 1) }))}>
+                            <ChevronRight size={13} />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )
+              )}
+            </section>
+          );
+        })}
       </div>
 
       {/* Apply Confirmation */}
@@ -440,9 +534,10 @@ const RecommendationsView: React.FC = () => {
             {applyTargets.map(r => (
               <div key={r.id} className="border border-subtle rounded-lg overflow-hidden">
                 <div className="px-3 py-2 bg-surface-2 flex items-center gap-2">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${CATEGORY_META[r.category].tint}`}>{r.category}</span>
                   <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${PLATFORM_TINT[r.platform]}`}>{r.platform}</span>
                   <span className="text-[12px] font-medium text-foreground">{r.campaign}</span>
-                  <span className="ml-auto text-[10.5px] text-muted-foreground">{r.sku} · {r.type}</span>
+                  <span className="ml-auto text-[10.5px] text-muted-foreground">{r.sku}</span>
                 </div>
                 <div className="px-3 py-2 text-[11.5px] text-muted-foreground border-b border-subtle bg-surface-1">
                   <span className="text-foreground font-medium">Why: </span>{r.rationale}
@@ -477,6 +572,56 @@ const RecommendationsView: React.FC = () => {
             <Button onClick={confirmApply} className="gap-1.5">
               <CheckCircle2 size={13} /> Confirm & Push to ad accounts
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Glass Box — Why this recommendation */}
+      <Dialog open={!!openGlass} onOpenChange={(o) => !o && setOpenGlass(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <Info size={16} className="text-primary" />
+              Why this recommendation
+            </DialogTitle>
+            <DialogDescription>
+              Transparent view of the signals the model used to generate this action.
+            </DialogDescription>
+          </DialogHeader>
+          {glassReco && (
+            <div className="space-y-4 mt-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${CATEGORY_META[glassReco.category].tint}`}>{glassReco.category}</span>
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${PLATFORM_TINT[glassReco.platform]}`}>{glassReco.platform}</span>
+                <span className="text-[12px] text-foreground font-medium">{glassReco.sku}</span>
+                {glassReco.city && <span className="text-[11px] text-muted-foreground">· {glassReco.city}</span>}
+                <span className="ml-auto"><ConfidenceDots n={glassReco.confidence} /></span>
+              </div>
+              <p className="text-[13px] text-foreground">{glassReco.headline}</p>
+              <p className="text-[12px] text-muted-foreground">{glassReco.rationale}</p>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-2">Signals used</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {glassReco.signals.map((s, si) => (
+                    <div key={si} className="p-2.5 rounded-lg border border-subtle bg-surface-2/40">
+                      <p className="text-[10.5px] text-muted-foreground truncate" title={s.label}>{s.label}</p>
+                      <p className="text-[12px] font-mono text-foreground mt-0.5">{s.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="text-[11px] text-sw-green flex items-center gap-1.5 px-3 py-2 rounded-lg bg-sw-green-dim/40">
+                <Sparkles size={11} /> Expected outcome: {glassReco.estImpact}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOpenGlass(null)}>Close</Button>
+            {glassReco && (
+              <Button onClick={() => { setOpenGlass(null); setOpenApply([glassReco.id]); }} className="gap-1.5">
+                <CheckCircle2 size={13} /> Review & Apply
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
