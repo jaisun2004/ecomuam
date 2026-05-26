@@ -856,17 +856,29 @@ const CampaignView: React.FC = () => {
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
       <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
-      <DeleteDayPartingModal
-        open={showDeleteDayPart}
-        onClose={() => { setShowDeleteDayPart(false); setConfigsToDelete([]); }}
+      <CreateDayPartingModal
+        open={showCreateDayPart || !!replaceTarget}
+        mode={replaceTarget ? "replace" : "create"}
+        preset={replaceTarget}
+        onClose={() => { setShowCreateDayPart(false); if (replaceTarget) { setReplaceTarget(null); setShowEditDayPart(true); } }}
+        allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))}
+        onReplace={(slot, newCampaigns) => {
+          setExistingDayPartConfigs(prev => prev.map(c => c.slot === slot ? { ...c, campaigns: newCampaigns } : c));
+        }}
+      />
+      <EditDayPartingModal
+        open={showEditDayPart}
+        onClose={() => setShowEditDayPart(false)}
         configs={existingDayPartConfigs}
-        selected={configsToDelete}
-        onToggle={(slot) => setConfigsToDelete(prev => prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot])}
-        onDelete={() => {
-          setExistingDayPartConfigs(prev => prev.filter(c => !configsToDelete.includes(c.slot)));
-          toast.success(`${configsToDelete.length} day parting config(s) deleted`, { description: "Configs removed successfully." });
-          setConfigsToDelete([]);
-          setShowDeleteDayPart(false);
+        onDeleteConfig={(slot) => {
+          setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
+          toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
+        }}
+        onReplaceCampaigns={(slot) => {
+          const cfg = existingDayPartConfigs.find(c => c.slot === slot);
+          if (!cfg) return;
+          setShowEditDayPart(false);
+          setReplaceTarget({ slot: cfg.slot, campaigns: cfg.campaigns });
         }}
       />
 
