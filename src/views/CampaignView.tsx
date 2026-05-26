@@ -626,6 +626,7 @@ const CampaignView: React.FC = () => {
   const [reallocApplied, setReallocApplied] = useState(false);
   const [showReports, setShowReports] = useState(false);
   const [showDayParting, setShowDayParting] = useState(false);
+  const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
