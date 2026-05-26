@@ -877,8 +877,43 @@ const CampaignView: React.FC = () => {
         onReplaceCampaigns={(slot) => {
           const cfg = existingDayPartConfigs.find(c => c.slot === slot);
           if (!cfg) return;
+          // Derive platforms from the campaigns in this config
+          const platforms = Array.from(new Set(
+            cfg.campaigns
+              .map(name => campaigns.find(c => c.name === name)?.platform)
+              .filter((p): p is string => !!p && DAYPART_PLATFORMS.includes(p))
+          ));
+          // Derive active hours from the slot's time range, e.g. "4:00 – 8:00 PM"
+          const parseTime = (s: string) => {
+            const m = s.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+            if (!m) return 0;
+            let h = parseInt(m[1], 10);
+            const mer = m[3]?.toUpperCase();
+            if (mer === "PM" && h !== 12) h += 12;
+            if (mer === "AM" && h === 12) h = 0;
+            return h % 24;
+          };
+          const [rawA, rawB] = cfg.time.split("–").map(s => s.trim());
+          const mer = (cfg.time.match(/AM|PM/gi) || []).pop();
+          const startStr = /AM|PM/i.test(rawA) ? rawA : `${rawA} ${mer ?? ""}`.trim();
+          const endStr = rawB;
+          const start = parseTime(startStr);
+          const end = parseTime(endStr);
+          const hours: number[] = [];
+          let h = start;
+          for (let i = 0; i < 24; i++) {
+            if (h === end) break;
+            hours.push(h);
+            h = (h + 1) % 24;
+          }
           setShowEditDayPart(false);
-          setReplaceTarget({ slot: cfg.slot, campaigns: cfg.campaigns });
+          setReplaceTarget({
+            slot: cfg.slot,
+            campaigns: cfg.campaigns,
+            platforms: platforms.length > 0 ? platforms : [...DAYPART_PLATFORMS],
+            days: [...WEEKDAYS],
+            hours: hours.length > 0 ? hours : [9,10,11,12,13,14,15,16,17],
+          });
         }}
       />
 
