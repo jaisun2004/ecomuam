@@ -255,6 +255,168 @@ const dayPartingSlots = [
   { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["7UP Retargeting"], budgetPct: 3 },
 ];
 
+const DAYPART_PLATFORMS = ["Carrefour", "Noon", "Noon Minutes", "Talabat", "Amazon UAE", "Lulu"];
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allCampaigns: { name: string; platform: string }[] }>
+  = ({ open, onClose, allCampaigns }) => {
+  const [step, setStep] = useState(1);
+  const [platforms, setPlatforms] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const [selCampaigns, setSelCampaigns] = useState<string[]>([]);
+  const [days, setDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [hours, setHours] = useState<number[]>([9, 10, 11, 12, 13, 16, 17, 18, 19, 20]);
+
+  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); };
+  const close = () => { reset(); onClose(); };
+
+  const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
+    set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
+
+  const filtered = allCampaigns.filter(c =>
+    (platforms.length === 0 || platforms.includes(c.platform)) &&
+    c.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const canNext = step === 1 ? platforms.length > 0 : step === 2 ? selCampaigns.length > 0 : step === 3 ? days.length > 0 : hours.length > 0;
+
+  const submit = () => {
+    toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
+      description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)`,
+    });
+    close();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) close(); }}>
+      <DialogContent className="max-w-2xl bg-surface-1 border-border-visible">
+        <DialogHeader>
+          <DialogTitle className="font-display text-foreground">Create Day Parting Config</DialogTitle>
+          <DialogDescription>Step {step} of 4 — {["Platforms","Campaigns","Schedule","Active hours"][step-1]}</DialogDescription>
+        </DialogHeader>
+
+        {/* Step progress */}
+        <div className="flex gap-1.5 mb-2">
+          {[1,2,3,4].map(s => (
+            <div key={s} className={`h-1 flex-1 rounded-full ${s <= step ? "bg-primary" : "bg-surface-3"}`} />
+          ))}
+        </div>
+
+        <div className="min-h-[280px]">
+          {step === 1 && (
+            <div>
+              <p className="text-xs text-muted-foreground mb-3">Select one or more platforms.</p>
+              <div className="flex flex-wrap gap-2">
+                {DAYPART_PLATFORMS.map(p => {
+                  const on = platforms.includes(p);
+                  return (
+                    <button key={p} onClick={() => toggle(platforms, p, setPlatforms)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                        on ? "bg-primary/15 border-primary/40 text-primary" : "bg-surface-2 border-subtle text-muted-foreground hover:bg-surface-3"
+                      }`}>{p}</button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-muted-foreground">Select campaigns ({selCampaigns.length} selected)</p>
+                <button onClick={() => setSelCampaigns(selCampaigns.length === filtered.length ? [] : filtered.map(c => c.name))}
+                  className="text-[10px] text-primary hover:underline">
+                  {selCampaigns.length === filtered.length ? "Clear all" : "Select all"}
+                </button>
+              </div>
+              <Input placeholder="Search campaigns…" value={search} onChange={e => setSearch(e.target.value)} className="mb-3" />
+              <div className="max-h-[220px] overflow-y-auto border border-subtle rounded-lg divide-y divide-subtle">
+                {filtered.length === 0 && <div className="p-4 text-xs text-muted-foreground text-center">No campaigns match.</div>}
+                {filtered.map(c => {
+                  const on = selCampaigns.includes(c.name);
+                  return (
+                    <button key={c.name} onClick={() => toggle(selCampaigns, c.name, setSelCampaigns)}
+                      className="w-full flex items-center gap-3 p-2.5 hover:bg-surface-2 text-left">
+                      <span className={`w-4 h-4 rounded border flex items-center justify-center ${on ? "bg-primary border-primary" : "border-subtle"}`}>
+                        {on && <span className="text-[10px] text-foreground">✓</span>}
+                      </span>
+                      <span className="text-xs text-foreground flex-1">{c.name}</span>
+                      <span className="text-[10px] font-mono text-muted-foreground">{c.platform}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-5">
+              <div>
+                <p className="text-xs text-muted-foreground mb-2">Weekdays</p>
+                <div className="flex gap-2">
+                  {WEEKDAYS.map(d => {
+                    const on = days.includes(d);
+                    return (
+                      <button key={d} onClick={() => toggle(days, d, setDays)}
+                        className={`w-12 h-10 rounded-lg text-xs font-medium border transition-all ${
+                          on ? "bg-primary/15 border-primary/40 text-primary" : "bg-surface-2 border-subtle text-muted-foreground hover:bg-surface-3"
+                        }`}>{d}</button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground mb-2">Date range <span className="text-[10px]">(optional — leave blank for always-on)</span></p>
+                <div className="flex items-center gap-2">
+                  <Input type="date" value={from} onChange={e => setFrom(e.target.value)} className="flex-1" />
+                  <span className="text-xs text-muted-foreground">→</span>
+                  <Input type="date" value={to} onChange={e => setTo(e.target.value)} className="flex-1" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-muted-foreground">Pick hours when campaigns stay ACTIVE ({hours.length}/24)</p>
+                <div className="flex gap-2 text-[10px]">
+                  <button onClick={() => setHours(Array.from({length:24}, (_,i)=>i))} className="text-primary hover:underline">All</button>
+                  <button onClick={() => setHours([])} className="text-muted-foreground hover:underline">Clear</button>
+                </div>
+              </div>
+              <div className="grid grid-cols-6 gap-1.5">
+                {Array.from({ length: 24 }, (_, h) => {
+                  const on = hours.includes(h);
+                  return (
+                    <button key={h} onClick={() => toggle(hours, h, setHours)}
+                      className={`h-10 rounded-md text-[11px] font-mono border transition-all ${
+                        on ? "bg-sw-green-dim border-sw-green/40 text-sw-green" : "bg-surface-2 border-subtle text-muted-foreground hover:bg-surface-3"
+                      }`}>{String(h).padStart(2, "0")}:00</button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="flex !justify-between items-center gap-2">
+          <Button variant="ghost" onClick={close}>Cancel</Button>
+          <div className="flex gap-2">
+            {step > 1 && <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button>}
+            {step < 4 && <Button onClick={() => setStep(step + 1)} disabled={!canNext}>Next</Button>}
+            {step === 4 && <Button onClick={submit} disabled={!canNext}>Create config</Button>}
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+
+
 /* ── Campaign Creator Modal ── */
 const QCOM_PLATFORMS = ["Talabat", "Noon Minutes", "Talabat"];
 
