@@ -1045,18 +1045,24 @@ const CampaignView: React.FC = () => {
         <PanelCard title="Day Parting Configuration" badge="6 time slots" badgeColor="amber" delay={0.05}>
           <div className="flex items-center justify-between mb-4 gap-3">
             <p className="text-[10px] text-muted-foreground">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
-            <button onClick={() => setShowCreateDayPart(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
-              <Plus size={12} /> Create Day Parting
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowDeleteDayPart(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red-dim text-sw-red hover:bg-sw-red/20 transition-all whitespace-nowrap border border-sw-red/20">
+                <X size={12} /> Delete Config
+              </button>
+              <button onClick={() => setShowCreateDayPart(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
+                <Plus size={12} /> Create Day Parting
+              </button>
+            </div>
           </div>
           {/* Visual timeline bar */}
           <div className="mb-5">
             <div className="flex h-8 rounded-xl overflow-hidden border border-subtle">
-              {dayPartingSlots.map((s, i) => {
+              {existingDayPartConfigs.map((s, i) => {
                 const colors = ["bg-primary/40", "bg-sw-green/40", "bg-sw-amber/40", "bg-sw-purple/40", "bg-sw-cyan/40", "bg-surface-3"];
                 return (
-                  <div key={i} className={`${colors[i]} flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity`}
+                  <div key={i} className={`${colors[i % colors.length]} flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity`}
                     style={{ width: `${s.budgetPct}%` }}
                     onClick={() => setExpandedSlots(p => ({ ...p, [i]: !p[i] }))}>
                     <span className="text-[8px] font-mono text-foreground truncate px-1">{s.budgetPct}%</span>
@@ -1065,7 +1071,7 @@ const CampaignView: React.FC = () => {
               })}
             </div>
             <div className="flex mt-1">
-              {dayPartingSlots.map((s, i) => (
+              {existingDayPartConfigs.map((s, i) => (
                 <div key={i} className="text-center" style={{ width: `${s.budgetPct}%` }}>
                   <span className="text-[7px] text-muted-foreground">{s.time.split("–")[0].trim()}</span>
                 </div>
@@ -1073,7 +1079,7 @@ const CampaignView: React.FC = () => {
             </div>
           </div>
           <div className="space-y-2">
-            {dayPartingSlots.map((s, si) => (
+            {existingDayPartConfigs.map((s, si) => (
               <div key={si} className="border border-subtle rounded-xl overflow-hidden">
                 <button onClick={() => setExpandedSlots(p => ({ ...p, [si]: !p[si] }))}
                   className="w-full flex items-center gap-3 p-3 hover:bg-surface-2 transition-colors">
