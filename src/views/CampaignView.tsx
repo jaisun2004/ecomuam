@@ -1139,9 +1139,9 @@ const CampaignView: React.FC = () => {
           <div className="flex items-center justify-between mb-4 gap-3">
             <p className="text-[10px] text-muted-foreground">Group campaigns into time slots to optimize budget allocation throughout the day.</p>
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowDeleteDayPart(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red-dim text-sw-red hover:bg-sw-red/20 transition-all whitespace-nowrap border border-sw-red/20">
-                <X size={12} /> Delete Config
+              <button onClick={() => setShowEditDayPart(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-2 border border-subtle text-foreground hover:bg-surface-3 transition-all whitespace-nowrap">
+                <FileEdit size={12} /> Edit Config
               </button>
               <button onClick={() => setShowCreateDayPart(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-foreground hover:bg-primary/80 transition-all whitespace-nowrap">
