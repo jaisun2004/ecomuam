@@ -415,6 +415,65 @@ const CreateDayPartingModal: React.FC<{ open: boolean; onClose: () => void; allC
   );
 };
 
+/* ── Delete Day Parting Modal ── */
+interface DeleteDayPartingModalProps {
+  open: boolean;
+  onClose: () => void;
+  configs: typeof dayPartingSlots;
+  selected: string[];
+  onToggle: (slot: string) => void;
+  onDelete: () => void;
+}
+
+const DeleteDayPartingModal: React.FC<DeleteDayPartingModalProps> = ({ open, onClose, configs, selected, onToggle, onDelete }) => {
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="max-w-xl bg-surface-1 border-border-visible">
+        <DialogHeader>
+          <DialogTitle className="font-display text-foreground">Delete Day Parting Configs</DialogTitle>
+          <DialogDescription>Select existing configs to remove. This action cannot be undone.</DialogDescription>
+        </DialogHeader>
+
+        <div className="min-h-[200px] max-h-[400px] overflow-y-auto space-y-2">
+          {configs.length === 0 && (
+            <div className="text-center py-8 text-xs text-muted-foreground">No day parting configs found.</div>
+          )}
+          {configs.map((c, i) => {
+            const isOn = selected.includes(c.slot);
+            return (
+              <button key={i} onClick={() => onToggle(c.slot)}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
+                  isOn ? "bg-sw-red-dim border-sw-red/30" : "bg-surface-2 border-subtle hover:bg-surface-3"
+                }`}>
+                <span className={`w-4 h-4 rounded border flex items-center justify-center ${isOn ? "bg-sw-red border-sw-red" : "border-subtle"}`}>
+                  {isOn && <span className="text-[10px] text-white">✓</span>}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-medium text-foreground">{c.slot}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
+                </div>
+                <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <DialogFooter className="flex !justify-between items-center gap-2">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button
+            variant="destructive"
+            onClick={onDelete}
+            disabled={selected.length === 0}
+            className="bg-sw-red hover:bg-sw-red/80"
+          >
+            Delete {selected.length > 0 ? `(${selected.length})` : ""}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 
 
 /* ── Campaign Creator Modal ── */
