@@ -628,6 +628,10 @@ const CampaignView: React.FC = () => {
   const [showDayParting, setShowDayParting] = useState(false);
   const [showCreateDayPart, setShowCreateDayPart] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
+  const [showCreateDayPart, setShowCreateDayPart] = useState(false);
+  const [showDeleteDayPart, setShowDeleteDayPart] = useState(false);
+  const [configsToDelete, setConfigsToDelete] = useState<string[]>([]);
+  const [existingDayPartConfigs, setExistingDayPartConfigs] = useState(dayPartingSlots);
   const [expandedPlatforms, setExpandedPlatforms] = useState<Record<number, boolean>>({});
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
@@ -713,6 +717,19 @@ const CampaignView: React.FC = () => {
     <div className="space-y-6 pb-20">
       <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
       <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
+      <DeleteDayPartingModal
+        open={showDeleteDayPart}
+        onClose={() => { setShowDeleteDayPart(false); setConfigsToDelete([]); }}
+        configs={existingDayPartConfigs}
+        selected={configsToDelete}
+        onToggle={(slot) => setConfigsToDelete(prev => prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot])}
+        onDelete={() => {
+          setExistingDayPartConfigs(prev => prev.filter(c => !configsToDelete.includes(c.slot)));
+          toast.success(`${configsToDelete.length} day parting config(s) deleted`, { description: "Configs removed successfully." });
+          setConfigsToDelete([]);
+          setShowDeleteDayPart(false);
+        }}
+      />
 
       <ScreenTabs activeTab={tab} onTabChange={setTab} />
 
