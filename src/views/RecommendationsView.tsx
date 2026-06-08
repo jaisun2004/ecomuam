@@ -793,6 +793,31 @@ const RecommendationsView: React.FC = () => {
                 <div className="px-3 py-2 text-[11.5px] text-muted-foreground border-b border-subtle bg-surface-1">
                   <span className="text-foreground font-medium">Why: </span>{r.rationale}
                 </div>
+                {(() => {
+                  const mtr = getMetrics(r);
+                  const cells: { k: string; v: string }[] = [
+                    { k: "ROAS",        v: mtr.roas },
+                    { k: "Impressions", v: mtr.impressions },
+                    { k: "Spend",       v: mtr.spend },
+                    { k: "Sales",       v: mtr.sales },
+                    { k: "Orders",      v: mtr.orders },
+                  ];
+                  return (
+                    <div className="px-3 py-2 border-b border-subtle bg-surface-1">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-1.5">
+                        Current campaign performance · last 14d
+                      </p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {cells.map(c => (
+                          <div key={c.k} className="px-2 py-1.5 rounded-md border border-subtle bg-surface-2/40">
+                            <p className="text-[9.5px] uppercase tracking-wider text-muted-foreground font-mono">{c.k}</p>
+                            <p className="text-[12px] font-mono text-foreground mt-0.5">{c.v}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
                 <table className="w-full text-[12px]">
                   <thead className="text-[10px] uppercase tracking-wider text-muted-foreground bg-surface-2/40">
                     <tr>
