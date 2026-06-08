@@ -97,7 +97,7 @@ const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
 };
 
 const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
+const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
 type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
 
