@@ -490,11 +490,23 @@ const RecommendationsView: React.FC = () => {
             )}
           </p>
         </div>
-        {selected.size > 0 && (
-          <Button size="sm" className="h-8 text-[12px] gap-1.5" onClick={() => setOpenApply(Array.from(selected))}>
-            <CheckCircle2 size={13} /> Apply {selected.size} selected
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full border border-subtle bg-surface-1 text-[11px] text-muted-foreground">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-sw-green opacity-60 animate-ping" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sw-green" />
+            </span>
+            <span>Recommendations updated <span className="text-foreground font-medium">{formatRelative(lastUpdated)}</span></span>
+            <button onClick={refreshRecos} className="ml-1 inline-flex items-center justify-center h-5 w-5 rounded hover:bg-surface-2 text-muted-foreground" title="Refresh now">
+              <RefreshCw size={11} />
+            </button>
+          </div>
+          {selected.size > 0 && (
+            <Button size="sm" className="h-8 text-[12px] gap-1.5" onClick={() => setOpenApply(Array.from(selected))}>
+              <CheckCircle2 size={13} /> Apply {selected.size} selected
+            </Button>
+          )}
+        </div>
       </header>
 
       {/* Section A — Monthly Target Pacing */}
@@ -503,9 +515,9 @@ const RecommendationsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <TargetIcon size={15} className="text-primary" />
             <h2 className="font-display font-semibold text-[14px] text-foreground">Monthly Target Pacing</h2>
-            <span className="text-[11px] text-muted-foreground">— current performance vs target for this month</span>
+            <span className="text-[11px] text-muted-foreground">— {MONTH_LABEL} performance vs end-of-month target</span>
           </div>
-          <span className="text-[11px] text-muted-foreground font-mono">Day 23 / 30 · {MONTH_ELAPSED_PCT}% elapsed</span>
+          <span className="text-[11px] text-muted-foreground font-mono">{MONTH_LABEL} {MONTH_DAY} · Day {MONTH_DAY} / {MONTH_DAYS_TOTAL} · {MONTH_ELAPSED_PCT}% elapsed</span>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {MONTH_TARGETS.map(t => <TargetCard key={t.key} t={t} />)}
