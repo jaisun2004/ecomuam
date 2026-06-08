@@ -375,11 +375,59 @@ const RecommendationsView: React.FC = () => {
 
   const confirmApply = () => {
     if (!openApply) return;
-    setApplied(p => { const n = new Set(p); openApply.forEach(id => n.add(id)); return n; });
-    setSelected(p => { const n = new Set(p); openApply.forEach(id => n.delete(id)); return n; });
-    toast.success(`${openApply.length} recommendation${openApply.length > 1 ? "s" : ""} applied`);
+    const ids = openApply;
+    const newEntries: LogEntry[] = ids.map(id => {
+      const r = MOCK.find(x => x.id === id)!;
+      const kw = (r.changes.find(c => c.field.toLowerCase().includes("keyword"))?.recommended)
+        || r.signals.find(s => s.label.startsWith('"'))?.label.replace(/"/g, "")
+        || r.sku;
+      return {
+        id: `log-${id}-${Date.now()}`,
+        ts: Date.now(),
+        campaign: r.campaign,
+        platform: r.platform,
+        keyword: kw,
+        city: r.city || CITIES[Math.abs(id.charCodeAt(1)) % CITIES.length],
+        category: r.category,
+        summary: r.headline,
+        user: "you",
+      };
+    });
+    setApprovedLog(prev => [...newEntries, ...prev]);
+    setLogExpandedCampaigns(prev => {
+      const n = new Set(prev);
+      newEntries.forEach(e => n.add(e.campaign));
+      return n;
+    });
+    setApplied(p => { const n = new Set(p); ids.forEach(id => n.add(id)); return n; });
+    setSelected(p => { const n = new Set(p); ids.forEach(id => n.delete(id)); return n; });
+    toast.success(`${ids.length} recommendation${ids.length > 1 ? "s" : ""} applied · logged below`);
     setOpenApply(null);
   };
+
+  const refreshRecos = () => {
+    setLastUpdated(Date.now());
+    toast.success("Checked for new recommendations");
+  };
+
+  // Group log: Campaign → Keyword → City
+  const groupedLog = useMemo(() => {
+    const byCampaign = new Map<string, { platform: Platform; keywords: Map<string, LogEntry[]> }>();
+    [...approvedLog].sort((a, b) => b.ts - a.ts).forEach(e => {
+      if (!byCampaign.has(e.campaign)) byCampaign.set(e.campaign, { platform: e.platform, keywords: new Map() });
+      const c = byCampaign.get(e.campaign)!;
+      if (!c.keywords.has(e.keyword)) c.keywords.set(e.keyword, []);
+      c.keywords.get(e.keyword)!.push(e);
+    });
+    return byCampaign;
+  }, [approvedLog]);
+
+  const toggleLogCampaign = (k: string) => setLogExpandedCampaigns(p => {
+    const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n;
+  });
+  const toggleLogKeyword = (k: string) => setLogExpandedKeywords(p => {
+    const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n;
+  });
 
   const RecoRow: React.FC<{ r: Reco }> = ({ r }) => (
     <div className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors">
