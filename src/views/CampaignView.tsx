@@ -667,7 +667,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-[11px] text-muted-foreground block mb-1">Campaign Name</label>
-                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="e.g. Summer Whey Push" />
+                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="e.g. Summer Cookies Push" />
               </div>
               <div>
                 <label className="text-[11px] text-muted-foreground block mb-1">Platform</label>

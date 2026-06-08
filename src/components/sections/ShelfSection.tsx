@@ -15,12 +15,12 @@ const sosTrend = [
 ];
 
 const radarData = [
-  { keyword: "Face Wash", you: 85, competitor: 72 },
-  { keyword: "Shampoo", you: 68, competitor: 80 },
-  { keyword: "Body Lotion", you: 92, competitor: 65 },
-  { keyword: "Hand Cream", you: 55, competitor: 78 },
-  { keyword: "Sunscreen", you: 78, competitor: 70 },
-  { keyword: "Hair Oil", you: 70, competitor: 85 },
+  { keyword: "Glucose Biscuits", you: 85, competitor: 72 },
+  { keyword: "Cream Biscuits", you: 68, competitor: 80 },
+  { keyword: "Cookies", you: 92, competitor: 65 },
+  { keyword: "Marie Biscuits", you: 55, competitor: 78 },
+  { keyword: "Digestive Biscuits", you: 78, competitor: 70 },
+  { keyword: "Bourbon Biscuits", you: 70, competitor: 85 },
 ];
 
 const organicRanks = [
@@ -38,29 +38,29 @@ const sponsoredRanks = [
 ];
 
 const categoryShare = [
-  { category: "Personal Care", you: 28, compA: 22, compB: 18, compC: 12 },
+  { category: "Glucose Biscuits", you: 28, compA: 22, compB: 18, compC: 12 },
   { category: "Biscuits", you: 35, compA: 20, compB: 15, compC: 10 },
-  { category: "Snacks", you: 18, compA: 25, compB: 20, compC: 15 },
-  { category: "Household", you: 22, compA: 18, compB: 22, compC: 16 },
+  { category: "Wafers", you: 18, compA: 25, compB: 20, compC: 15 },
+  { category: "Confectionery", you: 22, compA: 18, compB: 22, compC: 16 },
 ];
 
 const campaignTriggers: CampaignTrigger[] = [
   {
-    id: "shelf-1", signal: "Lost #1 organic rank on 'Face Wash'",
+    id: "shelf-1", signal: "Lost #1 organic rank on 'Glucose Biscuits'",
     signalDetail: "Competitor A overtook your organic position with aggressive SEO + sponsored ads",
     strategy: "Rank Recovery Blitz", campaignType: "Sponsored Product Ads (exact match)",
     platforms: ["Instamart", "Instamart"],
-    keywords: ["face wash", "face cleanser", "best face wash", "face wash for oily skin"],
+    keywords: ["glucose biscuits", "marie biscuit", "best glucose biscuits", "digestive biscuits high fibre"],
     estimatedImpact: "Recover #1 rank in 5-7 days", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
   {
-    id: "shelf-2", signal: "Competitor reducing ad spend on Shampoo",
+    id: "shelf-2", signal: "Competitor reducing ad spend on Cream Biscuits",
     signalDetail: "Competitor B sponsored visibility dropped 40% this week",
     strategy: "Ad Gap Exploitation", campaignType: "Category Targeting + Sponsored Display",
     platforms: ["Instamart", "Blinkit", "BigBasket"],
-    keywords: ["shampoo", "anti dandruff shampoo", "hair care", "natural shampoo"],
-    estimatedImpact: "+8% shelf share in Shampoo", urgency: "high",
+    keywords: ["cream biscuits", "chocolate cream biscuits", "tea time biscuits", "natural cream biscuits"],
+    estimatedImpact: "+8% shelf share in Cream Biscuits", urgency: "high",
     icon: <Shield className="h-4 w-4 text-warning" />,
   },
 ];

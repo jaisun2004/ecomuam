@@ -296,7 +296,7 @@ const defaultStrategicLocks: StrategicLock[] = [
   },
   {
     id: "sl3", name: "Budget pacing floor", reason: "Ensure minimum daily spend on protein campaigns",
-    campaign_scope: "custom", campaign_ids: ["whey-protein-sponsored"], keyword_ids: [], keyword_pattern: null, product_ids: [],
+    campaign_scope: "custom", campaign_ids: ["cookies-sponsored"], keyword_ids: [], keyword_pattern: null, product_ids: [],
     locked_actions: ["decrease_budget"],
     allow_manual_override: true,
     trigger: {
@@ -311,7 +311,7 @@ const defaultStrategicLocks: StrategicLock[] = [
 
 const defaultOwnerships: ActionOwnership[] = [
   { insightId: "avail-pause", ownerScreen: "campaigns", campaignName: "Creatine Retargeting", status: "active", reason: "Tier 1: Availability < 20%" },
-  { insightId: "defense-kw-whey", ownerScreen: "campaigns", campaignName: "Whey Protein — Sponsored", status: "active" },
+  { insightId: "defense-kw-cookies", ownerScreen: "campaigns", campaignName: "Cream Biscuits — Sponsored", status: "active" },
   { insightId: "budget-shift-flipkart", ownerScreen: "budget", campaignName: "Creatine Retargeting", status: "active" },
 ];
 
@@ -376,10 +376,10 @@ export const GuardrailProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return !!(rule?.enabled && rule.last_triggered_at);
   }, [hardStops]);
   const hasDefenseBlocked = useCallback(() => {
-    return hasActiveTier1() && actionOwnerships.some(o => o.insightId === "defense-kw-whey" && o.status === "active");
+    return hasActiveTier1() && actionOwnerships.some(o => o.insightId === "defense-kw-cookies" && o.status === "active");
   }, [hardStops, actionOwnerships]);
   const hasDefenseActive = useCallback(() => {
-    return actionOwnerships.some(o => o.insightId === "defense-kw-whey" && o.status === "active") && !hasActiveTier1();
+    return actionOwnerships.some(o => o.insightId === "defense-kw-cookies" && o.status === "active") && !hasActiveTier1();
   }, [actionOwnerships, hardStops]);
   const isBlocked = useCallback((_insightType: string) => {
     if (!hasActiveTier1()) return false;

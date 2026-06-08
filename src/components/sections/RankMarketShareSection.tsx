@@ -36,10 +36,10 @@ const marketShareTrend = [
 ];
 
 const rankActions: ActionItem[] = [
-  { id: "1", severity: "critical", title: "Lost #1 rank on 3 high-volume keywords", description: "Competitor A overtook on 'organic shampoo', 'natural face wash', 'vitamin c'", metric: "3 keywords", action: "Reclaim" },
-  { id: "2", severity: "warning", title: "Market share declining in Hair Care", description: "2% MoM decline over past quarter", metric: "-2% MoM", action: "Strategize" },
-  { id: "3", severity: "info", title: "New market entry opportunity", description: "Lip care category growing 40% QoQ with low competition", metric: "+40% QoQ", action: "Explore" },
-  { id: "4", severity: "success", title: "Body Lotion #1 across all platforms", description: "Achieved category leadership with 35% market share", metric: "#1", action: "Defend" },
+  { id: "1", severity: "critical", title: "Lost #1 rank on 3 high-volume keywords", description: "Competitor A overtook on 'organic glucose biscuits', 'natural marie biscuits', 'premium cookies'", metric: "3 keywords", action: "Reclaim" },
+  { id: "2", severity: "warning", title: "Market share declining in Tea Time Biscuits", description: "2% MoM decline over past quarter", metric: "-2% MoM", action: "Strategize" },
+  { id: "3", severity: "info", title: "New market entry opportunity", description: "Wafer biscuits category growing 40% QoQ with low competition", metric: "+40% QoQ", action: "Explore" },
+  { id: "4", severity: "success", title: "Cookies #1 across all platforms", description: "Achieved category leadership with 35% market share", metric: "#1", action: "Defend" },
 ];
 
 const cityShareData = [
@@ -54,19 +54,19 @@ const cityShareData = [
 const rankCampaignTriggers: CampaignTrigger[] = [
   {
     id: "rank-1", signal: "Lost #1 rank on 3 high-volume keywords",
-    signalDetail: "Competitor A overtook on 'organic shampoo', 'natural face wash', 'vitamin c serum'",
+    signalDetail: "Competitor A overtook on 'organic glucose biscuits', 'natural marie biscuits', 'premium cookies'",
     strategy: "Rank Recovery Campaign", campaignType: "Exact Match Sponsored + Display Retargeting",
     platforms: ["Instamart", "Instamart"],
-    keywords: ["organic shampoo", "natural face wash", "vitamin c serum", "best face wash"],
+    keywords: ["organic glucose biscuits", "natural marie biscuits", "premium cookies", "best glucose biscuits"],
     estimatedImpact: "Recover #1 rank on 2/3 keywords within 10 days", urgency: "critical" as const,
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
   {
-    id: "rank-2", signal: "Market share declining 2% MoM in Hair Care",
+    id: "rank-2", signal: "Market share declining 2% MoM in Tea Time Biscuits",
     signalDetail: "Competitor gaining through aggressive promotions in Delhi NCR & Mumbai",
     strategy: "Market Share Defense", campaignType: "Category Ads + Deal of the Day",
     platforms: ["Instamart", "Instamart", "BigBasket"],
-    keywords: ["hair care", "shampoo", "hair oil", "anti dandruff"],
+    keywords: ["tea time biscuits", "cream biscuits", "bourbon biscuits", "chocolate cream"],
     estimatedImpact: "Stabilize share loss and recover 1% within 30 days", urgency: "high" as const,
     icon: <Shield className="h-4 w-4 text-warning" />,
   },
@@ -123,12 +123,12 @@ const RankMarketShareSection = () => {
               <h3 className="font-heading font-semibold text-foreground mb-4">Category Rankings</h3>
               <div className="space-y-3">
                 {[
-                  { category: "Face Wash", rank: 2, change: 1, marketShare: 28 },
-                  { category: "Shampoo", rank: 4, change: -1, marketShare: 18 },
-                  { category: "Body Lotion", rank: 1, change: 2, marketShare: 35 },
-                  { category: "Sunscreen", rank: 3, change: 0, marketShare: 22 },
-                  { category: "Hair Oil", rank: 5, change: -2, marketShare: 14 },
-                  { category: "Hand Cream", rank: 2, change: 1, marketShare: 26 },
+                  { category: "Glucose Biscuits", rank: 2, change: 1, marketShare: 28 },
+                  { category: "Cream Biscuits", rank: 4, change: -1, marketShare: 18 },
+                  { category: "Cookies", rank: 1, change: 2, marketShare: 35 },
+                  { category: "Digestive Biscuits", rank: 3, change: 0, marketShare: 22 },
+                  { category: "Bourbon Biscuits", rank: 5, change: -2, marketShare: 14 },
+                  { category: "Marie Biscuits", rank: 2, change: 1, marketShare: 26 },
                 ].map((cat) => (
                   <div key={cat.category} className="flex items-center gap-3 text-sm">
                     <span className={`h-7 w-7 rounded-lg flex items-center justify-center text-xs font-bold ${
