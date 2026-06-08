@@ -68,7 +68,7 @@ const cityWiseOpps = [
   { city: "Delhi NCR", onlineShare: "28%", offlinePotential: "HIGH", channels: ["Kirana Partnerships", "Local Train Ads"], estUplift: "+₹ 8L/mo" },
   { city: "Riyadh", onlineShare: "22%", offlinePotential: "MEDIUM", channels: ["Kirana Partnerships", "Tech Park Ads"], estUplift: "+₹ 5L/mo" },
   { city: "Jeddah", onlineShare: "15%", offlinePotential: "MEDIUM", channels: ["Kirana Partnerships", "Mall Activations"], estUplift: "+₹ 3L/mo" },
-  { city: "Doha", onlineShare: "12%", offlinePotential: "LOW", channels: ["Kirana Partnerships"], estUplift: "+₹ 2L/mo" },
+  { city: "Doha", onlineShare: "12%", offlinePotential: "LOW", channels: ["Kirana Partnerships"], estUplift: "+₹ 200g/mo" },
 ];
 
 const OfflineAdsView: React.FC = () => {

@@ -451,7 +451,7 @@ const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
   const historicalCampaigns = [
     { name: 'Summer Sale - Energy Biscuits', date: 'Jun 2025', roas: '4.2x', spend: '₹ 50K' },
     { name: 'Competitor Conquesting - RedBull', date: 'May 2025', roas: '2.8x', spend: '₹ 30K' },
-    { name: 'Diwali Festival Push', date: 'Oct 2024', roas: '5.6x', spend: '₹ 1.2L' },
+    { name: 'Diwali Festival Push', date: 'Oct 2024', roas: '5.6x', spend: '₹ 1.200g' },
   ];
 
   const aiSuggestions = [

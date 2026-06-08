@@ -44,15 +44,15 @@ interface BrandContext {
 
 /* ─── Mock data ─── */
 const mockSkus = [
-  { name: "Parle-G 1L", platform: "Blinkit", rank: 8, clickShare: "Low" as const, roas: 2.1, targetRoas: 3.0, competitorSlots: 4, brandSlots: 1 },
-  { name: "Parle-G 1L", platform: "Zepto", rank: 5, clickShare: "Medium" as const, roas: 2.8, targetRoas: 3.0, competitorSlots: 3, brandSlots: 2 },
-  { name: "Aquafina 1.5L", platform: "Blinkit", rank: 12, clickShare: "Low" as const, roas: 1.9, targetRoas: 2.5, competitorSlots: 5, brandSlots: 0 },
-  { name: "Aquafina 1.5L", platform: "Zepto", rank: 7, clickShare: "Medium" as const, roas: 2.4, targetRoas: 2.5, competitorSlots: 3, brandSlots: 2 },
+  { name: "Parle-G 120g", platform: "Blinkit", rank: 8, clickShare: "Low" as const, roas: 2.1, targetRoas: 3.0, competitorSlots: 4, brandSlots: 1 },
+  { name: "Parle-G 250g", platform: "Zepto", rank: 5, clickShare: "Medium" as const, roas: 2.8, targetRoas: 3.0, competitorSlots: 3, brandSlots: 2 },
+  { name: "Britannia Marie 150g", platform: "Blinkit", rank: 12, clickShare: "Low" as const, roas: 1.9, targetRoas: 2.5, competitorSlots: 5, brandSlots: 0 },
+  { name: "Britannia Marie 150g", platform: "Zepto", rank: 7, clickShare: "Medium" as const, roas: 2.4, targetRoas: 2.5, competitorSlots: 3, brandSlots: 2 },
 ];
 
 const initialObservations: Observation[] = [
-  { id: "obs1", type: "Anomaly", title: "Parle-G 1L ROAS on Zepto spiked 42% last week", detail: "Spend remained flat but conversion rate jumped — possibly a competitor stockout drove organic traffic into your paid funnel.", rendered: false, resolved: false },
-  { id: "obs2", type: "Tension", title: "Aquafina 1.5L rank is rising on Zepto but ROAS is falling", detail: "Organic rank improved from #10 to #7 over 3 weeks, but paid ROAS dropped from 2.8x to 2.4x in the same period. Paid may be cannibalising organic.", rendered: false, resolved: false },
+  { id: "obs1", type: "Anomaly", title: "Parle-G 120g ROAS on Zepto spiked 42% last week", detail: "Spend remained flat but conversion rate jumped — possibly a competitor stockout drove organic traffic into your paid funnel.", rendered: false, resolved: false },
+  { id: "obs2", type: "Tension", title: "Britannia Marie 150g rank is rising on Zepto but ROAS is falling", detail: "Organic rank improved from #10 to #7 over 3 weeks, but paid ROAS dropped from 2.8x to 2.4x in the same period. Paid may be cannibalising organic.", rendered: false, resolved: false },
   { id: "obs3", type: "Assumption challenge", title: "Your brand context says 'growth mode' — but Blinkit ad spend efficiency has declined 3 weeks straight", detail: "If growth is the priority, the declining efficiency on your primary platform may need addressing before scaling.", rendered: false, resolved: false },
   { id: "obs4", type: "Tension", title: "Parle-G Cashew search volume on Zepto growing 18% WoW but you have zero presence", detail: "Competitor X launched a sponsored campaign on this keyword 5 days ago and is capturing 60% of click share. This is a gap, not a trend — the window may close.", rendered: false, resolved: false },
 ];
@@ -66,15 +66,15 @@ const defaultHistoryContext: BrandContext = {
 };
 
 const initialRecommendations: Recommendation[] = [
-  { id: "r1", priority: "P1", text: "Shift 15% budget from Blinkit to Zepto — ROAS is 33% higher on Zepto for Parle-G 1L.", reason: "Zepto ROAS trending up for 2 consecutive weeks.", status: "pending" },
-  { id: "r2", priority: "P2", text: "Pause Aquafina 1.5L on Blinkit — rank stalled at 12 with declining CTR.", reason: "3-week rank stagnation with below-target ROAS.", status: "pending" },
-  { id: "r3", priority: "P2", text: "Increase bid on Parle-G 1L keyword 'butter biscuits' on Zepto by 20%.", reason: "Click share can move from Medium to High at current CPC levels.", status: "pending" },
+  { id: "r1", priority: "P1", text: "Shift 15% budget from Blinkit to Zepto — ROAS is 33% higher on Zepto for Parle-G 250g.", reason: "Zepto ROAS trending up for 2 consecutive weeks.", status: "pending" },
+  { id: "r2", priority: "P2", text: "Pause Britannia Marie 150g on Blinkit — rank stalled at 12 with declining CTR.", reason: "3-week rank stagnation with below-target ROAS.", status: "pending" },
+  { id: "r3", priority: "P2", text: "Increase bid on Parle-G 120g keyword 'butter biscuits' on Zepto by 20%.", reason: "Click share can move from Medium to High at current CPC levels.", status: "pending" },
   { id: "r4", priority: "P3", text: "Test challenger SKU 'Parle-G Cashew' on Zepto with ₹ 50K weekly budget.", reason: "Category search volume growing 18% WoW, no existing presence.", status: "pending" },
 ];
 
 const defaultInsights: Insight[] = [
-  { id: "ins1", tier: "plan-breaking", text: "Aquafina 1.5L ROAS on Blinkit is below pause threshold (1.9x vs 1.5x trigger). Allocating more budget here contradicts your own guardrails.", resolved: false, deferred: false },
-  { id: "ins2", tier: "plan-informing", text: "Parle-G 1L has 3 days of dark store stock remaining on Blinkit — scaling spend may waste budget on out-of-stock impressions.", resolved: false, deferred: false },
+  { id: "ins1", tier: "plan-breaking", text: "Britannia Marie 150g ROAS on Blinkit is below pause threshold (1.9x vs 1.5x trigger). Allocating more budget here contradicts your own guardrails.", resolved: false, deferred: false },
+  { id: "ins2", tier: "plan-informing", text: "Parle-G 250g has 3 days of dark store stock remaining on Blinkit — scaling spend may waste budget on out-of-stock impressions.", resolved: false, deferred: false },
   { id: "ins3", tier: "plan-informing", text: "A new competitor brand entered top 5 sponsored slots on Zepto for 'digestive biscuits' last week.", resolved: false, deferred: false },
 ];
 
@@ -211,12 +211,12 @@ const ValidationCards = () => {
 /* ─── Detailed Action Plan after scenario selection ─── */
 const ActionPlanDetail = ({ s }: { s: Scenario }) => {
   const campaignBreakdown = [
-    { name: `GDB-BLK-MOR-WD`, sku: "Parle-G 1L", platform: "Blinkit", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: s.id === "A" ? "₹ 12" : s.id === "B" ? "₹ 10" : "₹ 8" }, { kw: "tea time biscuits", bid: s.id === "A" ? "₹ 9" : "₹ 7" }], budget: s.id === "A" ? "₹ 1.25L/wk" : s.id === "B" ? "₹ 1.5L/wk" : "₹ 1.8L/wk", estRoas: s.id === "A" ? "3.2x" : s.id === "B" ? "2.8x" : "2.4x", estImpr: "1.8L" },
-    { name: `GDB-BLK-EVE-WD`, sku: "Parle-G 1L", platform: "Blinkit", city: "Mumbai", dayPart: "Evening", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: s.id === "A" ? "₹ 14" : "₹ 11" }, { kw: "evening snacks", bid: "₹ 11" }], budget: s.id === "A" ? "₹ 1.5L/wk" : "₹ 1.2L/wk", estRoas: s.id === "A" ? "3.5x" : "2.9x", estImpr: "2.1L" },
-    { name: `GDB-ZEP-MOR-WD`, sku: "Parle-G 1L", platform: "Zepto", city: "Delhi NCR", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: "₹ 10" }, { kw: "britannia biscuits", bid: "₹ 13" }], budget: s.id === "A" ? "₹ 2.5L/wk" : s.id === "B" ? "₹ 1.8L/wk" : "₹ 1.5L/wk", estRoas: s.id === "A" ? "4.0x" : "3.2x", estImpr: "3.2L" },
-    { name: `GDB-ZEP-EVE-WE`, sku: "Parle-G 1L", platform: "Zepto", city: "Delhi NCR", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "sunfeast biscuits", bid: "₹ 16" }, { kw: "parle biscuits", bid: "₹ 14" }], budget: s.id === "A" ? "₹ 2L/wk" : "₹ 1.2L/wk", estRoas: s.id === "A" ? "2.8x" : "2.5x", estImpr: "2.0L" },
-    { name: `NCD-BLK-MOR-WD`, sku: "Aquafina 1.5L", platform: "Blinkit", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "digestive biscuits", bid: "₹ 9" }, { kw: "healthy snacks", bid: "₹ 7" }], budget: s.id === "A" ? "₹ 1L/wk" : "₹ 1.2L/wk", estRoas: "2.9x", estImpr: "1.4L" },
-    { name: `NCD-ZEP-EVE-WE`, sku: "Aquafina 1.5L", platform: "Zepto", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "digestive biscuits", bid: "₹ 11" }, { kw: "mcvities digestive", bid: "₹ 12" }], budget: s.id === "A" ? "₹ 1.75L/wk" : "₹ 1.3L/wk", estRoas: "3.4x", estImpr: "2.2L" },
+    { name: `GDB-BLK-MOR-WD`, sku: "Parle-G 120g", platform: "Blinkit", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: s.id === "A" ? "₹ 12" : s.id === "B" ? "₹ 10" : "₹ 8" }, { kw: "tea time biscuits", bid: s.id === "A" ? "₹ 9" : "₹ 7" }], budget: s.id === "A" ? "₹ 1.25L/wk" : s.id === "B" ? "₹ 150g/wk" : "₹ 1.8L/wk", estRoas: s.id === "A" ? "3.2x" : s.id === "B" ? "2.8x" : "2.4x", estImpr: "1.8L" },
+    { name: `GDB-BLK-EVE-WD`, sku: "Parle-G 250g", platform: "Blinkit", city: "Mumbai", dayPart: "Evening", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: s.id === "A" ? "₹ 14" : "₹ 11" }, { kw: "evening snacks", bid: "₹ 11" }], budget: s.id === "A" ? "₹ 150g/wk" : "₹ 1.200g/wk", estRoas: s.id === "A" ? "3.5x" : "2.9x", estImpr: "2.120g" },
+    { name: `GDB-ZEP-MOR-WD`, sku: "Parle-G 250g", platform: "Zepto", city: "Delhi NCR", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: "₹ 10" }, { kw: "britannia biscuits", bid: "₹ 13" }], budget: s.id === "A" ? "₹ 2.5L/wk" : s.id === "B" ? "₹ 1.8L/wk" : "₹ 150g/wk", estRoas: s.id === "A" ? "4.0x" : "3.2x", estImpr: "3.200g" },
+    { name: `GDB-ZEP-EVE-WE`, sku: "Parle-G 120g", platform: "Zepto", city: "Delhi NCR", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "sunfeast biscuits", bid: "₹ 16" }, { kw: "parle biscuits", bid: "₹ 14" }], budget: s.id === "A" ? "₹ 200g/wk" : "₹ 1.200g/wk", estRoas: s.id === "A" ? "2.8x" : "2.5x", estImpr: "2.0L" },
+    { name: `NCD-BLK-MOR-WD`, sku: "Britannia Marie 150g", platform: "Blinkit", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "digestive biscuits", bid: "₹ 9" }, { kw: "healthy snacks", bid: "₹ 7" }], budget: s.id === "A" ? "₹ 250g/wk" : "₹ 1.200g/wk", estRoas: "2.9x", estImpr: "1.4L" },
+    { name: `NCD-ZEP-EVE-WE`, sku: "Britannia Marie 150g", platform: "Zepto", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "digestive biscuits", bid: "₹ 11" }, { kw: "mcvities digestive", bid: "₹ 12" }], budget: s.id === "A" ? "₹ 1.75L/wk" : "₹ 1.3L/wk", estRoas: "3.4x", estImpr: "2.200g" },
   ];
 
   return (
@@ -384,10 +384,10 @@ const ExecutionPlan = ({ scenario, userGoal, userSkus, confidence }: { scenario:
                 </tr></thead>
                 <tbody className="text-foreground">
                   {[
-                    { sku: "Parle-G 1L", plat: "Blinkit", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
-                    { sku: "Parle-G 1L", plat: "Zepto", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
-                    { sku: "Aquafina 1.5L", plat: "Blinkit", type: "Sponsored Brand", tgt: "Category", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
-                    { sku: "Aquafina 1.5L", plat: "Zepto", type: "Sponsored Brand", tgt: "Category", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
+                    { sku: "Parle-G 120g", plat: "Blinkit", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
+                    { sku: "Parle-G 250g", plat: "Zepto", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
+                    { sku: "Britannia Marie 150g", plat: "Blinkit", type: "Sponsored Brand", tgt: "Category", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
+                    { sku: "Britannia Marie 150g", plat: "Zepto", type: "Sponsored Brand", tgt: "Category", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
                   ].map((r, i) => (
                     <tr key={i} className="border-t border-border-visible">
                       <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
@@ -448,10 +448,10 @@ const ExecutionPlan = ({ scenario, userGoal, userSkus, confidence }: { scenario:
                 </tr></thead>
                 <tbody className="text-foreground">
                   {[
-                    { sku: "Parle-G 1L", plat: "Blinkit", cur: 8, tgt: 3, weeks: 6, status: "At risk" },
-                    { sku: "Parle-G 1L", plat: "Zepto", cur: 5, tgt: 3, weeks: 3, status: "On track" },
-                    { sku: "Aquafina 1.5L", plat: "Blinkit", cur: 12, tgt: 5, weeks: 10, status: "Stalled" },
-                    { sku: "Aquafina 1.5L", plat: "Zepto", cur: 7, tgt: 5, weeks: 4, status: "On track" },
+                    { sku: "Parle-G 120g", plat: "Blinkit", cur: 8, tgt: 3, weeks: 6, status: "At risk" },
+                    { sku: "Parle-G 250g", plat: "Zepto", cur: 5, tgt: 3, weeks: 3, status: "On track" },
+                    { sku: "Britannia Marie 150g", plat: "Blinkit", cur: 12, tgt: 5, weeks: 10, status: "Stalled" },
+                    { sku: "Britannia Marie 150g", plat: "Zepto", cur: 7, tgt: 5, weeks: 4, status: "On track" },
                   ].map((r, i) => (
                     <tr key={i} className="border-t border-border-visible">
                       <td className="px-3 py-2">{r.sku}</td><td className="px-3 py-2">{r.plat}</td>
@@ -820,7 +820,7 @@ const StrategicPlanningView: React.FC = () => {
       checkInsightsComplete(updated);
     } else if (action === "tell-more") {
       addUserMsg("Tell me more about this insight");
-      addCopilotMsg("This is connected to the ROAS efficiency gap on Blinkit. The guardrail threshold is 1.5x — Aquafina is at 1.9x, which is above pause but below scale. Allocating fresh budget here may push ROAS lower if the underlying conversion rate doesn't improve. Resolution: confirm you're comfortable running at 1.9x or revise SKU allocation.");
+      addCopilotMsg("This is connected to the ROAS efficiency gap on Blinkit. The guardrail threshold is 1.5x — Britannia Marie is at 1.9x, which is above pause but below scale. Allocating fresh budget here may push ROAS lower if the underlying conversion rate doesn't improve. Resolution: confirm you're comfortable running at 1.9x or revise SKU allocation.");
     }
   };
 

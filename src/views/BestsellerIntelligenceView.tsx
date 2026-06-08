@@ -39,9 +39,9 @@ type CompetitorBrand = {
 
 const competitorBrands: CompetitorBrand[] = [
   { name: "Our SKU", isUs: true, color: "hsl(270,60%,42%)", currentRank: 4, startRank: 9, organicRank: 5, sponsoredRank: 3 },
-  { name: "Parle Mountain Dew", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
-  { name: "Coca-Cookies Premium", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
-  { name: "Almarai Hide & Seek", color: "hsl(35,85%,50%)", currentRank: 8, startRank: 7, organicRank: 9, sponsoredRank: 7 },
+  { name: "Parle Bourbon", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
+  { name: "Britannia Premium", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
+  { name: "Britannia Hide & Seek", color: "hsl(35,85%,50%)", currentRank: 8, startRank: 7, organicRank: 9, sponsoredRank: 7 },
   { name: "Rauch Choco Chip", color: "hsl(140,55%,40%)", currentRank: 11, startRank: 8, organicRank: 12, sponsoredRank: 10 },
 ];
 
@@ -88,7 +88,7 @@ const reductionCandidates = [
     why: "ROAS 1.7x, organic rank improving — overlap with organic traffic",
   },
   {
-    name: "Aquafina — Category Top Slot",
+    name: "Britannia Marie — Category Top Slot",
     platform: "Blinkit",
     dailySpend: 5400,
     suggestedSpend: 3780,
@@ -100,7 +100,7 @@ const reductionCandidates = [
 ].sort((a, b) => b.monthlySavings - a.monthlySavings);
 
 const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const skuOptions = ["Parle-G 1L", "Marie Gold 1L", "Aquafina 1.5L", "Lipton Ice Tea Peach 320ml"];
+const skuOptions = ["Parle-G 120g", "Marie Gold 250g", "Britannia Marie 150g", "Lipton Ice Tea Peach 320ml"];
 const presets = ["7D", "30D", "90D"] as const;
 type Preset = (typeof presets)[number];
 

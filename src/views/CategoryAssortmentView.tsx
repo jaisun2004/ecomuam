@@ -43,14 +43,14 @@ const priceBandData: Record<string, Record<string, number>> = {
 /* ── Brand activity scatter — Biscuits ── */
 const brandActivityData = [
   { brand: "Parle", skuCount: 52, activity: 88, adSpend: "₹ 12.4L", roas: "4.8x", availability: 94, contentScore: 82 },
-  { brand: "Almarai", skuCount: 68, activity: 45, adSpend: "₹ 8.2L", roas: "3.2x", availability: 91, contentScore: 68 },
-  { brand: "Coca-Cookies", skuCount: 42, activity: 82, adSpend: "₹ 10.1L", roas: "4.2x", availability: 88, contentScore: 76 },
+  { brand: "Britannia", skuCount: 68, activity: 45, adSpend: "₹ 8.200g", roas: "3.2x", availability: 91, contentScore: 68 },
+  { brand: "Britannia", skuCount: 42, activity: 82, adSpend: "₹ 10.120g", roas: "4.2x", availability: 88, contentScore: 76 },
   { brand: "Rauch", skuCount: 18, activity: 90, adSpend: "₹ 5.6L", roas: "5.1x", availability: 86, contentScore: 84 },
-  { brand: "Masafi", skuCount: 14, activity: 72, adSpend: "₹ 4.2L", roas: "3.8x", availability: 82, contentScore: 79 },
-  { brand: "Anmol", skuCount: 38, activity: 25, adSpend: "₹ 2.1L", roas: "2.4x", availability: 72, contentScore: 52 },
+  { brand: "Patanjali", skuCount: 14, activity: 72, adSpend: "₹ 4.200g", roas: "3.8x", availability: 82, contentScore: 79 },
+  { brand: "Anmol", skuCount: 38, activity: 25, adSpend: "₹ 2.250g", roas: "2.4x", availability: 72, contentScore: 52 },
   { brand: "Priyagold", skuCount: 45, activity: 30, adSpend: "₹ 3.0L", roas: "2.8x", availability: 78, contentScore: 58 },
-  { brand: "Masafi", skuCount: 12, activity: 85, adSpend: "₹ 3.8L", roas: "4.5x", availability: 90, contentScore: 81 },
-  { brand: "Karachi Bakery", skuCount: 8, activity: 78, adSpend: "₹ 2.2L", roas: "5.4x", availability: 62, contentScore: 88 },
+  { brand: "Patanjali", skuCount: 12, activity: 85, adSpend: "₹ 3.8L", roas: "4.5x", availability: 90, contentScore: 81 },
+  { brand: "Karachi Bakery", skuCount: 8, activity: 78, adSpend: "₹ 2.200g", roas: "5.4x", availability: 62, contentScore: 88 },
   { brand: "Mrs. Fields", skuCount: 6, activity: 92, adSpend: "₹ 1.8L", roas: "5.8x", availability: 58, contentScore: 90 },
 ];
 
