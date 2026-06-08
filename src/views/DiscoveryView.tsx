@@ -20,8 +20,8 @@ const demandForecast = [
   { category: "Health & Fibre", current: 48, forecast: 62 },
 ];
 
-const platformFilter = ["All Platforms", "Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
+const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Blinkit: "#FDDC2B", "Zepto": "#833AB4" };
 const categoryFilter = ["All Categories", "Cream Beverages", "Glucose", "Digestive", "Drinks", "Health & Fibre"];
 
 const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: string; opp: string; oppColor: string; platform?: string }[]> = {
@@ -58,7 +58,7 @@ const sosData = {
 };
 
 const poachingIncidents = [
-  { keyword: "britannia good day", competitor: "Coca-Cola", platforms: ["Instamart", "Instamart"], firstDetected: "Mar 12", severity: "High" },
+  { keyword: "britannia good day", competitor: "Coca-Cola", platforms: ["Instamart"], firstDetected: "Mar 12", severity: "High" },
   { keyword: "britannia beverages", competitor: "Almarai", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
   { keyword: "britannia bourbon", competitor: "Lacnor", platforms: ["Zepto", "Instamart"], firstDetected: "Mar 15", severity: "Low" },
 ];
@@ -88,7 +88,7 @@ const sosOverTime = Array.from({ length: 30 }, (_, i) => ({
   categoryAvg: Math.round(20 + Math.random() * 2),
 }));
 
-const sosRetailerHeatmap = ["Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"].map(r => ({
+const sosRetailerHeatmap = ["Blinkit", "Zepto", "Instamart"].map(r => ({
   retailer: r,
   weeks: Array.from({ length: 8 }, () => Math.round(15 + Math.random() * 25)),
 }));
@@ -107,34 +107,32 @@ const shelfCoverageData: Record<string, {
   opp: string;
   oppColor: string;
   Instamart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Instamart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
   Blinkit: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  "Zepto": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
   "Zepto": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
 }[]> = {
   "All Categories": [
-    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Instamart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Instamart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
-    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Instamart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 } },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   "Cream Beverages": [
-    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Instamart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Glucose: [
-    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Instamart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Digestive: [
-    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Drinks: [
-    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 } },
   ],
   "Health & Fibre": [
-    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
 };
 
