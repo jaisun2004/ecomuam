@@ -56,7 +56,7 @@ const wastedSpendData = [
 const samePlatformShifts = [
   {
     platform: "Instamart", color: "#FF9900",
-    from: { campaign: "Lipton Ice Tea Peach — SP", roas: "2.1x", currentSpend: "₹ 1.200g" },
+    from: { campaign: "Hide & Seek Choco — SP", roas: "2.1x", currentSpend: "₹ 1.200g" },
     to: { campaign: "Parle-G 120g — SP", roas: "5.1x", currentSpend: "₹ 3.8L" },
     amount: "₹ 40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
   },
@@ -367,7 +367,7 @@ const CAMPAIGN_RECOS: CampaignReco[] = [
   { id: "r2", campaign: "Britannia Marie 150g — Instamart", platform: "Instamart", platformColor: "#0E4C92", change: "↓ Bid −12%", changeTone: "amber", reason: "CTR holding but CPC up 18% w/w — overpaying for same clicks." },
   { id: "r3", campaign: "Marie Gold 250g — Zepto Riyadh", platform: "Zepto", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
   { id: "r4", campaign: "Bourbon — Instamart SP", platform: "Instamart", platformColor: "#FEEE00", change: "Shift ₹ 500 → Zepto", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
-  { id: "r5", campaign: "Lipton Ice Tea Peach — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Britannia OOS in 3 Mumbai areas — capture defensive auctions now." },
+  { id: "r5", campaign: "Hide & Seek Choco — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Britannia OOS in 3 Mumbai areas — capture defensive auctions now." },
   { id: "r6", campaign: "Tropicana OJ — Instamart Brand", platform: "Instamart", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Britannia entered top-10 on brand keywords — defend before rank entrenches." },
 ];
 const tonePill: Record<string, string> = { red: "bg-sw-red-dim text-sw-red", amber: "bg-sw-amber-dim text-sw-amber", green: "bg-sw-green-dim text-sw-green", purple: "bg-sw-purple-dim text-sw-purple" };

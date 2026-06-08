@@ -212,7 +212,7 @@ const reportData: ReportPlatform[] = [
               { city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green",
                 products: [
                   { code: "SKU-GD200", title: "Parle-G 120g", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" },
+                  { code: "SKU-5050", title: "Hide & Seek Choco 120g", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" },
                 ]},
             ],
           },

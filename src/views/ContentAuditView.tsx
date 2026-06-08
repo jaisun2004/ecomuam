@@ -12,7 +12,7 @@ const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Co
 export const skuData = [
   { id: "sku-001", sku: "Parle-G 120g", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Instamart", category: "Biscuits", priceParity: "match", availability: 96 },
   { id: "sku-002", sku: "Marie Gold 250g", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Instamart", category: "Glucose", priceParity: "above", availability: 88 },
-  { id: "sku-003", sku: "Lipton Ice Tea Peach 320ml", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Instamart", category: "Cream", priceParity: "below", availability: 72 },
+  { id: "sku-003", sku: "Hide & Seek Choco 120g", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Instamart", category: "Cream", priceParity: "below", availability: 72 },
   { id: "sku-004", sku: "Britannia Marie 150g", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health", priceParity: "match", availability: 94 },
   { id: "sku-005", sku: "Bourbon 120g", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream", priceParity: "below", availability: 98 },
   { id: "sku-006", sku: "Sunfeast 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Blinkit", category: "Kids", priceParity: "above", availability: 65 },
@@ -81,19 +81,19 @@ const FilterDropdown: React.FC<{
 };
 
 const titleIssues: Record<string, { issues: string[]; suggested: string }> = {
-  "Lipton Ice Tea Peach 320ml": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Parle Lipton Ice Tea Peach 320ml | Salted Butter Biscuits | Crunchy Snack | Family Pack" },
+  "Hide & Seek Choco 120g": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Parle Hide & Seek Choco 120g | Salted Butter Biscuits | Crunchy Snack | Family Pack" },
   "Sunfeast 150g": { issues: ["Missing keywords", "No brand name"], suggested: "Parle Sunfeast 150g | Milk Cream Biscuits | Kids Favourite | Rich in Calcium" },
   "Marie Gold 250g": { issues: ["No size/variant"], suggested: "Parle Marie Gold 120g | Lite Biscuits | 0% Trans Fat | Fibre Rich | Tea-time Snack" },
 };
 
 const heroImageIssues: Record<string, string[]> = {
-  "Lipton Ice Tea Peach 320ml": ["Low resolution", "No product focus", "No size callout visible"],
+  "Hide & Seek Choco 120g": ["Low resolution", "No product focus", "No size callout visible"],
   "Sunfeast 150g": ["Busy background", "No size callout visible"],
   "Britannia Marie 150g": ["No product focus"],
 };
 
 const searchKeywords: Record<string, { kw: string; rank: number }[]> = {
-  "Lipton Ice Tea Peach 320ml": [{ kw: "salted biscuits", rank: 14 }, { kw: "butter biscuits", rank: 22 }, { kw: "cream biscuits", rank: 8 }, { kw: "maska chaska", rank: 18 }, { kw: "Lipton Ice Tea biscuits", rank: 11 }],
+  "Hide & Seek Choco 120g": [{ kw: "salted biscuits", rank: 14 }, { kw: "butter biscuits", rank: 22 }, { kw: "cream biscuits", rank: 8 }, { kw: "maska chaska", rank: 18 }, { kw: "Hide & Seek biscuits", rank: 11 }],
   "Marie Gold 250g": [{ kw: "marie biscuits", rank: 6 }, { kw: "glucose biscuits", rank: 12 }, { kw: "tea time biscuits", rank: 15 }],
 };
 
@@ -109,7 +109,7 @@ const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket:
 const crossPlatformData = [
   { sku: "Parle-G 120g", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Instamart", gap: 29, issue: true },
   { sku: "Marie Gold 250g", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Instamart", gap: 14, issue: true },
-  { sku: "Lipton Ice Tea Peach 320ml", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Instamart", gap: 16, issue: true },
+  { sku: "Hide & Seek Choco 120g", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Instamart", gap: 16, issue: true },
   { sku: "Britannia Marie 150g", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Instamart", gap: 5, issue: false },
   { sku: "Bourbon 120g", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Instamart", gap: 8, issue: false },
   { sku: "Sunfeast 150g", amazon: 56, flipkart: 44, blinkit: 38, zepto: 32, instamart: 28, bestPlatform: "Instamart", gap: 28, issue: true },
@@ -119,7 +119,7 @@ const crossPlatformData = [
 const benchmarkData = [
   { sku: "Parle-G 250g", yourScore: 77, categoryAvg: 68, compAvg: 74, campaign: "Parle-G SP", campaignActive: true, roas: "4.8x", campaignStatus: "Strong" },
   { sku: "Marie Gold 120g", yourScore: 66, categoryAvg: 68, compAvg: 72, campaign: "Marie Range SP", campaignActive: true, roas: "2.9x", campaignStatus: "Underperforming" },
-  { sku: "Lipton Ice Tea Peach 320ml", yourScore: 51, categoryAvg: 68, compAvg: 70, campaign: "Lipton Ice Tea Launch", campaignActive: false, roas: "—", campaignStatus: "Paused" },
+  { sku: "Hide & Seek Choco 120g", yourScore: 51, categoryAvg: 68, compAvg: 70, campaign: "Hide & Seek Launch", campaignActive: false, roas: "—", campaignStatus: "Paused" },
   { sku: "Britannia Marie 150g", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "Britannia Marie Brand SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
   { sku: "Bourbon 250g", yourScore: 82, categoryAvg: 68, compAvg: 71, campaign: "Bourbon Premium SP", campaignActive: true, roas: "6.1x", campaignStatus: "Excellent" },
   { sku: "Sunfeast 150g", yourScore: 56, categoryAvg: 68, compAvg: 66, campaign: "Sunfeast Kids", campaignActive: true, roas: "1.6x", campaignStatus: "Poor — fix content first" },

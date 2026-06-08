@@ -23,7 +23,7 @@ const skuCatalogue: SkuOption[] = [
   { id: "sku-gd200", name: "Parle-G 250g", contentScore: 82, availability: 96, platform: "Instamart" },
   { id: "sku-gd100", name: "Parle-G 120g 100g", contentScore: 78, availability: 91, platform: "Instamart" },
   { id: "sku-mg250", name: "Marie Gold 250g", contentScore: 45, availability: 42, platform: "Instamart" },
-  { id: "sku-5050", name: "Lipton Ice Tea Peach 320ml", contentScore: 38, availability: 55, platform: "Blinkit" },
+  { id: "sku-5050", name: "Hide & Seek Choco 120g", contentScore: 38, availability: 55, platform: "Blinkit" },
   { id: "sku-nc", name: "Britannia Marie 150g", contentScore: 88, availability: 94, platform: "Zepto" },
   { id: "sku-mf", name: "Sunfeast 150g", contentScore: 72, availability: 89, platform: "Blinkit" },
   { id: "sku-treat", name: "Sunfeast Orange 120g 75g", contentScore: 91, availability: 97, platform: "Blinkit" },
@@ -108,7 +108,7 @@ const WarRoomView: React.FC = () => {
 
   const diffs: StrategyDiff[] = [
     { type: "add", desc: "Shelf gap fix for Marie Gold on Instamart", impact: "+₹ 5K budget" },
-    { type: "change", desc: "Lipton Ice Tea content fix prioritised in pre-launch", impact: "₹ 5K reallocated" },
+    { type: "change", desc: "Hide & Seek content fix prioritised in pre-launch", impact: "₹ 5K reallocated" },
     { type: "remove", desc: "Low-availability Tiger Glucose Biscuits campaign deferred", impact: "−₹ 30K deferred" },
   ];
 
@@ -120,7 +120,7 @@ const WarRoomView: React.FC = () => {
   ];
 
   const budgetSplitData = [
-    { phase: "Pre-launch", amount: "₹ 10,000", pct: "20%", rationale: "Content fixes for Marie Gold (₹ 5K) + Availability fix for Lipton Ice Tea (₹ 5K)" },
+    { phase: "Pre-launch", amount: "₹ 10,000", pct: "20%", rationale: "Content fixes for Marie Gold (₹ 5K) + Availability fix for Hide & Seek (₹ 5K)" },
     { phase: "Live", amount: "₹ 30,000", pct: "60%", rationale: "Parle-G Boost (₹ 15K) + Britannia Marie Boost (₹ 15K) — highest ROAS products" },
     { phase: "Optimise", amount: "₹ 10,000", pct: "20%", rationale: "Bid optimisation (₹ 6K) + Daypart shift (₹ 4K) based on conversion patterns" },
   ];
