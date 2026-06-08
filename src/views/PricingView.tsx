@@ -107,22 +107,13 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
     { sku: "Aquafina 500ml", yourPrice: "₹ 45", compPrice: "₹ 45", parity: true, competitor: "Masafi" },
     { sku: "Mountain Dew 1L", yourPrice: "₹ 30", compPrice: "₹ 32", parity: true, competitor: "Almarai" },
   ],
-    { sku: "Pepsi 1L", yourPrice: "₹ 42", compPrice: "₹ 36", parity: false, competitor: "Coca-Cola" },
-    { sku: "7UP 1L", yourPrice: "₹ 36", compPrice: "₹ 31", parity: false, competitor: "Coca-Cola" },
-    { sku: "Aquafina 500ml", yourPrice: "₹ 46", compPrice: "₹ 41", parity: false, competitor: "Masafi" },
-  ],
   Blinkit: [
     { sku: "Pepsi 1L", yourPrice: "₹ 42", compPrice: "₹ 38", parity: false, competitor: "Coca-Cola" },
     { sku: "Mountain Dew 1L", yourPrice: "₹ 32", compPrice: "₹ 30", parity: false, competitor: "Almarai" },
   ],
-  "Zepto": [
+  Zepto: [
     { sku: "Pepsi 1L", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Coca-Cola" },
     { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Almarai" },
-  ],
-  "Zepto": [
-    { sku: "Pepsi 1L", yourPrice: "₹ 44", compPrice: "₹ 39", parity: false, competitor: "Coca-Cola" },
-    { sku: "7UP 1L", yourPrice: "₹ 38", compPrice: "₹ 34", parity: false, competitor: "Coca-Cola" },
-    { sku: "Aquafina 500ml", yourPrice: "₹ 48", compPrice: "₹ 44", parity: false, competitor: "Masafi" },
   ],
 };
 
