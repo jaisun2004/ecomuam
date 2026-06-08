@@ -32,8 +32,6 @@ const PLATFORM_TINT: Record<Platform, string> = {
   Blinkit: "bg-sw-amber-dim text-sw-amber",
   "Zepto": "bg-sw-purple-dim text-sw-purple",
   Instamart: "bg-sw-cyan-dim text-sw-cyan",
-  "Zepto": "bg-primary/15 text-primary",
-  Instamart: "bg-sw-green-dim text-sw-green",
 };
 
 const CATEGORY_META: Record<RecoCategory, { icon: React.ElementType; tint: string; accent: string; desc: string }> = {
@@ -105,7 +103,6 @@ function makeReco(i: number): Reco {
       signals = [
         { label: "Pacing today",     value: isUp ? "100% by 13:42" : "92% by 16:10" },
         { label: "ROAS (14d)",       value: isUp ? "5.1x · target 3.5x" : "2.6x · target 3.5x" },
-        { label: "Lost impr. share", value: isUp ? "31% (budget)" : "4%" },
       ];
       changes = [
         { field: "Daily Budget (₹)", current: `${cur}`, recommended: `${Math.round(cur * (1 + (isUp ? 1 : -1) * pct / 100))}` },

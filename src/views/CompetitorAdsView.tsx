@@ -27,8 +27,8 @@ const contestedKeywords = [
   { keyword: "choco chip drinks", yourPos: "#6", topComp: "Coca-Cola Premium", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
 ];
 
-const platformFilter = ["All Platforms", "Instamart", "Instamart", "Blinkit", "Zepto"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4" };
+const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Blinkit: "#FDDC2B", "Zepto": "#833AB4" };
 
 const keywordOptions = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks"];
 

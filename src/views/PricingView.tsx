@@ -74,7 +74,6 @@ const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
       { brand: "Almarai Juice 1L", you: false, price: "₹ 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Rauch Multivit 1L", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Instamart: [
       { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Coca-Cola 1L", you: false, price: "₹ 36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
@@ -86,7 +85,6 @@ const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
       { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Coca-Cola 1L", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    "Zepto": [
       { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
       { brand: "Coca-Cola 1L", you: false, price: "₹ 39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
@@ -115,7 +113,6 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
     { sku: "Aquafina 500ml", yourPrice: "₹ 45", compPrice: "₹ 45", parity: true, competitor: "Masafi" },
     { sku: "Mountain Dew 1L", yourPrice: "₹ 30", compPrice: "₹ 32", parity: true, competitor: "Almarai" },
   ],
-  Instamart: [
     { sku: "Pepsi 1L", yourPrice: "₹ 42", compPrice: "₹ 36", parity: false, competitor: "Coca-Cola" },
     { sku: "7UP 1L", yourPrice: "₹ 36", compPrice: "₹ 31", parity: false, competitor: "Coca-Cola" },
     { sku: "Aquafina 500ml", yourPrice: "₹ 46", compPrice: "₹ 41", parity: false, competitor: "Masafi" },
@@ -415,7 +412,6 @@ const PricingView: React.FC = () => {
                 Blinkit: row.yours,
                 Instamart: row.yours - 1 + (i % 3),
                 "Zepto": row.yours + 2 - (i % 4),
-                Instamart: row.yours - 2 + (i % 5),
               }));
               const latest: any = data[data.length - 1] || {};
               const prev: any = data[data.length - 8] || latest;

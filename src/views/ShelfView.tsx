@@ -45,7 +45,6 @@ const searchDataByPlatform: Record<string, { kw: string; you: number; comp: numb
     { kw: "digestive beverages", you: 33, comp: 29, compName: "Masafi", status: "winning" },
     { kw: "kids beverages", you: 21, comp: 44, compName: "Almarai", status: "losing", poaching: true },
   ],
-  Instamart: [
     { kw: "butter beverages", you: 22, comp: 48, compName: "Coca-Cola", status: "losing", poaching: true },
     { kw: "cream beverages", you: 38, comp: 35, compName: "Almarai", status: "winning" },
     { kw: "glucose beverages", you: 14, comp: 42, compName: "Almarai", status: "losing" },
