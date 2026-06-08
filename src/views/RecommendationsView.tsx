@@ -452,8 +452,16 @@ const RecommendationsView: React.FC = () => {
   });
 
   const RecoRow: React.FC<{ r: Reco }> = ({ r }) => (
-    <div className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors">
-      <Checkbox checked={selected.has(r.id)} onCheckedChange={() => toggleSel(r.id)} aria-label="Select" />
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setOpenApply([r.id])}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpenApply([r.id]); } }}
+      className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors cursor-pointer"
+    >
+      <span onClick={(e) => e.stopPropagation()}>
+        <Checkbox checked={selected.has(r.id)} onCheckedChange={() => toggleSel(r.id)} aria-label="Select" />
+      </span>
       <div className="min-w-0">
         <p className="text-[13px] font-medium text-foreground truncate leading-tight">{r.headline}</p>
         <p className="text-[11px] text-muted-foreground truncate mt-0.5">
@@ -463,7 +471,7 @@ const RecommendationsView: React.FC = () => {
       </div>
       <span className="text-[11px] text-sw-green truncate" title={r.estImpact}>{r.estImpact}</span>
       <ConfidenceDots n={r.confidence} />
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
         {r.warnings.map((w, wi) => {
           const WIcon = WARN_META[w.kind].icon;
           return (
@@ -475,7 +483,7 @@ const RecommendationsView: React.FC = () => {
           );
         })}
       </div>
-      <div className="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
         <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] gap-1 text-muted-foreground"
           onClick={() => setOpenGlass(r.id)} title="Why this recommendation?">
           <Info size={12} /> Why
@@ -492,6 +500,7 @@ const RecommendationsView: React.FC = () => {
       </div>
     </div>
   );
+
 
   return (
     <div className="space-y-6 max-w-7xl">
