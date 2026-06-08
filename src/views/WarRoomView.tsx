@@ -18,18 +18,18 @@ interface RuleCondition { metric: string; direction: "increases" | "decreases"; 
 interface RuleAction { action: string; value: string; }
 interface Rule { id: string; conditions: RuleCondition[]; actions: RuleAction[]; enabled: boolean; }
 
-/* ── Beverages SKU catalogue ── */
+/* ── Biscuits SKU catalogue ── */
 const skuCatalogue: SkuOption[] = [
-  { id: "sku-gd200", name: "Pepsi 1L", contentScore: 82, availability: 96, platform: "Instamart" },
-  { id: "sku-gd100", name: "Pepsi 1L 100g", contentScore: 78, availability: 91, platform: "Instamart" },
-  { id: "sku-mg250", name: "7UP 1L", contentScore: 45, availability: 42, platform: "Instamart" },
+  { id: "sku-gd200", name: "Parle-G 1L", contentScore: 82, availability: 96, platform: "Instamart" },
+  { id: "sku-gd100", name: "Parle-G 1L 100g", contentScore: 78, availability: 91, platform: "Instamart" },
+  { id: "sku-mg250", name: "Marie Gold 1L", contentScore: 45, availability: 42, platform: "Instamart" },
   { id: "sku-5050", name: "Lipton Ice Tea Peach 320ml", contentScore: 38, availability: 55, platform: "Blinkit" },
   { id: "sku-nc", name: "Aquafina 1.5L", contentScore: 88, availability: 94, platform: "Zepto" },
-  { id: "sku-mf", name: "Mirinda 150g", contentScore: 72, availability: 89, platform: "Blinkit" },
-  { id: "sku-treat", name: "Mirinda Orange 1L 75g", contentScore: 91, availability: 97, platform: "Blinkit" },
+  { id: "sku-mf", name: "Sunfeast 150g", contentScore: 72, availability: 89, platform: "Blinkit" },
+  { id: "sku-treat", name: "Sunfeast Orange 1L 75g", contentScore: 91, availability: 97, platform: "Blinkit" },
   { id: "sku-bourbon", name: "Mountain Dew 1L", contentScore: 65, availability: 80, platform: "Instamart" },
   { id: "sku-jim", name: "Jim Jam Cream 100g", contentScore: 52, availability: 68, platform: "Instamart" },
-  { id: "sku-tiger", name: "Tiger Glucose 250g", contentScore: 34, availability: 38, platform: "Zepto" },
+  { id: "sku-tiger", name: "Tiger Glucose Biscuits 250g", contentScore: 34, availability: 38, platform: "Zepto" },
 ];
 
 const buildCards = (selectedSkus: string[]): Record<PhaseId, CampaignCard[]> => {
@@ -107,9 +107,9 @@ const WarRoomView: React.FC = () => {
   const totalCards = Object.values(phases).flat().length;
 
   const diffs: StrategyDiff[] = [
-    { type: "add", desc: "Shelf gap fix for 7UP on Instamart", impact: "+₹ 5K budget" },
+    { type: "add", desc: "Shelf gap fix for Marie Gold on Instamart", impact: "+₹ 5K budget" },
     { type: "change", desc: "Lipton Ice Tea content fix prioritised in pre-launch", impact: "₹ 5K reallocated" },
-    { type: "remove", desc: "Low-availability Tiger Glucose campaign deferred", impact: "−₹ 30K deferred" },
+    { type: "remove", desc: "Low-availability Tiger Glucose Biscuits campaign deferred", impact: "−₹ 30K deferred" },
   ];
 
   const guardrailHealth = [
@@ -120,8 +120,8 @@ const WarRoomView: React.FC = () => {
   ];
 
   const budgetSplitData = [
-    { phase: "Pre-launch", amount: "₹ 10,000", pct: "20%", rationale: "Content fixes for 7UP (₹ 5K) + Availability fix for Lipton Ice Tea (₹ 5K)" },
-    { phase: "Live", amount: "₹ 30,000", pct: "60%", rationale: "Pepsi Boost (₹ 15K) + Aquafina Boost (₹ 15K) — highest ROAS products" },
+    { phase: "Pre-launch", amount: "₹ 10,000", pct: "20%", rationale: "Content fixes for Marie Gold (₹ 5K) + Availability fix for Lipton Ice Tea (₹ 5K)" },
+    { phase: "Live", amount: "₹ 30,000", pct: "60%", rationale: "Parle-G Boost (₹ 15K) + Aquafina Boost (₹ 15K) — highest ROAS products" },
     { phase: "Optimise", amount: "₹ 10,000", pct: "20%", rationale: "Bid optimisation (₹ 6K) + Daypart shift (₹ 4K) based on conversion patterns" },
   ];
 
@@ -289,7 +289,7 @@ const WarRoomView: React.FC = () => {
           {/* Messages */}
           <div className="flex-1 space-y-3 max-h-[350px] overflow-y-auto py-3">
             {chatMessages.length === 0 && (
-              <p className="text-[11px] text-muted-foreground italic">Describe your goal — e.g. "I want to increase ROAS by 20% for Pepsi products in 2 weeks"</p>
+              <p className="text-[11px] text-muted-foreground italic">Describe your goal — e.g. "I want to increase ROAS by 20% for Parle-G products in 2 weeks"</p>
             )}
             {chatMessages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>

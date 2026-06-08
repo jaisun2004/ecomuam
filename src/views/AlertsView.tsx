@@ -8,21 +8,21 @@ import { Mail, Plus, X, Settings, Check } from "lucide-react";
 const severityFilter = ["All", "Critical", "Warning", "Resolved"];
 
 const criticalAlerts = [
-  { icon: "🚨", title: "OOS — 7UP 1L on Blinkit", detail: "6 Delhi NCR pin codes out of stock.", meta: "2m ago · Blinkit", action: "Alert Team" },
-  { icon: "💸", title: "Pepsi 18.8% above market", detail: "Coca-Cola and Almarai priced ₹ 5 lower. Conversion drop -22%.", meta: "15m ago · Instamart", action: "Fix Price" },
-  { icon: "📉", title: "Cream beverages rank drop #5→#8", detail: "Competitor launched sponsored push with 3x bid.", meta: "32m ago · Instamart", action: "Raise Bid" },
-  { icon: "⚠️", title: "Blinkit Pepsi stock at 12%", detail: "Trending +47%. Will stock out in 2.3 days.", meta: "1h ago · Blinkit", action: "Reorder" },
+  { icon: "🚨", title: "OOS — Marie Gold 1L on Blinkit", detail: "6 Delhi NCR pin codes out of stock.", meta: "2m ago · Blinkit", action: "Alert Team" },
+  { icon: "💸", title: "Parle-G 18.8% above market", detail: "Coca-Cookies and Almarai priced ₹ 5 lower. Conversion drop -22%.", meta: "15m ago · Instamart", action: "Fix Price" },
+  { icon: "📉", title: "Cream biscuits rank drop #5→#8", detail: "Competitor launched sponsored push with 3x bid.", meta: "32m ago · Instamart", action: "Raise Bid" },
+  { icon: "⚠️", title: "Blinkit Parle-G stock at 12%", detail: "Trending +47%. Will stock out in 2.3 days.", meta: "1h ago · Blinkit", action: "Reorder" },
 ];
 
 const warningAlerts = [
   { icon: "📝", title: "Content score below 40%", detail: "Lipton Ice Tea Peach listing missing A+ content, 3 images, 4 keywords.", meta: "2h ago · Instamart", action: "Fix Now" },
-  { icon: "💰", title: "ROAS below 2.5x threshold", detail: "Instamart 7UP at 2.1x for 5 days. Auto-pause triggered.", meta: "3h ago · Instamart", action: "Review" },
+  { icon: "💰", title: "ROAS below 2.5x threshold", detail: "Instamart Marie Gold at 2.1x for 5 days. Auto-pause triggered.", meta: "3h ago · Instamart", action: "Review" },
   { icon: "🏷️", title: "Negative review spike", detail: "4 new 1-star reviews on Zepto Mountain Dew — all mention packaging damaged.", meta: "5h ago · Zepto", action: "Escalate" },
 ];
 
 const resolvedAlerts = [
   { icon: "✅", title: "AI auto-resolved", detail: "Instamart Mountain Dew bid ₹ 28→₹ 18. ROAS improved 1.9x→4.1x in 4 hours.", meta: "Today 2PM", action: "View Details" },
-  { icon: "✅", title: "Stock replenished", detail: "7UP restocked on Zepto. Availability back to 93% Mumbai.", meta: "Today 11AM", action: "View Details" },
+  { icon: "✅", title: "Stock replenished", detail: "Marie Gold restocked on Zepto. Availability back to 93% Mumbai.", meta: "Today 11AM", action: "View Details" },
 ];
 
 const categoryOptions = ["All", "Stock", "Pricing", "Campaigns", "Content", "Reviews"];

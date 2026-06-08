@@ -18,20 +18,20 @@ const reportData: ReportPlatform[] = [
   {
     platform: "Instamart", color: "#FF9900", totalSpend: "₹ 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
-      { name: "Pepsi 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green", impressions: "842K", clicks: "28.4K", ctr: "3.4%",
+      { name: "Parle-G 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green", impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
-          { keyword: "butter beverages online", impressions: "342K", clicks: "12.8K", spend: "₹ 1.8L", roas: "6.2x", roasColor: "text-sw-green",
+          { keyword: "butter biscuits online", impressions: "342K", clicks: "12.8K", spend: "₹ 1.8L", roas: "6.2x", roasColor: "text-sw-green",
             cities: [
-              { city: "Mumbai", impressions: "98K", clicks: "4.1K", spend: "₹ 52K", roas: "6.5x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" }, { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" }] },
-              { city: "Delhi NCR", impressions: "82K", clicks: "3.2K", spend: "₹ 44K", roas: "6.4x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" }] },
+              { city: "Mumbai", impressions: "98K", clicks: "4.1K", spend: "₹ 52K", roas: "6.5x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" }, { code: "SKU-GD100", title: "Parle-G 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" }] },
+              { city: "Delhi NCR", impressions: "82K", clicks: "3.2K", spend: "₹ 44K", roas: "6.4x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" }] },
             ],
           },
-          { keyword: "cream beverages", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber" },
+          { keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber" },
         ],
       },
-      { name: "7UP — Keyword Target", status: "PAUSED", spend: "₹ 1.8L", roas: "2.1x", roasColor: "text-sw-red", impressions: "284K", clicks: "8.2K", ctr: "2.9%",
-        keywords: [{ keyword: "glucose beverages bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
-          cities: [{ city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "7UP 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" }] }],
+      { name: "Marie Gold — Keyword Target", status: "PAUSED", spend: "₹ 1.8L", roas: "2.1x", roasColor: "text-sw-red", impressions: "284K", clicks: "8.2K", ctr: "2.9%",
+        keywords: [{ keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
+          cities: [{ city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "Marie Gold 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" }] }],
         }],
       },
     ],
@@ -39,12 +39,12 @@ const reportData: ReportPlatform[] = [
   {
     platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹ 3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
     campaigns: [
-      { name: "Q-Commerce Beverage Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber", impressions: "412K", clicks: "14.8K", ctr: "3.6%",
+      { name: "Q-Commerce Biscuits Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber", impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
-          { keyword: "butter beverages", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
-            cities: [{ city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" }, { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" }] }],
+          { keyword: "butter biscuits", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
+            cities: [{ city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" }, { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" }] }],
           },
-          { keyword: "choco chip drinks", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber" },
+          { keyword: "choco chip biscuits", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber" },
         ],
       },
     ],
@@ -52,9 +52,9 @@ const reportData: ReportPlatform[] = [
   {
     platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
-      { name: "7UP Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red", impressions: "524K", clicks: "12.8K", ctr: "2.4%",
-        keywords: [{ keyword: "glucose beverages", impressions: "284K", clicks: "6.2K", spend: "₹ 1.8L", roas: "1.4x", roasColor: "text-sw-red",
-          cities: [{ city: "Mumbai", impressions: "82K", clicks: "1.8K", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "7UP 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" }] }],
+      { name: "Marie Gold Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red", impressions: "524K", clicks: "12.8K", ctr: "2.4%",
+        keywords: [{ keyword: "glucose biscuits", impressions: "284K", clicks: "6.2K", spend: "₹ 1.8L", roas: "1.4x", roasColor: "text-sw-red",
+          cities: [{ city: "Mumbai", impressions: "82K", clicks: "1.8K", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "Marie Gold 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" }] }],
         }],
       },
     ],

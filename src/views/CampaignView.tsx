@@ -11,59 +11,59 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const bidProductsByKeyword: Record<string, { sku: string; title: string; rank: number; roas: number }[]> = {
-  "butter beverages online": [
-    { sku: "B-GD-200", title: "Pepsi 1L Drinks 200g", rank: 2, roas: 6.4 },
-    { sku: "B-GD-500", title: "Pepsi 1L Drinks 500g Family Pack", rank: 5, roas: 5.1 },
-    { sku: "B-GD-CMB", title: "Pepsi 1L Combo (3-Pack)", rank: 7, roas: 4.0 },
+  "butter biscuits online": [
+    { sku: "B-GD-200", title: "Parle-G 1L Biscuits 200g", rank: 2, roas: 6.4 },
+    { sku: "B-GD-500", title: "Parle-G 1L Biscuits 500g Family Pack", rank: 5, roas: 5.1 },
+    { sku: "B-GD-CMB", title: "Parle-G 1L Combo (3-Pack)", rank: 7, roas: 4.0 },
   ],
-  "cream beverages": [
-    { sku: "B-BB-150", title: "Mountain Dew Beverages 150g", rank: 8, roas: 3.4 },
-    { sku: "B-BB-300", title: "Mountain Dew Beverages 300g Value", rank: 11, roas: 2.6 },
+  "cream biscuits": [
+    { sku: "B-BB-150", title: "Mountain Dew Biscuits 150g", rank: 8, roas: 3.4 },
+    { sku: "B-BB-300", title: "Mountain Dew Biscuits 300g Value", rank: 11, roas: 2.6 },
   ],
-  "glucose beverages bulk": [
-    { sku: "B-MG-250", title: "7UP Glucose 250g", rank: 14, roas: 1.4 },
-    { sku: "B-MG-1KG", title: "7UP Glucose 1Kg Bulk", rank: 16, roas: 1.7 },
+  "glucose biscuits bulk": [
+    { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, roas: 1.4 },
+    { sku: "B-MG-1KG", title: "Marie Gold Glucose 1Kg Bulk", rank: 16, roas: 1.7 },
   ],
-  "digestive beverages": [
+  "digestive biscuits": [
     { sku: "B-NC-100", title: "Aquafina 1.5L", rank: 1, roas: 6.2 },
     { sku: "B-NC-250", title: "Aquafina 1.5L 250g", rank: 1, roas: 5.4 },
     { sku: "B-NC-MLT", title: "Aquafina Multigrain Digestive 200g", rank: 4, roas: 4.6 },
   ],
-  "choco chip drinks": [
-    { sku: "B-DF-100", title: "Mountain Dew Choco Chip Drinks 100g", rank: 5, roas: 4.9 },
-    { sku: "B-DF-250", title: "Mountain Dew Choco Chip Drinks 250g", rank: 8, roas: 3.8 },
+  "choco chip biscuits": [
+    { sku: "B-DF-100", title: "Mountain Dew Choco Chip Biscuits 100g", rank: 5, roas: 4.9 },
+    { sku: "B-DF-250", title: "Mountain Dew Choco Chip Biscuits 250g", rank: 8, roas: 3.8 },
   ],
-  "beverage combo pack": [
-    { sku: "B-VP-500", title: "PepsiCo Variety Pack 500g", rank: 11, roas: 1.9 },
-    { sku: "B-VP-1KG", title: "PepsiCo Family Variety Pack 1Kg", rank: 13, roas: 1.6 },
+  "biscuits combo pack": [
+    { sku: "B-VP-500", title: "Parle Variety Pack 500g", rank: 11, roas: 1.9 },
+    { sku: "B-VP-1KG", title: "Parle Family Variety Pack 1Kg", rank: 13, roas: 1.6 },
   ],
 };
 
 type BidCampaignRow = { campaign: string; spend: string; roas: number; budget: number };
 
 const bidCampaignsByKeyword: Record<string, BidCampaignRow[]> = {
-  "butter beverages online": [
-    { campaign: "Pepsi 1L — SP Exact", spend: "₹ 42K", roas: 6.4, budget: 2500 },
-    { campaign: "Pepsi 1L — SP Broad", spend: "₹ 38K", roas: 5.1, budget: 2200 },
-    { campaign: "Butter Beverages — SB Defence", spend: "₹ 25K", roas: 4.0, budget: 1800 },
+  "butter biscuits online": [
+    { campaign: "Parle-G 1L — SP Exact", spend: "₹ 42K", roas: 6.4, budget: 2500 },
+    { campaign: "Parle-G 1L — SP Broad", spend: "₹ 38K", roas: 5.1, budget: 2200 },
+    { campaign: "Butter Biscuits — SB Defence", spend: "₹ 25K", roas: 4.0, budget: 1800 },
   ],
-  "cream beverages": [
+  "cream biscuits": [
     { campaign: "Mountain Dew — SP Exact", spend: "₹ 30K", roas: 3.4, budget: 2000 },
     { campaign: "Cream Range — SP Broad", spend: "₹ 22K", roas: 2.6, budget: 1700 },
   ],
-  "glucose beverages bulk": [
-    { campaign: "7UP — SP Bulk", spend: "₹ 28K", roas: 1.4, budget: 1600 },
+  "glucose biscuits bulk": [
+    { campaign: "Marie Gold — SP Bulk", spend: "₹ 28K", roas: 1.4, budget: 1600 },
   ],
-  "digestive beverages": [
+  "digestive biscuits": [
     { campaign: "Aquafina — Brand SP", spend: "₹ 55K", roas: 6.2, budget: 3000 },
     { campaign: "Digestive — SP Exact", spend: "₹ 30K", roas: 5.0, budget: 2200 },
     { campaign: "Multigrain Digestive — SP", spend: "₹ 18K", roas: 4.6, budget: 1700 },
   ],
-  "choco chip drinks": [
+  "choco chip biscuits": [
     { campaign: "Mountain Dew Choco — SP Exact", spend: "₹ 31K", roas: 4.9, budget: 2200 },
     { campaign: "Choco Chip — SP Phrase", spend: "₹ 20K", roas: 3.8, budget: 1700 },
   ],
-  "beverage combo pack": [
+  "biscuits combo pack": [
     { campaign: "Variety Pack — SP", spend: "₹ 22K", roas: 1.9, budget: 1500 },
     { campaign: "Combo Pack — SP Broad", spend: "₹ 14K", roas: 1.6, budget: 1200 },
   ],
@@ -84,9 +84,9 @@ const revenueData = [
 ];
 
 const campaigns = [
-  { name: "Pepsi 1L — Sponsored", platform: "Instamart", platformColor: "#FF9900", roas: "5.1x", spend: "₹ 82K", status: "LIVE", ai: true },
-  { name: "Q-Commerce Beverage Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹ 50K", status: "LIVE", ai: true },
-  { name: "7UP Retargeting", platform: "Instamart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹ 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
+  { name: "Parle-G 1L — Sponsored", platform: "Instamart", platformColor: "#FF9900", roas: "5.1x", spend: "₹ 82K", status: "LIVE", ai: true },
+  { name: "Q-Commerce Biscuits Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹ 50K", status: "LIVE", ai: true },
+  { name: "Marie Gold Retargeting", platform: "Instamart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹ 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
   { name: "Mountain Dew Brand Awareness", platform: "Instamart", platformColor: "#E1306C", roas: "4.4x", spend: "₹ 50K", status: "LIVE", ai: false },
   { name: "Aquafina New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹ 30K", status: "LIVE", ai: true },
 ];
@@ -108,17 +108,17 @@ const budgetAlloc = [
 ];
 
 const keywords = [
-  { kw: "butter beverages online", bid: "₹ 28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "cream beverages", bid: "₹ 45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
-  { kw: "glucose beverages bulk", bid: "₹ 22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
-  { kw: "digestive beverages", bid: "₹ 18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "choco chip drinks", bid: "₹ 35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "beverage combo pack", bid: "₹ 12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "butter biscuits online", bid: "₹ 28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "cream biscuits", bid: "₹ 45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
+  { kw: "glucose biscuits bulk", bid: "₹ 22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "digestive biscuits", bid: "₹ 18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "choco chip biscuits", bid: "₹ 35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "biscuits combo pack", bid: "₹ 12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
 ];
 
 const copilotCards = [
-  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹ 25,000 from Instamart 7UP (ROAS 2.1x) to Instamart Pepsi (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
-  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Instamart Pepsi campaign. 'butter beverages family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
+  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹ 25,000 from Instamart Marie Gold (ROAS 2.1x) to Instamart Parle-G (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
+  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Instamart Parle-G campaign. 'butter biscuits family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
   { impact: "MED IMPACT", emoji: "⚡", text: "Aquafina trending +47% on Blinkit South Mumbai. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
 ];
 
@@ -159,39 +159,39 @@ const reportData: ReportPlatform[] = [
     platform: "Instamart", color: "#FF9900", totalSpend: "₹ 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
       {
-        name: "Pepsi 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green",
+        name: "Parle-G 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green",
         impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
           {
-            keyword: "butter beverages online", impressions: "342K", clicks: "12.8K", spend: "₹ 1.8L", roas: "6.2x", roasColor: "text-sw-green",
+            keyword: "butter biscuits online", impressions: "342K", clicks: "12.8K", spend: "₹ 1.8L", roas: "6.2x", roasColor: "text-sw-green",
             cities: [
               { city: "Mumbai", impressions: "98K", clicks: "4.1K", spend: "₹ 52K", roas: "6.5x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" },
-                  { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Parle-G 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" },
                 ]},
               { city: "Delhi NCR", impressions: "82K", clicks: "3.2K", spend: "₹ 44K", roas: "6.4x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "₹ 16K", roas: "6.3x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Parle-G 1L 100g", spend: "₹ 16K", roas: "6.3x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "cream beverages", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber",
+            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber",
           },
         ],
       },
       {
-        name: "7UP — Keyword Target", status: "PAUSED", spend: "₹ 1.8L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "Marie Gold — Keyword Target", status: "PAUSED", spend: "₹ 1.8L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "284K", clicks: "8.2K", ctr: "2.9%",
         keywords: [
           {
-            keyword: "glucose beverages bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
               { city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-MG250", title: "7UP 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -203,21 +203,21 @@ const reportData: ReportPlatform[] = [
     platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹ 3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
     campaigns: [
       {
-        name: "Q-Commerce Beverage Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber",
+        name: "Q-Commerce Biscuits Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber",
         impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
           {
-            keyword: "butter beverages", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
+            keyword: "butter biscuits", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
             cities: [
               { city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" },
                   { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "choco chip drinks", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber",
+            keyword: "choco chip biscuits", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber",
           },
         ],
       },
@@ -227,15 +227,15 @@ const reportData: ReportPlatform[] = [
     platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
       {
-        name: "7UP Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "Marie Gold Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "524K", clicks: "12.8K", ctr: "2.4%",
         keywords: [
           {
-            keyword: "glucose beverages", impressions: "284K", clicks: "6.2K", spend: "₹ 1.8L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits", impressions: "284K", clicks: "6.2K", spend: "₹ 1.8L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
               { city: "Mumbai", impressions: "82K", clicks: "1.8K", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-MG250", title: "7UP 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -247,12 +247,12 @@ const reportData: ReportPlatform[] = [
 
 /* ── Day Parting Data ── */
 const dayPartingSlots = [
-  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Pepsi 1L — Sponsored", "Q-Commerce Beverage Push"], budgetPct: 15 },
-  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Pepsi 1L — Sponsored", "Mountain Dew Brand Awareness", "Aquafina New Users"], budgetPct: 25 },
-  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["7UP Retargeting", "Mountain Dew Brand Awareness"], budgetPct: 15 },
-  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Pepsi 1L — Sponsored", "Q-Commerce Beverage Push", "Aquafina New Users", "Mountain Dew Brand Awareness"], budgetPct: 30 },
-  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Pepsi 1L — Sponsored", "Q-Commerce Beverage Push"], budgetPct: 12 },
-  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["7UP Retargeting"], budgetPct: 3 },
+  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 1L — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
+  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 1L — Sponsored", "Mountain Dew Brand Awareness", "Aquafina New Users"], budgetPct: 25 },
+  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Mountain Dew Brand Awareness"], budgetPct: 15 },
+  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 1L — Sponsored", "Q-Commerce Biscuits Push", "Aquafina New Users", "Mountain Dew Brand Awareness"], budgetPct: 30 },
+  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 1L — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
+  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
 const DAYPART_PLATFORMS = ["Instamart", "Instamart", "Zepto", "Blinkit", "Amazon India", "Lulu"];
@@ -571,15 +571,15 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
   if (!open) return null;
 
   const aiSuggestions = [
-    { name: "Stock Recovery Blitz", signal: "7UP OOS on Blinkit — 6 pincodes", roas: "4.8x", budget: "₹ 15K", duration: "3 days", keywords: ["butter beverages", "cream beverages"] },
-    { name: "Price Advantage Push", signal: "Pepsi 14% cheaper than Coca-Cola", roas: "5.2x", budget: "₹ 20K", duration: "7 days", keywords: ["glucose beverages", "digestive beverages"] },
-    { name: "Trending Capture", signal: "Aquafina trending +47% on Blinkit", roas: "3.9x", budget: "₹ 12K", duration: "5 days", keywords: ["digestive beverages", "health beverages"] },
+    { name: "Stock Recovery Blitz", signal: "Marie Gold OOS on Blinkit — 6 pincodes", roas: "4.8x", budget: "₹ 15K", duration: "3 days", keywords: ["butter biscuits", "cream biscuits"] },
+    { name: "Price Advantage Push", signal: "Parle-G 14% cheaper than Coca-Cookies", roas: "5.2x", budget: "₹ 20K", duration: "7 days", keywords: ["glucose biscuits", "digestive biscuits"] },
+    { name: "Trending Capture", signal: "Aquafina trending +47% on Blinkit", roas: "3.9x", budget: "₹ 12K", duration: "5 days", keywords: ["digestive biscuits", "health biscuits"] },
   ];
 
   const historyCampaigns = [
-    { name: "Pepsi Summer Push 2025", platform: "Instamart", spend: "₹ 3.2L", roas: "4.9x", duration: "14 days" },
+    { name: "Parle-G Summer Push 2025", platform: "Instamart", spend: "₹ 3.2L", roas: "4.9x", duration: "14 days" },
     { name: "Festive Season Blast", platform: "Instamart", spend: "₹ 5.1L", roas: "5.6x", duration: "21 days" },
-    { name: "Q-Commerce Beverage Pilot", platform: "Blinkit", spend: "₹ 1.8L", roas: "3.4x", duration: "7 days" },
+    { name: "Q-Commerce Biscuits Pilot", platform: "Blinkit", spend: "₹ 1.8L", roas: "3.4x", duration: "7 days" },
   ];
 
   const granularityOptions: { key: "sku" | "city_sku" | "city"; label: string; desc: string }[] = [
@@ -732,7 +732,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 
             <div>
               <label className="text-[11px] text-muted-foreground block mb-1">Keywords (comma-separated)</label>
-              <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="whey protein, protein powder, gym supplement" />
+              <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="cream biscuits, digestive biscuits, gym supplement" />
             </div>
             <button onClick={() => setLaunched(true)} className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-foreground hover:bg-primary/80">
               🚀 Create Campaign
@@ -793,9 +793,9 @@ const CampaignView: React.FC = () => {
   const [undoToast, setUndoToast] = useState<string | null>(null);
 
   const digestActions = [
-    { id: 0, campaign: "Pepsi 1L — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
-    { id: 1, campaign: "Q-Commerce Beverage Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "7UP Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 0, campaign: "Parle-G 1L — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
+    { id: 1, campaign: "Q-Commerce Biscuits Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
+    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
     { id: 3, campaign: "Mountain Dew Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
     { id: 4, campaign: "Aquafina New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
@@ -845,7 +845,7 @@ const CampaignView: React.FC = () => {
   }));
 
   const actionHistory = [
-    { time: "Mar 16 09:42", action: "Defense bid increase", campaign: "Whey Protein — Sponsored", roasBefore: "4.8x", roasAfter: "5.1x", trigger: "Auto" },
+    { time: "Mar 16 09:42", action: "Defense bid increase", campaign: "Cream Biscuits — Sponsored", roasBefore: "4.8x", roasAfter: "5.1x", trigger: "Auto" },
     { time: "Mar 15 14:20", action: "Budget reallocation", campaign: "Creatine Retargeting", roasBefore: "2.1x", roasAfter: "2.1x", trigger: "Manual" },
     { time: "Mar 15 08:00", action: "Daypart shift", campaign: "Q-Commerce Launch Push", roasBefore: "3.5x", roasAfter: "3.8x", trigger: "Auto" },
     { time: "Mar 14 16:45", action: "Keyword expansion", campaign: "BCAA Brand Awareness", roasBefore: "4.2x", roasAfter: "4.4x", trigger: "Auto" },
@@ -1040,7 +1040,7 @@ const CampaignView: React.FC = () => {
                 Tier 1 conflict active — 2 insights blocked
               </h3>
               <p className="text-[11px] text-muted-foreground mt-1">
-                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: 7UP Retargeting, Aquafina New Users · Est. auto-clearance: {g.estResolutionTime}
+                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Marie Gold Retargeting, Aquafina New Users · Est. auto-clearance: {g.estResolutionTime}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -1596,12 +1596,12 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
   const tone = isRaise ? "text-sw-green bg-sw-green/10" : item.action.includes("Lower") ? "text-sw-red bg-sw-red/10" : "text-muted-foreground bg-surface-2";
 
   const variantByKw: Record<string, string> = {
-    "butter beverages online": "butter drinks premium",
-    "cream beverages": "cream filled beverage",
-    "glucose beverages bulk": "glucose beverage value",
-    "digestive beverages": "digestive beverage pack",
-    "choco chip drinks": "choco chip beverage",
-    "beverage combo pack": "beverage family pack",
+    "butter biscuits online": "butter biscuits premium",
+    "cream biscuits": "cream filled biscuits",
+    "glucose biscuits bulk": "glucose biscuits value",
+    "digestive biscuits": "digestive biscuits pack",
+    "choco chip biscuits": "choco chip biscuits",
+    "biscuits combo pack": "biscuits family pack",
   };
   const baseBid = parseInt(item.currentBid.replace(/[^\d]/g, "")) || 20;
   const suggested = parseInt(item.suggestedBid.replace(/[^\d]/g, "")) || baseBid;

@@ -39,7 +39,7 @@ const sponsoredRanks = [
 
 const categoryShare = [
   { category: "Personal Care", you: 28, compA: 22, compB: 18, compC: 12 },
-  { category: "Beverages", you: 35, compA: 20, compB: 15, compC: 10 },
+  { category: "Biscuits", you: 35, compA: 20, compB: 15, compC: 10 },
   { category: "Snacks", you: 18, compA: 25, compB: 20, compC: 15 },
   { category: "Household", you: 22, compA: 18, compB: 22, compC: 16 },
 ];
@@ -127,7 +127,7 @@ const ShelfSection = () => {
             <div className="h-48 bg-muted/30 rounded-lg border border-border relative p-4">
               <svg className="w-full h-full overflow-visible">
                 <path d="M0,80 Q100,20 200,40 T400,10" fill="none" stroke="hsl(270, 70%, 50%)" strokeWidth="3" />
-                <text x="410" y="10" fill="hsl(270, 70%, 50%)" fontSize="11" fontWeight="bold">"Energy Drink" (Org)</text>
+                <text x="410" y="10" fill="hsl(270, 70%, 50%)" fontSize="11" fontWeight="bold">"Energy Biscuits" (Org)</text>
                 <path d="M0,150 Q100,140 200,100 T400,120" fill="none" stroke="hsl(245, 58%, 51%)" strokeWidth="2" strokeDasharray="5,5" />
                 <text x="410" y="120" fill="hsl(245, 58%, 51%)" fontSize="11" fontWeight="bold">"Hydration" (Paid)</text>
                 <circle cx="200" cy="40" r="15" fill="none" stroke="hsl(0, 72%, 51%)" strokeWidth="2" />

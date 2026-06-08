@@ -41,7 +41,7 @@ const priceActionItems: ActionItem[] = [
   { id: "2", severity: "critical", title: "Competitor undercut on top 5 SKUs", description: "Avg 12% lower pricing detected on Instamart", metric: "-12% avg", action: "Review" },
   { id: "3", severity: "warning", title: "Price erosion in Personal Care", description: "Consistent 5% MoM price drop across category", metric: "-5% MoM", action: "Analyze" },
   { id: "4", severity: "info", title: "Price premium opportunity", description: "8 SKUs priced 20% below category avg", metric: "+20% headroom", action: "Optimize" },
-  { id: "5", severity: "success", title: "Price parity achieved", description: "All Beverages SKUs now within 2% across platforms", metric: "±2%", action: "Monitor" },
+  { id: "5", severity: "success", title: "Price parity achieved", description: "All Biscuits SKUs now within 2% across platforms", metric: "±2%", action: "Monitor" },
 ];
 
 const campaignTriggers: CampaignTrigger[] = [
@@ -50,24 +50,24 @@ const campaignTriggers: CampaignTrigger[] = [
     signalDetail: "Comp A dropped prices on 4 hydration SKUs across Instamart & Instamart",
     strategy: "Defensive Brand Protection", campaignType: "Sponsored Brand + Video Ads",
     platforms: ["Instamart", "Instamart", "Blinkit"],
-    keywords: ["electrolyte water", "hydration drink", "sports drink", "ORS drink"],
+    keywords: ["electrolyte water", "hydration biscuits", "sports biscuits", "ORS biscuits"],
     estimatedImpact: "Protect ₹ 5.2L weekly revenue", urgency: "critical",
     icon: <Shield className="h-4 w-4 text-destructive" />,
   },
   {
     id: "price-2", signal: "Your SKUs 15% cheaper than competition",
-    signalDetail: "Energy drink range priced significantly below market",
+    signalDetail: "Energy biscuits range priced significantly below market",
     strategy: "Price Advantage Amplification", campaignType: "Keyword Bidding + Display Ads",
     platforms: ["Instamart", "Instamart", "Zepto"],
-    keywords: ["cheap energy drink", "affordable caffeine", "energy drink deal"],
+    keywords: ["cheap energy biscuits", "affordable caffeine", "energy biscuits deal"],
     estimatedImpact: "+22% conversion rate, ₹ 4.8L incremental revenue", urgency: "high",
     icon: <Target className="h-4 w-4 text-warning" />,
   },
 ];
 
 const ownSkuPricing = [
-  { sku: "SKU-101 (Energy Drink)", platform: "Instamart", currentPrice: 199, competitorPrice: 175, margin: "32%", stock: "Healthy" },
-  { sku: "SKU-101 (Energy Drink)", platform: "Instamart", currentPrice: 195, competitorPrice: 178, margin: "31%", stock: "Healthy" },
+  { sku: "SKU-101 (Energy Biscuits)", platform: "Instamart", currentPrice: 199, competitorPrice: 175, margin: "32%", stock: "Healthy" },
+  { sku: "SKU-101 (Energy Biscuits)", platform: "Instamart", currentPrice: 195, competitorPrice: 178, margin: "31%", stock: "Healthy" },
   { sku: "SKU-205 (Electrolyte)", platform: "Instamart", currentPrice: 159, competitorPrice: 122, margin: "28%", stock: "Low" },
   { sku: "SKU-205 (Electrolyte)", platform: "Instamart", currentPrice: 155, competitorPrice: 118, margin: "27%", stock: "Healthy" },
   { sku: "SKU-300 (Green Tea)", platform: "Instamart", currentPrice: 450, competitorPrice: 420, margin: "35%", stock: "Healthy" },

@@ -109,18 +109,18 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(({ label, descr
 });
 TagInput.displayName = "TagInput";
 
-const availableKeywords = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks", "beverage combo", "health beverages", "kids beverages", "premium drinks", "rusk online"];
+const availableKeywords = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip biscuits", "biscuits combo", "health biscuits", "kids biscuits", "premium biscuits", "rusk online"];
 const availableProducts = ["SKU-GD200", "SKU-GD100", "SKU-MG250", "SKU-5050", "SKU-NC100", "SKU-MF150", "SKU-TREAT75", "SKU-BOURBON", "SKU-JIM100", "SKU-TIGER250"];
 const availablePincodes = ["110001", "110020", "110045", "400001", "400050", "560001", "560034", "500001", "600001", "700001", "411001", "380001", "302001", "226001", "144001"];
 const availablePlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit", "JioMart", "BigBasket"];
 
 const campaignKeywords = [
-  { value: "butter beverages", volume: "142K" },
-  { value: "cream beverages", volume: "498K" },
-  { value: "glucose beverages", volume: "87K" },
-  { value: "digestive beverages", volume: "63K" },
-  { value: "choco chip drinks", volume: "211K" },
-  { value: "beverage combo", volume: null },
+  { value: "butter biscuits", volume: "142K" },
+  { value: "cream biscuits", volume: "498K" },
+  { value: "glucose biscuits", volume: "87K" },
+  { value: "digestive biscuits", volume: "63K" },
+  { value: "choco chip biscuits", volume: "211K" },
+  { value: "biscuits combo", volume: null },
   { value: "healthy snacks", volume: "321K" },
 ];
 
@@ -147,7 +147,7 @@ const campaignPlatforms = [
 ];
 
 const CrawlingInputsView: React.FC = () => {
-  const [keywords, setKeywords] = useState<string[]>(["butter beverages", "cream beverages", "glucose beverages"]);
+  const [keywords, setKeywords] = useState<string[]>(["butter biscuits", "cream biscuits", "glucose biscuits"]);
   const [products, setProducts] = useState<string[]>(["SKU-GD200", "SKU-MG250"]);
   const [pincodes, setPincodes] = useState<string[]>(["110001", "400001", "560001"]);
   const [platforms, setPlatforms] = useState<string[]>(["Instamart", "Instamart", "Blinkit"]);

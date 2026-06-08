@@ -26,34 +26,34 @@ const categoryShareData = Array.from({ length: 30 }, (_, i) => ({
 const upcomingFestivals = [
   {
     name: "Holi Sale", date: "Mar 25 – Mar 28", daysAway: 15,
-    recommendation: "Beverage gift packs see 40% uplift during Holi. Pre-position combo packs on Blinkit & Zepto 3 days before.",
+    recommendation: "Biscuits gift packs see 40% uplift during Holi. Pre-position combo packs on Blinkit & Zepto 3 days before.",
     campaigns: [
-      { name: "Holi Beverage Combo", platform: "Instamart", type: "Sponsored Products", budget: "₹ 40K", duration: "4 days", keywords: ["holi sale beverages", "festival gift pack", "beverage combo offer"], targetROAS: "4.5x" },
-      { name: "Quick Delivery Holi Push", platform: "Blinkit", type: "Banner + Sponsored", budget: "₹ 20K", duration: "3 days", keywords: ["holi beverage delivery", "same day beverages"], targetROAS: "3.8x" },
+      { name: "Holi Biscuits Combo", platform: "Instamart", type: "Sponsored Products", budget: "₹ 40K", duration: "4 days", keywords: ["holi sale biscuits", "festival gift pack", "biscuits combo offer"], targetROAS: "4.5x" },
+      { name: "Quick Delivery Holi Push", platform: "Blinkit", type: "Banner + Sponsored", budget: "₹ 20K", duration: "3 days", keywords: ["holi biscuits delivery", "same day biscuits"], targetROAS: "3.8x" },
     ],
   },
   {
     name: "IPL Season", date: "Apr 1 – May 30", daysAway: 22,
-    recommendation: "Snack searches spike 45% during IPL. 'Party beverages' and 'snack combo' keywords surge on match days.",
+    recommendation: "Snack searches spike 45% during IPL. 'Party biscuits' and 'snack combo' keywords surge on match days.",
     campaigns: [
-      { name: "IPL Match Day Snacks", platform: "Instamart", type: "Sponsored Products + Video", budget: "₹ 1.2L", duration: "60 days", keywords: ["ipl snacks", "cricket party beverages", "match day munchies"], targetROAS: "5.0x" },
-      { name: "IPL Q-Commerce Push", platform: "Zepto", type: "Sponsored Listings", budget: "₹ 35K", duration: "8 weekends", keywords: ["quick snack delivery", "match day beverages"], targetROAS: "3.5x" },
+      { name: "IPL Match Day Snacks", platform: "Instamart", type: "Sponsored Products + Video", budget: "₹ 1.2L", duration: "60 days", keywords: ["ipl snacks", "cricket party biscuits", "match day munchies"], targetROAS: "5.0x" },
+      { name: "IPL Q-Commerce Push", platform: "Zepto", type: "Sponsored Listings", budget: "₹ 35K", duration: "8 weekends", keywords: ["quick snack delivery", "match day biscuits"], targetROAS: "3.5x" },
     ],
   },
   {
     name: "Summer Refreshment", date: "Apr 15 – Jun 15", daysAway: 36,
-    recommendation: "Light beverages and cream variants see 25% higher searches. 7UP and Aquafina are category leaders in summer.",
+    recommendation: "Light biscuits and cream variants see 25% higher searches. Marie Gold and Aquafina are category leaders in summer.",
     campaigns: [
-      { name: "Summer Light Beverages", platform: "Instamart", type: "Sponsored Products", budget: "₹ 1.5L", duration: "60 days", keywords: ["light beverages", "healthy snacks summer", "digestive beverages"], targetROAS: "4.5x" },
-      { name: "Summer Kids Favourites", platform: "Instamart", type: "Sponsored + Display", budget: "₹ 80K", duration: "45 days", keywords: ["kids beverages", "summer snacks kids"], targetROAS: "3.8x" },
+      { name: "Summer Light Biscuits", platform: "Instamart", type: "Sponsored Products", budget: "₹ 1.5L", duration: "60 days", keywords: ["light biscuits", "healthy snacks summer", "digestive biscuits"], targetROAS: "4.5x" },
+      { name: "Summer Kids Favourites", platform: "Instamart", type: "Sponsored + Display", budget: "₹ 80K", duration: "45 days", keywords: ["kids biscuits", "summer snacks kids"], targetROAS: "3.8x" },
     ],
   },
   {
     name: "Independence Day Sale", date: "Aug 10 – Aug 16", daysAway: 153,
     recommendation: "Major marketplace sales event. Historically ROAS peaks at 5.8x during freedom sales. Stock up 2 weeks before.",
     campaigns: [
-      { name: "Freedom Sale Mega Pack", platform: "Instamart", type: "Lightning Deal + Sponsored", budget: "₹ 2.5L", duration: "7 days", keywords: ["independence day sale", "freedom sale beverages", "15 august offer"], targetROAS: "5.8x" },
-      { name: "Instamart Freedom Sale", platform: "Instamart", type: "Top Deal + Sponsored", budget: "₹ 1.5L", duration: "7 days", keywords: ["flipkart sale beverages", "independence offer"], targetROAS: "5.2x" },
+      { name: "Freedom Sale Mega Pack", platform: "Instamart", type: "Lightning Deal + Sponsored", budget: "₹ 2.5L", duration: "7 days", keywords: ["independence day sale", "freedom sale biscuits", "15 august offer"], targetROAS: "5.8x" },
+      { name: "Instamart Freedom Sale", platform: "Instamart", type: "Top Deal + Sponsored", budget: "₹ 1.5L", duration: "7 days", keywords: ["flipkart sale biscuits", "independence offer"], targetROAS: "5.2x" },
     ],
   },
 ];

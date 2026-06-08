@@ -17,9 +17,9 @@ const contentHealthScores = [
 ];
 
 const productTitles: Record<string, { current: string; optimized: string }> = {
-  "SKU-101": { current: "ZapDrink Energy Boost 250ml Can - Sugar Free Caffeine Drink", optimized: "ZapDrink Energy Boost 250ml Can | Sugar Free | Electrolytes | Pre-Workout Gym Drink | Zero Calories" },
+  "SKU-101": { current: "ZapDrink Energy Boost 250ml Can - Sugar Free Caffeine Biscuits", optimized: "ZapDrink Energy Boost 250ml Can | Sugar Free | Electrolytes | Pre-Workout Gym Biscuits | Zero Calories" },
   "SKU-205": { current: "HydraMax Electrolyte Water 500ml", optimized: "HydraMax Electrolyte Water 500ml | Keto Friendly | Vegan | Zero Sugar | Coconut Water + Minerals" },
-  "SKU-404": { current: "FitCrunch Protein Bar 60g", optimized: "FitCrunch Protein Bar 60g | 20g Protein | Low Sugar | Gym Snack | Whey Protein | Chocolate Flavour" },
+  "SKU-404": { current: "FitCrunch Protein Bar 60g", optimized: "FitCrunch Protein Bar 60g | 20g Protein | Low Sugar | Gym Snack | Cream Biscuits | Chocolate Flavour" },
 };
 
 const titleKeywordData = [
@@ -69,7 +69,7 @@ const campaignTriggers: CampaignTrigger[] = [
     signalDetail: "Title score 45/100 — missing 4 high-volume keywords. Add-to-cart rate 35% below avg",
     strategy: "Sponsored Ads to compensate weak organic", campaignType: "Sponsored Product + Headline Search",
     platforms: ["Instamart", "Instamart"],
-    keywords: ["electrolyte water", "keto drink", "sports hydration", "coconut water"],
+    keywords: ["electrolyte water", "keto biscuits", "sports hydration", "coconut water"],
     estimatedImpact: "Maintain visibility while title is optimized — protect ₹ 2.1L/week", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },

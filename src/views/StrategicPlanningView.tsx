@@ -44,38 +44,38 @@ interface BrandContext {
 
 /* ─── Mock data ─── */
 const mockSkus = [
-  { name: "Pepsi 1L", platform: "Blinkit", rank: 8, clickShare: "Low" as const, roas: 2.1, targetRoas: 3.0, competitorSlots: 4, brandSlots: 1 },
-  { name: "Pepsi 1L", platform: "Zepto", rank: 5, clickShare: "Medium" as const, roas: 2.8, targetRoas: 3.0, competitorSlots: 3, brandSlots: 2 },
+  { name: "Parle-G 1L", platform: "Blinkit", rank: 8, clickShare: "Low" as const, roas: 2.1, targetRoas: 3.0, competitorSlots: 4, brandSlots: 1 },
+  { name: "Parle-G 1L", platform: "Zepto", rank: 5, clickShare: "Medium" as const, roas: 2.8, targetRoas: 3.0, competitorSlots: 3, brandSlots: 2 },
   { name: "Aquafina 1.5L", platform: "Blinkit", rank: 12, clickShare: "Low" as const, roas: 1.9, targetRoas: 2.5, competitorSlots: 5, brandSlots: 0 },
   { name: "Aquafina 1.5L", platform: "Zepto", rank: 7, clickShare: "Medium" as const, roas: 2.4, targetRoas: 2.5, competitorSlots: 3, brandSlots: 2 },
 ];
 
 const initialObservations: Observation[] = [
-  { id: "obs1", type: "Anomaly", title: "Pepsi 1L ROAS on Zepto spiked 42% last week", detail: "Spend remained flat but conversion rate jumped — possibly a competitor stockout drove organic traffic into your paid funnel.", rendered: false, resolved: false },
+  { id: "obs1", type: "Anomaly", title: "Parle-G 1L ROAS on Zepto spiked 42% last week", detail: "Spend remained flat but conversion rate jumped — possibly a competitor stockout drove organic traffic into your paid funnel.", rendered: false, resolved: false },
   { id: "obs2", type: "Tension", title: "Aquafina 1.5L rank is rising on Zepto but ROAS is falling", detail: "Organic rank improved from #10 to #7 over 3 weeks, but paid ROAS dropped from 2.8x to 2.4x in the same period. Paid may be cannibalising organic.", rendered: false, resolved: false },
   { id: "obs3", type: "Assumption challenge", title: "Your brand context says 'growth mode' — but Blinkit ad spend efficiency has declined 3 weeks straight", detail: "If growth is the priority, the declining efficiency on your primary platform may need addressing before scaling.", rendered: false, resolved: false },
-  { id: "obs4", type: "Tension", title: "Pepsi Cashew search volume on Zepto growing 18% WoW but you have zero presence", detail: "Competitor X launched a sponsored campaign on this keyword 5 days ago and is capturing 60% of click share. This is a gap, not a trend — the window may close.", rendered: false, resolved: false },
+  { id: "obs4", type: "Tension", title: "Parle-G Cashew search volume on Zepto growing 18% WoW but you have zero presence", detail: "Competitor X launched a sponsored campaign on this keyword 5 days ago and is capturing 60% of click share. This is a gap, not a trend — the window may close.", rendered: false, resolved: false },
 ];
 
 const defaultHistoryContext: BrandContext = {
   posture: "Growth mode — expanding category share on quick commerce",
-  categoryBelief: "Impulse snacking on Q-commerce is under-indexed vs offline; 10-min delivery unlocks unplanned purchases",
+  categoryBelief: "Impulse biscuit on Q-commerce is under-indexed vs offline; 10-min delivery unlocks unplanned purchases",
   historicalFrustration: "Scaled Blinkit spend 3x last quarter — ROAS dropped but market share didn't move proportionally",
   currentHypothesis: "Reallocate budget toward Zepto where efficiency is higher, use Blinkit for defense only",
   sessionReasoning: [],
 };
 
 const initialRecommendations: Recommendation[] = [
-  { id: "r1", priority: "P1", text: "Shift 15% budget from Blinkit to Zepto — ROAS is 33% higher on Zepto for Pepsi 1L.", reason: "Zepto ROAS trending up for 2 consecutive weeks.", status: "pending" },
+  { id: "r1", priority: "P1", text: "Shift 15% budget from Blinkit to Zepto — ROAS is 33% higher on Zepto for Parle-G 1L.", reason: "Zepto ROAS trending up for 2 consecutive weeks.", status: "pending" },
   { id: "r2", priority: "P2", text: "Pause Aquafina 1.5L on Blinkit — rank stalled at 12 with declining CTR.", reason: "3-week rank stagnation with below-target ROAS.", status: "pending" },
-  { id: "r3", priority: "P2", text: "Increase bid on Pepsi 1L keyword 'butter drinks' on Zepto by 20%.", reason: "Click share can move from Medium to High at current CPC levels.", status: "pending" },
-  { id: "r4", priority: "P3", text: "Test challenger SKU 'Pepsi Cashew' on Zepto with ₹ 50K weekly budget.", reason: "Category search volume growing 18% WoW, no existing presence.", status: "pending" },
+  { id: "r3", priority: "P2", text: "Increase bid on Parle-G 1L keyword 'butter biscuits' on Zepto by 20%.", reason: "Click share can move from Medium to High at current CPC levels.", status: "pending" },
+  { id: "r4", priority: "P3", text: "Test challenger SKU 'Parle-G Cashew' on Zepto with ₹ 50K weekly budget.", reason: "Category search volume growing 18% WoW, no existing presence.", status: "pending" },
 ];
 
 const defaultInsights: Insight[] = [
   { id: "ins1", tier: "plan-breaking", text: "Aquafina 1.5L ROAS on Blinkit is below pause threshold (1.9x vs 1.5x trigger). Allocating more budget here contradicts your own guardrails.", resolved: false, deferred: false },
-  { id: "ins2", tier: "plan-informing", text: "Pepsi 1L has 3 days of dark store stock remaining on Blinkit — scaling spend may waste budget on out-of-stock impressions.", resolved: false, deferred: false },
-  { id: "ins3", tier: "plan-informing", text: "A new competitor brand entered top 5 sponsored slots on Zepto for 'digestive beverages' last week.", resolved: false, deferred: false },
+  { id: "ins2", tier: "plan-informing", text: "Parle-G 1L has 3 days of dark store stock remaining on Blinkit — scaling spend may waste budget on out-of-stock impressions.", resolved: false, deferred: false },
+  { id: "ins3", tier: "plan-informing", text: "A new competitor brand entered top 5 sponsored slots on Zepto for 'digestive biscuits' last week.", resolved: false, deferred: false },
 ];
 
 const scenarios: Scenario[] = [
@@ -88,8 +88,8 @@ const scenarios: Scenario[] = [
       { name: "Delhi NCR", blinkitBudget: "₹ 10L", zeptoBudget: "₹ 25L" },
       { name: "Bengaluru", blinkitBudget: "₹ 10L", zeptoBudget: "₹ 20L" },
     ],
-    keywords: ["butter drinks", "digestive beverages", "healthy snacks", "tea time beverages"],
-    competitorKeywords: ["britannia drinks", "mcvities digestive", "parle drinks"],
+    keywords: ["butter biscuits", "digestive biscuits", "healthy snacks", "tea time biscuits"],
+    competitorKeywords: ["britannia biscuits", "mcvities digestive", "parle biscuits"],
     estImpressions: "18L – 24L weekly",
   },
   {
@@ -101,8 +101,8 @@ const scenarios: Scenario[] = [
       { name: "Delhi NCR", blinkitBudget: "₹ 16L", zeptoBudget: "₹ 16L" },
       { name: "Bengaluru", blinkitBudget: "₹ 16L", zeptoBudget: "₹ 16L" },
     ],
-    keywords: ["butter drinks", "digestive beverages", "healthy snacks"],
-    competitorKeywords: ["britannia drinks", "mcvities digestive"],
+    keywords: ["butter biscuits", "digestive biscuits", "healthy snacks"],
+    competitorKeywords: ["britannia biscuits", "mcvities digestive"],
     estImpressions: "14L – 20L weekly",
   },
   {
@@ -114,8 +114,8 @@ const scenarios: Scenario[] = [
       { name: "Delhi NCR", blinkitBudget: "₹ 20L", zeptoBudget: "₹ 15L" },
       { name: "Bengaluru", blinkitBudget: "₹ 15L", zeptoBudget: "₹ 15L" },
     ],
-    keywords: ["butter drinks", "digestive beverages"],
-    competitorKeywords: ["britannia drinks"],
+    keywords: ["butter biscuits", "digestive biscuits"],
+    competitorKeywords: ["britannia biscuits"],
     estImpressions: "10L – 15L weekly",
   },
 ];
@@ -211,12 +211,12 @@ const ValidationCards = () => {
 /* ─── Detailed Action Plan after scenario selection ─── */
 const ActionPlanDetail = ({ s }: { s: Scenario }) => {
   const campaignBreakdown = [
-    { name: `GDB-BLK-MOR-WD`, sku: "Pepsi 1L", platform: "Blinkit", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter drinks", bid: s.id === "A" ? "₹ 12" : s.id === "B" ? "₹ 10" : "₹ 8" }, { kw: "tea time beverages", bid: s.id === "A" ? "₹ 9" : "₹ 7" }], budget: s.id === "A" ? "₹ 1.25L/wk" : s.id === "B" ? "₹ 1.5L/wk" : "₹ 1.8L/wk", estRoas: s.id === "A" ? "3.2x" : s.id === "B" ? "2.8x" : "2.4x", estImpr: "1.8L" },
-    { name: `GDB-BLK-EVE-WD`, sku: "Pepsi 1L", platform: "Blinkit", city: "Mumbai", dayPart: "Evening", dayType: "Weekday", keywords: [{ kw: "butter drinks", bid: s.id === "A" ? "₹ 14" : "₹ 11" }, { kw: "evening snacks", bid: "₹ 11" }], budget: s.id === "A" ? "₹ 1.5L/wk" : "₹ 1.2L/wk", estRoas: s.id === "A" ? "3.5x" : "2.9x", estImpr: "2.1L" },
-    { name: `GDB-ZEP-MOR-WD`, sku: "Pepsi 1L", platform: "Zepto", city: "Delhi NCR", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter drinks", bid: "₹ 10" }, { kw: "britannia drinks", bid: "₹ 13" }], budget: s.id === "A" ? "₹ 2.5L/wk" : s.id === "B" ? "₹ 1.8L/wk" : "₹ 1.5L/wk", estRoas: s.id === "A" ? "4.0x" : "3.2x", estImpr: "3.2L" },
-    { name: `GDB-ZEP-EVE-WE`, sku: "Pepsi 1L", platform: "Zepto", city: "Delhi NCR", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "sunfeast drinks", bid: "₹ 16" }, { kw: "parle drinks", bid: "₹ 14" }], budget: s.id === "A" ? "₹ 2L/wk" : "₹ 1.2L/wk", estRoas: s.id === "A" ? "2.8x" : "2.5x", estImpr: "2.0L" },
-    { name: `NCD-BLK-MOR-WD`, sku: "Aquafina 1.5L", platform: "Blinkit", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "digestive beverages", bid: "₹ 9" }, { kw: "healthy snacks", bid: "₹ 7" }], budget: s.id === "A" ? "₹ 1L/wk" : "₹ 1.2L/wk", estRoas: "2.9x", estImpr: "1.4L" },
-    { name: `NCD-ZEP-EVE-WE`, sku: "Aquafina 1.5L", platform: "Zepto", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "digestive beverages", bid: "₹ 11" }, { kw: "mcvities digestive", bid: "₹ 12" }], budget: s.id === "A" ? "₹ 1.75L/wk" : "₹ 1.3L/wk", estRoas: "3.4x", estImpr: "2.2L" },
+    { name: `GDB-BLK-MOR-WD`, sku: "Parle-G 1L", platform: "Blinkit", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: s.id === "A" ? "₹ 12" : s.id === "B" ? "₹ 10" : "₹ 8" }, { kw: "tea time biscuits", bid: s.id === "A" ? "₹ 9" : "₹ 7" }], budget: s.id === "A" ? "₹ 1.25L/wk" : s.id === "B" ? "₹ 1.5L/wk" : "₹ 1.8L/wk", estRoas: s.id === "A" ? "3.2x" : s.id === "B" ? "2.8x" : "2.4x", estImpr: "1.8L" },
+    { name: `GDB-BLK-EVE-WD`, sku: "Parle-G 1L", platform: "Blinkit", city: "Mumbai", dayPart: "Evening", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: s.id === "A" ? "₹ 14" : "₹ 11" }, { kw: "evening snacks", bid: "₹ 11" }], budget: s.id === "A" ? "₹ 1.5L/wk" : "₹ 1.2L/wk", estRoas: s.id === "A" ? "3.5x" : "2.9x", estImpr: "2.1L" },
+    { name: `GDB-ZEP-MOR-WD`, sku: "Parle-G 1L", platform: "Zepto", city: "Delhi NCR", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "butter biscuits", bid: "₹ 10" }, { kw: "britannia biscuits", bid: "₹ 13" }], budget: s.id === "A" ? "₹ 2.5L/wk" : s.id === "B" ? "₹ 1.8L/wk" : "₹ 1.5L/wk", estRoas: s.id === "A" ? "4.0x" : "3.2x", estImpr: "3.2L" },
+    { name: `GDB-ZEP-EVE-WE`, sku: "Parle-G 1L", platform: "Zepto", city: "Delhi NCR", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "sunfeast biscuits", bid: "₹ 16" }, { kw: "parle biscuits", bid: "₹ 14" }], budget: s.id === "A" ? "₹ 2L/wk" : "₹ 1.2L/wk", estRoas: s.id === "A" ? "2.8x" : "2.5x", estImpr: "2.0L" },
+    { name: `NCD-BLK-MOR-WD`, sku: "Aquafina 1.5L", platform: "Blinkit", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ kw: "digestive biscuits", bid: "₹ 9" }, { kw: "healthy snacks", bid: "₹ 7" }], budget: s.id === "A" ? "₹ 1L/wk" : "₹ 1.2L/wk", estRoas: "2.9x", estImpr: "1.4L" },
+    { name: `NCD-ZEP-EVE-WE`, sku: "Aquafina 1.5L", platform: "Zepto", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ kw: "digestive biscuits", bid: "₹ 11" }, { kw: "mcvities digestive", bid: "₹ 12" }], budget: s.id === "A" ? "₹ 1.75L/wk" : "₹ 1.3L/wk", estRoas: "3.4x", estImpr: "2.2L" },
   ];
 
   return (
@@ -384,8 +384,8 @@ const ExecutionPlan = ({ scenario, userGoal, userSkus, confidence }: { scenario:
                 </tr></thead>
                 <tbody className="text-foreground">
                   {[
-                    { sku: "Pepsi 1L", plat: "Blinkit", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
-                    { sku: "Pepsi 1L", plat: "Zepto", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
+                    { sku: "Parle-G 1L", plat: "Blinkit", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
+                    { sku: "Parle-G 1L", plat: "Zepto", type: "Sponsored Product", tgt: "Keyword", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
                     { sku: "Aquafina 1.5L", plat: "Blinkit", type: "Sponsored Brand", tgt: "Category", budget: scenario.id === "A" ? "₹ 3,75,000 (Blinkit)" : scenario.id === "B" ? "₹ 6,25,000 (Blinkit)" : "₹ 6,87,500 (Blinkit)" },
                     { sku: "Aquafina 1.5L", plat: "Zepto", type: "Sponsored Brand", tgt: "Category", budget: scenario.id === "A" ? "₹ 8,75,000 (Zepto)" : scenario.id === "B" ? "₹ 6,25,000 (Zepto)" : "₹ 5,62,500 (Zepto)" },
                   ].map((r, i) => (
@@ -448,8 +448,8 @@ const ExecutionPlan = ({ scenario, userGoal, userSkus, confidence }: { scenario:
                 </tr></thead>
                 <tbody className="text-foreground">
                   {[
-                    { sku: "Pepsi 1L", plat: "Blinkit", cur: 8, tgt: 3, weeks: 6, status: "At risk" },
-                    { sku: "Pepsi 1L", plat: "Zepto", cur: 5, tgt: 3, weeks: 3, status: "On track" },
+                    { sku: "Parle-G 1L", plat: "Blinkit", cur: 8, tgt: 3, weeks: 6, status: "At risk" },
+                    { sku: "Parle-G 1L", plat: "Zepto", cur: 5, tgt: 3, weeks: 3, status: "On track" },
                     { sku: "Aquafina 1.5L", plat: "Blinkit", cur: 12, tgt: 5, weeks: 10, status: "Stalled" },
                     { sku: "Aquafina 1.5L", plat: "Zepto", cur: 7, tgt: 5, weeks: 4, status: "On track" },
                   ].map((r, i) => (

@@ -10,16 +10,16 @@ const categoryTriggers: CampaignTrigger[] = [
     signalDetail: "High demand (45K monthly searches) with only 2 niche competitors",
     strategy: "New Product Launch Blitz", campaignType: "Sponsored Product + Video Ads + Display",
     platforms: ["Instamart", "Instamart", "Blinkit", "Zepto"],
-    keywords: ["mango chilli drink", "spicy mango", "tangy fruit drink", "new energy drink"],
+    keywords: ["mango chilli biscuits", "spicy mango", "tangy fruit biscuits", "new energy biscuits"],
     estimatedImpact: "Capture 15% category share in first 30 days", urgency: "high",
     icon: <Zap className="h-4 w-4 text-warning" />,
   },
   {
-    id: "cat-2", signal: "Competitor delisted Cola 1.5L variant",
-    signalDetail: "Competitor A removed their Cola 1.5L — opportunity to capture search traffic",
+    id: "cat-2", signal: "Competitor delisted Cookies 1.5L variant",
+    signalDetail: "Competitor A removed their Cookies 1.5L — opportunity to capture search traffic",
     strategy: "Competitor Delist Capture", campaignType: "Keyword Targeting on competitor brand terms",
     platforms: ["Instamart", "Instamart"],
-    keywords: ["cola 1.5l", "large cola bottle", "party cola", "cola family pack"],
+    keywords: ["cookies 1.5l", "large cookies bottle", "party cookies", "cookies family pack"],
     estimatedImpact: "+₹ 2.8L revenue from competitor's abandoned traffic", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
@@ -160,7 +160,7 @@ const CategoryRecommendationSection = () => {
                 </thead>
                 <tbody className="text-sm divide-y divide-border/50">
                   {[
-                    { variant: 'Cola 1.5L', vol: 'Low', volColor: 'text-destructive', margin: '12%', marginColor: 'text-warning', rec: 'Delist', recColor: 'bg-destructive/10 text-destructive' },
+                    { variant: 'Cookies 1.5L', vol: 'Low', volColor: 'text-destructive', margin: '12%', marginColor: 'text-warning', rec: 'Delist', recColor: 'bg-destructive/10 text-destructive' },
                     { variant: 'Lemon 200ml', vol: 'Med', volColor: 'text-warning', margin: '5%', marginColor: 'text-destructive', rec: 'Reprice', recColor: 'bg-warning/10 text-warning' },
                     { variant: 'Energy 500ml', vol: 'High', volColor: 'text-success', margin: '28%', marginColor: 'text-success', rec: 'Scale', recColor: 'bg-success/10 text-success' },
                   ].map((item, idx) => (
