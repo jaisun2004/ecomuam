@@ -266,7 +266,60 @@ const TargetCard: React.FC<{ t: MonthTarget }> = ({ t }) => {
   );
 };
 
+/* ===== Approved Recommendations Log (Campaign → Keyword → City) ===== */
+interface LogEntry {
+  id: string;
+  ts: number;          // applied time
+  campaign: string;
+  platform: Platform;
+  keyword: string;
+  city: string;
+  category: RecoCategory;
+  summary: string;     // short description of what was changed
+  user: string;
+}
+
+const NOW = Date.now();
+const m = (n: number) => NOW - n * 60_000;
+const h = (n: number) => NOW - n * 3_600_000;
+const d = (n: number) => NOW - n * 86_400_000;
+
+const SEED_LOG: LogEntry[] = [
+  // Pepsi 1L — Blinkit
+  { id: "l1", ts: m(12),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Mumbai",     category: "Bid Changes",     summary: "Raised bid ₹1.20 → ₹1.42 (+18%)", user: "AI Auto" },
+  { id: "l2", ts: m(38),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Delhi NCR",  category: "Budget",          summary: "Daily budget ₹400 → ₹520 (+30%)", user: "priya.s" },
+  { id: "l3", ts: h(2),   campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "diet pepsi",          city: "Mumbai",     category: "Remove Keywords", summary: "Removed 2 low-intent keywords", user: "AI Auto" },
+  // Lay's — Zepto
+  { id: "l4", ts: h(4),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Bangalore",  category: "City",            summary: "Expanded geo into Bangalore (5 km)", user: "rohit.k" },
+  { id: "l5", ts: h(6),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Pune",       category: "Bid Changes",     summary: "Trimmed bid ₹2.10 → ₹1.85 (−12%)", user: "AI Auto" },
+  // 7UP — Instamart
+  { id: "l6", ts: h(20),  campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "lemon soda 500ml",    city: "Hyderabad",  category: "Budget",          summary: "Trimmed daily budget −15%", user: "priya.s" },
+  { id: "l7", ts: d(1),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Hyderabad",  category: "Remove Keywords", summary: "Negative-keyworded 3 wasted terms", user: "AI Auto" },
+  { id: "l8", ts: d(2),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Chennai",    category: "City",            summary: "Disabled Chennai geo (ROAS 1.6x)", user: "rohit.k" },
+];
+
+const formatRelative = (ts: number) => {
+  const diff = Math.max(0, Date.now() - ts);
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+};
+
+const CATEGORY_DOT: Record<RecoCategory, string> = {
+  "Budget": "bg-sw-green",
+  "City": "bg-sw-cyan",
+  "Remove Keywords": "bg-sw-amber",
+  "Bid Changes": "bg-sw-purple",
+};
+
 const PAGE_SIZE = 30;
+
+// last refresh timestamp — used in header chip
+const LAST_UPDATED_TS = m(4);
 
 const RecommendationsView: React.FC = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -276,6 +329,10 @@ const RecommendationsView: React.FC = () => {
   const [openWarn, setOpenWarn] = useState<{ recoId: string; warnIdx: number } | null>(null);
   const [openGlass, setOpenGlass] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<RecoCategory>>(new Set(CATEGORIES));
+  const [approvedLog, setApprovedLog] = useState<LogEntry[]>(SEED_LOG);
+  const [logExpandedCampaigns, setLogExpandedCampaigns] = useState<Set<string>>(new Set([SEED_LOG[0].campaign]));
+  const [logExpandedKeywords, setLogExpandedKeywords] = useState<Set<string>>(new Set());
+  const [lastUpdated, setLastUpdated] = useState<number>(LAST_UPDATED_TS);
 
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
