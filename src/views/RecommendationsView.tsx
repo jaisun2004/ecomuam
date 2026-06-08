@@ -32,8 +32,6 @@ const PLATFORM_TINT: Record<Platform, string> = {
   Blinkit: "bg-sw-amber-dim text-sw-amber",
   "Zepto": "bg-sw-purple-dim text-sw-purple",
   Instamart: "bg-sw-cyan-dim text-sw-cyan",
-  "Zepto": "bg-primary/15 text-primary",
-  Instamart: "bg-sw-green-dim text-sw-green",
 };
 
 const CATEGORY_META: Record<RecoCategory, { icon: React.ElementType; tint: string; accent: string; desc: string }> = {

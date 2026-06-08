@@ -156,7 +156,6 @@ const keywordDataByPlatform: Record<string, KeywordRank[]> = {
     { keyword: "sugar free beverages", sponsoredRank: 8, organicRank: 18, topCompetitor: "Rauch", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
     { keyword: "kids beverages", sponsoredRank: 2, organicRank: 3, topCompetitor: "Almarai", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Instamart: [
     { keyword: "butter beverages", sponsoredRank: 2, organicRank: 5, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "52K", searchVolNum: 52, shareOfSearch: 16, trend: "down", action: "Boost campaign", canReduceSpend: false },
     { keyword: "cream beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Almarai", compRank: 3, searchVol: "41K", searchVolNum: 41, shareOfSearch: 18, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "glucose beverages", sponsoredRank: 4, organicRank: 9, topCompetitor: "Almarai", compRank: 1, searchVol: "88K", searchVolNum: 88, shareOfSearch: 9, trend: "flat", action: "Optimise bids", canReduceSpend: false },

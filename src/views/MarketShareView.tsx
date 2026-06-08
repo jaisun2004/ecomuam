@@ -57,7 +57,6 @@ const darkStores: DarkStore[] = [
 const platformColorMap: Record<string, string> = {
   Blinkit: "#FDDC2B",
   "Zepto": "#833AB4",
-  "Zepto": "#FC8019",
 };
 
 const platforms = ["Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"];
