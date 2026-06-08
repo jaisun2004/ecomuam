@@ -4,15 +4,15 @@ import PanelCard from "@/components/sw/PanelCard";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Line, ComposedChart, Cell } from "recharts";
 import { X } from "lucide-react";
 
-/* ── Sub-category health data — Beverages ── */
+/* ── Sub-category health data — Biscuits ── */
 const healthData = [
-  { sub: "Butter Drinks", skuCount: 128, brandCount: 22, avgDiscount: 14, availability: 94 },
+  { sub: "Butter Biscuits", skuCount: 128, brandCount: 22, avgDiscount: 14, availability: 94 },
   { sub: "Glucose", skuCount: 96, brandCount: 18, avgDiscount: 18, availability: 91 },
-  { sub: "Cream Beverages", skuCount: 72, brandCount: 15, avgDiscount: 22, availability: 82 },
+  { sub: "Cream Biscuits", skuCount: 72, brandCount: 15, avgDiscount: 22, availability: 82 },
   { sub: "Digestive / Health", skuCount: 54, brandCount: 12, avgDiscount: 10, availability: 88 },
   { sub: "Wafers", skuCount: 38, brandCount: 9, avgDiscount: 25, availability: 72 },
-  { sub: "Kids Beverages", skuCount: 45, brandCount: 11, avgDiscount: 20, availability: 78 },
-  { sub: "Premium Drinks", skuCount: 32, brandCount: 8, avgDiscount: 8, availability: 96 },
+  { sub: "Kids Biscuits", skuCount: 45, brandCount: 11, avgDiscount: 20, availability: 78 },
+  { sub: "Premium Biscuits", skuCount: 32, brandCount: 8, avgDiscount: 8, availability: 96 },
   { sub: "Rusk", skuCount: 28, brandCount: 7, avgDiscount: 15, availability: 68 },
 ];
 
@@ -30,21 +30,21 @@ const ragBg = (val: number, thresholds: [number, number]) => {
 /* ── Price band heatmap ── */
 const priceBands = ["Budget", "Mid", "Premium", "Luxury"] as const;
 const priceBandData: Record<string, Record<string, number>> = {
-  "Butter Drinks": { Budget: 22, Mid: 48, Premium: 38, Luxury: 8 },
+  "Butter Biscuits": { Budget: 22, Mid: 48, Premium: 38, Luxury: 8 },
   Glucose: { Budget: 35, Mid: 42, Premium: 12, Luxury: 0 },
-  "Cream Beverages": { Budget: 18, Mid: 32, Premium: 14, Luxury: 0 },
+  "Cream Biscuits": { Budget: 18, Mid: 32, Premium: 14, Luxury: 0 },
   "Digestive / Health": { Budget: 5, Mid: 22, Premium: 18, Luxury: 4 },
   Wafers: { Budget: 8, Mid: 18, Premium: 8, Luxury: 0 },
-  "Kids Beverages": { Budget: 12, Mid: 22, Premium: 6, Luxury: 0 },
-  "Premium Drinks": { Budget: 0, Mid: 8, Premium: 16, Luxury: 6 },
+  "Kids Biscuits": { Budget: 12, Mid: 22, Premium: 6, Luxury: 0 },
+  "Premium Biscuits": { Budget: 0, Mid: 8, Premium: 16, Luxury: 6 },
   Rusk: { Budget: 10, Mid: 14, Premium: 2, Luxury: 0 },
 };
 
-/* ── Brand activity scatter — Beverages ── */
+/* ── Brand activity scatter — Biscuits ── */
 const brandActivityData = [
-  { brand: "PepsiCo", skuCount: 52, activity: 88, adSpend: "₹ 12.4L", roas: "4.8x", availability: 94, contentScore: 82 },
+  { brand: "Parle", skuCount: 52, activity: 88, adSpend: "₹ 12.4L", roas: "4.8x", availability: 94, contentScore: 82 },
   { brand: "Almarai", skuCount: 68, activity: 45, adSpend: "₹ 8.2L", roas: "3.2x", availability: 91, contentScore: 68 },
-  { brand: "Coca-Cola", skuCount: 42, activity: 82, adSpend: "₹ 10.1L", roas: "4.2x", availability: 88, contentScore: 76 },
+  { brand: "Coca-Cookies", skuCount: 42, activity: 82, adSpend: "₹ 10.1L", roas: "4.2x", availability: 88, contentScore: 76 },
   { brand: "Rauch", skuCount: 18, activity: 90, adSpend: "₹ 5.6L", roas: "5.1x", availability: 86, contentScore: 84 },
   { brand: "Masafi", skuCount: 14, activity: 72, adSpend: "₹ 4.2L", roas: "3.8x", availability: 82, contentScore: 79 },
   { brand: "Anmol", skuCount: 38, activity: 25, adSpend: "₹ 2.1L", roas: "2.4x", availability: 72, contentScore: 52 },
@@ -93,13 +93,13 @@ const CategoryAssortmentView: React.FC = () => {
     itemStyle: { color: "hsl(var(--muted-foreground))" },
   };
 
-  const yourBrand = brandActivityData.find(b => b.brand === "PepsiCo")!;
+  const yourBrand = brandActivityData.find(b => b.brand === "Parle")!;
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div>
         <h1 className="text-xl font-display font-bold text-foreground">Category Assortment</h1>
-        <p className="text-xs text-muted-foreground mt-1">Assortment health, white space, and opportunity signals across beverage sub-categories</p>
+        <p className="text-xs text-muted-foreground mt-1">Assortment health, white space, and opportunity signals across biscuits sub-categories</p>
       </div>
 
       {/* Visual 1 — Category Health Scorecard */}
@@ -194,7 +194,7 @@ const CategoryAssortmentView: React.FC = () => {
         {/* Brand detail overlay */}
         {selectedBrand && (
           <div className="lg:col-span-2">
-            <PanelCard title={`${selectedBrand.brand} vs You (PepsiCo)`} badge="Comparison" badgeColor="accent" delay={0.05}>
+            <PanelCard title={`${selectedBrand.brand} vs You (Parle)`} badge="Comparison" badgeColor="accent" delay={0.05}>
               <button onClick={() => setSelectedBrand(null)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"><X size={14} /></button>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
@@ -202,7 +202,7 @@ const CategoryAssortmentView: React.FC = () => {
                     <tr className="border-b border-border">
                       <th className="text-left py-2 pr-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Metric</th>
                       <th className="text-center py-2 px-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{selectedBrand.brand}</th>
-                      <th className="text-center py-2 px-4 text-[10px] font-mono text-primary uppercase tracking-widest">PepsiCo (You)</th>
+                      <th className="text-center py-2 px-4 text-[10px] font-mono text-primary uppercase tracking-widest">Parle (You)</th>
                       <th className="text-center py-2 px-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Delta</th>
                     </tr>
                   </thead>

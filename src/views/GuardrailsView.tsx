@@ -32,7 +32,7 @@ const campaignTypes = ["Brand Search", "Performance Max", "Non-Brand", "Retarget
 // ─── Mock campaign list for "custom" scope ───
 const MOCK_CAMPAIGNS = [
   { id: "creatine-retargeting", name: "Creatine Retargeting" },
-  { id: "whey-protein-sponsored", name: "Whey Protein — Sponsored" },
+  { id: "cookies-protein-sponsored", name: "Cream Biscuits — Sponsored" },
   { id: "brand-search-main", name: "Brand Search — Main" },
   { id: "perf-max-protein", name: "Performance Max — Protein" },
   { id: "festival-diwali", name: "Diwali Campaign" },
@@ -144,7 +144,7 @@ const ScopeSelector: React.FC<{
   );
 };
 
-// ─── Compact blocked actions chips ───
+// ─── Compact blocked actions biscuits ───
 const BlockedActionsChips: React.FC<{ actions: ActionPrimitive[] }> = ({ actions }) => {
   const groupColors: Record<string, string> = {
     "Campaign state": "rgba(79,127,255,0.15)",

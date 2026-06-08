@@ -29,7 +29,7 @@ const offlineChannels = [
     estCost: "₹ 4.5L/mo",
     projImpact: "+18% brand recall, +12% repeat purchase",
     roi: "3.5x (blended online+offline)",
-    rationale: "65% of beverage purchases happen in kirana stores. Direct shelf visibility and sampling converts at 15%.",
+    rationale: "65% of biscuits purchases happen in kirana stores. Direct shelf visibility and sampling converts at 15%.",
   },
   {
     channel: "Metro/Transit Ads",
@@ -39,7 +39,7 @@ const offlineChannels = [
     estCost: "₹ 7L/mo",
     projImpact: "+20% brand search volume, +10% online sales",
     roi: "2.6x (attributed via search lift)",
-    rationale: "Transit ads drive measurable search lift within 48 hours. Tea-time beverage positioning resonates with commuter demographic.",
+    rationale: "Transit ads drive measurable search lift within 48 hours. Tea-time biscuits positioning resonates with commuter demographic.",
   },
   {
     channel: "School & College Events",
@@ -49,7 +49,7 @@ const offlineChannels = [
     estCost: "₹ 3L/quarter",
     projImpact: "+30% social mentions, +20% new customer acquisition (Kids segment)",
     roi: "4.2x (tracked via promo codes)",
-    rationale: "Kids beverage segment (Mirinda, Pepsi) directly benefits from school sampling. Parents drive repeat purchase.",
+    rationale: "Kids biscuits segment (Sunfeast, Parle-G) directly benefits from school sampling. Parents drive repeat purchase.",
   },
   {
     channel: "Radio Sponsorships",
@@ -59,7 +59,7 @@ const offlineChannels = [
     estCost: "₹ 1.8L/mo",
     projImpact: "+8% direct traffic, high recall rate",
     roi: "3.8x (promo code tracked)",
-    rationale: "Radio listeners in Tier 2-3 cities have high beverage purchase frequency. Low competition in beverage radio ads.",
+    rationale: "Radio listeners in Tier 2-3 cities have high biscuits purchase frequency. Low competition in biscuits radio ads.",
   },
 ];
 

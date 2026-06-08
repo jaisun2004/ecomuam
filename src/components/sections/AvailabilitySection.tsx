@@ -53,11 +53,11 @@ const actionItems: ActionItem[] = [
 
 const campaignTriggers: CampaignTrigger[] = [
   {
-    id: "avail-1", signal: "Competitor OOS on Energy Drinks",
+    id: "avail-1", signal: "Competitor OOS on Energy Biscuits",
     signalDetail: "RedBull & Monster out of stock on Blinkit NCR & Zepto Delhi NCR for 48+ hours",
     strategy: "Competitor OOS Conquesting", campaignType: "Sponsored Product + Banner Ad",
     platforms: ["Blinkit", "Zepto", "Instamart"],
-    keywords: ["energy drink", "caffeine drink", "gym drink", "pre workout drink"],
+    keywords: ["energy biscuits", "caffeine biscuits", "gym biscuits", "pre workout biscuits"],
     estimatedImpact: "+₹ 8.5L revenue capture in 7 days", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },

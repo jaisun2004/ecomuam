@@ -120,15 +120,15 @@ const anomalies = [
   },
   {
     id: 3, time: "1 hr ago", severity: "warning" as const, location: "Riyadh", kpi: "Market Share", brand: "ZapDrink", sku: "SKU-101 (Energy)",
-    detail: "Lost #1 organic rank on 'energy drink' to Competitor B.",
+    detail: "Lost #1 organic rank on 'energy biscuits' to Competitor B.",
     investigation: {
       platforms: [
         { name: "Instamart", status: "Rank: #1 → #3", since: "18 hrs", lastPrice: "₹ 199", fulfillment: "FBA" },
         { name: "Blinkit", status: "Rank: #2 → #4", since: "12 hrs", lastPrice: "₹ 210", fulfillment: "Dark store" },
       ],
-      rootCause: "Competitor B (BoltEnergy) launched a new variant with 50+ seeded reviews and aggressive sponsored placement on 'energy drink' keyword.",
+      rootCause: "Competitor B (BoltEnergy) launched a new variant with 50+ seeded reviews and aggressive sponsored placement on 'energy biscuits' keyword.",
       revenueImpact: "Organic traffic down 31% in last 24 hrs. Estimated ₹ 2.1L/week loss if rank not recovered.",
-      recommendation: "Boost sponsored bid on 'energy drink' by 40%. Launch review generation campaign. Consider A+ content refresh with comparison charts.",
+      recommendation: "Boost sponsored bid on 'energy biscuits' by 40%. Launch review generation campaign. Consider A+ content refresh with comparison charts.",
     },
   },
   {

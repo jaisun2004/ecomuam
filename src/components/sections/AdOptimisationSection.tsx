@@ -45,7 +45,7 @@ const AdOptimisationSection = () => {
       signalDetail: "3 keywords running below 1.5x ROAS for 5+ days",
       strategy: "Budget Reallocation", campaignType: "Pause low performers, boost high ROAS",
       platforms: ["Instamart", "Instamart"],
-      keywords: ["energy supplement", "health drink powder", "vitamin mix"],
+      keywords: ["energy supplement", "health biscuits powder", "vitamin mix"],
       estimatedImpact: "Save ₹ 15K/week and redirect to 4x+ ROAS keywords", urgency: "high",
       icon: <Target className="h-4 w-4 text-warning" />,
     },
@@ -54,7 +54,7 @@ const AdOptimisationSection = () => {
       signalDetail: "Competitor B dropped sponsored visibility 60% this week",
       strategy: "Opportunistic Conquesting", campaignType: "Exact Match + Category Targeting",
       platforms: ["Instamart", "Blinkit"],
-      keywords: ["protein bar", "whey protein bar", "gym snack bar"],
+      keywords: ["protein bar", "cream biscuits bar", "gym snack bar"],
       estimatedImpact: "+25% impression share on protein bar category", urgency: "critical",
       icon: <Zap className="h-4 w-4 text-destructive" />,
     },
@@ -87,7 +87,7 @@ const AdOptimisationSection = () => {
               <h3 className="font-heading font-semibold text-foreground mb-4">Active Campaigns</h3>
               <div className="space-y-3">
                 {[
-                  { name: 'Summer Sale - Energy Drinks', status: 'Active', budget: '₹ 50,000', roas: '4.2x' },
+                  { name: 'Summer Sale - Energy Biscuits', status: 'Active', budget: '₹ 50,000', roas: '4.2x' },
                   { name: 'Competitor Conquesting - RedBull', status: 'Active', budget: '₹ 30,000', roas: '2.8x' },
                   { name: 'Brand Defense', status: 'Paused', budget: '₹ 20,000', roas: '5.1x' },
                 ].map((c, i) => (
@@ -256,8 +256,8 @@ const AdOptimisationSection = () => {
                   </thead>
                   <tbody className="divide-y divide-border/50">
                     {[
-                      { platform: 'Instamart', keyword: 'energy drink', city: 'Delhi NCR', spend: '₹ 5K', roas: 4.2 },
-                      { platform: 'Instamart', keyword: 'energy drink', city: 'Mumbai', spend: '₹ 3.2K', roas: 3.8 },
+                      { platform: 'Instamart', keyword: 'energy biscuits', city: 'Delhi NCR', spend: '₹ 5K', roas: 4.2 },
+                      { platform: 'Instamart', keyword: 'energy biscuits', city: 'Mumbai', spend: '₹ 3.2K', roas: 3.8 },
                       { platform: 'Instamart', keyword: 'my brand', city: 'Riyadh', spend: '₹ 1.5K', roas: 5.5 },
                       { platform: 'Blinkit', keyword: 'refreshment', city: 'Delhi NCR', spend: '₹ 800', roas: 2.1 },
                       { platform: 'Instamart', keyword: 'redbull', city: 'Khalifa City', spend: '₹ 2.1K', roas: 1.8 },
@@ -449,15 +449,15 @@ const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
   const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "BigBasket"];
 
   const historicalCampaigns = [
-    { name: 'Summer Sale - Energy Drinks', date: 'Jun 2025', roas: '4.2x', spend: '₹ 50K' },
+    { name: 'Summer Sale - Energy Biscuits', date: 'Jun 2025', roas: '4.2x', spend: '₹ 50K' },
     { name: 'Competitor Conquesting - RedBull', date: 'May 2025', roas: '2.8x', spend: '₹ 30K' },
     { name: 'Diwali Festival Push', date: 'Oct 2024', roas: '5.6x', spend: '₹ 1.2L' },
   ];
 
   const aiSuggestions = [
-    { name: 'Stock Recovery Blitz', reason: 'Competitor X out of stock on 3 SKUs in Delhi NCR', platforms: ['Instamart', 'Blinkit'], budget: '₹ 25K', estRoas: '4.5x', keywords: ['energy drink', 'protein shake', 'health drink'] },
+    { name: 'Stock Recovery Blitz', reason: 'Competitor X out of stock on 3 SKUs in Delhi NCR', platforms: ['Instamart', 'Blinkit'], budget: '₹ 25K', estRoas: '4.5x', keywords: ['energy biscuits', 'protein shake', 'health biscuits'] },
     { name: 'Price Advantage Campaign', reason: 'Your MRP is 12% lower than Competitor Y on Instamart', platforms: ['Instamart'], budget: '₹ 15K', estRoas: '3.8x', keywords: ['affordable energy', 'best price protein'] },
-    { name: 'Weekend Warrior Push', reason: '40% higher conversions on weekends historically', platforms: ['Instamart', 'Zepto', 'Blinkit'], budget: '₹ 20K', estRoas: '5.1x', keywords: ['weekend deal', 'quick delivery drink'] },
+    { name: 'Weekend Warrior Push', reason: '40% higher conversions on weekends historically', platforms: ['Instamart', 'Zepto', 'Blinkit'], budget: '₹ 20K', estRoas: '5.1x', keywords: ['weekend deal', 'quick delivery biscuits'] },
   ];
 
   const togglePlatform = (p: string) => {
@@ -611,7 +611,7 @@ const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
 
               <div>
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Keywords (comma-separated)</label>
-                <textarea value={manualForm.keywords} onChange={e => setManualForm({ ...manualForm, keywords: e.target.value })} placeholder="energy drink, protein bar, health supplement"
+                <textarea value={manualForm.keywords} onChange={e => setManualForm({ ...manualForm, keywords: e.target.value })} placeholder="energy biscuits, protein bar, health supplement"
                   className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none h-20" />
               </div>
 

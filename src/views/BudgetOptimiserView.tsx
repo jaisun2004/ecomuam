@@ -40,11 +40,11 @@ const toneClasses: Record<string, string> = {
 };
 
 const budgetUtilData = [
-  { name: "Pepsi 1L", ratio: 82, color: "hsl(160,70%,48%)" },
+  { name: "Parle-G 1L", ratio: 82, color: "hsl(160,70%,48%)" },
   { name: "Q-Commerce Push", ratio: 91, color: "hsl(38,92%,50%)" },
   { name: "Mountain Dew RT", ratio: 98, color: "hsl(0,76%,57%)" },
   { name: "Aquafina Brand", ratio: 67, color: "hsl(160,70%,48%)" },
-  { name: "7UP SP", ratio: 88, color: "hsl(38,92%,50%)" },
+  { name: "Marie Gold SP", ratio: 88, color: "hsl(38,92%,50%)" },
 ];
 
 const wastedSpendData = [
@@ -57,27 +57,27 @@ const samePlatformShifts = [
   {
     platform: "Instamart", color: "#FF9900",
     from: { campaign: "Lipton Ice Tea Peach — SP", roas: "2.1x", currentSpend: "₹ 1.2L" },
-    to: { campaign: "Pepsi 1L — SP", roas: "5.1x", currentSpend: "₹ 3.8L" },
+    to: { campaign: "Parle-G 1L — SP", roas: "5.1x", currentSpend: "₹ 3.8L" },
     amount: "₹ 40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
   },
   {
     platform: "Instamart", color: "#2F77FF",
-    from: { campaign: "Mirinda Retargeting", roas: "2.1x", currentSpend: "₹ 2.5L" },
+    from: { campaign: "Sunfeast Retargeting", roas: "2.1x", currentSpend: "₹ 2.5L" },
     to: { campaign: "Mountain Dew Push", roas: "4.2x", currentSpend: "₹ 1.0L" },
     amount: "₹ 60K", projImpact: "+800 conversions, campaign ROAS → 4.5x",
   },
   {
     platform: "Blinkit", color: "#FDDC2B",
-    from: { campaign: "Generic Beverage Ads", roas: "2.8x", currentSpend: "₹ 1.2L" },
-    to: { campaign: "Pepsi Q-Commerce Push", roas: "3.8x", currentSpend: "₹ 2.4L" },
+    from: { campaign: "Generic Biscuits Ads", roas: "2.8x", currentSpend: "₹ 1.2L" },
+    to: { campaign: "Parle-G Q-Commerce Push", roas: "3.8x", currentSpend: "₹ 2.4L" },
     amount: "₹ 25K", projImpact: "+500 conversions, better geo-targeting",
   },
 ];
 
 const crossPlatformShifts = [
   {
-    from: { platform: "Instamart", color: "#2F77FF", campaign: "Mirinda Retargeting", roas: "2.1x", spend: "₹ 2.5L" },
-    to: { platform: "Instamart", color: "#FF9900", campaign: "Pepsi 1L — SP", roas: "5.1x", spend: "₹ 3.8L" },
+    from: { platform: "Instamart", color: "#2F77FF", campaign: "Sunfeast Retargeting", roas: "2.1x", spend: "₹ 2.5L" },
+    to: { platform: "Instamart", color: "#FF9900", campaign: "Parle-G 1L — SP", roas: "5.1x", spend: "₹ 3.8L" },
     amount: "₹ 80K", projImpact: "Incremental conversions +2,100, blended portfolio ROAS +0.5x",
     confidence: 92,
   },
@@ -89,7 +89,7 @@ const crossPlatformShifts = [
   },
   {
     from: { platform: "Zepto", color: "#833AB4", campaign: "Low-stock geo campaigns", roas: "1.8x", spend: "₹ 60K" },
-    to: { platform: "Blinkit", color: "#FDDC2B", campaign: "Pepsi Q-Commerce Push", roas: "3.8x", spend: "₹ 2.4L" },
+    to: { platform: "Blinkit", color: "#FDDC2B", campaign: "Parle-G Q-Commerce Push", roas: "3.8x", spend: "₹ 2.4L" },
     amount: "₹ 30K", projImpact: "Better dark-store coverage + higher ROAS",
     confidence: 78,
   },
@@ -363,11 +363,11 @@ interface CampaignReco {
   reason: string;
 }
 const CAMPAIGN_RECOS: CampaignReco[] = [
-  { id: "r1", campaign: "Pepsi 1L — Blinkit SP", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Budget +₹ 800/day", changeTone: "green", reason: "ROAS 4.2x vs goal 3.0x — capacity headroom on top-10 keywords." },
+  { id: "r1", campaign: "Parle-G 1L — Blinkit SP", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Budget +₹ 800/day", changeTone: "green", reason: "ROAS 4.2x vs goal 3.0x — capacity headroom on top-10 keywords." },
   { id: "r2", campaign: "Aquafina 1.5L — Instamart", platform: "Instamart", platformColor: "#0E4C92", change: "↓ Bid −12%", changeTone: "amber", reason: "CTR holding but CPC up 18% w/w — overpaying for same clicks." },
-  { id: "r3", campaign: "7UP 1L — Zepto Riyadh", platform: "Zepto", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
+  { id: "r3", campaign: "Marie Gold 1L — Zepto Riyadh", platform: "Zepto", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
   { id: "r4", campaign: "Mountain Dew — Instamart SP", platform: "Instamart", platformColor: "#FEEE00", change: "Shift ₹ 500 → Zepto", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
-  { id: "r5", campaign: "Lipton Ice Tea Peach — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Coca-Cola OOS in 3 Mumbai areas — capture defensive auctions now." },
+  { id: "r5", campaign: "Lipton Ice Tea Peach — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Coca-Cookies OOS in 3 Mumbai areas — capture defensive auctions now." },
   { id: "r6", campaign: "Tropicana OJ — Instamart Brand", platform: "Instamart", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Almarai entered top-10 on brand keywords — defend before rank entrenches." },
 ];
 const tonePill: Record<string, string> = { red: "bg-sw-red-dim text-sw-red", amber: "bg-sw-amber-dim text-sw-amber", green: "bg-sw-green-dim text-sw-green", purple: "bg-sw-purple-dim text-sw-purple" };
@@ -615,8 +615,8 @@ const BudgetOptimiserView: React.FC = () => {
             <h3 className="text-sm font-medium text-foreground mb-1">Budget Shift Impact Simulator</h3>
             <p className="text-[11px] text-muted-foreground mb-3">Estimate the ROAS impact of moving budget between campaigns (read-only)</p>
             <div className="grid grid-cols-3 gap-4">
-              <div><label className="text-[10px] text-muted-foreground">From Campaign</label><p className="text-xs text-foreground mt-1">Mirinda Retargeting (2.1x ROAS)</p></div>
-              <div><label className="text-[10px] text-muted-foreground">To Campaign</label><p className="text-xs text-foreground mt-1">Pepsi 1L — SP (5.1x ROAS)</p></div>
+              <div><label className="text-[10px] text-muted-foreground">From Campaign</label><p className="text-xs text-foreground mt-1">Sunfeast Retargeting (2.1x ROAS)</p></div>
+              <div><label className="text-[10px] text-muted-foreground">To Campaign</label><p className="text-xs text-foreground mt-1">Parle-G 1L — SP (5.1x ROAS)</p></div>
               <div><label className="text-[10px] text-muted-foreground">Amount</label><p className="text-xs text-foreground mt-1">₹ 40,000</p></div>
             </div>
             <div className="mt-3 p-3 rounded-xl bg-sw-green-dim border border-sw-green/20">

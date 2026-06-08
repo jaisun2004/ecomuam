@@ -39,8 +39,8 @@ type CompetitorBrand = {
 
 const competitorBrands: CompetitorBrand[] = [
   { name: "Our SKU", isUs: true, color: "hsl(270,60%,42%)", currentRank: 4, startRank: 9, organicRank: 5, sponsoredRank: 3 },
-  { name: "PepsiCo Mountain Dew", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
-  { name: "Coca-Cola Premium", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
+  { name: "Parle Mountain Dew", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
+  { name: "Coca-Cookies Premium", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
   { name: "Almarai Hide & Seek", color: "hsl(35,85%,50%)", currentRank: 8, startRank: 7, organicRank: 9, sponsoredRank: 7 },
   { name: "Rauch Choco Chip", color: "hsl(140,55%,40%)", currentRank: 11, startRank: 8, organicRank: 12, sponsoredRank: 10 },
 ];
@@ -68,7 +68,7 @@ const buildCompetitorRankSeries = (days: number) => {
 // Low-ROAS / high-spend campaign candidates with concrete details
 const reductionCandidates = [
   {
-    name: "7UP — Generic Search",
+    name: "Marie Gold — Generic Search",
     platform: "Instamart",
     dailySpend: 6800,
     suggestedSpend: 4760,
@@ -78,7 +78,7 @@ const reductionCandidates = [
     why: "ROAS 1.4x, organic rank already #3 — paid spend redundant",
   },
   {
-    name: "Pepsi — Broad Match",
+    name: "Parle-G — Broad Match",
     platform: "Instamart",
     dailySpend: 8900,
     suggestedSpend: 7120,
@@ -100,7 +100,7 @@ const reductionCandidates = [
 ].sort((a, b) => b.monthlySavings - a.monthlySavings);
 
 const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 1.5L", "Lipton Ice Tea Peach 320ml"];
+const skuOptions = ["Parle-G 1L", "Marie Gold 1L", "Aquafina 1.5L", "Lipton Ice Tea Peach 320ml"];
 const presets = ["7D", "30D", "90D"] as const;
 type Preset = (typeof presets)[number];
 

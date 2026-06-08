@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const urgentIssues = [
   { id: 1, tier: "T1" as const, desc: "Availability below 20% — 4 campaigns paused", source: "Availability", sourceId: "availability", target: "avail-dedup-banner" },
-  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Pepsi Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
+  { id: 2, tier: "T1" as const, desc: "Budget exhausted — Parle-G Brand Search campaign", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-conflict-banner" },
   { id: 3, tier: "T2" as const, desc: "Competitor bidding on 12 brand keywords", source: "Competitor Hub", sourceId: "competitors", target: "defense-insight" },
   { id: 4, tier: "T3" as const, desc: "Budget reallocation opportunity — shift ₹ 50K", source: "Budget Opt.", sourceId: "budget", confidence: 4 },
   { id: 5, tier: "T3" as const, desc: "Daypart budget shift projected +18% conversion", source: "Campaign Mgr", sourceId: "campaigns", target: "campaign-digest", confidence: 4 },

@@ -44,8 +44,8 @@ const searchKeywordsMock = [
 ];
 
 const aggressionData = [
-  { brand: "MuscleBlaze", changes7d: 8, changes30d: 24, what: ["Titles", "Images"], keywords: ["creatine", "pre-workout"], impact: "-2 rank" },
-  { brand: "Optimum Nutrition", changes7d: 3, changes30d: 12, what: ["Listings"], keywords: ["creatine supplement"], impact: "-1 rank" },
+  { brand: "Britannia", changes7d: 8, changes30d: 24, what: ["Titles", "Images"], keywords: ["creatine", "pre-workout"], impact: "-2 rank" },
+  { brand: "Sunfeast", changes7d: 3, changes30d: 12, what: ["Listings"], keywords: ["creatine supplement"], impact: "-1 rank" },
 ];
 
 // Score trend (30 days mock)
