@@ -64,13 +64,14 @@ interface Reco {
 }
 
 const SKUS = [
-  "Pepsi 1L PET", "Pepsi 1.5L PET", "Pepsi 330ml Can", "Pepsi Black 1L",
-  "7UP 330ml Can", "7UP 1L PET", "Mountain Dew 500ml", "Mirinda Orange 1L",
-  "Lay's Classic 150g", "Lay's Salt & Vinegar 150g", "Doritos Nacho 150g",
-  "Cheetos Crunchy 130g", "Quaker Oats 1kg", "Tropicana Orange 1L",
+  "Parle-G Gold 200g", "Parle-G Original 250g", "Hide & Seek Chocolate 200g",
+  "Bourbon Cream 150g", "Good Day Cashew 200g", "Good Day Butter 150g",
+  "Marie Gold 250g", "NutriChoice Digestive 250g", "Milk Bikis 150g",
+  "Dark Fantasy Choco Fills 75g", "50-50 Maska Chaska 150g", "Krackjack 200g",
+  "Monaco Classic 150g", "Oreo Vanilla 120g", "Treat Jim Jam 150g",
 ];
 
-const KEYWORDS = ["cola drink", "soft drink 1l", "diet pepsi", "energy soda", "fizzy juice", "lemon soda 500ml", "party pack soda", "midnight snack chips"];
+const KEYWORDS = ["glucose biscuits", "cream biscuits", "digestive biscuits", "marie biscuits", "chocolate biscuits 200g", "cookies pack", "tea time biscuits", "kids snack biscuits"];
 
 function makeReco(i: number): Reco {
   const sku = SKUS[i % SKUS.length];
