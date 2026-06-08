@@ -222,13 +222,17 @@ interface MonthTarget {
   direction: "up" | "down"; // up = higher is better
 }
 const MONTH_TARGETS: MonthTarget[] = [
-  { key: "spend",  label: "Spend (MTD)", current: 684_000, target: 900_000, unit: "₹", format: n => `₹ ${(n/1000).toFixed(0)}K`, direction: "up" },
+  { key: "spend",  label: "Spend (MTD)", current: 182_400, target: 900_000, unit: "₹", format: n => `₹ ${(n/1000).toFixed(0)}K`, direction: "up" },
   { key: "roas",   label: "ROAS",        current: 4.2,     target: 3.5,     unit: "x",   format: n => `${n.toFixed(1)}x`,            direction: "up" },
   { key: "acos",   label: "ACoS",        current: 22,      target: 18,      unit: "%",   format: n => `${n.toFixed(0)}%`,            direction: "down" },
-  { key: "orders", label: "Orders (MTD)",current: 142_300, target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },
+  { key: "orders", label: "Orders (MTD)",current: 38_100,  target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },
 ];
 
-const MONTH_ELAPSED_PCT = 76; // ~day 23 of 30 — used as the pacing baseline
+// June 8 → day 8 of 30
+const MONTH_ELAPSED_PCT = 27;
+const MONTH_DAY = 8;
+const MONTH_DAYS_TOTAL = 30;
+const MONTH_LABEL = "June";
 
 const TargetCard: React.FC<{ t: MonthTarget }> = ({ t }) => {
   const pct = t.direction === "up"
