@@ -10,50 +10,40 @@ import { toast } from "@/hooks/use-toast";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 500ml", "Mountain Dew 1L", "Lipton Ice Tea 320ml"];
-const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
+const platformOptions = ["Instamart", "Blinkit", "Zepto"];
+const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
 const priceHistoryBySku: Record<string, Record<string, any[]>> = {
   "Pepsi 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 43, comp1: i >= 15 ? 38 : 41, comp2: 45, comp3: 34 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
   },
   "7UP 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 41, comp3: 30 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
   },
   "Aquafina 500ml": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 43, comp2: 51, comp3: 40 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
   },
   "Mountain Dew 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
   },
   "Lipton Ice Tea 320ml": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
-    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
-    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 23, comp1: 21, comp2: 25, comp3: 18 })),
   },
 };
