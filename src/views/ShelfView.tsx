@@ -45,12 +45,6 @@ const searchDataByPlatform: Record<string, { kw: string; you: number; comp: numb
     { kw: "digestive beverages", you: 33, comp: 29, compName: "Masafi", status: "winning" },
     { kw: "kids beverages", you: 21, comp: 44, compName: "Almarai", status: "losing", poaching: true },
   ],
-    { kw: "butter beverages", you: 22, comp: 48, compName: "Coca-Cola", status: "losing", poaching: true },
-    { kw: "cream beverages", you: 38, comp: 35, compName: "Almarai", status: "winning" },
-    { kw: "glucose beverages", you: 14, comp: 42, compName: "Almarai", status: "losing" },
-    { kw: "digestive beverages", you: 29, comp: 33, compName: "Masafi", status: "losing" },
-    { kw: "kids beverages", you: 31, comp: 28, compName: "Rauch", status: "winning" },
-  ],
   Blinkit: [
     { kw: "butter beverages", you: 35, comp: 30, compName: "Coca-Cola", status: "winning" },
     { kw: "cream beverages", you: 41, comp: 22, compName: "Almarai", status: "winning" },
@@ -58,19 +52,12 @@ const searchDataByPlatform: Record<string, { kw: string; you: number; comp: numb
     { kw: "digestive beverages", you: 44, comp: 18, compName: "Masafi", status: "winning" },
     { kw: "kids beverages", you: 12, comp: 55, compName: "Coca-Cola", status: "losing", poaching: true },
   ],
-  "Zepto": [
+  Zepto: [
     { kw: "butter beverages", you: 31, comp: 33, compName: "Coca-Cola", status: "losing" },
     { kw: "cream beverages", you: 39, comp: 28, compName: "Almarai", status: "winning" },
     { kw: "glucose beverages", you: 22, comp: 35, compName: "Almarai", status: "losing" },
     { kw: "digestive beverages", you: 27, comp: 40, compName: "Masafi", status: "losing", poaching: true },
     { kw: "kids beverages", you: 18, comp: 47, compName: "Coca-Cola", status: "losing" },
-  ],
-  "Zepto": [
-    { kw: "butter beverages", you: 25, comp: 38, compName: "Coca-Cola", status: "losing" },
-    { kw: "cream beverages", you: 33, comp: 41, compName: "Almarai", status: "losing", poaching: true },
-    { kw: "glucose beverages", you: 11, comp: 52, compName: "Almarai", status: "losing" },
-    { kw: "digestive beverages", you: 40, comp: 22, compName: "Masafi", status: "winning" },
-    { kw: "kids beverages", you: 15, comp: 49, compName: "Coca-Cola", status: "losing", poaching: true },
   ],
 };
 

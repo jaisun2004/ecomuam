@@ -17,20 +17,21 @@ import {
   Sparkles, AlertTriangle, Package, DollarSign, BarChart3,
   CheckCircle2, X, Search, ChevronLeft, ChevronRight, ChevronDown,
   Wallet, MapPin, KeyRound, Gauge, Info, Target as TargetIcon,
+  RefreshCw, History, ClipboardCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 
-type Platform = "Blinkit" | "Zepto" | "Instamart" | "Zepto" | "Instamart";
+type Platform = "Blinkit" | "Zepto" | "Instamart";
 type RecoCategory = "Budget" | "City" | "Remove Keywords" | "Bid Changes";
 
-const PLATFORMS: Platform[] = ["Blinkit", "Zepto", "Instamart", "Zepto", "Instamart"];
+const PLATFORMS: Platform[] = ["Blinkit", "Zepto", "Instamart"];
 const CATEGORIES: RecoCategory[] = ["Budget", "City", "Remove Keywords", "Bid Changes"];
 
-const CITIES = ["Mumbai", "Delhi NCR", "Bangalore", "Pune", "Al Ain", "Ras Al Khaimah", "Fujairah"];
+const CITIES = ["Mumbai", "Delhi NCR", "Bangalore", "Pune", "Hyderabad", "Chennai", "Kolkata"];
 
 const PLATFORM_TINT: Record<Platform, string> = {
   Blinkit: "bg-sw-amber-dim text-sw-amber",
-  "Zepto": "bg-sw-purple-dim text-sw-purple",
+  Zepto: "bg-sw-purple-dim text-sw-purple",
   Instamart: "bg-sw-cyan-dim text-sw-cyan",
 };
 
@@ -221,13 +222,17 @@ interface MonthTarget {
   direction: "up" | "down"; // up = higher is better
 }
 const MONTH_TARGETS: MonthTarget[] = [
-  { key: "spend",  label: "Spend (MTD)", current: 684_000, target: 900_000, unit: "₹", format: n => `₹ ${(n/1000).toFixed(0)}K`, direction: "up" },
+  { key: "spend",  label: "Spend (MTD)", current: 182_400, target: 900_000, unit: "₹", format: n => `₹ ${(n/1000).toFixed(0)}K`, direction: "up" },
   { key: "roas",   label: "ROAS",        current: 4.2,     target: 3.5,     unit: "x",   format: n => `${n.toFixed(1)}x`,            direction: "up" },
   { key: "acos",   label: "ACoS",        current: 22,      target: 18,      unit: "%",   format: n => `${n.toFixed(0)}%`,            direction: "down" },
-  { key: "orders", label: "Orders (MTD)",current: 142_300, target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },
+  { key: "orders", label: "Orders (MTD)",current: 38_100,  target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },
 ];
 
-const MONTH_ELAPSED_PCT = 76; // ~day 23 of 30 — used as the pacing baseline
+// June 8 → day 8 of 30
+const MONTH_ELAPSED_PCT = 27;
+const MONTH_DAY = 8;
+const MONTH_DAYS_TOTAL = 30;
+const MONTH_LABEL = "June";
 
 const TargetCard: React.FC<{ t: MonthTarget }> = ({ t }) => {
   const pct = t.direction === "up"
@@ -261,7 +266,60 @@ const TargetCard: React.FC<{ t: MonthTarget }> = ({ t }) => {
   );
 };
 
+/* ===== Approved Recommendations Log (Campaign → Keyword → City) ===== */
+interface LogEntry {
+  id: string;
+  ts: number;          // applied time
+  campaign: string;
+  platform: Platform;
+  keyword: string;
+  city: string;
+  category: RecoCategory;
+  summary: string;     // short description of what was changed
+  user: string;
+}
+
+const NOW = Date.now();
+const m = (n: number) => NOW - n * 60_000;
+const h = (n: number) => NOW - n * 3_600_000;
+const d = (n: number) => NOW - n * 86_400_000;
+
+const SEED_LOG: LogEntry[] = [
+  // Pepsi 1L — Blinkit
+  { id: "l1", ts: m(12),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Mumbai",     category: "Bid Changes",     summary: "Raised bid ₹1.20 → ₹1.42 (+18%)", user: "AI Auto" },
+  { id: "l2", ts: m(38),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Delhi NCR",  category: "Budget",          summary: "Daily budget ₹400 → ₹520 (+30%)", user: "priya.s" },
+  { id: "l3", ts: h(2),   campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "diet pepsi",          city: "Mumbai",     category: "Remove Keywords", summary: "Removed 2 low-intent keywords", user: "AI Auto" },
+  // Lay's — Zepto
+  { id: "l4", ts: h(4),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Bangalore",  category: "City",            summary: "Expanded geo into Bangalore (5 km)", user: "rohit.k" },
+  { id: "l5", ts: h(6),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Pune",       category: "Bid Changes",     summary: "Trimmed bid ₹2.10 → ₹1.85 (−12%)", user: "AI Auto" },
+  // 7UP — Instamart
+  { id: "l6", ts: h(20),  campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "lemon soda 500ml",    city: "Hyderabad",  category: "Budget",          summary: "Trimmed daily budget −15%", user: "priya.s" },
+  { id: "l7", ts: d(1),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Hyderabad",  category: "Remove Keywords", summary: "Negative-keyworded 3 wasted terms", user: "AI Auto" },
+  { id: "l8", ts: d(2),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Chennai",    category: "City",            summary: "Disabled Chennai geo (ROAS 1.6x)", user: "rohit.k" },
+];
+
+const formatRelative = (ts: number) => {
+  const diff = Math.max(0, Date.now() - ts);
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+};
+
+const CATEGORY_DOT: Record<RecoCategory, string> = {
+  "Budget": "bg-sw-green",
+  "City": "bg-sw-cyan",
+  "Remove Keywords": "bg-sw-amber",
+  "Bid Changes": "bg-sw-purple",
+};
+
 const PAGE_SIZE = 30;
+
+// last refresh timestamp — used in header chip
+const LAST_UPDATED_TS = m(4);
 
 const RecommendationsView: React.FC = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -271,6 +329,10 @@ const RecommendationsView: React.FC = () => {
   const [openWarn, setOpenWarn] = useState<{ recoId: string; warnIdx: number } | null>(null);
   const [openGlass, setOpenGlass] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<RecoCategory>>(new Set(CATEGORIES));
+  const [approvedLog, setApprovedLog] = useState<LogEntry[]>(SEED_LOG);
+  const [logExpandedCampaigns, setLogExpandedCampaigns] = useState<Set<string>>(new Set([SEED_LOG[0].campaign]));
+  const [logExpandedKeywords, setLogExpandedKeywords] = useState<Set<string>>(new Set());
+  const [lastUpdated, setLastUpdated] = useState<number>(LAST_UPDATED_TS);
 
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
@@ -313,11 +375,59 @@ const RecommendationsView: React.FC = () => {
 
   const confirmApply = () => {
     if (!openApply) return;
-    setApplied(p => { const n = new Set(p); openApply.forEach(id => n.add(id)); return n; });
-    setSelected(p => { const n = new Set(p); openApply.forEach(id => n.delete(id)); return n; });
-    toast.success(`${openApply.length} recommendation${openApply.length > 1 ? "s" : ""} applied`);
+    const ids = openApply;
+    const newEntries: LogEntry[] = ids.map(id => {
+      const r = MOCK.find(x => x.id === id)!;
+      const kw = (r.changes.find(c => c.field.toLowerCase().includes("keyword"))?.recommended)
+        || r.signals.find(s => s.label.startsWith('"'))?.label.replace(/"/g, "")
+        || r.sku;
+      return {
+        id: `log-${id}-${Date.now()}`,
+        ts: Date.now(),
+        campaign: r.campaign,
+        platform: r.platform,
+        keyword: kw,
+        city: r.city || CITIES[Math.abs(id.charCodeAt(1)) % CITIES.length],
+        category: r.category,
+        summary: r.headline,
+        user: "you",
+      };
+    });
+    setApprovedLog(prev => [...newEntries, ...prev]);
+    setLogExpandedCampaigns(prev => {
+      const n = new Set(prev);
+      newEntries.forEach(e => n.add(e.campaign));
+      return n;
+    });
+    setApplied(p => { const n = new Set(p); ids.forEach(id => n.add(id)); return n; });
+    setSelected(p => { const n = new Set(p); ids.forEach(id => n.delete(id)); return n; });
+    toast.success(`${ids.length} recommendation${ids.length > 1 ? "s" : ""} applied · logged below`);
     setOpenApply(null);
   };
+
+  const refreshRecos = () => {
+    setLastUpdated(Date.now());
+    toast.success("Checked for new recommendations");
+  };
+
+  // Group log: Campaign → Keyword → City
+  const groupedLog = useMemo(() => {
+    const byCampaign = new Map<string, { platform: Platform; keywords: Map<string, LogEntry[]> }>();
+    [...approvedLog].sort((a, b) => b.ts - a.ts).forEach(e => {
+      if (!byCampaign.has(e.campaign)) byCampaign.set(e.campaign, { platform: e.platform, keywords: new Map() });
+      const c = byCampaign.get(e.campaign)!;
+      if (!c.keywords.has(e.keyword)) c.keywords.set(e.keyword, []);
+      c.keywords.get(e.keyword)!.push(e);
+    });
+    return byCampaign;
+  }, [approvedLog]);
+
+  const toggleLogCampaign = (k: string) => setLogExpandedCampaigns(p => {
+    const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n;
+  });
+  const toggleLogKeyword = (k: string) => setLogExpandedKeywords(p => {
+    const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n;
+  });
 
   const RecoRow: React.FC<{ r: Reco }> = ({ r }) => (
     <div className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors">
@@ -380,11 +490,23 @@ const RecommendationsView: React.FC = () => {
             )}
           </p>
         </div>
-        {selected.size > 0 && (
-          <Button size="sm" className="h-8 text-[12px] gap-1.5" onClick={() => setOpenApply(Array.from(selected))}>
-            <CheckCircle2 size={13} /> Apply {selected.size} selected
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full border border-subtle bg-surface-1 text-[11px] text-muted-foreground">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-sw-green opacity-60 animate-ping" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sw-green" />
+            </span>
+            <span>Recommendations updated <span className="text-foreground font-medium">{formatRelative(lastUpdated)}</span></span>
+            <button onClick={refreshRecos} className="ml-1 inline-flex items-center justify-center h-5 w-5 rounded hover:bg-surface-2 text-muted-foreground" title="Refresh now">
+              <RefreshCw size={11} />
+            </button>
+          </div>
+          {selected.size > 0 && (
+            <Button size="sm" className="h-8 text-[12px] gap-1.5" onClick={() => setOpenApply(Array.from(selected))}>
+              <CheckCircle2 size={13} /> Apply {selected.size} selected
+            </Button>
+          )}
+        </div>
       </header>
 
       {/* Section A — Monthly Target Pacing */}
@@ -393,9 +515,9 @@ const RecommendationsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <TargetIcon size={15} className="text-primary" />
             <h2 className="font-display font-semibold text-[14px] text-foreground">Monthly Target Pacing</h2>
-            <span className="text-[11px] text-muted-foreground">— current performance vs target for this month</span>
+            <span className="text-[11px] text-muted-foreground">— {MONTH_LABEL} performance vs end-of-month target</span>
           </div>
-          <span className="text-[11px] text-muted-foreground font-mono">Day 23 / 30 · {MONTH_ELAPSED_PCT}% elapsed</span>
+          <span className="text-[11px] text-muted-foreground font-mono">{MONTH_LABEL} {MONTH_DAY} · Day {MONTH_DAY} / {MONTH_DAYS_TOTAL} · {MONTH_ELAPSED_PCT}% elapsed</span>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {MONTH_TARGETS.map(t => <TargetCard key={t.key} t={t} />)}
@@ -513,6 +635,107 @@ const RecommendationsView: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Section C — Recently Approved Recommendations (Audit log: Campaign → Keyword → City) */}
+      <section className="rounded-2xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="px-5 py-4 border-b border-subtle flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ClipboardCheck size={15} className="text-sw-green" />
+            <h2 className="font-display font-semibold text-[14px] text-foreground">Recently Approved Recommendations</h2>
+            <span className="text-[11px] text-muted-foreground">— audit log of applied changes, grouped Campaign → Keyword → City</span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
+            <History size={11} /> {approvedLog.length} entries
+          </span>
+        </div>
+
+        {approvedLog.length === 0 ? (
+          <div className="px-5 py-8 text-center text-[12px] text-muted-foreground">
+            No recommendations applied yet. Apply one above and it will appear here.
+          </div>
+        ) : (
+          <div className="divide-y divide-subtle">
+            {Array.from(groupedLog.entries()).map(([campaign, c]) => {
+              const isOpen = logExpandedCampaigns.has(campaign);
+              const totalChanges = Array.from(c.keywords.values()).reduce((s, arr) => s + arr.length, 0);
+              const lastTs = Math.max(...Array.from(c.keywords.values()).flat().map(e => e.ts));
+              return (
+                <div key={campaign}>
+                  <button
+                    onClick={() => toggleLogCampaign(campaign)}
+                    className="w-full flex items-center gap-3 px-5 py-3 hover:bg-surface-2/40 transition-colors text-left"
+                  >
+                    <ChevronDown size={14} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${PLATFORM_TINT[c.platform]}`}>{c.platform}</span>
+                    <span className="text-[13px] font-medium text-foreground truncate flex-1">{campaign}</span>
+                    <span className="text-[10.5px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
+                      {c.keywords.size} kw · {totalChanges} changes
+                    </span>
+                    <span className="text-[10.5px] text-muted-foreground w-20 text-right">{formatRelative(lastTs)}</span>
+                  </button>
+
+                  {isOpen && (
+                    <div className="bg-surface-2/30 border-t border-subtle">
+                      {Array.from(c.keywords.entries()).map(([kw, entries]) => {
+                        const kwKey = `${campaign}::${kw}`;
+                        const kwOpen = logExpandedKeywords.has(kwKey);
+                        const byCity = new Map<string, LogEntry[]>();
+                        entries.forEach(e => {
+                          if (!byCity.has(e.city)) byCity.set(e.city, []);
+                          byCity.get(e.city)!.push(e);
+                        });
+                        return (
+                          <div key={kwKey} className="border-t border-subtle/60 first:border-t-0">
+                            <button
+                              onClick={() => toggleLogKeyword(kwKey)}
+                              className="w-full flex items-center gap-3 pl-12 pr-5 py-2 hover:bg-surface-2/60 transition-colors text-left"
+                            >
+                              <ChevronDown size={12} className={`text-muted-foreground transition-transform ${kwOpen ? "" : "-rotate-90"}`} />
+                              <KeyRound size={11} className="text-muted-foreground" />
+                              <span className="text-[12px] text-foreground font-mono truncate flex-1">"{kw}"</span>
+                              <span className="text-[10.5px] text-muted-foreground">
+                                {byCity.size} {byCity.size === 1 ? "city" : "cities"} · {entries.length} action{entries.length > 1 ? "s" : ""}
+                              </span>
+                            </button>
+
+                            {kwOpen && (
+                              <div className="pl-[76px] pr-5 pb-2">
+                                {Array.from(byCity.entries()).map(([city, cityEntries]) => (
+                                  <div key={city} className="mt-1.5">
+                                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mb-1">
+                                      <MapPin size={10} />
+                                      <span className="font-medium text-foreground">{city}</span>
+                                      <span>· {cityEntries.length} change{cityEntries.length > 1 ? "s" : ""}</span>
+                                    </div>
+                                    <ul className="space-y-1">
+                                      {cityEntries.map(e => (
+                                        <li key={e.id} className="flex items-start gap-2 text-[11.5px] pl-4 border-l-2 border-subtle py-1">
+                                          <span className={`mt-1 inline-block h-1.5 w-1.5 rounded-full shrink-0 ${CATEGORY_DOT[e.category]}`} />
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-foreground truncate">{e.summary}</p>
+                                            <p className="text-[10.5px] text-muted-foreground mt-0.5">
+                                              <span className="font-mono">{e.category}</span> · by <span className="text-foreground">{e.user}</span> · {formatRelative(e.ts)}
+                                            </p>
+                                          </div>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
 
       {/* Apply Confirmation */}
       <Dialog open={!!openApply} onOpenChange={(o) => !o && setOpenApply(null)}>

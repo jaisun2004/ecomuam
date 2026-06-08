@@ -97,7 +97,7 @@ const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
 };
 
 const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
+const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
 type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
 
@@ -156,23 +156,14 @@ const keywordDataByPlatform: Record<string, KeywordRank[]> = {
     { keyword: "sugar free beverages", sponsoredRank: 8, organicRank: 18, topCompetitor: "Rauch", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
     { keyword: "kids beverages", sponsoredRank: 2, organicRank: 3, topCompetitor: "Almarai", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-    { keyword: "butter beverages", sponsoredRank: 2, organicRank: 5, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "52K", searchVolNum: 52, shareOfSearch: 16, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "cream beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Almarai", compRank: 3, searchVol: "41K", searchVolNum: 41, shareOfSearch: 18, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "glucose beverages", sponsoredRank: 4, organicRank: 9, topCompetitor: "Almarai", compRank: 1, searchVol: "88K", searchVolNum: 88, shareOfSearch: 9, trend: "flat", action: "Optimise bids", canReduceSpend: false },
-    { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Masafi", compRank: 1, searchVol: "32K", searchVolNum: 32, shareOfSearch: 25, trend: "up", action: "Reduce spend", canReduceSpend: true },
-  ],
   Blinkit: [
     { keyword: "butter beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Almarai", compRank: 2, searchVol: "18K", searchVolNum: 18, shareOfSearch: 35, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "cream beverages", sponsoredRank: 3, organicRank: 6, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "12K", searchVolNum: 12, shareOfSearch: 12, trend: "down", action: "Boost campaign", canReduceSpend: false },
     { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Masafi", compRank: 2, searchVol: "8K", searchVolNum: 8, shareOfSearch: 42, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  "Zepto": [
+  Zepto: [
     { keyword: "butter beverages", sponsoredRank: 2, organicRank: 4, topCompetitor: "Almarai", compRank: 1, searchVol: "14K", searchVolNum: 14, shareOfSearch: 20, trend: "flat", action: "Optimise bids", canReduceSpend: false },
     { keyword: "glucose beverages", sponsoredRank: 5, organicRank: 12, topCompetitor: "Almarai", compRank: 1, searchVol: "22K", searchVolNum: 22, shareOfSearch: 6, trend: "down", action: "New campaign needed", canReduceSpend: false },
-  ],
-  "Zepto": [
-    { keyword: "butter beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "11K", searchVolNum: 11, shareOfSearch: 24, trend: "up", action: "Reduce spend", canReduceSpend: true },
-    { keyword: "cream beverages", sponsoredRank: 3, organicRank: 7, topCompetitor: "Almarai", compRank: 2, searchVol: "9K", searchVolNum: 9, shareOfSearch: 10, trend: "down", action: "Boost campaign", canReduceSpend: false },
   ],
 };
 
