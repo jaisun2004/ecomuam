@@ -10,51 +10,51 @@ import { toast } from "@/hooks/use-toast";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 500ml", "Mountain Dew 1L", "Lipton Ice Tea 320ml"];
-const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", "Talabat Pro": "#FC8019" };
+const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
 const priceHistoryBySku: Record<string, Record<string, any[]>> = {
   "Pepsi 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
-    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
-    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
-    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
-    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 43, comp1: i >= 15 ? 38 : 41, comp2: 45, comp3: 34 })),
-    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 43, comp1: i >= 15 ? 38 : 41, comp2: 45, comp3: 34 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
   },
   "7UP 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
-    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
-    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
-    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
-    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 41, comp3: 30 })),
-    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 41, comp3: 30 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
   },
   "Aquafina 500ml": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
-    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
-    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
-    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
-    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 43, comp2: 51, comp3: 40 })),
-    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 43, comp2: 51, comp3: 40 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
   },
   "Mountain Dew 1L": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
-    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
-    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
-    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
-    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
-    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
   },
   "Lipton Ice Tea 320ml": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
-    "Carrefour": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
-    "Noon": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
-    "Talabat": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
-    "Noon Minutes": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
-    "Talabat Pro": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 23, comp1: 21, comp2: 25, comp3: 18 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 23, comp1: 21, comp2: 25, comp3: 18 })),
   },
 };
 
@@ -68,77 +68,77 @@ const compNamesBySku: Record<string, string[]> = {
 
 const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
   "All SKUs": {
-    Carrefour: [
-      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cola 1L", you: false, price: "AED 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Almarai Juice 1L", you: false, price: "AED 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Rauch Multivit 1L", you: false, price: "AED 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    Instamart: [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "₹ 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Almarai Juice 1L", you: false, price: "₹ 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Rauch Multivit 1L", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Noon: [
-      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cola 1L", you: false, price: "AED 36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    Instamart: [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,482", pos: "#4", posColor: "text-sw-amber", sos: "22%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "₹ 36", priceColor: "text-sw-red", rating: "4.4★", ratingColor: "text-sw-green", reviews: "22,810", pos: "#1", posColor: "text-sw-red", sos: "38%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    Talabat: [
-      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cola 1L", you: false, price: "AED 38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    Blinkit: [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    "Noon Minutes": [
-      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cola 1L", you: false, price: "AED 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    "Zepto": [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
-    "Talabat Pro": [
-      { brand: "PepsiCo Pepsi 1L", you: true, price: "AED 44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
-      { brand: "Coca-Cola 1L", you: false, price: "AED 39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+    "Zepto": [
+      { brand: "PepsiCo Pepsi 1L", you: true, price: "₹ 44", priceColor: "text-primary", rating: "4.0★", ratingColor: "text-sw-amber", reviews: "156", pos: "#4", posColor: "text-sw-red", sos: "18%", sosColor: "text-sw-amber", stock: "LOW STOCK", stockColor: "text-sw-amber bg-sw-amber-dim" },
+      { brand: "Coca-Cola 1L", you: false, price: "₹ 39", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "2,410", pos: "#1", posColor: "text-sw-red", sos: "48%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
   },
 };
 
 const priceAlerts = [
-  { sku: "7UP 1L", competitor: "Coca-Cola", platform: "Carrefour", yourPrice: "AED 35", compPrice: "AED 30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
-  { sku: "Aquafina 500ml", competitor: "Masafi", platform: "Carrefour", yourPrice: "AED 45", compPrice: "AED 40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
-  { sku: "Mountain Dew 1L", competitor: "Almarai", platform: "Noon", yourPrice: "AED 30", compPrice: "AED 28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
-  { sku: "Lipton Ice Tea 320ml", competitor: "Almarai", platform: "Noon Minutes", yourPrice: "AED 20", compPrice: "AED 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
+  { sku: "7UP 1L", competitor: "Coca-Cola", platform: "Instamart", yourPrice: "₹ 35", compPrice: "₹ 30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
+  { sku: "Aquafina 500ml", competitor: "Masafi", platform: "Instamart", yourPrice: "₹ 45", compPrice: "₹ 40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
+  { sku: "Mountain Dew 1L", competitor: "Almarai", platform: "Instamart", yourPrice: "₹ 30", compPrice: "₹ 28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "Lipton Ice Tea 320ml", competitor: "Almarai", platform: "Zepto", yourPrice: "₹ 20", compPrice: "₹ 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
 ];
 
 const platformPricing = [
-  { platform: "Carrefour", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1, needsAttention: false },
-  { platform: "Noon", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
-  { platform: "Talabat", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
-  { platform: "Noon Minutes", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
-  { platform: "Talabat", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
+  { platform: "Instamart", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1, needsAttention: false },
+  { platform: "Instamart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
+  { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
+  { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
+  { platform: "Blinkit", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
 ];
 
 const platformPricingDetail: Record<string, { sku: string; yourPrice: string; compPrice: string; parity: boolean; competitor: string }[]> = {
-  Carrefour: [
-    { sku: "Pepsi 1L", yourPrice: "AED 40", compPrice: "AED 35", parity: false, competitor: "Coca-Cola" },
-    { sku: "7UP 1L", yourPrice: "AED 35", compPrice: "AED 30", parity: false, competitor: "Coca-Cola" },
-    { sku: "Aquafina 500ml", yourPrice: "AED 45", compPrice: "AED 45", parity: true, competitor: "Masafi" },
-    { sku: "Mountain Dew 1L", yourPrice: "AED 30", compPrice: "AED 32", parity: true, competitor: "Almarai" },
+  Instamart: [
+    { sku: "Pepsi 1L", yourPrice: "₹ 40", compPrice: "₹ 35", parity: false, competitor: "Coca-Cola" },
+    { sku: "7UP 1L", yourPrice: "₹ 35", compPrice: "₹ 30", parity: false, competitor: "Coca-Cola" },
+    { sku: "Aquafina 500ml", yourPrice: "₹ 45", compPrice: "₹ 45", parity: true, competitor: "Masafi" },
+    { sku: "Mountain Dew 1L", yourPrice: "₹ 30", compPrice: "₹ 32", parity: true, competitor: "Almarai" },
   ],
-  Noon: [
-    { sku: "Pepsi 1L", yourPrice: "AED 42", compPrice: "AED 36", parity: false, competitor: "Coca-Cola" },
-    { sku: "7UP 1L", yourPrice: "AED 36", compPrice: "AED 31", parity: false, competitor: "Coca-Cola" },
-    { sku: "Aquafina 500ml", yourPrice: "AED 46", compPrice: "AED 41", parity: false, competitor: "Masafi" },
+  Instamart: [
+    { sku: "Pepsi 1L", yourPrice: "₹ 42", compPrice: "₹ 36", parity: false, competitor: "Coca-Cola" },
+    { sku: "7UP 1L", yourPrice: "₹ 36", compPrice: "₹ 31", parity: false, competitor: "Coca-Cola" },
+    { sku: "Aquafina 500ml", yourPrice: "₹ 46", compPrice: "₹ 41", parity: false, competitor: "Masafi" },
   ],
-  Talabat: [
-    { sku: "Pepsi 1L", yourPrice: "AED 42", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
-    { sku: "Mountain Dew 1L", yourPrice: "AED 32", compPrice: "AED 30", parity: false, competitor: "Almarai" },
+  Blinkit: [
+    { sku: "Pepsi 1L", yourPrice: "₹ 42", compPrice: "₹ 38", parity: false, competitor: "Coca-Cola" },
+    { sku: "Mountain Dew 1L", yourPrice: "₹ 32", compPrice: "₹ 30", parity: false, competitor: "Almarai" },
   ],
-  "Noon Minutes": [
-    { sku: "Pepsi 1L", yourPrice: "AED 43", compPrice: "AED 38", parity: false, competitor: "Coca-Cola" },
-    { sku: "Lipton Ice Tea 320ml", yourPrice: "AED 22", compPrice: "AED 20", parity: false, competitor: "Almarai" },
+  "Zepto": [
+    { sku: "Pepsi 1L", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Coca-Cola" },
+    { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Almarai" },
   ],
-  "Talabat Pro": [
-    { sku: "Pepsi 1L", yourPrice: "AED 44", compPrice: "AED 39", parity: false, competitor: "Coca-Cola" },
-    { sku: "7UP 1L", yourPrice: "AED 38", compPrice: "AED 34", parity: false, competitor: "Coca-Cola" },
-    { sku: "Aquafina 500ml", yourPrice: "AED 48", compPrice: "AED 44", parity: false, competitor: "Masafi" },
+  "Zepto": [
+    { sku: "Pepsi 1L", yourPrice: "₹ 44", compPrice: "₹ 39", parity: false, competitor: "Coca-Cola" },
+    { sku: "7UP 1L", yourPrice: "₹ 38", compPrice: "₹ 34", parity: false, competitor: "Coca-Cola" },
+    { sku: "Aquafina 500ml", yourPrice: "₹ 48", compPrice: "₹ 44", parity: false, competitor: "Masafi" },
   ],
 };
 
 const priceAdvantageData = [
-  { sku: "Pepsi 1L", yourPrice: "AED 40", compPrice: "AED 45", competitor: "Rauch", platform: "Carrefour", gap: "−12.5%", keywords: ["unibic butter drinks", "unibic beverages", "premium butter drinks"], estCpc: "AED 3.20", estRoas: "5.2x" },
-  { sku: "Mountain Dew 1L", yourPrice: "AED 30", compPrice: "AED 34", competitor: "Coca-Cola", platform: "Noon", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream beverages", "sunfeast dark fantasy"], estCpc: "AED 2.80", estRoas: "4.6x" },
-  { sku: "Lipton Ice Tea 320ml", yourPrice: "AED 20", compPrice: "AED 24", competitor: "Almarai", platform: "Talabat", gap: "−16.7%", keywords: ["parle krackjack", "salted beverages online", "parle snack beverages"], estCpc: "AED 1.90", estRoas: "6.1x" },
+  { sku: "Pepsi 1L", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Rauch", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter drinks", "unibic beverages", "premium butter drinks"], estCpc: "₹ 3.20", estRoas: "5.2x" },
+  { sku: "Mountain Dew 1L", yourPrice: "₹ 30", compPrice: "₹ 34", competitor: "Coca-Cola", platform: "Instamart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream beverages", "sunfeast dark fantasy"], estCpc: "₹ 2.80", estRoas: "4.6x" },
+  { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Almarai", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted beverages online", "parle snack beverages"], estCpc: "₹ 1.90", estRoas: "6.1x" },
 ];
 
 const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
@@ -156,11 +156,11 @@ const elasticityData = [
 ];
 
 const priceGapTable = [
-  { sku: "7UP 1L", yours: "AED 35", lowest: "AED 30", gap: "+16.7%", action: "Match Price" },
-  { sku: "Aquafina 500ml", yours: "AED 45", lowest: "AED 40", gap: "+12.5%", action: "Match Price" },
-  { sku: "Mountain Dew 1L", yours: "AED 30", lowest: "AED 28", gap: "+7.1%", action: "Monitor" },
-  { sku: "Lipton Ice Tea 320ml", yours: "AED 20", lowest: "AED 18", gap: "+11.1%", action: "Monitor" },
-  { sku: "Pepsi 1L", yours: "AED 40", lowest: "AED 35", gap: "+14.3%", action: "Match Price" },
+  { sku: "7UP 1L", yours: "₹ 35", lowest: "₹ 30", gap: "+16.7%", action: "Match Price" },
+  { sku: "Aquafina 500ml", yours: "₹ 45", lowest: "₹ 40", gap: "+12.5%", action: "Match Price" },
+  { sku: "Mountain Dew 1L", yours: "₹ 30", lowest: "₹ 28", gap: "+7.1%", action: "Monitor" },
+  { sku: "Lipton Ice Tea 320ml", yours: "₹ 20", lowest: "₹ 18", gap: "+11.1%", action: "Monitor" },
+  { sku: "Pepsi 1L", yours: "₹ 40", lowest: "₹ 35", gap: "+14.3%", action: "Match Price" },
 ];
 
 // Price index trend by SKU for analytics filter
@@ -181,7 +181,7 @@ const PricingView: React.FC = () => {
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [selectedSku, setSelectedSku] = useState("Pepsi 1L");
-  const [selectedPlatform, setSelectedPlatform] = useState("Carrefour");
+  const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
   const [priceHistoryToggle, setPriceHistoryToggle] = useState<"sku" | "platform">("sku");
   const [priceHistoryPlatform, setPriceHistoryPlatform] = useState("All");
@@ -238,7 +238,7 @@ const PricingView: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
-          <button onClick={() => { setShowNeedAttention(true); setSelectedPlatform("Noon"); }}
+          <button onClick={() => { setShowNeedAttention(true); setSelectedPlatform("Instamart"); }}
             className="ml-auto px-3 py-1.5 rounded-lg text-[10px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 flex items-center gap-1">
             <AlertTriangle size={10} /> Need Attention
           </button>
@@ -284,10 +284,10 @@ const PricingView: React.FC = () => {
           <p className="text-[10px] text-muted-foreground mb-3">Pricing signals that translate directly to a campaign-level action.</p>
           <div className="space-y-2">
             {[
-              { insight: "Pepsi 1L is 12% cheaper than Coca-Cola on Noon Minutes", delta: "−12%", platform: "Noon Minutes", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
-              { insight: "Lacnor raised price 8% on Talabat — defensive window open on cola keywords", delta: "+8%", platform: "Talabat", action: "Raise bid on competing keywords", icon: TrendingUp, tone: "amber" },
-              { insight: "Aquafina 1.5L underpriced vs market by 15% on Carrefour — margin leaking", delta: "−15%", platform: "Carrefour", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
-              { insight: "Tropicana OJ at parity with Almarai on Noon — hold pricing, push share-of-shelf", delta: "0%", platform: "Noon", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
+              { insight: "Pepsi 1L is 12% cheaper than Coca-Cola on Zepto", delta: "−12%", platform: "Zepto", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
+              { insight: "Lacnor raised price 8% on Blinkit — defensive window open on cola keywords", delta: "+8%", platform: "Blinkit", action: "Raise bid on competing keywords", icon: TrendingUp, tone: "amber" },
+              { insight: "Aquafina 1.5L underpriced vs market by 15% on Instamart — margin leaking", delta: "−15%", platform: "Instamart", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
+              { insight: "Tropicana OJ at parity with Almarai on Instamart — hold pricing, push share-of-shelf", delta: "0%", platform: "Instamart", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
             ].map((row, i) => {
               const Icon = row.icon;
               const toneBg = row.tone === "green" ? "bg-sw-green-dim text-sw-green" : row.tone === "amber" ? "bg-sw-amber-dim text-sw-amber" : row.tone === "red" ? "bg-sw-red-dim text-sw-red" : "bg-sw-purple-dim text-sw-purple";
@@ -408,14 +408,14 @@ const PricingView: React.FC = () => {
             </div>
           ) : (
             (() => {
-              const plats = ["Talabat", "Noon", "Noon Minutes", "Carrefour"];
+              const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
               const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
               const data = base.map((row: any, i: number) => ({
                 day: row.day,
-                Talabat: row.yours,
-                Noon: row.yours - 1 + (i % 3),
-                "Noon Minutes": row.yours + 2 - (i % 4),
-                Carrefour: row.yours - 2 + (i % 5),
+                Blinkit: row.yours,
+                Instamart: row.yours - 1 + (i % 3),
+                "Zepto": row.yours + 2 - (i % 4),
+                Instamart: row.yours - 2 + (i % 5),
               }));
               const latest: any = data[data.length - 1] || {};
               const prev: any = data[data.length - 8] || latest;
@@ -442,7 +442,7 @@ const PricingView: React.FC = () => {
                       <thead>
                         <tr className="text-muted-foreground">
                           <th className="text-left py-1 font-normal">Platform</th>
-                          <th className="text-right py-1 font-normal">Price (AED)</th>
+                          <th className="text-right py-1 font-normal">Price (₹)</th>
                           <th className="text-right py-1 font-normal">Δ 7d</th>
                           <th className="text-right py-1 font-normal">vs Min</th>
                         </tr>

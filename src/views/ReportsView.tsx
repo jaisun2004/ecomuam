@@ -9,22 +9,22 @@ const timeRangeOptions = ["7D", "30D", "90D"];
 
 const plRowsByTime: Record<string, { platform: string; color: string; spend: string; returns: string; retColor: string; margin: string; mColor: string }[]> = {
   "7D": [
-    { platform: "Carrefour", color: "#FF9900", spend: "AED 1.9L", returns: "6.8%", retColor: "text-sw-amber", margin: "39%", mColor: "text-sw-green font-bold" },
-    { platform: "Noon", color: "#2F77FF", spend: "AED 1.3L", returns: "9.1%", retColor: "text-sw-red", margin: "29%", mColor: "text-sw-amber font-bold" },
-    { platform: "Talabat", color: "#FDDC2B", spend: "AED 0.7L", returns: "2.0%", retColor: "text-sw-green", margin: "43%", mColor: "text-sw-green font-bold" },
-    { platform: "Noon Minutes", color: "#833AB4", spend: "AED 0.4L", returns: "1.7%", retColor: "text-sw-green", margin: "45%", mColor: "text-sw-green font-bold" },
+    { platform: "Instamart", color: "#FF9900", spend: "₹ 1.9L", returns: "6.8%", retColor: "text-sw-amber", margin: "39%", mColor: "text-sw-green font-bold" },
+    { platform: "Instamart", color: "#2F77FF", spend: "₹ 1.3L", returns: "9.1%", retColor: "text-sw-red", margin: "29%", mColor: "text-sw-amber font-bold" },
+    { platform: "Blinkit", color: "#FDDC2B", spend: "₹ 0.7L", returns: "2.0%", retColor: "text-sw-green", margin: "43%", mColor: "text-sw-green font-bold" },
+    { platform: "Zepto", color: "#833AB4", spend: "₹ 0.4L", returns: "1.7%", retColor: "text-sw-green", margin: "45%", mColor: "text-sw-green font-bold" },
   ],
   "30D": [
-    { platform: "Carrefour", color: "#FF9900", spend: "AED 7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
-    { platform: "Noon", color: "#2F77FF", spend: "AED 5.2L", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
-    { platform: "Talabat", color: "#FDDC2B", spend: "AED 2.9L", returns: "2.1%", retColor: "text-sw-green", margin: "42%", mColor: "text-sw-green font-bold" },
-    { platform: "Noon Minutes", color: "#833AB4", spend: "AED 1.8L", returns: "1.8%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
+    { platform: "Instamart", color: "#FF9900", spend: "₹ 7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
+    { platform: "Instamart", color: "#2F77FF", spend: "₹ 5.2L", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
+    { platform: "Blinkit", color: "#FDDC2B", spend: "₹ 2.9L", returns: "2.1%", retColor: "text-sw-green", margin: "42%", mColor: "text-sw-green font-bold" },
+    { platform: "Zepto", color: "#833AB4", spend: "₹ 1.8L", returns: "1.8%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
   ],
   "90D": [
-    { platform: "Carrefour", color: "#FF9900", spend: "AED 22L", returns: "6.9%", retColor: "text-sw-amber", margin: "40%", mColor: "text-sw-green font-bold" },
-    { platform: "Noon", color: "#2F77FF", spend: "AED 14L", returns: "9.2%", retColor: "text-sw-red", margin: "30%", mColor: "text-sw-amber font-bold" },
-    { platform: "Talabat", color: "#FDDC2B", spend: "AED 8L", returns: "2.0%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
-    { platform: "Noon Minutes", color: "#833AB4", spend: "AED 5L", returns: "1.6%", retColor: "text-sw-green", margin: "46%", mColor: "text-sw-green font-bold" },
+    { platform: "Instamart", color: "#FF9900", spend: "₹ 22L", returns: "6.9%", retColor: "text-sw-amber", margin: "40%", mColor: "text-sw-green font-bold" },
+    { platform: "Instamart", color: "#2F77FF", spend: "₹ 14L", returns: "9.2%", retColor: "text-sw-red", margin: "30%", mColor: "text-sw-amber font-bold" },
+    { platform: "Blinkit", color: "#FDDC2B", spend: "₹ 8L", returns: "2.0%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
+    { platform: "Zepto", color: "#833AB4", spend: "₹ 5L", returns: "1.6%", retColor: "text-sw-green", margin: "46%", mColor: "text-sw-green font-bold" },
   ],
 };
 
@@ -107,7 +107,7 @@ const ReportsView: React.FC = () => {
             </tbody>
           </table>
           <div className={`mt-4 p-3 rounded-xl ${planAdded ? "bg-sw-green-dim border border-sw-green/20" : "bg-primary/10 border border-primary/20"}`}>
-            <p className="text-[11px] text-foreground">💡 Talabat has the highest net margin. Consider reallocating 10% of Noon spend to Talabat.</p>
+            <p className="text-[11px] text-foreground">💡 Blinkit has the highest net margin. Consider reallocating 10% of Instamart spend to Blinkit.</p>
             <button onClick={() => setPlanAdded(true)} className={`mt-2 px-3 py-1.5 rounded-lg text-[11px] font-medium ${planAdded ? "bg-sw-green/20 text-sw-green" : "bg-primary/20 text-primary hover:bg-primary/30"}`}>
               {planAdded ? "✓ Added to Plan" : "Add to Plan"}
             </button>

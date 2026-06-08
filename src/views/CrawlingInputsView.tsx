@@ -112,7 +112,7 @@ TagInput.displayName = "TagInput";
 const availableKeywords = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks", "beverage combo", "health beverages", "kids beverages", "premium drinks", "rusk online"];
 const availableProducts = ["SKU-GD200", "SKU-GD100", "SKU-MG250", "SKU-5050", "SKU-NC100", "SKU-MF150", "SKU-TREAT75", "SKU-BOURBON", "SKU-JIM100", "SKU-TIGER250"];
 const availablePincodes = ["110001", "110020", "110045", "400001", "400050", "560001", "560034", "500001", "600001", "700001", "411001", "380001", "302001", "226001", "144001"];
-const availablePlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat", "JioMart", "BigBasket"];
+const availablePlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit", "JioMart", "BigBasket"];
 
 const campaignKeywords = [
   { value: "butter beverages", volume: "142K" },
@@ -140,17 +140,17 @@ const campaignPincodes = [
 ];
 
 const campaignPlatforms = [
-  { value: "Carrefour", volume: null },
-  { value: "Noon", volume: null },
-  { value: "Talabat", volume: null },
-  { value: "Noon Minutes", volume: null },
+  { value: "Instamart", volume: null },
+  { value: "Instamart", volume: null },
+  { value: "Blinkit", volume: null },
+  { value: "Zepto", volume: null },
 ];
 
 const CrawlingInputsView: React.FC = () => {
   const [keywords, setKeywords] = useState<string[]>(["butter beverages", "cream beverages", "glucose beverages"]);
   const [products, setProducts] = useState<string[]>(["SKU-GD200", "SKU-MG250"]);
   const [pincodes, setPincodes] = useState<string[]>(["110001", "400001", "560001"]);
-  const [platforms, setPlatforms] = useState<string[]>(["Carrefour", "Noon", "Talabat"]);
+  const [platforms, setPlatforms] = useState<string[]>(["Instamart", "Instamart", "Blinkit"]);
   const [linkToCampaign, setLinkToCampaign] = useState(false);
   const [crawlsPerDay, setCrawlsPerDay] = useState(3);
 

@@ -27,8 +27,8 @@ const contestedKeywords = [
   { keyword: "choco chip drinks", yourPos: "#6", topComp: "Coca-Cola Premium", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
 ];
 
-const platformFilter = ["All Platforms", "Carrefour", "Noon", "Talabat", "Noon Minutes"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4" };
+const platformFilter = ["All Platforms", "Instamart", "Instamart", "Blinkit", "Zepto"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4" };
 
 const keywordOptions = ["butter beverages", "cream beverages", "glucose beverages", "digestive beverages", "choco chip drinks"];
 
@@ -47,36 +47,36 @@ const competitorSpendTrend = [
 ];
 
 const competitorAdProfiles = [
-  { name: "Coca-Cola", color: "#FF5722", estSpend: "AED 5.5L/wk", platforms: ["Carrefour", "Noon", "Talabat"], topKeywords: ["butter beverages", "cream beverages", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
-  { name: "Almarai", color: "#FF9800", estSpend: "AED 2.8L/wk", platforms: ["Carrefour", "Noon"], topKeywords: ["glucose beverages", "parle-g", "butter beverages"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
-  { name: "Rauch", color: "#4CAF50", estSpend: "AED 1.5L/wk", platforms: ["Carrefour", "Noon", "Noon Minutes"], topKeywords: ["drinks", "choco chip", "sugar free beverages"], keywordCount: 22, pattern: "Value play — aggressive on premium drinks segment.", budgetExhausted: false, sponsoredActive: true },
-  { name: "Masafi", color: "#9C27B0", estSpend: "AED 1.8L/wk", platforms: ["Carrefour", "Talabat"], topKeywords: ["digestive beverages", "whole wheat beverages", "healthy beverages"], keywordCount: 18, pattern: "Health segment focus — targeting Aquafina directly.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Coca-Cola", color: "#FF5722", estSpend: "₹ 5.5L/wk", platforms: ["Instamart", "Instamart", "Blinkit"], topKeywords: ["butter beverages", "cream beverages", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Almarai", color: "#FF9800", estSpend: "₹ 2.8L/wk", platforms: ["Instamart", "Instamart"], topKeywords: ["glucose beverages", "parle-g", "butter beverages"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Rauch", color: "#4CAF50", estSpend: "₹ 1.5L/wk", platforms: ["Instamart", "Instamart", "Zepto"], topKeywords: ["drinks", "choco chip", "sugar free beverages"], keywordCount: 22, pattern: "Value play — aggressive on premium drinks segment.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Masafi", color: "#9C27B0", estSpend: "₹ 1.8L/wk", platforms: ["Instamart", "Blinkit"], topKeywords: ["digestive beverages", "whole wheat beverages", "healthy beverages"], keywordCount: 18, pattern: "Health segment focus — targeting Aquafina directly.", budgetExhausted: true, sponsoredActive: false },
 ];
 
 const budgetExhaustionByKeyword: Record<string, { competitor: string; platform: string; keyword: string; lastSeen: string; sponsoredRank: string; opportunity: string }[]> = {
   "butter beverages": [
-    { competitor: "Almarai", platform: "Carrefour", keyword: "butter beverages", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid AED 18→AED 12, maintain position at lower cost" },
-    { competitor: "Masafi", platform: "Talabat", keyword: "butter beverages", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid AED 22→AED 15, capture their traffic" },
+    { competitor: "Almarai", platform: "Instamart", keyword: "butter beverages", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid ₹ 18→₹ 12, maintain position at lower cost" },
+    { competitor: "Masafi", platform: "Blinkit", keyword: "butter beverages", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹ 22→₹ 15, capture their traffic" },
   ],
   "cream beverages": [
-    { competitor: "Rauch", platform: "Carrefour", keyword: "cream beverages", lastSeen: "1h ago", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
+    { competitor: "Rauch", platform: "Instamart", keyword: "cream beverages", lastSeen: "1h ago", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
   ],
   "glucose beverages": [
-    { competitor: "Almarai", platform: "Noon", keyword: "glucose beverages", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid AED 30→AED 20, save AED 8K/day" },
+    { competitor: "Almarai", platform: "Instamart", keyword: "glucose beverages", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid ₹ 30→₹ 20, save ₹ 8K/day" },
   ],
   "digestive beverages": [
-    { competitor: "Masafi", platform: "Carrefour", keyword: "digestive beverages", lastSeen: "1h ago", sponsoredRank: "Flickering", opportunity: "Hold bid — Masafi running out mid-day" },
+    { competitor: "Masafi", platform: "Instamart", keyword: "digestive beverages", lastSeen: "1h ago", sponsoredRank: "Flickering", opportunity: "Hold bid — Masafi running out mid-day" },
   ],
   "choco chip drinks": [
-    { competitor: "Rauch", platform: "Noon", keyword: "choco chip drinks", lastSeen: "5h ago", sponsoredRank: "Absent", opportunity: "Reduce bid AED 20→AED 12" },
+    { competitor: "Rauch", platform: "Instamart", keyword: "choco chip drinks", lastSeen: "5h ago", sponsoredRank: "Absent", opportunity: "Reduce bid ₹ 20→₹ 12" },
   ],
 };
 
 const keywordConquestOpps = [
-  { keyword: "sunfeast dark fantasy", volume: "28K", competition: "Coca-Cola", compSoS: "62%", yourSoS: "0%", bidEst: "AED 18", projROAS: "4.2x" },
-  { keyword: "parle g beverages", volume: "44K", competition: "Almarai", compSoS: "72%", yourSoS: "0%", bidEst: "AED 12", projROAS: "3.8x" },
-  { keyword: "best butter drinks india", volume: "32K", competition: "Multiple", compSoS: "41%", yourSoS: "12%", bidEst: "AED 15", projROAS: "5.1x" },
-  { keyword: "healthy beverages for kids", volume: "18K", competition: "Almarai", compSoS: "34%", yourSoS: "8%", bidEst: "AED 10", projROAS: "4.4x" },
+  { keyword: "sunfeast dark fantasy", volume: "28K", competition: "Coca-Cola", compSoS: "62%", yourSoS: "0%", bidEst: "₹ 18", projROAS: "4.2x" },
+  { keyword: "parle g beverages", volume: "44K", competition: "Almarai", compSoS: "72%", yourSoS: "0%", bidEst: "₹ 12", projROAS: "3.8x" },
+  { keyword: "best butter drinks india", volume: "32K", competition: "Multiple", compSoS: "41%", yourSoS: "12%", bidEst: "₹ 15", projROAS: "5.1x" },
+  { keyword: "healthy beverages for kids", volume: "18K", competition: "Almarai", compSoS: "34%", yourSoS: "8%", bidEst: "₹ 10", projROAS: "4.4x" },
 ];
 
 const CompetitorAdsView: React.FC = () => {
@@ -139,7 +139,7 @@ const CompetitorAdsView: React.FC = () => {
           <KPICard title="Competitors Tracked" value="4" delta="Active ad monitoring" deltaType="positive" sub="Real-time sponsored rank tracking" accentColor="bg-sw-red" delay={0} />
           <KPICard title="Budget Exhaustions (24h)" value="3" delta="Bid reduction opportunity" deltaType="positive" sub="Competitors out of budget today" accentColor="bg-sw-green" delay={0.05} />
           <KPICard title="Keyword Poaching Opps" value="6" delta="Competitor brand keywords" deltaType="positive" sub="Available for conquest campaigns" accentColor="bg-sw-purple" delay={0.1} />
-          <KPICard title="Est. Competitor Spend" value="AED 11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Est. Competitor Spend" value="₹ 11.6L/wk" delta="▲ 18% MoM" deltaType="negative" sub="Combined across 4 competitors" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <PanelCard title="Competitor Ad Profiles" badge="Real-time monitoring" badgeColor="red" delay={0.2}>

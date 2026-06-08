@@ -55,52 +55,52 @@ const wastedSpendData = [
 
 const samePlatformShifts = [
   {
-    platform: "Carrefour", color: "#FF9900",
-    from: { campaign: "Lipton Ice Tea Peach — SP", roas: "2.1x", currentSpend: "AED 1.2L" },
-    to: { campaign: "Pepsi 1L — SP", roas: "5.1x", currentSpend: "AED 3.8L" },
-    amount: "AED 40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
+    platform: "Instamart", color: "#FF9900",
+    from: { campaign: "Lipton Ice Tea Peach — SP", roas: "2.1x", currentSpend: "₹ 1.2L" },
+    to: { campaign: "Pepsi 1L — SP", roas: "5.1x", currentSpend: "₹ 3.8L" },
+    amount: "₹ 40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
   },
   {
-    platform: "Noon", color: "#2F77FF",
-    from: { campaign: "Mirinda Retargeting", roas: "2.1x", currentSpend: "AED 2.5L" },
-    to: { campaign: "Mountain Dew Push", roas: "4.2x", currentSpend: "AED 1.0L" },
-    amount: "AED 60K", projImpact: "+800 conversions, campaign ROAS → 4.5x",
+    platform: "Instamart", color: "#2F77FF",
+    from: { campaign: "Mirinda Retargeting", roas: "2.1x", currentSpend: "₹ 2.5L" },
+    to: { campaign: "Mountain Dew Push", roas: "4.2x", currentSpend: "₹ 1.0L" },
+    amount: "₹ 60K", projImpact: "+800 conversions, campaign ROAS → 4.5x",
   },
   {
-    platform: "Talabat", color: "#FDDC2B",
-    from: { campaign: "Generic Beverage Ads", roas: "2.8x", currentSpend: "AED 1.2L" },
-    to: { campaign: "Pepsi Q-Commerce Push", roas: "3.8x", currentSpend: "AED 2.4L" },
-    amount: "AED 25K", projImpact: "+500 conversions, better geo-targeting",
+    platform: "Blinkit", color: "#FDDC2B",
+    from: { campaign: "Generic Beverage Ads", roas: "2.8x", currentSpend: "₹ 1.2L" },
+    to: { campaign: "Pepsi Q-Commerce Push", roas: "3.8x", currentSpend: "₹ 2.4L" },
+    amount: "₹ 25K", projImpact: "+500 conversions, better geo-targeting",
   },
 ];
 
 const crossPlatformShifts = [
   {
-    from: { platform: "Noon", color: "#2F77FF", campaign: "Mirinda Retargeting", roas: "2.1x", spend: "AED 2.5L" },
-    to: { platform: "Carrefour", color: "#FF9900", campaign: "Pepsi 1L — SP", roas: "5.1x", spend: "AED 3.8L" },
-    amount: "AED 80K", projImpact: "Incremental conversions +2,100, blended portfolio ROAS +0.5x",
+    from: { platform: "Instamart", color: "#2F77FF", campaign: "Mirinda Retargeting", roas: "2.1x", spend: "₹ 2.5L" },
+    to: { platform: "Instamart", color: "#FF9900", campaign: "Pepsi 1L — SP", roas: "5.1x", spend: "₹ 3.8L" },
+    amount: "₹ 80K", projImpact: "Incremental conversions +2,100, blended portfolio ROAS +0.5x",
     confidence: 92,
   },
   {
-    from: { platform: "Noon", color: "#2F77FF", campaign: "Various underperformers", roas: "2.1x", spend: "AED 1.8L" },
-    to: { platform: "Noon", color: "#E1306C", campaign: "Mountain Dew Brand Awareness", roas: "4.4x", spend: "AED 40K" },
-    amount: "AED 40K", projImpact: "Expand brand reach +180K impressions, ROAS 4.4x vs 2.1x",
+    from: { platform: "Instamart", color: "#2F77FF", campaign: "Various underperformers", roas: "2.1x", spend: "₹ 1.8L" },
+    to: { platform: "Instamart", color: "#E1306C", campaign: "Mountain Dew Brand Awareness", roas: "4.4x", spend: "₹ 40K" },
+    amount: "₹ 40K", projImpact: "Expand brand reach +180K impressions, ROAS 4.4x vs 2.1x",
     confidence: 85,
   },
   {
-    from: { platform: "Noon Minutes", color: "#833AB4", campaign: "Low-stock geo campaigns", roas: "1.8x", spend: "AED 60K" },
-    to: { platform: "Talabat", color: "#FDDC2B", campaign: "Pepsi Q-Commerce Push", roas: "3.8x", spend: "AED 2.4L" },
-    amount: "AED 30K", projImpact: "Better dark-store coverage + higher ROAS",
+    from: { platform: "Zepto", color: "#833AB4", campaign: "Low-stock geo campaigns", roas: "1.8x", spend: "₹ 60K" },
+    to: { platform: "Blinkit", color: "#FDDC2B", campaign: "Pepsi Q-Commerce Push", roas: "3.8x", spend: "₹ 2.4L" },
+    amount: "₹ 30K", projImpact: "Better dark-store coverage + higher ROAS",
     confidence: 78,
   },
 ];
 
 const platformSummary = [
-  { platform: "Carrefour", color: "#FF9900", spend: 6.5, roas: 5.1, optSpend: 7.3, optRoas: 5.4 },
-  { platform: "Noon", color: "#E1306C", spend: 3.2, roas: 4.4, optSpend: 3.6, optRoas: 4.5 },
-  { platform: "Talabat", color: "#FDDC2B", spend: 2.8, roas: 3.8, optSpend: 3.1, optRoas: 4.0 },
-  { platform: "Noon", color: "#2F77FF", spend: 4.3, roas: 2.1, optSpend: 2.5, optRoas: 3.0 },
-  { platform: "Noon Minutes", color: "#833AB4", spend: 1.4, roas: 3.2, optSpend: 1.1, optRoas: 3.5 },
+  { platform: "Instamart", color: "#FF9900", spend: 6.5, roas: 5.1, optSpend: 7.3, optRoas: 5.4 },
+  { platform: "Instamart", color: "#E1306C", spend: 3.2, roas: 4.4, optSpend: 3.6, optRoas: 4.5 },
+  { platform: "Blinkit", color: "#FDDC2B", spend: 2.8, roas: 3.8, optSpend: 3.1, optRoas: 4.0 },
+  { platform: "Instamart", color: "#2F77FF", spend: 4.3, roas: 2.1, optSpend: 2.5, optRoas: 3.0 },
+  { platform: "Zepto", color: "#833AB4", spend: 1.4, roas: 3.2, optSpend: 1.1, optRoas: 3.5 },
 ];
 
 const chartData = platformSummary.map(p => ({ name: p.platform, current: p.roas, optimised: p.optRoas }));
@@ -231,8 +231,8 @@ interface StdRule {
   defaultOn?: boolean;
 }
 const STD_RULES: StdRule[] = [
-  { id: "no-comp", name: "No competition on keyword → reduce bid 20%", why: "Saves spend when there's no contested auction (SoV competitors = 0 for 3d).", impact: "Affects 8 keywords · ~AED 1.4K/wk", tone: "amber", defaultOn: true },
-  { id: "comp-oos", name: "3+ competitors OOS → reduce both budget −30% and bid −15%", why: "Demand drops when shelf is thin — capture cheaper conversions, don't overpay.", impact: "Affects 4 campaigns · ~AED 2.1K/wk", tone: "red", defaultOn: true },
+  { id: "no-comp", name: "No competition on keyword → reduce bid 20%", why: "Saves spend when there's no contested auction (SoV competitors = 0 for 3d).", impact: "Affects 8 keywords · ~₹ 1.4K/wk", tone: "amber", defaultOn: true },
+  { id: "comp-oos", name: "3+ competitors OOS → reduce both budget −30% and bid −15%", why: "Demand drops when shelf is thin — capture cheaper conversions, don't overpay.", impact: "Affects 4 campaigns · ~₹ 2.1K/wk", tone: "red", defaultOn: true },
   { id: "own-oos", name: "Own SKU OOS in pincode → pause campaign there", why: "Stop wasted clicks routed to an unbuyable PDP.", impact: "Affects 3 pincode campaigns", tone: "red" },
 ];
 
@@ -248,7 +248,7 @@ const SHELF_VALUE_OPTIONS: Record<string, string[]> = {
   "Competitor price gap": ["+5%", "+10%", "+15%", "−10%"],
 };
 const SHELF_ACTION_OPTIONS = ["Reduce bid −10%", "Reduce bid −20%", "Reduce budget −20%", "Reduce budget −30% & bid −15%", "Pause campaign", "Raise bid +15%", "Raise bid +25% (defensive)"];
-const SHELF_SCOPE_OPTIONS = ["All platforms", "Talabat", "Noon", "Noon Minutes", "Carrefour"];
+const SHELF_SCOPE_OPTIONS = ["All platforms", "Blinkit", "Instamart", "Zepto", "Instamart"];
 
 const ShelfMonitoringSection: React.FC = () => {
   const [on, setOn] = useState<Record<string, boolean>>(Object.fromEntries(STD_RULES.map(r => [r.id, !!r.defaultOn])));
@@ -258,7 +258,7 @@ const ShelfMonitoringSection: React.FC = () => {
   const [scope, setScope] = useState(SHELF_SCOPE_OPTIONS[0]);
   const [shelfAction, setShelfAction] = useState(SHELF_ACTION_OPTIONS[0]);
   const [customShelfRules, setCustomShelfRules] = useState<{ id: string; signal: string; op: string; val: string; scope: string; action: string }[]>([
-    { id: "s1", signal: "Competitors OOS", op: "≥", val: "3", scope: "Talabat", action: "Reduce budget −30% & bid −15%" },
+    { id: "s1", signal: "Competitors OOS", op: "≥", val: "3", scope: "Blinkit", action: "Reduce budget −30% & bid −15%" },
   ]);
 
   const valueOpts = SHELF_VALUE_OPTIONS[signal] || ["0"];
@@ -363,12 +363,12 @@ interface CampaignReco {
   reason: string;
 }
 const CAMPAIGN_RECOS: CampaignReco[] = [
-  { id: "r1", campaign: "Pepsi 1L — Talabat SP", platform: "Talabat", platformColor: "#FF5A00", change: "↑ Budget +AED 800/day", changeTone: "green", reason: "ROAS 4.2x vs goal 3.0x — capacity headroom on top-10 keywords." },
-  { id: "r2", campaign: "Aquafina 1.5L — Carrefour", platform: "Carrefour", platformColor: "#0E4C92", change: "↓ Bid −12%", changeTone: "amber", reason: "CTR holding but CPC up 18% w/w — overpaying for same clicks." },
-  { id: "r3", campaign: "7UP 1L — Noon Minutes Riyadh", platform: "Noon Minutes", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
-  { id: "r4", campaign: "Mountain Dew — Noon SP", platform: "Noon", platformColor: "#FEEE00", change: "Shift AED 500 → Noon Minutes", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
-  { id: "r5", campaign: "Lipton Ice Tea Peach — Talabat Dubai", platform: "Talabat", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Coca-Cola OOS in 3 Dubai areas — capture defensive auctions now." },
-  { id: "r6", campaign: "Tropicana OJ — Carrefour Brand", platform: "Carrefour", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Almarai entered top-10 on brand keywords — defend before rank entrenches." },
+  { id: "r1", campaign: "Pepsi 1L — Blinkit SP", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Budget +₹ 800/day", changeTone: "green", reason: "ROAS 4.2x vs goal 3.0x — capacity headroom on top-10 keywords." },
+  { id: "r2", campaign: "Aquafina 1.5L — Instamart", platform: "Instamart", platformColor: "#0E4C92", change: "↓ Bid −12%", changeTone: "amber", reason: "CTR holding but CPC up 18% w/w — overpaying for same clicks." },
+  { id: "r3", campaign: "7UP 1L — Zepto Riyadh", platform: "Zepto", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
+  { id: "r4", campaign: "Mountain Dew — Instamart SP", platform: "Instamart", platformColor: "#FEEE00", change: "Shift ₹ 500 → Zepto", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
+  { id: "r5", campaign: "Lipton Ice Tea Peach — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Coca-Cola OOS in 3 Mumbai areas — capture defensive auctions now." },
+  { id: "r6", campaign: "Tropicana OJ — Instamart Brand", platform: "Instamart", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Almarai entered top-10 on brand keywords — defend before rank entrenches." },
 ];
 const tonePill: Record<string, string> = { red: "bg-sw-red-dim text-sw-red", amber: "bg-sw-amber-dim text-sw-amber", green: "bg-sw-green-dim text-sw-green", purple: "bg-sw-purple-dim text-sw-purple" };
 
@@ -437,11 +437,11 @@ const BudgetOptimiserView: React.FC = () => {
           <KPICard title="Optimisations carried out yesterday" value="12 actions" delta="Auto + manual" deltaType="positive" sub="Budget shifts applied across portfolio" accentColor="bg-primary" delay={0} />
           <KPICard title="ROAS increment from yesterday" value="+0.3x" delta="vs prior day" deltaType="positive" sub="Blended portfolio gain" accentColor="bg-sw-green" delay={0.05} />
           <KPICard title="Underperforming campaigns" value="7 campaigns" delta="Below brand avg 3.4x" deltaType="negative" sub="Click to review reduction candidates" accentColor="bg-sw-red" delay={0.1} />
-          <KPICard title="Lowest avg ROAS platform" value="Noon · 2.1x" delta="-1.3x vs brand avg" deltaType="negative" sub="Reallocation opportunity flagged" accentColor="bg-sw-amber" delay={0.15} />
+          <KPICard title="Lowest avg ROAS platform" value="Instamart · 2.1x" delta="-1.3x vs brand avg" deltaType="negative" sub="Reallocation opportunity flagged" accentColor="bg-sw-amber" delay={0.15} />
         </div>
 
         <PanelCard title="Rule Engine" badge="Automation" badgeColor="purple" delay={0.18}>
-          <p className="text-[11px] text-muted-foreground mb-4">Shelf monitoring KPI rules plus performance-driven templates and a custom builder. All apply bid / budget actions automatically across Talabat, Noon, Noon Minutes and Carrefour.</p>
+          <p className="text-[11px] text-muted-foreground mb-4">Shelf monitoring KPI rules plus performance-driven templates and a custom builder. All apply bid / budget actions automatically across Blinkit, Instamart, Zepto and Instamart.</p>
           <div className="space-y-6">
             <ShelfMonitoringSection />
             <div className="border-t border-subtle pt-5">
@@ -617,7 +617,7 @@ const BudgetOptimiserView: React.FC = () => {
             <div className="grid grid-cols-3 gap-4">
               <div><label className="text-[10px] text-muted-foreground">From Campaign</label><p className="text-xs text-foreground mt-1">Mirinda Retargeting (2.1x ROAS)</p></div>
               <div><label className="text-[10px] text-muted-foreground">To Campaign</label><p className="text-xs text-foreground mt-1">Pepsi 1L — SP (5.1x ROAS)</p></div>
-              <div><label className="text-[10px] text-muted-foreground">Amount</label><p className="text-xs text-foreground mt-1">AED 40,000</p></div>
+              <div><label className="text-[10px] text-muted-foreground">Amount</label><p className="text-xs text-foreground mt-1">₹ 40,000</p></div>
             </div>
             <div className="mt-3 p-3 rounded-xl bg-sw-green-dim border border-sw-green/20">
               <p className="text-[11px] text-foreground">Estimated impact: Blended ROAS +0.4x, incremental conversions +1,200</p>

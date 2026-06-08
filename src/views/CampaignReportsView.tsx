@@ -16,45 +16,45 @@ type ReportPlatform = { platform: string; color: string; totalSpend: string; ble
 
 const reportData: ReportPlatform[] = [
   {
-    platform: "Carrefour", color: "#FF9900", totalSpend: "AED 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
+    platform: "Instamart", color: "#FF9900", totalSpend: "₹ 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
-      { name: "Pepsi 1L — Sponsored", status: "LIVE", spend: "AED 4.2L", roas: "5.1x", roasColor: "text-sw-green", impressions: "842K", clicks: "28.4K", ctr: "3.4%",
+      { name: "Pepsi 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green", impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
-          { keyword: "butter beverages online", impressions: "342K", clicks: "12.8K", spend: "AED 1.8L", roas: "6.2x", roasColor: "text-sw-green",
+          { keyword: "butter beverages online", impressions: "342K", clicks: "12.8K", spend: "₹ 1.8L", roas: "6.2x", roasColor: "text-sw-green",
             cities: [
-              { city: "Dubai", impressions: "98K", clicks: "4.1K", spend: "AED 52K", roas: "6.5x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "AED 32K", roas: "6.6x", roasColor: "text-sw-green" }, { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "AED 20K", roas: "6.5x", roasColor: "text-sw-green" }] },
-              { city: "Abu Dhabi", impressions: "82K", clicks: "3.2K", spend: "AED 44K", roas: "6.4x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "AED 28K", roas: "6.4x", roasColor: "text-sw-green" }] },
+              { city: "Mumbai", impressions: "98K", clicks: "4.1K", spend: "₹ 52K", roas: "6.5x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" }, { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" }] },
+              { city: "Delhi NCR", impressions: "82K", clicks: "3.2K", spend: "₹ 44K", roas: "6.4x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" }] },
             ],
           },
-          { keyword: "cream beverages", impressions: "498K", clicks: "14.2K", spend: "AED 2.1L", roas: "3.1x", roasColor: "text-sw-amber" },
+          { keyword: "cream beverages", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber" },
         ],
       },
-      { name: "7UP — Keyword Target", status: "PAUSED", spend: "AED 1.8L", roas: "2.1x", roasColor: "text-sw-red", impressions: "284K", clicks: "8.2K", ctr: "2.9%",
-        keywords: [{ keyword: "glucose beverages bulk", impressions: "187K", clicks: "5.4K", spend: "AED 1.2L", roas: "1.4x", roasColor: "text-sw-red",
-          cities: [{ city: "Dubai", impressions: "62K", clicks: "1.8K", spend: "AED 42K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "7UP 1L", spend: "AED 42K", roas: "1.4x", roasColor: "text-sw-red" }] }],
+      { name: "7UP — Keyword Target", status: "PAUSED", spend: "₹ 1.8L", roas: "2.1x", roasColor: "text-sw-red", impressions: "284K", clicks: "8.2K", ctr: "2.9%",
+        keywords: [{ keyword: "glucose beverages bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
+          cities: [{ city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "7UP 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" }] }],
         }],
       },
     ],
   },
   {
-    platform: "Talabat", color: "#FDDC2B", totalSpend: "AED 3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
+    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹ 3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
     campaigns: [
-      { name: "Q-Commerce Beverage Push", status: "LIVE", spend: "AED 2.8L", roas: "3.8x", roasColor: "text-sw-amber", impressions: "412K", clicks: "14.8K", ctr: "3.6%",
+      { name: "Q-Commerce Beverage Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber", impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
-          { keyword: "butter beverages", impressions: "188K", clicks: "7.2K", spend: "AED 1.4L", roas: "4.0x", roasColor: "text-sw-green",
-            cities: [{ city: "Dubai", impressions: "92K", clicks: "3.8K", spend: "AED 72K", roas: "4.3x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "AED 48K", roas: "4.4x", roasColor: "text-sw-green" }, { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "AED 24K", roas: "4.2x", roasColor: "text-sw-green" }] }],
+          { keyword: "butter beverages", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
+            cities: [{ city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" }, { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" }] }],
           },
-          { keyword: "choco chip drinks", impressions: "124K", clicks: "4.8K", spend: "AED 88K", roas: "3.6x", roasColor: "text-sw-amber" },
+          { keyword: "choco chip drinks", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber" },
         ],
       },
     ],
   },
   {
-    platform: "Noon", color: "#2F77FF", totalSpend: "AED 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
-      { name: "7UP Retargeting", status: "PAUSED", spend: "AED 3.0L", roas: "2.1x", roasColor: "text-sw-red", impressions: "524K", clicks: "12.8K", ctr: "2.4%",
-        keywords: [{ keyword: "glucose beverages", impressions: "284K", clicks: "6.2K", spend: "AED 1.8L", roas: "1.4x", roasColor: "text-sw-red",
-          cities: [{ city: "Dubai", impressions: "82K", clicks: "1.8K", spend: "AED 52K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "7UP 1L", spend: "AED 52K", roas: "1.4x", roasColor: "text-sw-red" }] }],
+      { name: "7UP Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red", impressions: "524K", clicks: "12.8K", ctr: "2.4%",
+        keywords: [{ keyword: "glucose beverages", impressions: "284K", clicks: "6.2K", spend: "₹ 1.8L", roas: "1.4x", roasColor: "text-sw-red",
+          cities: [{ city: "Mumbai", impressions: "82K", clicks: "1.8K", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red", products: [{ code: "SKU-MG250", title: "7UP 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" }] }],
         }],
       },
     ],
@@ -68,11 +68,11 @@ const spendTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const platformBreakdown = [
-  { platform: "Carrefour", spend: 78, roas: 5.1, color: "#FF9900" },
-  { platform: "Talabat", spend: 33, roas: 3.8, color: "#FDDC2B" },
-  { platform: "Noon", spend: 52, roas: 2.1, color: "#2F77FF" },
-  { platform: "Noon Minutes", spend: 18, roas: 3.2, color: "#833AB4" },
-  { platform: "Noon", spend: 41, roas: 4.4, color: "#E1306C" },
+  { platform: "Instamart", spend: 78, roas: 5.1, color: "#FF9900" },
+  { platform: "Blinkit", spend: 33, roas: 3.8, color: "#FDDC2B" },
+  { platform: "Instamart", spend: 52, roas: 2.1, color: "#2F77FF" },
+  { platform: "Zepto", spend: 18, roas: 3.2, color: "#833AB4" },
+  { platform: "Instamart", spend: 41, roas: 4.4, color: "#E1306C" },
 ];
 
 const CampaignReportsView: React.FC = () => {
@@ -107,11 +107,11 @@ const CampaignReportsView: React.FC = () => {
 
       {/* KPIs */}
       <div className="grid grid-cols-5 gap-4">
-        <KPICard title="Total Spend (30D)" value="AED 18.4L" delta="▲ AED 2.1L MoM" deltaType="positive" sub="24 campaigns" accentColor="bg-primary" delay={0} />
+        <KPICard title="Total Spend (30D)" value="₹ 18.4L" delta="▲ ₹ 2.1L MoM" deltaType="positive" sub="24 campaigns" accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x" accentColor="bg-sw-green" delay={0.05} />
         <KPICard title="Total Impressions" value="4.2M" delta="▲ 18%" deltaType="positive" sub="Across all platforms" accentColor="bg-sw-cyan" delay={0.1} />
         <KPICard title="Avg CTR" value="3.1%" delta="▲ 0.4%" deltaType="positive" sub="Industry avg: 2.2%" accentColor="bg-sw-purple" delay={0.15} />
-        <KPICard title="Avg CPC" value="AED 18.2" delta="▼ AED 2.1" deltaType="positive" sub="30-day average" accentColor="bg-sw-amber" delay={0.2} />
+        <KPICard title="Avg CPC" value="₹ 18.2" delta="▼ ₹ 2.1" deltaType="positive" sub="30-day average" accentColor="bg-sw-amber" delay={0.2} />
       </div>
 
       {/* Charts */}
@@ -123,18 +123,18 @@ const CampaignReportsView: React.FC = () => {
               <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} interval={4} />
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />
-              <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} name="Spend (AED K)" />
+              <Area type="monotone" dataKey="spend" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} name="Spend (₹ K)" />
             </AreaChart>
           </ResponsiveContainer>
         </PanelCard>
-        <PanelCard title="Platform spend breakdown" badge="AED K" badgeColor="accent" delay={0.1}>
+        <PanelCard title="Platform spend breakdown" badge="₹ K" badgeColor="accent" delay={0.1}>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={platformBreakdown} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
               <XAxis dataKey="platform" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip {...tooltipStyle} />
-              <Bar dataKey="spend" name="Spend (AED K)" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="spend" name="Spend (₹ K)" radius={[4, 4, 0, 0]}>
                 {platformBreakdown.map((entry, i) => (
                   <motion.rect key={i} fill={entry.color} fillOpacity={0.8} />
                 ))}

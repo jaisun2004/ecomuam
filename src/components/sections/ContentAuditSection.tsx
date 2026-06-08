@@ -8,12 +8,12 @@ import {
 } from "recharts";
 
 const contentHealthScores = [
-  { sku: "SKU-101", name: "ZapDrink Energy Boost 250ml", retailer: "Carrefour", titleScore: 85, titleLength: 58, maxLength: 80, heroScore: 92, ratingScore: 88, avgRating: 4.3, reviewCount: 1245, keywordScore: 70, searchRank: 3 },
-  { sku: "SKU-101", name: "ZapDrink Energy Boost 250ml", retailer: "Noon", titleScore: 72, titleLength: 42, maxLength: 80, heroScore: 65, ratingScore: 78, avgRating: 4.1, reviewCount: 890, keywordScore: 55, searchRank: 7 },
-  { sku: "SKU-205", name: "HydraMax Electrolyte Water 500ml", retailer: "Carrefour", titleScore: 45, titleLength: 32, maxLength: 80, heroScore: 40, ratingScore: 62, avgRating: 3.6, reviewCount: 234, keywordScore: 30, searchRank: 18 },
-  { sku: "SKU-205", name: "HydraMax Electrolyte Water 500ml", retailer: "Talabat", titleScore: 68, titleLength: 48, maxLength: 60, heroScore: 75, ratingScore: 70, avgRating: 3.8, reviewCount: 156, keywordScore: 58, searchRank: 5 },
-  { sku: "SKU-300", name: "PureLeaf Green Tea 330ml", retailer: "Carrefour", titleScore: 90, titleLength: 72, maxLength: 80, heroScore: 95, ratingScore: 94, avgRating: 4.5, reviewCount: 3200, keywordScore: 82, searchRank: 1 },
-  { sku: "SKU-404", name: "FitCrunch Protein Bar 60g", retailer: "Carrefour", titleScore: 78, titleLength: 55, maxLength: 80, heroScore: 82, ratingScore: 58, avgRating: 3.4, reviewCount: 89, keywordScore: 65, searchRank: 9 },
+  { sku: "SKU-101", name: "ZapDrink Energy Boost 250ml", retailer: "Instamart", titleScore: 85, titleLength: 58, maxLength: 80, heroScore: 92, ratingScore: 88, avgRating: 4.3, reviewCount: 1245, keywordScore: 70, searchRank: 3 },
+  { sku: "SKU-101", name: "ZapDrink Energy Boost 250ml", retailer: "Instamart", titleScore: 72, titleLength: 42, maxLength: 80, heroScore: 65, ratingScore: 78, avgRating: 4.1, reviewCount: 890, keywordScore: 55, searchRank: 7 },
+  { sku: "SKU-205", name: "HydraMax Electrolyte Water 500ml", retailer: "Instamart", titleScore: 45, titleLength: 32, maxLength: 80, heroScore: 40, ratingScore: 62, avgRating: 3.6, reviewCount: 234, keywordScore: 30, searchRank: 18 },
+  { sku: "SKU-205", name: "HydraMax Electrolyte Water 500ml", retailer: "Blinkit", titleScore: 68, titleLength: 48, maxLength: 60, heroScore: 75, ratingScore: 70, avgRating: 3.8, reviewCount: 156, keywordScore: 58, searchRank: 5 },
+  { sku: "SKU-300", name: "PureLeaf Green Tea 330ml", retailer: "Instamart", titleScore: 90, titleLength: 72, maxLength: 80, heroScore: 95, ratingScore: 94, avgRating: 4.5, reviewCount: 3200, keywordScore: 82, searchRank: 1 },
+  { sku: "SKU-404", name: "FitCrunch Protein Bar 60g", retailer: "Instamart", titleScore: 78, titleLength: 55, maxLength: 80, heroScore: 82, ratingScore: 58, avgRating: 3.4, reviewCount: 89, keywordScore: 65, searchRank: 9 },
 ];
 
 const productTitles: Record<string, { current: string; optimized: string }> = {
@@ -68,16 +68,16 @@ const campaignTriggers: CampaignTrigger[] = [
     id: "content-1", signal: "SKU-205 title underperforming vs category",
     signalDetail: "Title score 45/100 — missing 4 high-volume keywords. Add-to-cart rate 35% below avg",
     strategy: "Sponsored Ads to compensate weak organic", campaignType: "Sponsored Product + Headline Search",
-    platforms: ["Carrefour", "Noon"],
+    platforms: ["Instamart", "Instamart"],
     keywords: ["electrolyte water", "keto drink", "sports hydration", "coconut water"],
-    estimatedImpact: "Maintain visibility while title is optimized — protect AED 2.1L/week", urgency: "critical",
+    estimatedImpact: "Maintain visibility while title is optimized — protect ₹ 2.1L/week", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
   {
     id: "content-2", signal: "SKU-404 rating dropped below 3.5",
     signalDetail: "Rating fell from 3.7 to 3.4 — 'too sweet' complaints rising",
     strategy: "Review Recovery + Brand Defense", campaignType: "Post-purchase email + Review request",
-    platforms: ["Carrefour", "Noon", "BigBasket"],
+    platforms: ["Instamart", "Instamart", "BigBasket"],
     keywords: ["protein bar", "healthy snack", "gym protein bar"],
     estimatedImpact: "Target 4.0 rating in 30 days — unlock 18% higher conversion", urgency: "high",
     icon: <Shield className="h-4 w-4 text-warning" />,

@@ -17,9 +17,9 @@ const availTrend = [
 ];
 
 const platformBreakdown = [
-  { name: "Carrefour", value: 94 },
-  { name: "Noon", value: 88 },
-  { name: "Talabat", value: 76 },
+  { name: "Instamart", value: 94 },
+  { name: "Instamart", value: 88 },
+  { name: "Blinkit", value: 76 },
   { name: "BigBasket", value: 91 },
 ];
 
@@ -28,24 +28,24 @@ const PIE_COLORS = [
 ];
 
 const oosHeatmapData = [
-  { sku: "SKU-101 (Energy)", retailers: [{ name: "Carrefour", status: "ok" }, { name: "Noon", status: "ok" }, { name: "Talabat", status: "critical" }, { name: "Noon Minutes", status: "warning" }] },
-  { sku: "SKU-205 (Hydrate)", retailers: [{ name: "Carrefour", status: "critical" }, { name: "Noon", status: "warning" }, { name: "Talabat", status: "ok" }, { name: "Noon Minutes", status: "ok" }] },
-  { sku: "SKU-300 (Tea)", retailers: [{ name: "Carrefour", status: "ok" }, { name: "Noon", status: "ok" }, { name: "Talabat", status: "ok" }, { name: "Noon Minutes", status: "ok" }] },
-  { sku: "SKU-404 (Bar)", retailers: [{ name: "Carrefour", status: "warning" }, { name: "Noon", status: "critical" }, { name: "Talabat", status: "critical" }, { name: "Noon Minutes", status: "warning" }] },
-  { sku: "SKU-505 (Mix)", retailers: [{ name: "Carrefour", status: "ok" }, { name: "Noon", status: "ok" }, { name: "Talabat", status: "warning" }, { name: "Noon Minutes", status: "ok" }] },
+  { sku: "SKU-101 (Energy)", retailers: [{ name: "Instamart", status: "ok" }, { name: "Instamart", status: "ok" }, { name: "Blinkit", status: "critical" }, { name: "Zepto", status: "warning" }] },
+  { sku: "SKU-205 (Hydrate)", retailers: [{ name: "Instamart", status: "critical" }, { name: "Instamart", status: "warning" }, { name: "Blinkit", status: "ok" }, { name: "Zepto", status: "ok" }] },
+  { sku: "SKU-300 (Tea)", retailers: [{ name: "Instamart", status: "ok" }, { name: "Instamart", status: "ok" }, { name: "Blinkit", status: "ok" }, { name: "Zepto", status: "ok" }] },
+  { sku: "SKU-404 (Bar)", retailers: [{ name: "Instamart", status: "warning" }, { name: "Instamart", status: "critical" }, { name: "Blinkit", status: "critical" }, { name: "Zepto", status: "warning" }] },
+  { sku: "SKU-505 (Mix)", retailers: [{ name: "Instamart", status: "ok" }, { name: "Instamart", status: "ok" }, { name: "Blinkit", status: "warning" }, { name: "Zepto", status: "ok" }] },
 ];
 
 const lostRevenueData = [
-  { retailer: "Talabat (NCR)", value: 2400000 },
-  { retailer: "Carrefour (Abu Dhabi)", value: 1800000 },
-  { retailer: "Noon (Dubai)", value: 1200000 },
-  { retailer: "Noon Minutes (Riyadh)", value: 600000 },
+  { retailer: "Blinkit (NCR)", value: 2400000 },
+  { retailer: "Instamart (Delhi NCR)", value: 1800000 },
+  { retailer: "Instamart (Mumbai)", value: 1200000 },
+  { retailer: "Zepto (Riyadh)", value: 600000 },
 ];
 
 const actionItems: ActionItem[] = [
-  { id: "1", severity: "critical", title: "12 SKUs out of stock on Carrefour", description: "Critical SKUs including bestsellers have 0 inventory since 2 days", metric: "AED 4.2L/day loss", action: "View SKUs" },
-  { id: "2", severity: "critical", title: "8 SKUs suppressed on Noon", description: "Listing suppressed due to pricing violation or quality issues", metric: "8 SKUs", action: "Fix Now" },
-  { id: "3", severity: "warning", title: "Low stock alert: 23 SKUs", description: "Inventory below 7-day threshold on Carrefour and BigBasket", metric: "23 SKUs", action: "Replenish" },
+  { id: "1", severity: "critical", title: "12 SKUs out of stock on Instamart", description: "Critical SKUs including bestsellers have 0 inventory since 2 days", metric: "₹ 4.2L/day loss", action: "View SKUs" },
+  { id: "2", severity: "critical", title: "8 SKUs suppressed on Instamart", description: "Listing suppressed due to pricing violation or quality issues", metric: "8 SKUs", action: "Fix Now" },
+  { id: "3", severity: "warning", title: "Low stock alert: 23 SKUs", description: "Inventory below 7-day threshold on Instamart and BigBasket", metric: "23 SKUs", action: "Replenish" },
   { id: "4", severity: "warning", title: "Seller hijacking detected", description: "3 unauthorized sellers found on 5 product listings", metric: "5 ASINs", action: "Investigate" },
   { id: "5", severity: "info", title: "New variant availability opportunity", description: "Competitor out of stock on 500ml variant across platforms", action: "Capitalize" },
   { id: "6", severity: "success", title: "Stock recovered: Premium Range", description: "All 15 premium SKUs back in stock after restock action", metric: "100%", action: "Details" },
@@ -54,20 +54,20 @@ const actionItems: ActionItem[] = [
 const campaignTriggers: CampaignTrigger[] = [
   {
     id: "avail-1", signal: "Competitor OOS on Energy Drinks",
-    signalDetail: "RedBull & Monster out of stock on Talabat NCR & Noon Minutes Abu Dhabi for 48+ hours",
+    signalDetail: "RedBull & Monster out of stock on Blinkit NCR & Zepto Delhi NCR for 48+ hours",
     strategy: "Competitor OOS Conquesting", campaignType: "Sponsored Product + Banner Ad",
-    platforms: ["Talabat", "Noon Minutes", "Carrefour"],
+    platforms: ["Blinkit", "Zepto", "Instamart"],
     keywords: ["energy drink", "caffeine drink", "gym drink", "pre workout drink"],
-    estimatedImpact: "+AED 8.5L revenue capture in 7 days", urgency: "critical",
+    estimatedImpact: "+₹ 8.5L revenue capture in 7 days", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
   {
     id: "avail-2", signal: "Your SKU-404 back in stock",
     signalDetail: "Protein Bar range restored across all platforms after 5 days OOS",
     strategy: "Restock Awareness Blitz", campaignType: "Search + Display Ads",
-    platforms: ["Carrefour", "Noon", "BigBasket"],
+    platforms: ["Instamart", "Instamart", "BigBasket"],
     keywords: ["protein bar", "healthy snack", "gym snack", "energy bar"],
-    estimatedImpact: "Recover AED 3.2L lost demand in 3 days", urgency: "high",
+    estimatedImpact: "Recover ₹ 3.2L lost demand in 3 days", urgency: "high",
     icon: <TrendingUp className="h-4 w-4 text-warning" />,
   },
 ];
@@ -88,7 +88,7 @@ const AvailabilitySection = () => {
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="In-Stock Rate" value="91.3%" change={2.1} changeLabel="vs last month" icon={<PackageCheck className="h-5 w-5" />} variant="primary" />
         <KPICard title="OOS SKUs" value="47" change={-15} changeLabel="down from 55" icon={<PackageX className="h-5 w-5" />} variant="destructive" />
-        <KPICard title="Revenue at Risk" value="AED 12.4L" change={-8} changeLabel="daily est. loss" icon={<AlertTriangle className="h-5 w-5" />} variant="warning" />
+        <KPICard title="Revenue at Risk" value="₹ 12.4L" change={-8} changeLabel="daily est. loss" icon={<AlertTriangle className="h-5 w-5" />} variant="warning" />
         <KPICard title="Active SKUs" value="1,284" change={3.5} changeLabel="across 4 platforms" icon={<Box className="h-5 w-5" />} />
       </div>
 
@@ -153,14 +153,14 @@ const AvailabilitySection = () => {
               <h3 className="font-heading font-semibold text-foreground mb-1">Lost Revenue Estimator</h3>
               <p className="text-xs text-muted-foreground mb-4">Revenue lost to OOS</p>
               <div className="text-center mb-4">
-                <p className="text-3xl font-bold text-destructive">AED 66,00,000</p>
+                <p className="text-3xl font-bold text-destructive">₹ 66,00,000</p>
                 <p className="text-xs text-muted-foreground">Total Est. Loss (4W)</p>
               </div>
               <div className="space-y-2">
                 {lostRevenueData.map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between p-2.5 bg-muted/50 rounded-lg border border-border">
                     <span className="text-xs text-foreground font-medium">{item.retailer}</span>
-                    <span className="text-xs font-bold text-destructive">-AED {item.value.toLocaleString('en-IN')}</span>
+                    <span className="text-xs font-bold text-destructive">-₹ {item.value.toLocaleString('en-IN')}</span>
                   </div>
                 ))}
               </div>
@@ -173,10 +173,10 @@ const AvailabilitySection = () => {
               <p className="text-xs text-muted-foreground mb-4">Avg. days/hours to recover stock</p>
               <div className="space-y-4">
                 {[
-                  { retailer: "Talabat (NCR)", time: "4 hours", pct: 80, color: "bg-destructive" },
-                  { retailer: "Carrefour", time: "1.2 days", pct: 20, color: "bg-success" },
-                  { retailer: "Noon Minutes", time: "2 hours", pct: 50, color: "bg-warning" },
-                  { retailer: "Noon", time: "6 hours", pct: 65, color: "bg-warning" },
+                  { retailer: "Blinkit (NCR)", time: "4 hours", pct: 80, color: "bg-destructive" },
+                  { retailer: "Instamart", time: "1.2 days", pct: 20, color: "bg-success" },
+                  { retailer: "Zepto", time: "2 hours", pct: 50, color: "bg-warning" },
+                  { retailer: "Instamart", time: "6 hours", pct: 65, color: "bg-warning" },
                 ].map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center">
                     <span className="text-xs text-foreground font-medium w-28">{item.retailer}</span>

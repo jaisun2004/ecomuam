@@ -43,8 +43,8 @@ const rankActions: ActionItem[] = [
 ];
 
 const cityShareData = [
-  { city: "Abu Dhabi", share: 18, change: -2.4, issue: "Pricing" },
-  { city: "Dubai", share: 22, change: 1.2, issue: "" },
+  { city: "Delhi NCR", share: 18, change: -2.4, issue: "Pricing" },
+  { city: "Mumbai", share: 22, change: 1.2, issue: "" },
   { city: "Riyadh", share: 15, change: -0.8, issue: "Availability" },
   { city: "Doha", share: 20, change: 0.5, issue: "" },
   { city: "Khalifa City", share: 12, change: -1.5, issue: "Competition" },
@@ -56,16 +56,16 @@ const rankCampaignTriggers: CampaignTrigger[] = [
     id: "rank-1", signal: "Lost #1 rank on 3 high-volume keywords",
     signalDetail: "Competitor A overtook on 'organic shampoo', 'natural face wash', 'vitamin c serum'",
     strategy: "Rank Recovery Campaign", campaignType: "Exact Match Sponsored + Display Retargeting",
-    platforms: ["Carrefour", "Noon"],
+    platforms: ["Instamart", "Instamart"],
     keywords: ["organic shampoo", "natural face wash", "vitamin c serum", "best face wash"],
     estimatedImpact: "Recover #1 rank on 2/3 keywords within 10 days", urgency: "critical" as const,
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
   {
     id: "rank-2", signal: "Market share declining 2% MoM in Hair Care",
-    signalDetail: "Competitor gaining through aggressive promotions in Abu Dhabi & Dubai",
+    signalDetail: "Competitor gaining through aggressive promotions in Delhi NCR & Mumbai",
     strategy: "Market Share Defense", campaignType: "Category Ads + Deal of the Day",
-    platforms: ["Carrefour", "Noon", "BigBasket"],
+    platforms: ["Instamart", "Instamart", "BigBasket"],
     keywords: ["hair care", "shampoo", "hair oil", "anti dandruff"],
     estimatedImpact: "Stabilize share loss and recover 1% within 30 days", urgency: "high" as const,
     icon: <Shield className="h-4 w-4 text-warning" />,
@@ -179,11 +179,11 @@ const RankMarketShareSection = () => {
 
             <div className="rounded-xl border bg-card shadow-card p-5">
               <h3 className="font-heading font-semibold text-foreground mb-1">Root Cause Diagnostic</h3>
-              <p className="text-xs text-muted-foreground mb-4">Why did share drop in Abu Dhabi?</p>
+              <p className="text-xs text-muted-foreground mb-4">Why did share drop in Delhi NCR?</p>
               <div className="flex flex-col items-center py-4">
                 <div className="bg-destructive/10 border border-destructive/30 rounded-lg px-5 py-2 text-center">
                   <p className="font-bold text-destructive text-sm">Share Loss: -2.4%</p>
-                  <p className="text-xs text-muted-foreground">Abu Dhabi, SKU-205</p>
+                  <p className="text-xs text-muted-foreground">Delhi NCR, SKU-205</p>
                 </div>
                 <div className="w-px h-4 bg-border"></div>
                 <div className="grid grid-cols-3 gap-4">

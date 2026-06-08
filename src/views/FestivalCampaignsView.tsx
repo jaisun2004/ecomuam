@@ -26,43 +26,43 @@ const categoryShareData = Array.from({ length: 30 }, (_, i) => ({
 const upcomingFestivals = [
   {
     name: "Holi Sale", date: "Mar 25 – Mar 28", daysAway: 15,
-    recommendation: "Beverage gift packs see 40% uplift during Holi. Pre-position combo packs on Talabat & Noon Minutes 3 days before.",
+    recommendation: "Beverage gift packs see 40% uplift during Holi. Pre-position combo packs on Blinkit & Zepto 3 days before.",
     campaigns: [
-      { name: "Holi Beverage Combo", platform: "Carrefour", type: "Sponsored Products", budget: "AED 40K", duration: "4 days", keywords: ["holi sale beverages", "festival gift pack", "beverage combo offer"], targetROAS: "4.5x" },
-      { name: "Quick Delivery Holi Push", platform: "Talabat", type: "Banner + Sponsored", budget: "AED 20K", duration: "3 days", keywords: ["holi beverage delivery", "same day beverages"], targetROAS: "3.8x" },
+      { name: "Holi Beverage Combo", platform: "Instamart", type: "Sponsored Products", budget: "₹ 40K", duration: "4 days", keywords: ["holi sale beverages", "festival gift pack", "beverage combo offer"], targetROAS: "4.5x" },
+      { name: "Quick Delivery Holi Push", platform: "Blinkit", type: "Banner + Sponsored", budget: "₹ 20K", duration: "3 days", keywords: ["holi beverage delivery", "same day beverages"], targetROAS: "3.8x" },
     ],
   },
   {
     name: "IPL Season", date: "Apr 1 – May 30", daysAway: 22,
     recommendation: "Snack searches spike 45% during IPL. 'Party beverages' and 'snack combo' keywords surge on match days.",
     campaigns: [
-      { name: "IPL Match Day Snacks", platform: "Carrefour", type: "Sponsored Products + Video", budget: "AED 1.2L", duration: "60 days", keywords: ["ipl snacks", "cricket party beverages", "match day munchies"], targetROAS: "5.0x" },
-      { name: "IPL Q-Commerce Push", platform: "Noon Minutes", type: "Sponsored Listings", budget: "AED 35K", duration: "8 weekends", keywords: ["quick snack delivery", "match day beverages"], targetROAS: "3.5x" },
+      { name: "IPL Match Day Snacks", platform: "Instamart", type: "Sponsored Products + Video", budget: "₹ 1.2L", duration: "60 days", keywords: ["ipl snacks", "cricket party beverages", "match day munchies"], targetROAS: "5.0x" },
+      { name: "IPL Q-Commerce Push", platform: "Zepto", type: "Sponsored Listings", budget: "₹ 35K", duration: "8 weekends", keywords: ["quick snack delivery", "match day beverages"], targetROAS: "3.5x" },
     ],
   },
   {
     name: "Summer Refreshment", date: "Apr 15 – Jun 15", daysAway: 36,
     recommendation: "Light beverages and cream variants see 25% higher searches. 7UP and Aquafina are category leaders in summer.",
     campaigns: [
-      { name: "Summer Light Beverages", platform: "Carrefour", type: "Sponsored Products", budget: "AED 1.5L", duration: "60 days", keywords: ["light beverages", "healthy snacks summer", "digestive beverages"], targetROAS: "4.5x" },
-      { name: "Summer Kids Favourites", platform: "Noon", type: "Sponsored + Display", budget: "AED 80K", duration: "45 days", keywords: ["kids beverages", "summer snacks kids"], targetROAS: "3.8x" },
+      { name: "Summer Light Beverages", platform: "Instamart", type: "Sponsored Products", budget: "₹ 1.5L", duration: "60 days", keywords: ["light beverages", "healthy snacks summer", "digestive beverages"], targetROAS: "4.5x" },
+      { name: "Summer Kids Favourites", platform: "Instamart", type: "Sponsored + Display", budget: "₹ 80K", duration: "45 days", keywords: ["kids beverages", "summer snacks kids"], targetROAS: "3.8x" },
     ],
   },
   {
     name: "Independence Day Sale", date: "Aug 10 – Aug 16", daysAway: 153,
     recommendation: "Major marketplace sales event. Historically ROAS peaks at 5.8x during freedom sales. Stock up 2 weeks before.",
     campaigns: [
-      { name: "Freedom Sale Mega Pack", platform: "Carrefour", type: "Lightning Deal + Sponsored", budget: "AED 2.5L", duration: "7 days", keywords: ["independence day sale", "freedom sale beverages", "15 august offer"], targetROAS: "5.8x" },
-      { name: "Noon Freedom Sale", platform: "Noon", type: "Top Deal + Sponsored", budget: "AED 1.5L", duration: "7 days", keywords: ["flipkart sale beverages", "independence offer"], targetROAS: "5.2x" },
+      { name: "Freedom Sale Mega Pack", platform: "Instamart", type: "Lightning Deal + Sponsored", budget: "₹ 2.5L", duration: "7 days", keywords: ["independence day sale", "freedom sale beverages", "15 august offer"], targetROAS: "5.8x" },
+      { name: "Instamart Freedom Sale", platform: "Instamart", type: "Top Deal + Sponsored", budget: "₹ 1.5L", duration: "7 days", keywords: ["flipkart sale beverages", "independence offer"], targetROAS: "5.2x" },
     ],
   },
 ];
 
 const pastPerformance = [
-  { festival: "Republic Day Sale", roas: "5.1x", spend: "AED 1.5L", topPlatform: "Carrefour", conversions: "1,000" },
-  { festival: "New Year Snack Fest", roas: "3.8x", spend: "AED 1.0L", topPlatform: "Talabat", conversions: "650" },
-  { festival: "Diwali Mega Sale", roas: "6.2x", spend: "AED 3.8L", topPlatform: "Carrefour", conversions: "2,400" },
-  { festival: "Navratri Snack Week", roas: "3.5x", spend: "AED 0.6L", topPlatform: "Noon", conversions: "420" },
+  { festival: "Republic Day Sale", roas: "5.1x", spend: "₹ 1.5L", topPlatform: "Instamart", conversions: "1,000" },
+  { festival: "New Year Snack Fest", roas: "3.8x", spend: "₹ 1.0L", topPlatform: "Blinkit", conversions: "650" },
+  { festival: "Diwali Mega Sale", roas: "6.2x", spend: "₹ 3.8L", topPlatform: "Instamart", conversions: "2,400" },
+  { festival: "Navratri Snack Week", roas: "3.5x", spend: "₹ 0.6L", topPlatform: "Instamart", conversions: "420" },
 ];
 
 const FestivalCampaignsView: React.FC = () => {
@@ -77,7 +77,7 @@ const FestivalCampaignsView: React.FC = () => {
           <KPICard title="Upcoming Festivals" value="4" delta="Next: Holi in 15 days" deltaType="positive" sub="Campaigns ready to deploy" accentColor="bg-sw-amber" delay={0} />
           <KPICard title="Pre-built Campaigns" value="8" delta="AI-optimised & pre-fed" deltaType="positive" sub="Across all festivals" accentColor="bg-sw-purple" delay={0.05} />
           <KPICard title="Avg Festival ROAS" value="4.8x" delta="▲ Based on past festivals" deltaType="positive" sub="Historical performance" accentColor="bg-sw-green" delay={0.1} />
-          <KPICard title="Total Planned Spend" value="AED 9.6L" delta="Across all festivals" deltaType="positive" sub="If all campaigns deployed" accentColor="bg-sw-cyan" delay={0.15} />
+          <KPICard title="Total Planned Spend" value="₹ 9.6L" delta="Across all festivals" deltaType="positive" sub="If all campaigns deployed" accentColor="bg-sw-cyan" delay={0.15} />
         </div>
 
         <PanelCard title="Past Festival Performance" badge="Benchmarks" badgeColor="green" delay={0.2}>
@@ -143,7 +143,7 @@ const FestivalCampaignsView: React.FC = () => {
                 <XAxis dataKey="festival" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
-                <Bar dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.6} radius={[4, 4, 0, 0]} name="Spend (AED K)" />
+                <Bar dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.6} radius={[4, 4, 0, 0]} name="Spend (₹ K)" />
                 <Bar dataKey="conversions" fill="hsl(160,70%,48%)" opacity={0.8} radius={[4, 4, 0, 0]} name="Conversions" />
               </BarChart>
             </ResponsiveContainer>

@@ -14,44 +14,44 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const oosProductsToday = [
-  { sku: "Lipton Ice Tea Peach 320ml", platform: "Noon", since: "6h ago" },
-  { sku: "7UP 1L", platform: "Talabat", since: "3h ago" },
-  { sku: "7UP 1L", platform: "Talabat", since: "1h ago" },
-  { sku: "Mirinda Orange 1L", platform: "Noon Minutes", since: "4h ago" },
-  { sku: "Aquafina 1.5L", platform: "Noon", since: "2h ago" },
+  { sku: "Lipton Ice Tea Peach 320ml", platform: "Instamart", since: "6h ago" },
+  { sku: "7UP 1L", platform: "Blinkit", since: "3h ago" },
+  { sku: "7UP 1L", platform: "Blinkit", since: "1h ago" },
+  { sku: "Mirinda Orange 1L", platform: "Zepto", since: "4h ago" },
+  { sku: "Aquafina 1.5L", platform: "Instamart", since: "2h ago" },
 ];
 
 const platformAvailability = [
-  { name: "Carrefour", overall: 86, color: "#FF9900", skus: [
+  { name: "Instamart", overall: 86, color: "#FF9900", skus: [
     { sku: "Pepsi 1L", avail: 97 }, { sku: "7UP 1L", avail: 100 }, { sku: "Aquafina 1.5L", avail: 72 },
     { sku: "Mirinda Orange 1L", avail: 95 }, { sku: "Lipton Ice Tea Peach", avail: 54 }, { sku: "Mirinda Orange 1L", avail: 98 },
   ]},
-  { name: "Noon", overall: 68, color: "#2F77FF", skus: [
+  { name: "Instamart", overall: 68, color: "#2F77FF", skus: [
     { sku: "Pepsi 1L", avail: 74 }, { sku: "7UP 1L", avail: 92 }, { sku: "Aquafina 1.5L", avail: 61 },
     { sku: "Mirinda Orange 1L", avail: 88 }, { sku: "Lipton Ice Tea Peach", avail: 12 }, { sku: "Mirinda Orange 1L", avail: 78 },
   ]},
-  { name: "Talabat", overall: 41, color: "#FDDC2B", skus: [
+  { name: "Blinkit", overall: 41, color: "#FDDC2B", skus: [
     { sku: "Pepsi 1L", avail: 55 }, { sku: "7UP 1L", avail: 38 }, { sku: "Mirinda Orange 1L", avail: 71 },
   ]},
-  { name: "Noon Minutes", overall: 56, color: "#833AB4", skus: [
+  { name: "Zepto", overall: 56, color: "#833AB4", skus: [
     { sku: "Pepsi 1L", avail: 93 }, { sku: "7UP 1L", avail: 77 }, { sku: "Mirinda Orange 1L", avail: 52 },
   ]},
-  { name: "Talabat", overall: 21, color: "#FC8019", skus: [
+  { name: "Blinkit", overall: 21, color: "#FC8019", skus: [
     { sku: "Pepsi 1L", avail: 34 }, { sku: "7UP 1L", avail: 9 }, { sku: "Mirinda Orange 1L", avail: 41 },
   ]},
 ];
 
 const stockForecast = [
-  { sku: "Lipton Ice Tea Peach 320ml", platform: "Talabat", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
-  { sku: "Mirinda Orange 1L", platform: "Noon Minutes", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
-  { sku: "7UP 1L", platform: "Talabat", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
-  { sku: "Aquafina 1.5L", platform: "Noon", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
-  { sku: "Mirinda Orange 1L", platform: "Carrefour", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
+  { sku: "Lipton Ice Tea Peach 320ml", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
+  { sku: "Mirinda Orange 1L", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
+  { sku: "7UP 1L", platform: "Blinkit", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
+  { sku: "Aquafina 1.5L", platform: "Instamart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
+  { sku: "Mirinda Orange 1L", platform: "Instamart", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
 ];
 
 const darkstoreGaps = [
   {
-    city: "Dubai", totalDarkstores: 142,
+    city: "Mumbai", totalDarkstores: 142,
     products: [
       { sku: "Pepsi 1L", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
       { sku: "7UP 1L", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
@@ -62,7 +62,7 @@ const darkstoreGaps = [
     ],
   },
   {
-    city: "Abu Dhabi", totalDarkstores: 98,
+    city: "Delhi NCR", totalDarkstores: 98,
     products: [
       { sku: "Pepsi 1L", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
       { sku: "7UP 1L", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
@@ -85,12 +85,12 @@ const darkstoreGaps = [
 
 /* Competition availability data */
 const competitionAvailability = [
-  { competitor: "Coca-Cola", platform: "Carrefour", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Coca-Cola 1L", trend: "stable" },
-  { competitor: "Coca-Cola", platform: "Talabat", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Coca-Cola Zero 330ml", trend: "improving" },
-  { competitor: "Almarai", platform: "Noon", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Almarai Juice 1L", trend: "stable" },
-  { competitor: "Almarai", platform: "Noon Minutes", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Almarai Laban 250ml", trend: "declining" },
-  { competitor: "Lacnor", platform: "Talabat", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Coca-Cola Premium", trend: "improving" },
-  { competitor: "Rauch", platform: "Carrefour", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 1L", trend: "stable" },
+  { competitor: "Coca-Cola", platform: "Instamart", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Coca-Cola 1L", trend: "stable" },
+  { competitor: "Coca-Cola", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Coca-Cola Zero 330ml", trend: "improving" },
+  { competitor: "Almarai", platform: "Instamart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Almarai Juice 1L", trend: "stable" },
+  { competitor: "Almarai", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Almarai Laban 250ml", trend: "declining" },
+  { competitor: "Lacnor", platform: "Blinkit", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Coca-Cola Premium", trend: "improving" },
+  { competitor: "Rauch", platform: "Instamart", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 1L", trend: "stable" },
 ];
 
 const AvailabilityView: React.FC = () => {
@@ -131,7 +131,7 @@ const AvailabilityView: React.FC = () => {
         <KPICard title="Overall Availability" value="68%" delta="▼ 4% vs last wk" deltaType="negative" sub="Across 5 platforms · 6 SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="OOS Products Today" value={String(oosProductsToday.length)} delta="▲ 2 vs yesterday" deltaType="negative" sub="Products currently out of stock" accentColor="bg-sw-red" delay={0.05} />
         <KPICard title="Darkstore Gaps" value="412" delta="Unlisted product-store pairs" deltaType="negative" sub="Across 3 cities · Q-Commerce" accentColor="bg-sw-amber" delay={0.1} />
-        <KPICard title="Ad Budget Wasted" value="AED 2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
+        <KPICard title="Ad Budget Wasted" value="₹ 2.8L/mo" delta="Ads running where not listed" deltaType="negative" sub="Click to pause OOS campaigns" accentColor="bg-sw-red" delay={0.15} />
       </div>
 
       {/* OOS Products Today */}
@@ -303,7 +303,7 @@ const AvailabilityView: React.FC = () => {
         <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
         {(() => {
           const skus = ["Pepsi 1L", "7UP 1L", "Mountain Dew 1L", "Aquafina 1.5L", "Mirinda Orange 1L", "Lipton Ice Tea Peach 320ml"];
-          const plats = ["Talabat", "Noon", "Noon Minutes", "Carrefour"];
+          const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
           const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
           const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
           return (
@@ -368,12 +368,12 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
   const tier2Locks = ["Manual pause — Aquafina Retargeting"];
 
   const competitionAvailData = [
-    { competitor: "Coca-Cola", platform: "Carrefour", compAvail: 96, yourAvail: 86, product: "Coca-Cola 1L", keywords: ["sunfeast butter drinks", "sunfeast beverages"], trend: "stable" },
-    { competitor: "Coca-Cola", platform: "Talabat", compAvail: 88, yourAvail: 41, product: "Coca-Cola Zero 330ml", keywords: ["sunfeast cream beverages", "cream drinks"], trend: "improving" },
-    { competitor: "Almarai", platform: "Noon", compAvail: 92, yourAvail: 68, product: "Almarai Juice 1L", keywords: ["parle beverages", "parle-g gold"], trend: "stable" },
-    { competitor: "Almarai", platform: "Noon Minutes", compAvail: 78, yourAvail: 56, product: "Almarai Laban 250ml", keywords: ["parle krackjack", "salted beverages"], trend: "declining" },
-    { competitor: "Lacnor", platform: "Talabat", compAvail: 72, yourAvail: 21, product: "Coca-Cola Premium", keywords: ["dark fantasy", "chocolate beverages"], trend: "improving" },
-    { competitor: "Rauch", platform: "Carrefour", compAvail: 84, yourAvail: 86, product: "Rauch Multivit 1L", keywords: ["unibic butter", "premium beverages"], trend: "stable" },
+    { competitor: "Coca-Cola", platform: "Instamart", compAvail: 96, yourAvail: 86, product: "Coca-Cola 1L", keywords: ["sunfeast butter drinks", "sunfeast beverages"], trend: "stable" },
+    { competitor: "Coca-Cola", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Coca-Cola Zero 330ml", keywords: ["sunfeast cream beverages", "cream drinks"], trend: "improving" },
+    { competitor: "Almarai", platform: "Instamart", compAvail: 92, yourAvail: 68, product: "Almarai Juice 1L", keywords: ["parle beverages", "parle-g gold"], trend: "stable" },
+    { competitor: "Almarai", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Almarai Laban 250ml", keywords: ["parle krackjack", "salted beverages"], trend: "declining" },
+    { competitor: "Lacnor", platform: "Blinkit", compAvail: 72, yourAvail: 21, product: "Coca-Cola Premium", keywords: ["dark fantasy", "chocolate beverages"], trend: "improving" },
+    { competitor: "Rauch", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Rauch Multivit 1L", keywords: ["unibic butter", "premium beverages"], trend: "stable" },
   ];
 
   return (
@@ -484,12 +484,12 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
           </thead>
           <tbody>
             {[
-              { city: "Dubai Marina", platform: "Talabat", compOos: 4, yourAvail: 96, campaign: "Boost Pepsi 1L — Dubai Marina", auto: true },
-              { city: "Downtown Dubai", platform: "Noon Minutes", compOos: 3, yourAvail: 92, campaign: "Conquest Mountain Dew vs Coca-Cola", auto: true },
-              { city: "Riyadh Olaya", platform: "Talabat", compOos: 5, yourAvail: 88, campaign: "Aquafina 1.5L Share Capture", auto: true },
-              { city: "Jeddah Al Hamra", platform: "Noon Minutes", compOos: 2, yourAvail: 84, campaign: "7UP — Almarai Conquest", auto: false },
-              { city: "Doha West Bay", platform: "Talabat", compOos: 3, yourAvail: 78, campaign: "Lipton Ice Tea Push", auto: false },
-              { city: "Abu Dhabi Khalifa", platform: "Carrefour", compOos: 4, yourAvail: 91, campaign: "Mirinda — Rauch Defensive", auto: true },
+              { city: "Bandra West", platform: "Blinkit", compOos: 4, yourAvail: 96, campaign: "Boost Pepsi 1L — Bandra West", auto: true },
+              { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Mountain Dew vs Coca-Cola", auto: true },
+              { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Aquafina 1.5L Share Capture", auto: true },
+              { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "7UP — Almarai Conquest", auto: false },
+              { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Lipton Ice Tea Push", auto: false },
+              { city: "Delhi NCR Khalifa", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Mirinda — Rauch Defensive", auto: true },
             ].map((r, i) => {
               const triggered = r.auto || !!compCampaignStates[i];
               return (
@@ -527,9 +527,9 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
         <div className="space-y-2">
           {[
-            { competitor: "Coca-Cola", product: "Coca-Cola Zero 330ml", platform: "Noon Minutes", since: "12h", keywords: ["cream beverages", "sunfeast cream"], estDemand: "4.2K searches/day" },
-            { competitor: "Almarai", product: "Almarai Juice 1L", platform: "Talabat", since: "6h", keywords: ["parle beverages", "glucose beverages"], estDemand: "8.1K searches/day" },
-            { competitor: "Lacnor", product: "Coca-Cola Premium", platform: "Talabat", since: "3h", keywords: ["dark fantasy", "chocolate beverages premium"], estDemand: "3.8K searches/day" },
+            { competitor: "Coca-Cola", product: "Coca-Cola Zero 330ml", platform: "Zepto", since: "12h", keywords: ["cream beverages", "sunfeast cream"], estDemand: "4.2K searches/day" },
+            { competitor: "Almarai", product: "Almarai Juice 1L", platform: "Blinkit", since: "6h", keywords: ["parle beverages", "glucose beverages"], estDemand: "8.1K searches/day" },
+            { competitor: "Lacnor", product: "Coca-Cola Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate beverages premium"], estDemand: "3.8K searches/day" },
           ].map((item, i) => (
             <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
               <div className="flex items-center justify-between mb-1">

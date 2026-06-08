@@ -9,7 +9,7 @@ const categoryTriggers: CampaignTrigger[] = [
     id: "cat-1", signal: "Whitespace detected: Mango Chilli variant",
     signalDetail: "High demand (45K monthly searches) with only 2 niche competitors",
     strategy: "New Product Launch Blitz", campaignType: "Sponsored Product + Video Ads + Display",
-    platforms: ["Carrefour", "Noon", "Talabat", "Noon Minutes"],
+    platforms: ["Instamart", "Instamart", "Blinkit", "Zepto"],
     keywords: ["mango chilli drink", "spicy mango", "tangy fruit drink", "new energy drink"],
     estimatedImpact: "Capture 15% category share in first 30 days", urgency: "high",
     icon: <Zap className="h-4 w-4 text-warning" />,
@@ -18,9 +18,9 @@ const categoryTriggers: CampaignTrigger[] = [
     id: "cat-2", signal: "Competitor delisted Cola 1.5L variant",
     signalDetail: "Competitor A removed their Cola 1.5L — opportunity to capture search traffic",
     strategy: "Competitor Delist Capture", campaignType: "Keyword Targeting on competitor brand terms",
-    platforms: ["Carrefour", "Noon"],
+    platforms: ["Instamart", "Instamart"],
     keywords: ["cola 1.5l", "large cola bottle", "party cola", "cola family pack"],
-    estimatedImpact: "+AED 2.8L revenue from competitor's abandoned traffic", urgency: "critical",
+    estimatedImpact: "+₹ 2.8L revenue from competitor's abandoned traffic", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
 ];
@@ -73,7 +73,7 @@ const CategoryRecommendationSection = () => {
                   {[
                     { label: "Search Volume", value: "High", color: "text-foreground" },
                     { label: "Competitor Density", value: "Low", color: "text-success" },
-                    { label: "Avg. Category Price", value: "AED 110", color: "text-foreground" },
+                    { label: "Avg. Category Price", value: "₹ 110", color: "text-foreground" },
                   ].map((item, idx) => (
                     <div key={idx} className="flex justify-between">
                       <span className="text-muted-foreground">{item.label}</span>
@@ -89,7 +89,7 @@ const CategoryRecommendationSection = () => {
                 </p>
                 <div className="p-3 bg-info/5 border border-info/20 rounded-lg">
                   <h5 className="text-xs font-bold text-info uppercase mb-1">Recommended Action</h5>
-                  <p className="text-xs text-foreground">Launch at AED 50 price point to capture early adopters.</p>
+                  <p className="text-xs text-foreground">Launch at ₹ 50 price point to capture early adopters.</p>
                 </div>
               </div>
             </div>

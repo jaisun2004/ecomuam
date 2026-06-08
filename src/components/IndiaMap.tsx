@@ -13,7 +13,7 @@ interface RegionData {
 
 const regions: RegionData[] = [
   { id: "mh", name: "Maharashtra", path: "M155,280 L175,260 L200,265 L210,285 L195,310 L170,305 Z", marketShare: 82, availability: 94, pricing: 88, sos: 42, competitionPoaching: 15 },
-  { id: "dl", name: "Dubai", path: "M185,145 L200,135 L215,142 L212,158 L195,160 Z", marketShare: 75, availability: 91, pricing: 82, sos: 38, competitionPoaching: 22 },
+  { id: "dl", name: "Mumbai", path: "M185,145 L200,135 L215,142 L212,158 L195,160 Z", marketShare: 75, availability: 91, pricing: 82, sos: 38, competitionPoaching: 22 },
   { id: "ka", name: "Karnataka", path: "M170,330 L195,320 L210,335 L200,360 L175,355 Z", marketShare: 68, availability: 88, pricing: 90, sos: 35, competitionPoaching: 18 },
   { id: "tn", name: "Tamil Nadu", path: "M195,360 L215,350 L230,365 L225,395 L200,390 Z", marketShare: 58, availability: 85, pricing: 78, sos: 30, competitionPoaching: 25 },
   { id: "gj", name: "Gujarat", path: "M120,220 L150,210 L160,230 L150,260 L125,255 Z", marketShare: 72, availability: 92, pricing: 85, sos: 40, competitionPoaching: 12 },

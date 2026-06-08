@@ -42,27 +42,27 @@ const mockSubmissions: PlanSubmission[] = [
     scenarioType: "Aggressive",
     submittedBy: "Brand Manager",
     submittedAt: "Mar 19, 2026 · 10:45 AM",
-    totalBudget: "AED 1,00,00,000",
-    blinkitSplit: "AED 30L",
-    zeptoSplit: "AED 70L",
+    totalBudget: "₹ 1,00,00,000",
+    blinkitSplit: "₹ 30L",
+    zeptoSplit: "₹ 70L",
     roasRange: "2.8x – 4.2x",
     estImpressions: "18L – 24L weekly",
     confidence: 85,
     status: "pending",
     campaigns: [
-      { name: "GDB-BLK-MOR-WD-KW", sku: "Pepsi 1L", platform: "Talabat", type: "Sponsored Product", city: "Dubai", dayPart: "Morning", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "AED 12", matchType: "Exact" }, { keyword: "tea time beverages", bid: "AED 9", matchType: "Phrase" }], budget: "AED 1,25,000/wk", estRoas: "3.2x", estImpressions: "1.8L" },
-      { name: "GDB-BLK-EVE-WD-KW", sku: "Pepsi 1L", platform: "Talabat", type: "Sponsored Product", city: "Dubai", dayPart: "Evening", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "AED 14", matchType: "Exact" }, { keyword: "evening snacks", bid: "AED 11", matchType: "Broad" }], budget: "AED 1,50,000/wk", estRoas: "3.5x", estImpressions: "2.1L" },
-      { name: "GDB-BLK-MOR-WE-KW", sku: "Pepsi 1L", platform: "Talabat", type: "Sponsored Product", city: "Dubai", dayPart: "Morning", dayType: "Weekend", keywords: [{ keyword: "butter drinks", bid: "AED 15", matchType: "Exact" }], budget: "AED 1,00,000/wk", estRoas: "3.8x", estImpressions: "1.5L" },
-      { name: "GDB-ZEP-MOR-WD-KW", sku: "Pepsi 1L", platform: "Noon Minutes", type: "Sponsored Product", city: "Dubai", dayPart: "Morning", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "AED 10", matchType: "Exact" }, { keyword: "beverage online", bid: "AED 8", matchType: "Phrase" }, { keyword: "britannia drinks", bid: "AED 13", matchType: "Exact" }], budget: "AED 2,50,000/wk", estRoas: "4.0x", estImpressions: "3.2L" },
-      { name: "GDB-ZEP-EVE-WD-KW", sku: "Pepsi 1L", platform: "Noon Minutes", type: "Sponsored Product", city: "Abu Dhabi", dayPart: "Evening", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "AED 11", matchType: "Exact" }, { keyword: "mcvities digestive", bid: "AED 14", matchType: "Exact" }], budget: "AED 2,25,000/wk", estRoas: "3.6x", estImpressions: "2.8L" },
-      { name: "NCD-BLK-MOR-WD-CAT", sku: "Aquafina 1.5L", platform: "Talabat", type: "Sponsored Brand", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ keyword: "digestive beverages", bid: "AED 9", matchType: "Exact" }, { keyword: "healthy snacks", bid: "AED 7", matchType: "Phrase" }], budget: "AED 1,00,000/wk", estRoas: "2.9x", estImpressions: "1.4L" },
-      { name: "NCD-ZEP-EVE-WE-CAT", sku: "Aquafina 1.5L", platform: "Noon Minutes", type: "Sponsored Brand", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ keyword: "digestive beverages", bid: "AED 11", matchType: "Exact" }, { keyword: "parle drinks", bid: "AED 12", matchType: "Exact" }], budget: "AED 1,75,000/wk", estRoas: "3.4x", estImpressions: "2.2L" },
-      { name: "GDB-ZEP-MOR-WE-COMP", sku: "Pepsi 1L", platform: "Noon Minutes", type: "Sponsored Product", city: "Abu Dhabi", dayPart: "Morning", dayType: "Weekend", keywords: [{ keyword: "sunfeast drinks", bid: "AED 16", matchType: "Exact" }, { keyword: "parle drinks", bid: "AED 14", matchType: "Exact" }], budget: "AED 2,00,000/wk", estRoas: "2.8x", estImpressions: "2.0L" },
+      { name: "GDB-BLK-MOR-WD-KW", sku: "Pepsi 1L", platform: "Blinkit", type: "Sponsored Product", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "₹ 12", matchType: "Exact" }, { keyword: "tea time beverages", bid: "₹ 9", matchType: "Phrase" }], budget: "₹ 1,25,000/wk", estRoas: "3.2x", estImpressions: "1.8L" },
+      { name: "GDB-BLK-EVE-WD-KW", sku: "Pepsi 1L", platform: "Blinkit", type: "Sponsored Product", city: "Mumbai", dayPart: "Evening", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "₹ 14", matchType: "Exact" }, { keyword: "evening snacks", bid: "₹ 11", matchType: "Broad" }], budget: "₹ 1,50,000/wk", estRoas: "3.5x", estImpressions: "2.1L" },
+      { name: "GDB-BLK-MOR-WE-KW", sku: "Pepsi 1L", platform: "Blinkit", type: "Sponsored Product", city: "Mumbai", dayPart: "Morning", dayType: "Weekend", keywords: [{ keyword: "butter drinks", bid: "₹ 15", matchType: "Exact" }], budget: "₹ 1,00,000/wk", estRoas: "3.8x", estImpressions: "1.5L" },
+      { name: "GDB-ZEP-MOR-WD-KW", sku: "Pepsi 1L", platform: "Zepto", type: "Sponsored Product", city: "Mumbai", dayPart: "Morning", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "₹ 10", matchType: "Exact" }, { keyword: "beverage online", bid: "₹ 8", matchType: "Phrase" }, { keyword: "britannia drinks", bid: "₹ 13", matchType: "Exact" }], budget: "₹ 2,50,000/wk", estRoas: "4.0x", estImpressions: "3.2L" },
+      { name: "GDB-ZEP-EVE-WD-KW", sku: "Pepsi 1L", platform: "Zepto", type: "Sponsored Product", city: "Delhi NCR", dayPart: "Evening", dayType: "Weekday", keywords: [{ keyword: "butter drinks", bid: "₹ 11", matchType: "Exact" }, { keyword: "mcvities digestive", bid: "₹ 14", matchType: "Exact" }], budget: "₹ 2,25,000/wk", estRoas: "3.6x", estImpressions: "2.8L" },
+      { name: "NCD-BLK-MOR-WD-CAT", sku: "Aquafina 1.5L", platform: "Blinkit", type: "Sponsored Brand", city: "Bengaluru", dayPart: "Morning", dayType: "Weekday", keywords: [{ keyword: "digestive beverages", bid: "₹ 9", matchType: "Exact" }, { keyword: "healthy snacks", bid: "₹ 7", matchType: "Phrase" }], budget: "₹ 1,00,000/wk", estRoas: "2.9x", estImpressions: "1.4L" },
+      { name: "NCD-ZEP-EVE-WE-CAT", sku: "Aquafina 1.5L", platform: "Zepto", type: "Sponsored Brand", city: "Bengaluru", dayPart: "Evening", dayType: "Weekend", keywords: [{ keyword: "digestive beverages", bid: "₹ 11", matchType: "Exact" }, { keyword: "parle drinks", bid: "₹ 12", matchType: "Exact" }], budget: "₹ 1,75,000/wk", estRoas: "3.4x", estImpressions: "2.2L" },
+      { name: "GDB-ZEP-MOR-WE-COMP", sku: "Pepsi 1L", platform: "Zepto", type: "Sponsored Product", city: "Delhi NCR", dayPart: "Morning", dayType: "Weekend", keywords: [{ keyword: "sunfeast drinks", bid: "₹ 16", matchType: "Exact" }, { keyword: "parle drinks", bid: "₹ 14", matchType: "Exact" }], budget: "₹ 2,00,000/wk", estRoas: "2.8x", estImpressions: "2.0L" },
     ],
     cities: [
-      { name: "Dubai", blinkitBudget: "AED 10L", zeptoBudget: "AED 25L" },
-      { name: "Abu Dhabi", blinkitBudget: "AED 10L", zeptoBudget: "AED 25L" },
-      { name: "Bengaluru", blinkitBudget: "AED 10L", zeptoBudget: "AED 20L" },
+      { name: "Mumbai", blinkitBudget: "₹ 10L", zeptoBudget: "₹ 25L" },
+      { name: "Delhi NCR", blinkitBudget: "₹ 10L", zeptoBudget: "₹ 25L" },
+      { name: "Bengaluru", blinkitBudget: "₹ 10L", zeptoBudget: "₹ 20L" },
     ],
   },
 ];
@@ -157,8 +157,8 @@ const ApprovalFlowView: React.FC = () => {
                 <div className="grid grid-cols-5 gap-3">
                   {[
                     { label: "Total Budget", value: plan.totalBudget },
-                    { label: "Talabat", value: plan.blinkitSplit },
-                    { label: "Noon Minutes", value: plan.zeptoSplit },
+                    { label: "Blinkit", value: plan.blinkitSplit },
+                    { label: "Zepto", value: plan.zeptoSplit },
                     { label: "Est. ROAS", value: plan.roasRange },
                     { label: "Est. Impressions", value: plan.estImpressions },
                   ].map(m => (
@@ -193,8 +193,8 @@ const ApprovalFlowView: React.FC = () => {
                       <table className="w-full text-xs">
                         <thead><tr className="bg-surface-2 text-muted-foreground">
                           <th className="px-3 py-2 text-left">City</th>
-                          <th className="px-3 py-2 text-right">Talabat Budget</th>
-                          <th className="px-3 py-2 text-right">Noon Minutes Budget</th>
+                          <th className="px-3 py-2 text-right">Blinkit Budget</th>
+                          <th className="px-3 py-2 text-right">Zepto Budget</th>
                         </tr></thead>
                         <tbody className="text-foreground">
                           {plan.cities.map(c => (
