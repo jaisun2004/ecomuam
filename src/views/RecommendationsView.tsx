@@ -322,6 +322,27 @@ const PAGE_SIZE = 30;
 // last refresh timestamp — used in header chip
 const LAST_UPDATED_TS = m(4);
 
+// Deterministic current-campaign performance metrics per recommendation id
+interface RecoMetrics { spend: string; sales: string; orders: string; impressions: string; roas: string; }
+const hashStr = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+const getMetrics = (r: Reco): RecoMetrics => {
+  const seed = hashStr(r.id);
+  const spend = 8000 + (seed % 42000);            // ₹ 8K – 50K
+  const roasN = 2.4 + ((seed >> 3) % 38) / 10;    // 2.4x – 6.2x
+  const sales = Math.round(spend * roasN);
+  const orders = Math.round(sales / (180 + ((seed >> 5) % 120))); // AOV 180-300
+  const impressions = 40_000 + ((seed >> 7) % 460_000);
+  const fmtK = (n: number) => n >= 100_000 ? `${(n / 100_000).toFixed(2)}L` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : `${n}`;
+  return {
+    spend: `₹ ${fmtK(spend)}`,
+    sales: `₹ ${fmtK(sales)}`,
+    orders: fmtK(orders),
+    impressions: fmtK(impressions),
+    roas: `${roasN.toFixed(1)}x`,
+  };
+};
+
+
 const RecommendationsView: React.FC = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [applied, setApplied] = useState<Set<string>>(new Set());
