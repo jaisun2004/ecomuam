@@ -39,7 +39,7 @@ const priceTrend = [
 const priceActionItems: ActionItem[] = [
   { id: "1", severity: "critical", title: "MAP violations on 14 SKUs", description: "Sellers undercutting minimum advertised price on Instamart", metric: "₹ 2.8L impact", action: "Enforce MAP" },
   { id: "2", severity: "critical", title: "Competitor undercut on top 5 SKUs", description: "Avg 12% lower pricing detected on Instamart", metric: "-12% avg", action: "Review" },
-  { id: "3", severity: "warning", title: "Price erosion in Personal Care", description: "Consistent 5% MoM price drop across category", metric: "-5% MoM", action: "Analyze" },
+  { id: "3", severity: "warning", title: "Price erosion in Glucose Biscuits", description: "Consistent 5% MoM price drop across category", metric: "-5% MoM", action: "Analyze" },
   { id: "4", severity: "info", title: "Price premium opportunity", description: "8 SKUs priced 20% below category avg", metric: "+20% headroom", action: "Optimize" },
   { id: "5", severity: "success", title: "Price parity achieved", description: "All Biscuits SKUs now within 2% across platforms", metric: "±2%", action: "Monitor" },
 ];
