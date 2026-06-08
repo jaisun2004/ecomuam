@@ -64,13 +64,14 @@ interface Reco {
 }
 
 const SKUS = [
-  "Pepsi 1L PET", "Pepsi 1.5L PET", "Pepsi 330ml Can", "Pepsi Black 1L",
-  "7UP 330ml Can", "7UP 1L PET", "Mountain Dew 500ml", "Mirinda Orange 1L",
-  "Lay's Classic 150g", "Lay's Salt & Vinegar 150g", "Doritos Nacho 150g",
-  "Cheetos Crunchy 130g", "Quaker Oats 1kg", "Tropicana Orange 1L",
+  "Parle-G Gold 200g", "Parle-G Original 250g", "Hide & Seek Chocolate 200g",
+  "Bourbon Cream 150g", "Good Day Cashew 200g", "Good Day Butter 150g",
+  "Marie Gold 250g", "NutriChoice Digestive 250g", "Milk Bikis 150g",
+  "Dark Fantasy Choco Fills 75g", "50-50 Maska Chaska 150g", "Krackjack 200g",
+  "Monaco Classic 150g", "Oreo Vanilla 120g", "Treat Jim Jam 150g",
 ];
 
-const KEYWORDS = ["cola drink", "soft drink 1l", "diet pepsi", "energy soda", "fizzy juice", "lemon soda 500ml", "party pack soda", "midnight snack chips"];
+const KEYWORDS = ["glucose biscuits", "cream biscuits", "digestive biscuits", "marie biscuits", "chocolate biscuits 200g", "cookies pack", "tea time biscuits", "kids snack biscuits"];
 
 function makeReco(i: number): Reco {
   const sku = SKUS[i % SKUS.length];
@@ -285,17 +286,17 @@ const h = (n: number) => NOW - n * 3_600_000;
 const d = (n: number) => NOW - n * 86_400_000;
 
 const SEED_LOG: LogEntry[] = [
-  // Pepsi 1L — Blinkit
-  { id: "l1", ts: m(12),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Mumbai",     category: "Bid Changes",     summary: "Raised bid ₹1.20 → ₹1.42 (+18%)", user: "AI Auto" },
-  { id: "l2", ts: m(38),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Delhi NCR",  category: "Budget",          summary: "Daily budget ₹400 → ₹520 (+30%)", user: "priya.s" },
-  { id: "l3", ts: h(2),   campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "diet pepsi",          city: "Mumbai",     category: "Remove Keywords", summary: "Removed 2 low-intent keywords", user: "AI Auto" },
-  // Lay's — Zepto
-  { id: "l4", ts: h(4),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Bangalore",  category: "City",            summary: "Expanded geo into Bangalore (5 km)", user: "rohit.k" },
-  { id: "l5", ts: h(6),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Pune",       category: "Bid Changes",     summary: "Trimmed bid ₹2.10 → ₹1.85 (−12%)", user: "AI Auto" },
-  // 7UP — Instamart
-  { id: "l6", ts: h(20),  campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "lemon soda 500ml",    city: "Hyderabad",  category: "Budget",          summary: "Trimmed daily budget −15%", user: "priya.s" },
-  { id: "l7", ts: d(1),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Hyderabad",  category: "Remove Keywords", summary: "Negative-keyworded 3 wasted terms", user: "AI Auto" },
-  { id: "l8", ts: d(2),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Chennai",    category: "City",            summary: "Disabled Chennai geo (ROAS 1.6x)", user: "rohit.k" },
+  // Parle-G — Blinkit
+  { id: "l1", ts: m(12),  campaign: "Parle-G — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "glucose biscuits",     city: "Mumbai",     category: "Bid Changes",     summary: "Raised bid ₹1.20 → ₹1.42 (+18%)", user: "AI Auto" },
+  { id: "l2", ts: m(38),  campaign: "Parle-G — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "glucose biscuits",     city: "Delhi NCR",  category: "Budget",          summary: "Daily budget ₹400 → ₹520 (+30%)", user: "priya.s" },
+  { id: "l3", ts: h(2),   campaign: "Parle-G — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "marie biscuits",       city: "Mumbai",     category: "Remove Keywords", summary: "Removed 2 low-intent keywords", user: "AI Auto" },
+  // Hide & Seek — Zepto
+  { id: "l4", ts: h(4),   campaign: "Hide & Seek — Performance Zepto #117", platform: "Zepto",   keyword: "chocolate biscuits 200g",city: "Bangalore", category: "City",            summary: "Expanded geo into Bangalore (5 km)", user: "rohit.k" },
+  { id: "l5", ts: h(6),   campaign: "Hide & Seek — Performance Zepto #117", platform: "Zepto",   keyword: "chocolate biscuits 200g",city: "Pune",      category: "Bid Changes",     summary: "Trimmed bid ₹2.10 → ₹1.85 (−12%)", user: "AI Auto" },
+  // Good Day — Instamart
+  { id: "l6", ts: h(20),  campaign: "Good Day — Non-Brand Instamart #134", platform: "Instamart",keyword: "cookies pack",         city: "Hyderabad",  category: "Budget",          summary: "Trimmed daily budget −15%", user: "priya.s" },
+  { id: "l7", ts: d(1),   campaign: "Good Day — Non-Brand Instamart #134", platform: "Instamart",keyword: "tea time biscuits",    city: "Hyderabad",  category: "Remove Keywords", summary: "Negative-keyworded 3 wasted terms", user: "AI Auto" },
+  { id: "l8", ts: d(2),   campaign: "Good Day — Non-Brand Instamart #134", platform: "Instamart",keyword: "tea time biscuits",    city: "Chennai",    category: "City",            summary: "Disabled Chennai geo (ROAS 1.6x)", user: "rohit.k" },
 ];
 
 const formatRelative = (ts: number) => {
@@ -320,6 +321,27 @@ const PAGE_SIZE = 30;
 
 // last refresh timestamp — used in header chip
 const LAST_UPDATED_TS = m(4);
+
+// Deterministic current-campaign performance metrics per recommendation id
+interface RecoMetrics { spend: string; sales: string; orders: string; impressions: string; roas: string; }
+const hashStr = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+const getMetrics = (r: Reco): RecoMetrics => {
+  const seed = hashStr(r.id);
+  const spend = 8000 + (seed % 42000);            // ₹ 8K – 50K
+  const roasN = 2.4 + ((seed >> 3) % 38) / 10;    // 2.4x – 6.2x
+  const sales = Math.round(spend * roasN);
+  const orders = Math.round(sales / (180 + ((seed >> 5) % 120))); // AOV 180-300
+  const impressions = 40_000 + ((seed >> 7) % 460_000);
+  const fmtK = (n: number) => n >= 100_000 ? `${(n / 100_000).toFixed(2)}L` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : `${n}`;
+  return {
+    spend: `₹ ${fmtK(spend)}`,
+    sales: `₹ ${fmtK(sales)}`,
+    orders: fmtK(orders),
+    impressions: fmtK(impressions),
+    roas: `${roasN.toFixed(1)}x`,
+  };
+};
+
 
 const RecommendationsView: React.FC = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -430,8 +452,16 @@ const RecommendationsView: React.FC = () => {
   });
 
   const RecoRow: React.FC<{ r: Reco }> = ({ r }) => (
-    <div className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors">
-      <Checkbox checked={selected.has(r.id)} onCheckedChange={() => toggleSel(r.id)} aria-label="Select" />
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setOpenApply([r.id])}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpenApply([r.id]); } }}
+      className="group grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2.5 border-t border-subtle hover:bg-surface-2/40 transition-colors cursor-pointer"
+    >
+      <span onClick={(e) => e.stopPropagation()}>
+        <Checkbox checked={selected.has(r.id)} onCheckedChange={() => toggleSel(r.id)} aria-label="Select" />
+      </span>
       <div className="min-w-0">
         <p className="text-[13px] font-medium text-foreground truncate leading-tight">{r.headline}</p>
         <p className="text-[11px] text-muted-foreground truncate mt-0.5">
@@ -441,7 +471,7 @@ const RecommendationsView: React.FC = () => {
       </div>
       <span className="text-[11px] text-sw-green truncate" title={r.estImpact}>{r.estImpact}</span>
       <ConfidenceDots n={r.confidence} />
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
         {r.warnings.map((w, wi) => {
           const WIcon = WARN_META[w.kind].icon;
           return (
@@ -453,7 +483,7 @@ const RecommendationsView: React.FC = () => {
           );
         })}
       </div>
-      <div className="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
         <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] gap-1 text-muted-foreground"
           onClick={() => setOpenGlass(r.id)} title="Why this recommendation?">
           <Info size={12} /> Why
@@ -470,6 +500,7 @@ const RecommendationsView: React.FC = () => {
       </div>
     </div>
   );
+
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -762,6 +793,31 @@ const RecommendationsView: React.FC = () => {
                 <div className="px-3 py-2 text-[11.5px] text-muted-foreground border-b border-subtle bg-surface-1">
                   <span className="text-foreground font-medium">Why: </span>{r.rationale}
                 </div>
+                {(() => {
+                  const mtr = getMetrics(r);
+                  const cells: { k: string; v: string }[] = [
+                    { k: "ROAS",        v: mtr.roas },
+                    { k: "Impressions", v: mtr.impressions },
+                    { k: "Spend",       v: mtr.spend },
+                    { k: "Sales",       v: mtr.sales },
+                    { k: "Orders",      v: mtr.orders },
+                  ];
+                  return (
+                    <div className="px-3 py-2 border-b border-subtle bg-surface-1">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-1.5">
+                        Current campaign performance · last 14d
+                      </p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {cells.map(c => (
+                          <div key={c.k} className="px-2 py-1.5 rounded-md border border-subtle bg-surface-2/40">
+                            <p className="text-[9.5px] uppercase tracking-wider text-muted-foreground font-mono">{c.k}</p>
+                            <p className="text-[12px] font-mono text-foreground mt-0.5">{c.v}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
                 <table className="w-full text-[12px]">
                   <thead className="text-[10px] uppercase tracking-wider text-muted-foreground bg-surface-2/40">
                     <tr>
