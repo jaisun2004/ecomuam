@@ -15,7 +15,7 @@ const criticalAlerts = [
 ];
 
 const warningAlerts = [
-  { icon: "📝", title: "Content score below 40%", detail: "Lipton Ice Tea Peach listing missing A+ content, 3 images, 4 keywords.", meta: "2h ago · Instamart", action: "Fix Now" },
+  { icon: "📝", title: "Content score below 40%", detail: "Hide & Seek Choco listing missing A+ content, 3 images, 4 keywords.", meta: "2h ago · Instamart", action: "Fix Now" },
   { icon: "💰", title: "ROAS below 2.5x threshold", detail: "Instamart Marie Gold at 2.1x for 5 days. Auto-pause triggered.", meta: "3h ago · Instamart", action: "Review" },
   { icon: "🏷️", title: "Negative review spike", detail: "4 new 1-star reviews on Zepto Bourbon — all mention packaging damaged.", meta: "5h ago · Zepto", action: "Escalate" },
 ];

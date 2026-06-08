@@ -100,7 +100,7 @@ const reductionCandidates = [
 ].sort((a, b) => b.monthlySavings - a.monthlySavings);
 
 const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
-const skuOptions = ["Parle-G 120g", "Marie Gold 250g", "Britannia Marie 150g", "Lipton Ice Tea Peach 320ml"];
+const skuOptions = ["Parle-G 120g", "Marie Gold 250g", "Britannia Marie 150g", "Hide & Seek Choco 120g"];
 const presets = ["7D", "30D", "90D"] as const;
 type Preset = (typeof presets)[number];
 

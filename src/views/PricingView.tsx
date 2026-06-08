@@ -9,7 +9,7 @@ import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell, ShieldAl
 import { toast } from "@/hooks/use-toast";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
-const skuOptions = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 250g", "Bourbon 250g", "Lipton Ice Tea 320ml"];
+const skuOptions = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 250g", "Bourbon 250g", "Hide & Seek 120g"];
 const platformOptions = ["Instamart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
@@ -40,7 +40,7 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 33, comp1: 31, comp2: 35, comp3: 28 })),
   },
-  "Lipton Ice Tea 320ml": {
+  "Hide & Seek 120g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 20, comp1: 18, comp2: 22, comp3: 15 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 21, comp1: 19, comp2: 23, comp3: 16 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 22, comp1: 20, comp2: 24, comp3: 17 })),
@@ -53,7 +53,7 @@ const compNamesBySku: Record<string, string[]> = {
   "Marie Gold 120g": ["Britannia", "Britannia", "Lacnor"],
   "Britannia Marie 250g": ["Patanjali", "Rauch", "Britannia"],
   "Bourbon 250g": ["Britannia", "Britannia", "Lacnor"],
-  "Lipton Ice Tea 320ml": ["Britannia", "Britannia", "Lacnor"],
+  "Hide & Seek 120g": ["Britannia", "Britannia", "Lacnor"],
 };
 
 const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
@@ -79,7 +79,7 @@ const priceAlerts = [
   { sku: "Marie Gold 120g", competitor: "Britannia", platform: "Instamart", yourPrice: "₹ 35", compPrice: "₹ 30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
   { sku: "Britannia Marie 250g", competitor: "Patanjali", platform: "Instamart", yourPrice: "₹ 45", compPrice: "₹ 40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
   { sku: "Bourbon 250g", competitor: "Britannia", platform: "Instamart", yourPrice: "₹ 30", compPrice: "₹ 28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
-  { sku: "Lipton Ice Tea 320ml", competitor: "Britannia", platform: "Zepto", yourPrice: "₹ 20", compPrice: "₹ 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
+  { sku: "Hide & Seek 120g", competitor: "Britannia", platform: "Zepto", yourPrice: "₹ 20", compPrice: "₹ 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
 ];
 
 const platformPricing = [
@@ -103,14 +103,14 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
   ],
   Zepto: [
     { sku: "Parle-G 250g", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Britannia" },
-    { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Britannia" },
+    { sku: "Hide & Seek 120g", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Britannia" },
   ],
 };
 
 const priceAdvantageData = [
   { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Rauch", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
   { sku: "Bourbon 250g", yourPrice: "₹ 30", compPrice: "₹ 34", competitor: "Britannia", platform: "Instamart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹ 2.80", estRoas: "4.6x" },
-  { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Britannia", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹ 1.90", estRoas: "6.1x" },
+  { sku: "Hide & Seek 120g", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Britannia", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹ 1.90", estRoas: "6.1x" },
 ];
 
 const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
@@ -124,14 +124,14 @@ const elasticityData = [
   { sku: "Marie Gold 250g", sensitivity: 0.65 },
   { sku: "Britannia Marie 250g", sensitivity: 0.91 },
   { sku: "Bourbon 120g", sensitivity: 0.48 },
-  { sku: "Lipton Ice Tea 320ml", sensitivity: 0.35 },
+  { sku: "Hide & Seek 120g", sensitivity: 0.35 },
 ];
 
 const priceGapTable = [
   { sku: "Marie Gold 250g", yours: "₹ 35", lowest: "₹ 30", gap: "+16.7%", action: "Match Price" },
   { sku: "Britannia Marie 250g", yours: "₹ 45", lowest: "₹ 40", gap: "+12.5%", action: "Match Price" },
   { sku: "Bourbon 120g", yours: "₹ 30", lowest: "₹ 28", gap: "+7.1%", action: "Monitor" },
-  { sku: "Lipton Ice Tea 320ml", yours: "₹ 20", lowest: "₹ 18", gap: "+11.1%", action: "Monitor" },
+  { sku: "Hide & Seek 120g", yours: "₹ 20", lowest: "₹ 18", gap: "+11.1%", action: "Monitor" },
   { sku: "Parle-G 250g", yours: "₹ 40", lowest: "₹ 35", gap: "+14.3%", action: "Match Price" },
 ];
 

@@ -9,7 +9,7 @@ import { Megaphone, ChevronDown, ChevronRight, MapPin, TrendingUp, TrendingDown,
 
 /* ── mock data ── */
 const heatmapData = {
-  skus: ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 250g", "Lipton Ice Tea 320ml", "Sunfeast 150g"],
+  skus: ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 250g", "Hide & Seek 120g", "Sunfeast 150g"],
   platforms: [
     { name: "Instamart", color: "#FF9900", values: [97, 100, 72, 95, 54, 98] },
     { name: "Instamart", color: "#2F77FF", values: [74, 92, 61, 88, 12, 78] },
@@ -108,7 +108,7 @@ const getShareColor = (v: number) => {
 
 const contentSkus = [
   { emoji: "🍪", name: "Parle-G 120g", platforms: "Instamart · Instamart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
-  { emoji: "🍘", name: "Lipton Ice Tea Peach 320ml", platforms: "Instamart · Instamart", score: 50, color: "hsl(38,92%,50%)" },
+  { emoji: "🍘", name: "Hide & Seek Choco 120g", platforms: "Instamart · Instamart", score: 50, color: "hsl(38,92%,50%)" },
   { emoji: "🥛", name: "Sunfeast 150g", platforms: "Instamart only", score: 20, color: "hsl(0,76%,57%)" },
   { emoji: "🍫", name: "Bourbon 250g", platforms: "Instamart · Instamart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
 ];

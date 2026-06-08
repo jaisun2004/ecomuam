@@ -14,7 +14,7 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const oosProductsToday = [
-  { sku: "Lipton Ice Tea Peach 320ml", platform: "Instamart", since: "6h ago" },
+  { sku: "Hide & Seek Choco 120g", platform: "Instamart", since: "6h ago" },
   { sku: "Marie Gold 250g", platform: "Blinkit", since: "3h ago" },
   { sku: "Marie Gold 120g", platform: "Blinkit", since: "1h ago" },
   { sku: "Sunfeast Orange 250g", platform: "Zepto", since: "4h ago" },
@@ -24,11 +24,11 @@ const oosProductsToday = [
 const platformAvailability = [
   { name: "Instamart", overall: 86, color: "#FF9900", skus: [
     { sku: "Parle-G 120g", avail: 97 }, { sku: "Marie Gold 250g", avail: 100 }, { sku: "Britannia Marie 150g", avail: 72 },
-    { sku: "Sunfeast Orange 120g", avail: 95 }, { sku: "Lipton Ice Tea Peach", avail: 54 }, { sku: "Sunfeast Orange 250g", avail: 98 },
+    { sku: "Sunfeast Orange 120g", avail: 95 }, { sku: "Hide & Seek Choco", avail: 54 }, { sku: "Sunfeast Orange 250g", avail: 98 },
   ]},
   { name: "Instamart", overall: 68, color: "#2F77FF", skus: [
     { sku: "Parle-G 120g", avail: 74 }, { sku: "Marie Gold 250g", avail: 92 }, { sku: "Britannia Marie 150g", avail: 61 },
-    { sku: "Sunfeast Orange 120g", avail: 88 }, { sku: "Lipton Ice Tea Peach", avail: 12 }, { sku: "Sunfeast Orange 250g", avail: 78 },
+    { sku: "Sunfeast Orange 120g", avail: 88 }, { sku: "Hide & Seek Choco", avail: 12 }, { sku: "Sunfeast Orange 250g", avail: 78 },
   ]},
   { name: "Blinkit", overall: 41, color: "#FDDC2B", skus: [
     { sku: "Parle-G 120g", avail: 55 }, { sku: "Marie Gold 250g", avail: 38 }, { sku: "Sunfeast Orange 120g", avail: 71 },
@@ -42,7 +42,7 @@ const platformAvailability = [
 ];
 
 const stockForecast = [
-  { sku: "Lipton Ice Tea Peach 320ml", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
+  { sku: "Hide & Seek Choco 120g", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
   { sku: "Sunfeast Orange 250g", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
   { sku: "Marie Gold 120g", platform: "Blinkit", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
   { sku: "Britannia Marie 150g", platform: "Instamart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
@@ -55,7 +55,7 @@ const darkstoreGaps = [
     products: [
       { sku: "Parle-G 120g", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
       { sku: "Marie Gold 250g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
-      { sku: "Lipton Ice Tea Peach", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
       { sku: "Britannia Marie 150g", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
       { sku: "Sunfeast Orange 120g", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
       { sku: "Sunfeast Orange 250g", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
@@ -66,7 +66,7 @@ const darkstoreGaps = [
     products: [
       { sku: "Parle-G 120g", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
       { sku: "Marie Gold 250g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
-      { sku: "Lipton Ice Tea Peach", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
       { sku: "Britannia Marie 150g", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
       { sku: "Sunfeast Orange 120g", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
       { sku: "Sunfeast Orange 250g", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
@@ -77,7 +77,7 @@ const darkstoreGaps = [
     products: [
       { sku: "Parle-G 120g", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
       { sku: "Marie Gold 250g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
-      { sku: "Lipton Ice Tea Peach", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
+      { sku: "Hide & Seek Choco", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
       { sku: "Britannia Marie 150g", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
     ],
   },
@@ -102,7 +102,7 @@ const AvailabilityView: React.FC = () => {
 
   const [tab, setTab] = useState("overview");
 
-  const allSkus = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Lipton Ice Tea Peach", "Sunfeast Orange 120g"];
+  const allSkus = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Hide & Seek Choco", "Sunfeast Orange 120g"];
 
   return (
     <div className="space-y-6 pb-20">
@@ -302,7 +302,7 @@ const AvailabilityView: React.FC = () => {
       <PanelCard title="Replenishment Lead-Time Heatmap" badge="Days to restock" badgeColor="purple" delay={0.45}>
         <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
         {(() => {
-          const skus = ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 150g", "Sunfeast Orange 120g", "Lipton Ice Tea Peach 320ml"];
+          const skus = ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 150g", "Sunfeast Orange 120g", "Hide & Seek Choco 120g"];
           const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
           const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
           const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
@@ -352,7 +352,7 @@ const AvailabilityView: React.FC = () => {
 const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
-  const skuNames = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Lipton Ice Tea Peach", "Sunfeast Orange 120g"];
+  const skuNames = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Hide & Seek Choco", "Sunfeast Orange 120g"];
   const heatmapData = useMemo(() => skuNames.map(sku => ({
     sku,
     days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
@@ -488,7 +488,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
               { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Bourbon vs Britannia", auto: true },
               { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Britannia Marie 150g Share Capture", auto: true },
               { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Britannia Conquest", auto: false },
-              { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Lipton Ice Tea Push", auto: false },
+              { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Hide & Seek Push", auto: false },
               { city: "Delhi NCR Khalifa", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Rauch Defensive", auto: true },
             ].map((r, i) => {
               const triggered = r.auto || !!compCampaignStates[i];

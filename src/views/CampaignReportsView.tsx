@@ -42,7 +42,7 @@ const reportData: ReportPlatform[] = [
       { name: "Q-Commerce Biscuits Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber", impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
           { keyword: "butter biscuits", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
-            cities: [{ city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Parle-G 250g", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" }, { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" }] }],
+            cities: [{ city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green", products: [{ code: "SKU-GD200", title: "Parle-G 250g", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" }, { code: "SKU-5050", title: "Hide & Seek Choco 120g", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" }] }],
           },
           { keyword: "choco chip biscuits", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber" },
         ],
