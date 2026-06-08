@@ -24,19 +24,19 @@ const offlineChannels = [
   {
     channel: "Kirana Partnerships",
     type: "In-store Display + Sampling",
-    cities: ["Dubai", "Abu Dhabi", "Riyadh", "Jeddah"],
+    cities: ["Mumbai", "Delhi NCR", "Riyadh", "Jeddah"],
     estReach: "3.8L households/mo",
-    estCost: "AED 4.5L/mo",
+    estCost: "₹ 4.5L/mo",
     projImpact: "+18% brand recall, +12% repeat purchase",
     roi: "3.5x (blended online+offline)",
     rationale: "65% of beverage purchases happen in kirana stores. Direct shelf visibility and sampling converts at 15%.",
   },
   {
     channel: "Metro/Transit Ads",
-    type: "Dubai Metro + Abu Dhabi Local",
-    cities: ["Dubai", "Abu Dhabi"],
+    type: "Mumbai Metro + Delhi NCR Local",
+    cities: ["Mumbai", "Delhi NCR"],
     estReach: "18L daily commuters",
-    estCost: "AED 7L/mo",
+    estCost: "₹ 7L/mo",
     projImpact: "+20% brand search volume, +10% online sales",
     roi: "2.6x (attributed via search lift)",
     rationale: "Transit ads drive measurable search lift within 48 hours. Tea-time beverage positioning resonates with commuter demographic.",
@@ -46,7 +46,7 @@ const offlineChannels = [
     type: "Sampling + Sponsorships",
     cities: ["Pan-India (top 8 cities)"],
     estReach: "50K direct + 1.5M social reach",
-    estCost: "AED 3L/quarter",
+    estCost: "₹ 3L/quarter",
     projImpact: "+30% social mentions, +20% new customer acquisition (Kids segment)",
     roi: "4.2x (tracked via promo codes)",
     rationale: "Kids beverage segment (Mirinda, Pepsi) directly benefits from school sampling. Parents drive repeat purchase.",
@@ -56,7 +56,7 @@ const offlineChannels = [
     type: "Morning Shows + Drive Time",
     cities: ["Digital — Pan-India"],
     estReach: "6L daily listeners",
-    estCost: "AED 1.8L/mo",
+    estCost: "₹ 1.8L/mo",
     projImpact: "+8% direct traffic, high recall rate",
     roi: "3.8x (promo code tracked)",
     rationale: "Radio listeners in Tier 2-3 cities have high beverage purchase frequency. Low competition in beverage radio ads.",
@@ -64,11 +64,11 @@ const offlineChannels = [
 ];
 
 const cityWiseOpps = [
-  { city: "Dubai", onlineShare: "34%", offlinePotential: "HIGH", channels: ["Kirana Partnerships", "Metro Ads"], estUplift: "+AED 10L/mo" },
-  { city: "Abu Dhabi", onlineShare: "28%", offlinePotential: "HIGH", channels: ["Kirana Partnerships", "Local Train Ads"], estUplift: "+AED 8L/mo" },
-  { city: "Riyadh", onlineShare: "22%", offlinePotential: "MEDIUM", channels: ["Kirana Partnerships", "Tech Park Ads"], estUplift: "+AED 5L/mo" },
-  { city: "Jeddah", onlineShare: "15%", offlinePotential: "MEDIUM", channels: ["Kirana Partnerships", "Mall Activations"], estUplift: "+AED 3L/mo" },
-  { city: "Doha", onlineShare: "12%", offlinePotential: "LOW", channels: ["Kirana Partnerships"], estUplift: "+AED 2L/mo" },
+  { city: "Mumbai", onlineShare: "34%", offlinePotential: "HIGH", channels: ["Kirana Partnerships", "Metro Ads"], estUplift: "+₹ 10L/mo" },
+  { city: "Delhi NCR", onlineShare: "28%", offlinePotential: "HIGH", channels: ["Kirana Partnerships", "Local Train Ads"], estUplift: "+₹ 8L/mo" },
+  { city: "Riyadh", onlineShare: "22%", offlinePotential: "MEDIUM", channels: ["Kirana Partnerships", "Tech Park Ads"], estUplift: "+₹ 5L/mo" },
+  { city: "Jeddah", onlineShare: "15%", offlinePotential: "MEDIUM", channels: ["Kirana Partnerships", "Mall Activations"], estUplift: "+₹ 3L/mo" },
+  { city: "Doha", onlineShare: "12%", offlinePotential: "LOW", channels: ["Kirana Partnerships"], estUplift: "+₹ 2L/mo" },
 ];
 
 const OfflineAdsView: React.FC = () => {
@@ -81,7 +81,7 @@ const OfflineAdsView: React.FC = () => {
       {tab === "overview" ? (<>
         <div className="grid grid-cols-4 gap-4">
           <KPICard title="Online ROAS" value="4.2x" delta="All KPIs healthy ✓" deltaType="positive" sub="No online issues detected" accentColor="bg-sw-green" delay={0} />
-          <KPICard title="Offline Opportunity" value="AED 28L/mo" delta="Incremental potential" deltaType="positive" sub="Across 4 offline channels" accentColor="bg-sw-purple" delay={0.05} />
+          <KPICard title="Offline Opportunity" value="₹ 28L/mo" delta="Incremental potential" deltaType="positive" sub="Across 4 offline channels" accentColor="bg-sw-purple" delay={0.05} />
           <KPICard title="Est. Blended ROI" value="3.5x" delta="Online + Offline combined" deltaType="positive" sub="Based on attribution modeling" accentColor="bg-sw-cyan" delay={0.1} />
           <KPICard title="Cities to Target" value="5" delta="Based on online penetration" deltaType="positive" sub="Highest offline potential" accentColor="bg-sw-amber" delay={0.15} />
         </div>

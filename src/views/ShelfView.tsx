@@ -11,11 +11,11 @@ import { Megaphone, ChevronDown, ChevronRight, MapPin, TrendingUp, TrendingDown,
 const heatmapData = {
   skus: ["Pepsi 1L", "7UP 1L", "Mountain Dew 1L", "Aquafina 500ml", "Lipton Ice Tea 320ml", "Mirinda 150g"],
   platforms: [
-    { name: "Carrefour", color: "#FF9900", values: [97, 100, 72, 95, 54, 98] },
-    { name: "Noon", color: "#2F77FF", values: [74, 92, 61, 88, 12, 78] },
-    { name: "Talabat", color: "#FDDC2B", values: [55, 38, null, null, null, 71] },
-    { name: "Noon Minutes", color: "#833AB4", values: [93, 77, null, null, null, 52] },
-    { name: "Talabat", color: "#FC8019", values: [34, 9, null, null, null, 41] },
+    { name: "Instamart", color: "#FF9900", values: [97, 100, 72, 95, 54, 98] },
+    { name: "Instamart", color: "#2F77FF", values: [74, 92, 61, 88, 12, 78] },
+    { name: "Blinkit", color: "#FDDC2B", values: [55, 38, null, null, null, 71] },
+    { name: "Zepto", color: "#833AB4", values: [93, 77, null, null, null, 52] },
+    { name: "Blinkit", color: "#FC8019", values: [34, 9, null, null, null, 41] },
     { name: "Myntra", color: "#E1306C", values: [null, null, null, null, null, 96] },
   ],
 };
@@ -30,43 +30,43 @@ const getCellColor = (v: number | null) => {
 };
 
 const platformsList = [
-  { name: "Carrefour", color: "#FF9900" },
-  { name: "Noon", color: "#2F77FF" },
-  { name: "Talabat", color: "#FDDC2B" },
-  { name: "Noon Minutes", color: "#833AB4" },
-  { name: "Talabat", color: "#FC8019" },
+  { name: "Instamart", color: "#FF9900" },
+  { name: "Instamart", color: "#2F77FF" },
+  { name: "Blinkit", color: "#FDDC2B" },
+  { name: "Zepto", color: "#833AB4" },
+  { name: "Blinkit", color: "#FC8019" },
 ];
 
 const searchDataByPlatform: Record<string, { kw: string; you: number; comp: number; compName: string; status: string; poaching?: boolean }[]> = {
-  Carrefour: [
+  Instamart: [
     { kw: "butter beverages", you: 28, comp: 41, compName: "Coca-Cola", status: "losing" },
     { kw: "cream beverages", you: 44, comp: 31, compName: "Coca-Cola", status: "winning" },
     { kw: "glucose beverages", you: 19, comp: 38, compName: "Almarai", status: "losing", poaching: true },
     { kw: "digestive beverages", you: 33, comp: 29, compName: "Masafi", status: "winning" },
     { kw: "kids beverages", you: 21, comp: 44, compName: "Almarai", status: "losing", poaching: true },
   ],
-  Noon: [
+  Instamart: [
     { kw: "butter beverages", you: 22, comp: 48, compName: "Coca-Cola", status: "losing", poaching: true },
     { kw: "cream beverages", you: 38, comp: 35, compName: "Almarai", status: "winning" },
     { kw: "glucose beverages", you: 14, comp: 42, compName: "Almarai", status: "losing" },
     { kw: "digestive beverages", you: 29, comp: 33, compName: "Masafi", status: "losing" },
     { kw: "kids beverages", you: 31, comp: 28, compName: "Rauch", status: "winning" },
   ],
-  Talabat: [
+  Blinkit: [
     { kw: "butter beverages", you: 35, comp: 30, compName: "Coca-Cola", status: "winning" },
     { kw: "cream beverages", you: 41, comp: 22, compName: "Almarai", status: "winning" },
     { kw: "glucose beverages", you: 8, comp: 51, compName: "Almarai", status: "losing", poaching: true },
     { kw: "digestive beverages", you: 44, comp: 18, compName: "Masafi", status: "winning" },
     { kw: "kids beverages", you: 12, comp: 55, compName: "Coca-Cola", status: "losing", poaching: true },
   ],
-  "Noon Minutes": [
+  "Zepto": [
     { kw: "butter beverages", you: 31, comp: 33, compName: "Coca-Cola", status: "losing" },
     { kw: "cream beverages", you: 39, comp: 28, compName: "Almarai", status: "winning" },
     { kw: "glucose beverages", you: 22, comp: 35, compName: "Almarai", status: "losing" },
     { kw: "digestive beverages", you: 27, comp: 40, compName: "Masafi", status: "losing", poaching: true },
     { kw: "kids beverages", you: 18, comp: 47, compName: "Coca-Cola", status: "losing" },
   ],
-  "Talabat Pro": [
+  "Zepto": [
     { kw: "butter beverages", you: 25, comp: 38, compName: "Coca-Cola", status: "losing" },
     { kw: "cream beverages", you: 33, comp: 41, compName: "Almarai", status: "losing", poaching: true },
     { kw: "glucose beverages", you: 11, comp: 52, compName: "Almarai", status: "losing" },
@@ -77,19 +77,19 @@ const searchDataByPlatform: Record<string, { kw: string; you: number; comp: numb
 
 /* Pincode data grouped by region with market share as main metric */
 const regionPincodes: Record<string, { pin: string; marketShare: number; availability: number; priceIndex: number; sos: number; city: string }[]> = {
-  "Dubai": [
-    { pin: "110001", marketShare: 42, availability: 98, priceIndex: 0.93, sos: 34, city: "New Dubai" },
-    { pin: "110003", marketShare: 38, availability: 95, priceIndex: 0.91, sos: 28, city: "New Dubai" },
-    { pin: "110016", marketShare: 22, availability: 61, priceIndex: 1.02, sos: 18, city: "South Dubai" },
-    { pin: "110017", marketShare: 35, availability: 88, priceIndex: 0.95, sos: 30, city: "South Dubai" },
-    { pin: "110025", marketShare: 8, availability: 12, priceIndex: 1.14, sos: 5, city: "East Dubai" },
-    { pin: "110044", marketShare: 19, availability: 55, priceIndex: 1.05, sos: 14, city: "West Dubai" },
-    { pin: "110048", marketShare: 5, availability: 8, priceIndex: 1.18, sos: 3, city: "South Dubai" },
-    { pin: "110051", marketShare: 37, availability: 92, priceIndex: 0.92, sos: 31, city: "North Dubai" },
-    { pin: "110062", marketShare: 16, availability: 44, priceIndex: 1.08, sos: 11, city: "West Dubai" },
-    { pin: "110065", marketShare: 40, availability: 96, priceIndex: 0.90, sos: 33, city: "South Dubai" },
-    { pin: "110067", marketShare: 24, availability: 67, priceIndex: 0.99, sos: 20, city: "West Dubai" },
-    { pin: "110070", marketShare: 10, availability: 23, priceIndex: 1.12, sos: 7, city: "South Dubai" },
+  "Mumbai": [
+    { pin: "110001", marketShare: 42, availability: 98, priceIndex: 0.93, sos: 34, city: "New Mumbai" },
+    { pin: "110003", marketShare: 38, availability: 95, priceIndex: 0.91, sos: 28, city: "New Mumbai" },
+    { pin: "110016", marketShare: 22, availability: 61, priceIndex: 1.02, sos: 18, city: "South Mumbai" },
+    { pin: "110017", marketShare: 35, availability: 88, priceIndex: 0.95, sos: 30, city: "South Mumbai" },
+    { pin: "110025", marketShare: 8, availability: 12, priceIndex: 1.14, sos: 5, city: "East Mumbai" },
+    { pin: "110044", marketShare: 19, availability: 55, priceIndex: 1.05, sos: 14, city: "West Mumbai" },
+    { pin: "110048", marketShare: 5, availability: 8, priceIndex: 1.18, sos: 3, city: "South Mumbai" },
+    { pin: "110051", marketShare: 37, availability: 92, priceIndex: 0.92, sos: 31, city: "North Mumbai" },
+    { pin: "110062", marketShare: 16, availability: 44, priceIndex: 1.08, sos: 11, city: "West Mumbai" },
+    { pin: "110065", marketShare: 40, availability: 96, priceIndex: 0.90, sos: 33, city: "South Mumbai" },
+    { pin: "110067", marketShare: 24, availability: 67, priceIndex: 0.99, sos: 20, city: "West Mumbai" },
+    { pin: "110070", marketShare: 10, availability: 23, priceIndex: 1.12, sos: 7, city: "South Mumbai" },
     { pin: "122001", marketShare: 36, availability: 91, priceIndex: 0.94, sos: 29, city: "Gurgaon" },
     { pin: "122002", marketShare: 33, availability: 87, priceIndex: 0.96, sos: 27, city: "Gurgaon" },
     { pin: "122011", marketShare: 18, availability: 53, priceIndex: 1.06, sos: 13, city: "Gurgaon" },
@@ -97,13 +97,13 @@ const regionPincodes: Record<string, { pin: string; marketShare: number; availab
     { pin: "122017", marketShare: 38, availability: 94, priceIndex: 0.91, sos: 32, city: "Gurgaon" },
     { pin: "122022", marketShare: 26, availability: 71, priceIndex: 0.98, sos: 22, city: "Gurgaon" },
   ],
-  "Abu Dhabi": [
-    { pin: "400001", marketShare: 44, availability: 96, priceIndex: 0.90, sos: 36, city: "South Abu Dhabi" },
+  "Delhi NCR": [
+    { pin: "400001", marketShare: 44, availability: 96, priceIndex: 0.90, sos: 36, city: "South Delhi NCR" },
     { pin: "400050", marketShare: 38, availability: 88, priceIndex: 0.94, sos: 30, city: "Khalifa City" },
     { pin: "400070", marketShare: 21, availability: 52, priceIndex: 1.04, sos: 16, city: "Kurla" },
     { pin: "400076", marketShare: 12, availability: 34, priceIndex: 1.10, sos: 8, city: "Al Nahda" },
     { pin: "400092", marketShare: 31, availability: 78, priceIndex: 0.97, sos: 25, city: "Borivali" },
-    { pin: "400607", marketShare: 28, availability: 72, priceIndex: 0.99, sos: 22, city: "Navi Abu Dhabi" },
+    { pin: "400607", marketShare: 28, availability: 72, priceIndex: 0.99, sos: 22, city: "Navi Delhi NCR" },
   ],
   "Riyadh": [
     { pin: "560001", marketShare: 46, availability: 97, priceIndex: 0.89, sos: 38, city: "MG Road" },
@@ -121,47 +121,47 @@ const getShareColor = (v: number) => {
 };
 
 const contentSkus = [
-  { emoji: "🍪", name: "Pepsi 1L", platforms: "Carrefour · Noon · Talabat", score: 80, color: "hsl(160,70%,48%)" },
-  { emoji: "🍘", name: "Lipton Ice Tea Peach 320ml", platforms: "Carrefour · Noon", score: 50, color: "hsl(38,92%,50%)" },
-  { emoji: "🥛", name: "Mirinda 150g", platforms: "Carrefour only", score: 20, color: "hsl(0,76%,57%)" },
-  { emoji: "🍫", name: "Mountain Dew 1L", platforms: "Carrefour · Noon · Noon Minutes", score: 70, color: "hsl(160,70%,48%)" },
+  { emoji: "🍪", name: "Pepsi 1L", platforms: "Instamart · Instamart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
+  { emoji: "🍘", name: "Lipton Ice Tea Peach 320ml", platforms: "Instamart · Instamart", score: 50, color: "hsl(38,92%,50%)" },
+  { emoji: "🥛", name: "Mirinda 150g", platforms: "Instamart only", score: 20, color: "hsl(0,76%,57%)" },
+  { emoji: "🍫", name: "Mountain Dew 1L", platforms: "Instamart · Instamart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
 ];
 
 const pricingRows = [
-  { sku: "Pepsi 1L", yours: "AED 40", comp: "AED 45", diff: "-11.1%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "7UP 1L", yours: "AED 35", comp: "AED 30", diff: "+16.7%", diffType: "red" as const, action: "Match Price" },
-  { sku: "Mountain Dew 1L", yours: "AED 30", comp: "AED 32", diff: "-6.3%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Aquafina 500ml", yours: "AED 45", comp: "AED 38", diff: "+18.4%", diffType: "red" as const, action: "Adjust ↓" },
-  { sku: "Mirinda 150g", yours: "AED 25", comp: "AED 25", diff: "0%", diffType: "grey" as const, action: "Hold Price" },
+  { sku: "Pepsi 1L", yours: "₹ 40", comp: "₹ 45", diff: "-11.1%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "7UP 1L", yours: "₹ 35", comp: "₹ 30", diff: "+16.7%", diffType: "red" as const, action: "Match Price" },
+  { sku: "Mountain Dew 1L", yours: "₹ 30", comp: "₹ 32", diff: "-6.3%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "Aquafina 500ml", yours: "₹ 45", comp: "₹ 38", diff: "+18.4%", diffType: "red" as const, action: "Adjust ↓" },
+  { sku: "Mirinda 150g", yours: "₹ 25", comp: "₹ 25", diff: "0%", diffType: "grey" as const, action: "Hold Price" },
 ];
 
 const searchPositions = [
-  { platform: "Carrefour", rank: 3, pos: 5, color: "hsl(160,70%,48%)" },
-  { platform: "Noon", rank: 8, pos: 35, color: "hsl(38,92%,50%)" },
-  { platform: "Talabat", rank: 6, pos: 28, color: "hsl(38,92%,50%)" },
-  { platform: "Noon Minutes", rank: 14, pos: 70, color: "hsl(0,76%,57%)" },
-  { platform: "Talabat", rank: 18, pos: 85, color: "hsl(0,76%,57%)" },
+  { platform: "Instamart", rank: 3, pos: 5, color: "hsl(160,70%,48%)" },
+  { platform: "Instamart", rank: 8, pos: 35, color: "hsl(38,92%,50%)" },
+  { platform: "Blinkit", rank: 6, pos: 28, color: "hsl(38,92%,50%)" },
+  { platform: "Zepto", rank: 14, pos: 70, color: "hsl(0,76%,57%)" },
+  { platform: "Blinkit", rank: 18, pos: 85, color: "hsl(0,76%,57%)" },
 ];
 
 /* SoS retailer-level issues */
 const sosRetailerIssues = [
-  { platform: "Noon", issue: "SoS dropped 12% WoW", type: "drop", kw: "butter beverages", detail: "Competitor bid aggression detected — Coca-Cola increased bids by 2.4x on 3 top keywords" },
-  { platform: "Talabat", issue: "0% SoS on 3 keywords", type: "missing", kw: "cream beverages, glucose beverages, kids beverages", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
-  { platform: "Noon Minutes", issue: "Poaching on digestive beverages", type: "poaching", kw: "digestive beverages", detail: "Masafi bidding on your brand keyword. Capturing 40% of branded searches" },
+  { platform: "Instamart", issue: "SoS dropped 12% WoW", type: "drop", kw: "butter beverages", detail: "Competitor bid aggression detected — Coca-Cola increased bids by 2.4x on 3 top keywords" },
+  { platform: "Blinkit", issue: "0% SoS on 3 keywords", type: "missing", kw: "cream beverages, glucose beverages, kids beverages", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
+  { platform: "Zepto", issue: "Poaching on digestive beverages", type: "poaching", kw: "digestive beverages", detail: "Masafi bidding on your brand keyword. Capturing 40% of branded searches" },
 ];
 
 const competitorAggression = [
-  { competitor: "Coca-Cola", platform: "Carrefour", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
-  { competitor: "Masafi", platform: "Noon Minutes", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
-  { competitor: "Almarai", platform: "Noon", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
-  { competitor: "Rauch", platform: "Talabat", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
+  { competitor: "Coca-Cola", platform: "Instamart", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
+  { competitor: "Masafi", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
+  { competitor: "Almarai", platform: "Instamart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
+  { competitor: "Rauch", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
 ];
 
 const poachingKeywords = [
-  { keyword: "britannia good day", poacher: "Coca-Cola", platform: "Carrefour", yourSoS: 62, theirSoS: 28, trend: "rising" },
-  { keyword: "britannia bourbon", poacher: "Almarai", platform: "Noon", yourSoS: 45, theirSoS: 38, trend: "rising" },
-  { keyword: "britannia marie gold", poacher: "Coca-Cola", platform: "Noon Minutes", yourSoS: 55, theirSoS: 31, trend: "stable" },
-  { keyword: "britannia nutrichoice", poacher: "Masafi", platform: "Carrefour", yourSoS: 71, theirSoS: 18, trend: "declining" },
+  { keyword: "britannia good day", poacher: "Coca-Cola", platform: "Instamart", yourSoS: 62, theirSoS: 28, trend: "rising" },
+  { keyword: "britannia bourbon", poacher: "Almarai", platform: "Instamart", yourSoS: 45, theirSoS: 38, trend: "rising" },
+  { keyword: "britannia marie gold", poacher: "Coca-Cola", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
+  { keyword: "britannia nutrichoice", poacher: "Masafi", platform: "Instamart", yourSoS: 71, theirSoS: 18, trend: "declining" },
 ];
 
 const ProgressRing = ({ score, color, size = 48 }: { score: number; color: string; size?: number }) => {
@@ -187,8 +187,8 @@ const IndiaMapView: React.FC<{
   onSelectRegion: (r: string) => void;
 }> = ({ regions, selectedRegion, onSelectRegion }) => {
   const regionPositions: Record<string, { x: number; y: number }> = {
-    "Dubai": { x: 150, y: 95 },
-    "Abu Dhabi": { x: 105, y: 195 },
+    "Mumbai": { x: 150, y: 95 },
+    "Delhi NCR": { x: 105, y: 195 },
     "Riyadh": { x: 140, y: 280 },
   };
 
@@ -241,9 +241,9 @@ const IndiaMapView: React.FC<{
 
 const ShelfView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
-  const [sosPlatform, setSosPlatform] = useState("Carrefour");
+  const [sosPlatform, setSosPlatform] = useState("Instamart");
   const [campaignTriggered, setCampaignTriggered] = useState<Record<string, boolean>>({});
-  const [selectedRegion, setSelectedRegion] = useState("Dubai");
+  const [selectedRegion, setSelectedRegion] = useState("Mumbai");
   const [selectedPin, setSelectedPin] = useState<string | null>(null);
   const [aggressionCampaigns, setAggressionCampaigns] = useState<Record<number, boolean>>({});
   const [poachingCampaigns, setPoachingCampaigns] = useState<Record<number, boolean>>({});
@@ -251,7 +251,7 @@ const ShelfView: React.FC = () => {
   const handleAction = (idx: number) => setActionStates((prev) => ({ ...prev, [idx]: true }));
   const triggerCampaign = (key: string) => setCampaignTriggered((p) => ({ ...p, [key]: true }));
 
-  const currentSearchData = searchDataByPlatform[sosPlatform] || searchDataByPlatform.Carrefour;
+  const currentSearchData = searchDataByPlatform[sosPlatform] || searchDataByPlatform.Instamart;
   const currentPins = regionPincodes[selectedRegion] || [];
   const selectedPinData = selectedPin ? currentPins.find(p => p.pin === selectedPin) : null;
 
@@ -261,17 +261,17 @@ const ShelfView: React.FC = () => {
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Shelf Health Score" value="76 / 100" delta="▼ 3.2 vs last wk" deltaType="negative" sub="Avg across 6 platforms · 48 SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="OOS Products Today" value="6" delta="▲ 2 vs yesterday" deltaType="negative" sub="Across all platforms" accentColor="bg-sw-red" delay={0.05} />
-        <KPICard title="Share of Search" value="28%" delta="▲ 1.8% MoM" deltaType="positive" sub="Beverages category · Carrefour" accentColor="bg-primary" delay={0.1} />
+        <KPICard title="Share of Search" value="28%" delta="▲ 1.8% MoM" deltaType="positive" sub="Beverages category · Instamart" accentColor="bg-primary" delay={0.1} />
         <KPICard title="Content Score Avg" value="62%" delta="⚠ 11 SKUs need update" deltaType="warning" sub="Title + Images + A+ content" accentColor="bg-sw-amber" delay={0.15} />
       </div>
 
       {/* ── LIVE INTELLIGENCE FEED (pushed to top) ── */}
       <PanelCard title="Live Intelligence Feed" badge="4 need action" badgeColor="red" delay={0.18}>
         <div className="grid grid-cols-2 gap-3">
-          <AlertItem severity="critical" icon="🚨" title="OOS on Talabat" detail="7UP 1L went out of stock in 6 Abu Dhabi pin codes." meta="2m ago · Talabat" action="Alert Team" actionDone="✓ Team Notified" />
-          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="Coca-Cola cut Dark Fantasy price by AED 5 on Carrefour. 14% above market." meta="18m ago · Carrefour" action="Review" actionDone="✓ Reviewed" />
-          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Pepsi 1L' moved from #7 to #3 on Carrefour after content update." meta="1h ago · Carrefour" action="View" />
-          <AlertItem severity="info" icon="💡" title="Cream beverages trending" detail="+47% search volume spike in 'cream beverages' on Talabat. Stock at 12%." meta="3h ago · Talabat" action="Top-up →" />
+          <AlertItem severity="critical" icon="🚨" title="OOS on Blinkit" detail="7UP 1L went out of stock in 6 Delhi NCR pin codes." meta="2m ago · Blinkit" action="Alert Team" actionDone="✓ Team Notified" />
+          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="Coca-Cola cut Dark Fantasy price by ₹ 5 on Instamart. 14% above market." meta="18m ago · Instamart" action="Review" actionDone="✓ Reviewed" />
+          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Pepsi 1L' moved from #7 to #3 on Instamart after content update." meta="1h ago · Instamart" action="View" />
+          <AlertItem severity="info" icon="💡" title="Cream beverages trending" detail="+47% search volume spike in 'cream beverages' on Blinkit. Stock at 12%." meta="3h ago · Blinkit" action="Top-up →" />
         </div>
       </PanelCard>
 
@@ -634,7 +634,7 @@ const ShelfView: React.FC = () => {
         <PanelCard title="Content Health Breakdown" badge="By Platform" badgeColor="accent" delay={0.52}>
           <div className="space-y-3">
             {platformsList.slice(0, 4).map(p => {
-              const score = p.name === "Carrefour" ? 72 : p.name === "Noon" ? 58 : p.name === "Talabat" ? 45 : 38;
+              const score = p.name === "Instamart" ? 72 : p.name === "Instamart" ? 58 : p.name === "Blinkit" ? 45 : 38;
               const color = score >= 70 ? "hsl(160,70%,48%)" : score >= 50 ? "hsl(38,92%,50%)" : "hsl(0,76%,57%)";
               return (
                 <div key={p.name} className="flex items-center gap-3">

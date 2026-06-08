@@ -43,29 +43,29 @@ type BidCampaignRow = { campaign: string; spend: string; roas: number; budget: n
 
 const bidCampaignsByKeyword: Record<string, BidCampaignRow[]> = {
   "butter beverages online": [
-    { campaign: "Pepsi 1L — SP Exact", spend: "AED 42K", roas: 6.4, budget: 2500 },
-    { campaign: "Pepsi 1L — SP Broad", spend: "AED 38K", roas: 5.1, budget: 2200 },
-    { campaign: "Butter Beverages — SB Defence", spend: "AED 25K", roas: 4.0, budget: 1800 },
+    { campaign: "Pepsi 1L — SP Exact", spend: "₹ 42K", roas: 6.4, budget: 2500 },
+    { campaign: "Pepsi 1L — SP Broad", spend: "₹ 38K", roas: 5.1, budget: 2200 },
+    { campaign: "Butter Beverages — SB Defence", spend: "₹ 25K", roas: 4.0, budget: 1800 },
   ],
   "cream beverages": [
-    { campaign: "Mountain Dew — SP Exact", spend: "AED 30K", roas: 3.4, budget: 2000 },
-    { campaign: "Cream Range — SP Broad", spend: "AED 22K", roas: 2.6, budget: 1700 },
+    { campaign: "Mountain Dew — SP Exact", spend: "₹ 30K", roas: 3.4, budget: 2000 },
+    { campaign: "Cream Range — SP Broad", spend: "₹ 22K", roas: 2.6, budget: 1700 },
   ],
   "glucose beverages bulk": [
-    { campaign: "7UP — SP Bulk", spend: "AED 28K", roas: 1.4, budget: 1600 },
+    { campaign: "7UP — SP Bulk", spend: "₹ 28K", roas: 1.4, budget: 1600 },
   ],
   "digestive beverages": [
-    { campaign: "Aquafina — Brand SP", spend: "AED 55K", roas: 6.2, budget: 3000 },
-    { campaign: "Digestive — SP Exact", spend: "AED 30K", roas: 5.0, budget: 2200 },
-    { campaign: "Multigrain Digestive — SP", spend: "AED 18K", roas: 4.6, budget: 1700 },
+    { campaign: "Aquafina — Brand SP", spend: "₹ 55K", roas: 6.2, budget: 3000 },
+    { campaign: "Digestive — SP Exact", spend: "₹ 30K", roas: 5.0, budget: 2200 },
+    { campaign: "Multigrain Digestive — SP", spend: "₹ 18K", roas: 4.6, budget: 1700 },
   ],
   "choco chip drinks": [
-    { campaign: "Mountain Dew Choco — SP Exact", spend: "AED 31K", roas: 4.9, budget: 2200 },
-    { campaign: "Choco Chip — SP Phrase", spend: "AED 20K", roas: 3.8, budget: 1700 },
+    { campaign: "Mountain Dew Choco — SP Exact", spend: "₹ 31K", roas: 4.9, budget: 2200 },
+    { campaign: "Choco Chip — SP Phrase", spend: "₹ 20K", roas: 3.8, budget: 1700 },
   ],
   "beverage combo pack": [
-    { campaign: "Variety Pack — SP", spend: "AED 22K", roas: 1.9, budget: 1500 },
-    { campaign: "Combo Pack — SP Broad", spend: "AED 14K", roas: 1.6, budget: 1200 },
+    { campaign: "Variety Pack — SP", spend: "₹ 22K", roas: 1.9, budget: 1500 },
+    { campaign: "Combo Pack — SP Broad", spend: "₹ 14K", roas: 1.6, budget: 1200 },
   ],
 };
 
@@ -84,42 +84,42 @@ const revenueData = [
 ];
 
 const campaigns = [
-  { name: "Pepsi 1L — Sponsored", platform: "Carrefour", platformColor: "#FF9900", roas: "5.1x", spend: "AED 82K", status: "LIVE", ai: true },
-  { name: "Q-Commerce Beverage Push", platform: "Talabat", platformColor: "#FDDC2B", roas: "3.8x", spend: "AED 50K", status: "LIVE", ai: true },
-  { name: "7UP Retargeting", platform: "Noon", platformColor: "#2F77FF", roas: "2.1x", spend: "AED 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
-  { name: "Mountain Dew Brand Awareness", platform: "Noon", platformColor: "#E1306C", roas: "4.4x", spend: "AED 50K", status: "LIVE", ai: false },
-  { name: "Aquafina New Users", platform: "Noon Minutes", platformColor: "#833AB4", roas: "3.2x", spend: "AED 30K", status: "LIVE", ai: true },
+  { name: "Pepsi 1L — Sponsored", platform: "Instamart", platformColor: "#FF9900", roas: "5.1x", spend: "₹ 82K", status: "LIVE", ai: true },
+  { name: "Q-Commerce Beverage Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹ 50K", status: "LIVE", ai: true },
+  { name: "7UP Retargeting", platform: "Instamart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹ 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
+  { name: "Mountain Dew Brand Awareness", platform: "Instamart", platformColor: "#E1306C", roas: "4.4x", spend: "₹ 50K", status: "LIVE", ai: false },
+  { name: "Aquafina New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹ 30K", status: "LIVE", ai: true },
 ];
 
 const platformROAS = [
-  { name: "Carrefour", roas: 5.1, color: "#FF9900" },
-  { name: "Talabat", roas: 3.8, color: "#FDDC2B" },
-  { name: "Noon", roas: 2.1, color: "#2F77FF" },
-  { name: "Noon Minutes", roas: 3.2, color: "#833AB4" },
-  { name: "Noon", roas: 4.4, color: "#E1306C" },
+  { name: "Instamart", roas: 5.1, color: "#FF9900" },
+  { name: "Blinkit", roas: 3.8, color: "#FDDC2B" },
+  { name: "Instamart", roas: 2.1, color: "#2F77FF" },
+  { name: "Zepto", roas: 3.2, color: "#833AB4" },
+  { name: "Instamart", roas: 4.4, color: "#E1306C" },
 ];
 
 const budgetAlloc = [
-  { name: "Carrefour Ads", pct: 38, spend: "AED 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
-  { name: "Noon/Meta", pct: 22, spend: "AED 4.1L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
-  { name: "Talabat Ads", pct: 18, spend: "AED 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
-  { name: "Noon Ads", pct: 12, spend: "AED 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
-  { name: "Noon Minutes Ads", pct: 10, spend: "AED 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
+  { name: "Instamart Ads", pct: 38, spend: "₹ 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
+  { name: "Instamart/Meta", pct: 22, spend: "₹ 4.1L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
+  { name: "Blinkit Ads", pct: 18, spend: "₹ 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
+  { name: "Instamart Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
+  { name: "Zepto Ads", pct: 10, spend: "₹ 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
 ];
 
 const keywords = [
-  { kw: "butter beverages online", bid: "AED 28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "cream beverages", bid: "AED 45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
-  { kw: "glucose beverages bulk", bid: "AED 22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
-  { kw: "digestive beverages", bid: "AED 18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "choco chip drinks", bid: "AED 35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
-  { kw: "beverage combo pack", bid: "AED 12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "butter beverages online", bid: "₹ 28", roas: "6.2x", imp: "142K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "cream beverages", bid: "₹ 45", roas: "3.1x", imp: "498K", roasColor: "text-sw-amber", action: "Hold bid", actionColor: "text-muted-foreground border-subtle" },
+  { kw: "glucose beverages bulk", bid: "₹ 22", roas: "1.4x", imp: "87K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
+  { kw: "digestive beverages", bid: "₹ 18", roas: "5.8x", imp: "63K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "choco chip drinks", bid: "₹ 35", roas: "4.7x", imp: "211K", roasColor: "text-sw-green", action: "Raise bid", actionColor: "text-sw-green border-sw-green/30" },
+  { kw: "beverage combo pack", bid: "₹ 12", roas: "1.8x", imp: "321K", roasColor: "text-sw-red", action: "Lower bid", actionColor: "text-sw-red border-sw-red/30" },
 ];
 
 const copilotCards = [
-  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift AED 25,000 from Noon 7UP (ROAS 2.1x) to Carrefour Pepsi (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
-  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Carrefour Pepsi campaign. 'butter beverages family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
-  { impact: "MED IMPACT", emoji: "⚡", text: "Aquafina trending +47% on Talabat South Dubai. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
+  { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹ 25,000 from Instamart 7UP (ROAS 2.1x) to Instamart Pepsi (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
+  { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Instamart Pepsi campaign. 'butter beverages family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
+  { impact: "MED IMPACT", emoji: "⚡", text: "Aquafina trending +47% on Blinkit South Mumbai. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
 ];
 
 /* ── Hierarchical Report Data ── */
@@ -156,42 +156,42 @@ type ReportPlatform = {
 
 const reportData: ReportPlatform[] = [
   {
-    platform: "Carrefour", color: "#FF9900", totalSpend: "AED 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
+    platform: "Instamart", color: "#FF9900", totalSpend: "₹ 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
       {
-        name: "Pepsi 1L — Sponsored", status: "LIVE", spend: "AED 4.2L", roas: "5.1x", roasColor: "text-sw-green",
+        name: "Pepsi 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green",
         impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
           {
-            keyword: "butter beverages online", impressions: "342K", clicks: "12.8K", spend: "AED 1.8L", roas: "6.2x", roasColor: "text-sw-green",
+            keyword: "butter beverages online", impressions: "342K", clicks: "12.8K", spend: "₹ 1.8L", roas: "6.2x", roasColor: "text-sw-green",
             cities: [
-              { city: "Dubai", impressions: "98K", clicks: "4.1K", spend: "AED 52K", roas: "6.5x", roasColor: "text-sw-green",
+              { city: "Mumbai", impressions: "98K", clicks: "4.1K", spend: "₹ 52K", roas: "6.5x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "AED 32K", roas: "6.6x", roasColor: "text-sw-green" },
-                  { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "AED 20K", roas: "6.5x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" },
                 ]},
-              { city: "Abu Dhabi", impressions: "82K", clicks: "3.2K", spend: "AED 44K", roas: "6.4x", roasColor: "text-sw-green",
+              { city: "Delhi NCR", impressions: "82K", clicks: "3.2K", spend: "₹ 44K", roas: "6.4x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "AED 28K", roas: "6.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "AED 16K", roas: "6.3x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Pepsi 1L 100g", spend: "₹ 16K", roas: "6.3x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "cream beverages", impressions: "498K", clicks: "14.2K", spend: "AED 2.1L", roas: "3.1x", roasColor: "text-sw-amber",
+            keyword: "cream beverages", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber",
           },
         ],
       },
       {
-        name: "7UP — Keyword Target", status: "PAUSED", spend: "AED 1.8L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "7UP — Keyword Target", status: "PAUSED", spend: "₹ 1.8L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "284K", clicks: "8.2K", ctr: "2.9%",
         keywords: [
           {
-            keyword: "glucose beverages bulk", impressions: "187K", clicks: "5.4K", spend: "AED 1.2L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose beverages bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
-              { city: "Dubai", impressions: "62K", clicks: "1.8K", spend: "AED 42K", roas: "1.4x", roasColor: "text-sw-red",
+              { city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-MG250", title: "7UP 1L", spend: "AED 42K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "7UP 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -200,42 +200,42 @@ const reportData: ReportPlatform[] = [
     ],
   },
   {
-    platform: "Talabat", color: "#FDDC2B", totalSpend: "AED 3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
+    platform: "Blinkit", color: "#FDDC2B", totalSpend: "₹ 3.3L", blendedRoas: "3.8x", roasColor: "text-sw-amber",
     campaigns: [
       {
-        name: "Q-Commerce Beverage Push", status: "LIVE", spend: "AED 2.8L", roas: "3.8x", roasColor: "text-sw-amber",
+        name: "Q-Commerce Beverage Push", status: "LIVE", spend: "₹ 2.8L", roas: "3.8x", roasColor: "text-sw-amber",
         impressions: "412K", clicks: "14.8K", ctr: "3.6%",
         keywords: [
           {
-            keyword: "butter beverages", impressions: "188K", clicks: "7.2K", spend: "AED 1.4L", roas: "4.0x", roasColor: "text-sw-green",
+            keyword: "butter beverages", impressions: "188K", clicks: "7.2K", spend: "₹ 1.4L", roas: "4.0x", roasColor: "text-sw-green",
             cities: [
-              { city: "Dubai", impressions: "92K", clicks: "3.8K", spend: "AED 72K", roas: "4.3x", roasColor: "text-sw-green",
+              { city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "AED 48K", roas: "4.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "AED 24K", roas: "4.2x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Pepsi 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "choco chip drinks", impressions: "124K", clicks: "4.8K", spend: "AED 88K", roas: "3.6x", roasColor: "text-sw-amber",
+            keyword: "choco chip drinks", impressions: "124K", clicks: "4.8K", spend: "₹ 88K", roas: "3.6x", roasColor: "text-sw-amber",
           },
         ],
       },
     ],
   },
   {
-    platform: "Noon", color: "#2F77FF", totalSpend: "AED 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
       {
-        name: "7UP Retargeting", status: "PAUSED", spend: "AED 3.0L", roas: "2.1x", roasColor: "text-sw-red",
+        name: "7UP Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red",
         impressions: "524K", clicks: "12.8K", ctr: "2.4%",
         keywords: [
           {
-            keyword: "glucose beverages", impressions: "284K", clicks: "6.2K", spend: "AED 1.8L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose beverages", impressions: "284K", clicks: "6.2K", spend: "₹ 1.8L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
-              { city: "Dubai", impressions: "82K", clicks: "1.8K", spend: "AED 52K", roas: "1.4x", roasColor: "text-sw-red",
+              { city: "Mumbai", impressions: "82K", clicks: "1.8K", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-MG250", title: "7UP 1L", spend: "AED 52K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "7UP 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -255,7 +255,7 @@ const dayPartingSlots = [
   { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["7UP Retargeting"], budgetPct: 3 },
 ];
 
-const DAYPART_PLATFORMS = ["Carrefour", "Noon", "Noon Minutes", "Talabat", "Amazon UAE", "Lulu"];
+const DAYPART_PLATFORMS = ["Instamart", "Instamart", "Zepto", "Blinkit", "Amazon India", "Lulu"];
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 interface DayPartPreset {
@@ -558,12 +558,12 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
 
 
 /* ── Campaign Creator Modal ── */
-const QCOM_PLATFORMS = ["Talabat", "Noon Minutes", "Talabat"];
+const QCOM_PLATFORMS = ["Blinkit", "Zepto", "Blinkit"];
 
 const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [method, setMethod] = useState<null | "ai" | "history" | "manual">(null);
   const [launched, setLaunched] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState("Carrefour");
+  const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [granularity, setGranularity] = useState<"sku" | "city_sku" | "city">("sku");
 
   const isQCom = QCOM_PLATFORMS.includes(selectedPlatform);
@@ -571,15 +571,15 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
   if (!open) return null;
 
   const aiSuggestions = [
-    { name: "Stock Recovery Blitz", signal: "7UP OOS on Talabat — 6 pincodes", roas: "4.8x", budget: "AED 15K", duration: "3 days", keywords: ["butter beverages", "cream beverages"] },
-    { name: "Price Advantage Push", signal: "Pepsi 14% cheaper than Coca-Cola", roas: "5.2x", budget: "AED 20K", duration: "7 days", keywords: ["glucose beverages", "digestive beverages"] },
-    { name: "Trending Capture", signal: "Aquafina trending +47% on Talabat", roas: "3.9x", budget: "AED 12K", duration: "5 days", keywords: ["digestive beverages", "health beverages"] },
+    { name: "Stock Recovery Blitz", signal: "7UP OOS on Blinkit — 6 pincodes", roas: "4.8x", budget: "₹ 15K", duration: "3 days", keywords: ["butter beverages", "cream beverages"] },
+    { name: "Price Advantage Push", signal: "Pepsi 14% cheaper than Coca-Cola", roas: "5.2x", budget: "₹ 20K", duration: "7 days", keywords: ["glucose beverages", "digestive beverages"] },
+    { name: "Trending Capture", signal: "Aquafina trending +47% on Blinkit", roas: "3.9x", budget: "₹ 12K", duration: "5 days", keywords: ["digestive beverages", "health beverages"] },
   ];
 
   const historyCampaigns = [
-    { name: "Pepsi Summer Push 2025", platform: "Carrefour", spend: "AED 3.2L", roas: "4.9x", duration: "14 days" },
-    { name: "Festive Season Blast", platform: "Noon", spend: "AED 5.1L", roas: "5.6x", duration: "21 days" },
-    { name: "Q-Commerce Beverage Pilot", platform: "Talabat", spend: "AED 1.8L", roas: "3.4x", duration: "7 days" },
+    { name: "Pepsi Summer Push 2025", platform: "Instamart", spend: "₹ 3.2L", roas: "4.9x", duration: "14 days" },
+    { name: "Festive Season Blast", platform: "Instamart", spend: "₹ 5.1L", roas: "5.6x", duration: "21 days" },
+    { name: "Q-Commerce Beverage Pilot", platform: "Blinkit", spend: "₹ 1.8L", roas: "3.4x", duration: "7 days" },
   ];
 
   const granularityOptions: { key: "sku" | "city_sku" | "city"; label: string; desc: string }[] = [
@@ -676,7 +676,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
                   onChange={e => { setSelectedPlatform(e.target.value); setGranularity("sku"); }}
                   className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground"
                 >
-                  <option>Carrefour</option><option>Noon</option><option>Talabat</option><option>Noon Minutes</option><option>Talabat</option><option>Noon</option>
+                  <option>Instamart</option><option>Instamart</option><option>Blinkit</option><option>Zepto</option><option>Blinkit</option><option>Instamart</option>
                 </select>
               </div>
               <div>
@@ -687,7 +687,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
               </div>
               <div>
                 <label className="text-[11px] text-muted-foreground block mb-1">Daily Budget</label>
-                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="AED 5,000" />
+                <input className="w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground" placeholder="₹ 5,000" />
               </div>
               <div>
                 <label className="text-[11px] text-muted-foreground block mb-1">Duration (days)</label>
@@ -795,7 +795,7 @@ const CampaignView: React.FC = () => {
   const digestActions = [
     { id: 0, campaign: "Pepsi 1L — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
     { id: 1, campaign: "Q-Commerce Beverage Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "7UP Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+AED 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 2, campaign: "7UP Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
     { id: 3, campaign: "Mountain Dew Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
     { id: 4, campaign: "Aquafina New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
@@ -839,7 +839,7 @@ const CampaignView: React.FC = () => {
 
   const scatterData = campaigns.map((c) => ({
     name: c.name,
-    spend: parseInt(c.spend.replace(/[AED KL,]/g, "")) || 50,
+    spend: parseInt(c.spend.replace(/[₹ KL,]/g, "")) || 50,
     roas: parseFloat(c.roas) || 3,
     impressions: 500,
   }));
@@ -1144,9 +1144,9 @@ const CampaignView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Total Ad Spend (30D)" value="AED 18.4L" delta="▲ AED 2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
+        <KPICard title="Total Ad Spend (30D)" value="₹ 18.4L" delta="▲ ₹ 2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x · 93% of goal" accentColor="bg-sw-green" delay={0.05} />
-        <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated AED 3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
+        <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹ 3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
         <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Across all campaigns" accentColor="bg-sw-cyan" delay={0.15} />
       </div>
 
@@ -1361,7 +1361,7 @@ const CampaignView: React.FC = () => {
       <div className="grid grid-cols-3 gap-4">
         <PanelCard title="Ad Spend — 30 Day Trend" badge="ROAS improving" badgeColor="green" className="col-span-2" delay={0.2}>
           <div className="flex items-center gap-4 mb-3 text-[10px] text-muted-foreground">
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> Ad Spend (AED K)</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-primary rounded-full" /> Ad Spend (₹ K)</span>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={revenueData}>
@@ -1425,7 +1425,7 @@ const CampaignView: React.FC = () => {
             ))}
           </div>
           <div className={`mt-4 p-3 rounded-xl ${reallocApplied ? "bg-sw-green-dim border border-sw-green/20" : "bg-sw-purple-dim border border-sw-purple/20"}`}>
-            <p className="text-[11px] text-foreground mb-2">💡 Shift AED 25K from Noon → Carrefour. Projected ROAS improvement: +0.3x blended</p>
+            <p className="text-[11px] text-foreground mb-2">💡 Shift ₹ 25K from Instamart → Instamart. Projected ROAS improvement: +0.3x blended</p>
             <button onClick={() => setReallocApplied(true)} className={`text-[11px] font-medium px-3 py-1 rounded-lg ${reallocApplied ? "bg-sw-green/20 text-sw-green" : "bg-sw-purple/20 text-sw-purple hover:bg-sw-purple/30"}`}>
               {reallocApplied ? "✓ Applied!" : "Apply Reallocation →"}
             </button>
@@ -1452,7 +1452,7 @@ const CampaignView: React.FC = () => {
           </div>
         </PanelCard>
 
-        <PanelCard title="Keyword Bid Optimiser" badge="Carrefour · Auto-bid ON" badgeColor="accent" delay={0.4}>
+        <PanelCard title="Keyword Bid Optimiser" badge="Instamart · Auto-bid ON" badgeColor="accent" delay={0.4}>
           <div className="space-y-2">
             {keywords.map((k, i) => (
               <div key={k.kw} className="flex items-center gap-2 py-1.5 border-b border-subtle last:border-0">
@@ -1465,7 +1465,7 @@ const CampaignView: React.FC = () => {
                     if (k.action.includes("Hold")) { setBidStates((p) => ({ ...p, [i]: "— " + k.bid })); return; }
                     const cur = parseInt(k.bid.replace(/[^\d]/g, "")) || 20;
                     const suggested = k.action.includes("Raise") ? Math.round(cur * 1.2) : Math.round(cur * 0.7);
-                    setBidReview({ keyword: k.kw, currentBid: k.bid, suggestedBid: `AED ${suggested}`, action: k.action, roas: k.roas, imp: k.imp, index: i });
+                    setBidReview({ keyword: k.kw, currentBid: k.bid, suggestedBid: `₹ ${suggested}`, action: k.action, roas: k.roas, imp: k.imp, index: i });
                   }}
                   className={`px-2 py-0.5 rounded text-[9px] font-medium border transition-all ${
                     bidStates[i] ? "bg-sw-green-dim text-sw-green border-sw-green/20" : k.actionColor
@@ -1516,7 +1516,7 @@ const CampaignView: React.FC = () => {
                 <YAxis yAxisId="spend" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis yAxisId="roas" orientation="right" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
-                <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (AED K)" />
+                <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹ K)" />
                 <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
               </LineChart>
             </ResponsiveContainer>
@@ -1563,8 +1563,8 @@ const CampaignView: React.FC = () => {
         onSubmit={(newBid) => {
           if (bidReview) {
             const arrow = bidReview.action.includes("Raise") ? "↑" : bidReview.action.includes("Lower") ? "↓" : "—";
-            setBidStates((p) => ({ ...p, [bidReview.index]: `${arrow} AED ${newBid}` }));
-            toast.success("Bid updated", { description: `"${bidReview.keyword}" → AED ${newBid}` });
+            setBidStates((p) => ({ ...p, [bidReview.index]: `${arrow} ₹ ${newBid}` }));
+            toast.success("Bid updated", { description: `"${bidReview.keyword}" → ₹ ${newBid}` });
           }
           setBidReview(null);
         }}
@@ -1589,7 +1589,7 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
   if (!item) return null;
   const products = bidProductsByKeyword[item.keyword] ?? [];
   const campaigns: BidCampaignRow[] = bidCampaignsByKeyword[item.keyword] ?? [
-    { campaign: `${item.keyword} — Auto SP`, spend: "AED —", roas: parseFloat(item.roas) || 0, budget: 2500 },
+    { campaign: `${item.keyword} — Auto SP`, spend: "₹ —", roas: parseFloat(item.roas) || 0, budget: 2500 },
   ];
   const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const isRaise = item.action.includes("Raise");
@@ -1626,7 +1626,7 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
           <div className="flex items-center gap-2">
             <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${tone}`}>{item.action}</span>
             <span className="font-mono text-xs text-muted-foreground">"{item.keyword}"</span>
-            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground">Carrefour</span>
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground">Instamart</span>
           </div>
           <DialogTitle className="text-base mt-2">Review &amp; confirm bid change</DialogTitle>
           <DialogDescription className="text-[11px]">
@@ -1644,7 +1644,7 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
                     <th className="text-left px-3 py-2 font-normal">Campaign</th>
                     <th className="text-right px-3 py-2 font-normal">Spend / mo</th>
                     <th className="text-right px-3 py-2 font-normal">ROAS</th>
-                    <th className="text-right px-3 py-2 font-normal">Daily Budget (AED )</th>
+                    <th className="text-right px-3 py-2 font-normal">Daily Budget (₹ )</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1693,10 +1693,10 @@ const BidReviewDialog: React.FC<BidReviewDialogProps> = ({ item, onClose, onSubm
                       <p className="text-[10px] text-muted-foreground mt-0.5 truncate">Campaign: <span className="text-foreground">{r.campaign}</span></p>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] flex-shrink-0">
-                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">AED {r.currentBid}</span></span>
-                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">AED {r.suggestedBid}</span></span>
+                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">₹ {r.currentBid}</span></span>
+                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">₹ {r.suggestedBid}</span></span>
                       <label className="flex items-center gap-1.5">
-                        <span className="text-muted-foreground">New AED </span>
+                        <span className="text-muted-foreground">New ₹ </span>
                         <Input
                           type="number"
                           value={bids[key] ?? String(r.suggestedBid)}

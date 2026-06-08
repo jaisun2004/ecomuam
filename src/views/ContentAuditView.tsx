@@ -10,12 +10,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
 export const skuData = [
-  { id: "sku-001", sku: "Pepsi 1L", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Carrefour", category: "Drinks", priceParity: "match", availability: 96 },
-  { id: "sku-002", sku: "7UP 1L", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Noon", category: "Glucose", priceParity: "above", availability: 88 },
-  { id: "sku-003", sku: "Lipton Ice Tea Peach 320ml", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Carrefour", category: "Cream", priceParity: "below", availability: 72 },
-  { id: "sku-004", sku: "Aquafina 1.5L", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Talabat", category: "Health", priceParity: "match", availability: 94 },
-  { id: "sku-005", sku: "Mountain Dew 1L", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Noon Minutes", category: "Cream", priceParity: "below", availability: 98 },
-  { id: "sku-006", sku: "Mirinda 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Talabat", category: "Kids", priceParity: "above", availability: 65 },
+  { id: "sku-001", sku: "Pepsi 1L", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Instamart", category: "Drinks", priceParity: "match", availability: 96 },
+  { id: "sku-002", sku: "7UP 1L", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Instamart", category: "Glucose", priceParity: "above", availability: 88 },
+  { id: "sku-003", sku: "Lipton Ice Tea Peach 320ml", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Instamart", category: "Cream", priceParity: "below", availability: 72 },
+  { id: "sku-004", sku: "Aquafina 1.5L", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health", priceParity: "match", availability: 94 },
+  { id: "sku-005", sku: "Mountain Dew 1L", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream", priceParity: "below", availability: 98 },
+  { id: "sku-006", sku: "Mirinda 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Blinkit", category: "Kids", priceParity: "above", availability: 65 },
 ];
 
 export const competitorScores: Record<string, Record<string, { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }>> = {
@@ -107,12 +107,12 @@ const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket:
 
 // Cross-platform consistency data
 const crossPlatformData = [
-  { sku: "Pepsi 1L", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Carrefour", gap: 29, issue: true },
-  { sku: "7UP 1L", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Carrefour", gap: 14, issue: true },
-  { sku: "Lipton Ice Tea Peach 320ml", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Carrefour", gap: 16, issue: true },
-  { sku: "Aquafina 1.5L", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Carrefour", gap: 5, issue: false },
-  { sku: "Mountain Dew 1L", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Carrefour", gap: 8, issue: false },
-  { sku: "Mirinda 150g", amazon: 56, flipkart: 44, blinkit: 38, zepto: 32, instamart: 28, bestPlatform: "Carrefour", gap: 28, issue: true },
+  { sku: "Pepsi 1L", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Instamart", gap: 29, issue: true },
+  { sku: "7UP 1L", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Instamart", gap: 14, issue: true },
+  { sku: "Lipton Ice Tea Peach 320ml", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Instamart", gap: 16, issue: true },
+  { sku: "Aquafina 1.5L", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Instamart", gap: 5, issue: false },
+  { sku: "Mountain Dew 1L", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Instamart", gap: 8, issue: false },
+  { sku: "Mirinda 150g", amazon: 56, flipkart: 44, blinkit: 38, zepto: 32, instamart: 28, bestPlatform: "Instamart", gap: 28, issue: true },
 ];
 
 // Category benchmark + campaign performance data
@@ -448,7 +448,7 @@ const ContentAuditView: React.FC = () => {
         {/* Filter bar */}
         <div className="flex items-center gap-3 flex-wrap">
           <FilterDropdown label="Platform" value={platformFilter}
-            options={[{ label: "All platforms", value: "All" }, { label: "Talabat", value: "Talabat" }, { label: "Noon Minutes", value: "Noon Minutes" }, { label: "Talabat", value: "Talabat" }, { label: "Carrefour", value: "Carrefour" }, { label: "Noon", value: "Noon" }]}
+            options={[{ label: "All platforms", value: "All" }, { label: "Blinkit", value: "Blinkit" }, { label: "Zepto", value: "Zepto" }, { label: "Blinkit", value: "Blinkit" }, { label: "Instamart", value: "Instamart" }, { label: "Instamart", value: "Instamart" }]}
             onChange={setPlatformFilter} />
           <FilterDropdown label="Score range" value={scoreFilter}
             options={[{ label: "All scores", value: "All" }, { label: "Critical (0–59)", value: "Critical" }, { label: "Needs work (60–79)", value: "NeedsWork" }, { label: "Strong (80–100)", value: "Strong" }]}
@@ -587,11 +587,11 @@ const ContentAuditView: React.FC = () => {
             <thead>
               <tr className="text-muted-foreground border-b border-subtle">
                 <th className="text-left py-2 font-normal">SKU</th>
-                <th className="text-center py-2 font-normal">Carrefour</th>
-                <th className="text-center py-2 font-normal">Noon</th>
-                <th className="text-center py-2 font-normal">Talabat</th>
-                <th className="text-center py-2 font-normal">Noon Minutes</th>
-                <th className="text-center py-2 font-normal">Talabat</th>
+                <th className="text-center py-2 font-normal">Instamart</th>
+                <th className="text-center py-2 font-normal">Instamart</th>
+                <th className="text-center py-2 font-normal">Blinkit</th>
+                <th className="text-center py-2 font-normal">Zepto</th>
+                <th className="text-center py-2 font-normal">Blinkit</th>
                 <th className="text-center py-2 font-normal">Gap</th>
                 <th className="text-center py-2 font-normal">Status</th>
               </tr>

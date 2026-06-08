@@ -20,35 +20,35 @@ const demandForecast = [
   { category: "Health & Fibre", current: 48, forecast: 62 },
 ];
 
-const platformFilter = ["All Platforms", "Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", "Talabat Pro": "#FC8019" };
+const platformFilter = ["All Platforms", "Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
 const categoryFilter = ["All Categories", "Cream Beverages", "Glucose", "Digestive", "Drinks", "Health & Fibre"];
 
 const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: string; opp: string; oppColor: string; platform?: string }[]> = {
   "All Categories": [
-    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Talabat" },
-    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Carrefour" },
-    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon Minutes" },
-    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Carrefour" },
-    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Talabat" },
-    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon" },
-    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", platform: "Carrefour" },
+    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Blinkit" },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Instamart" },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Instamart" },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Instamart" },
+    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", platform: "Instamart" },
   ],
   "Cream Beverages": [
-    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Carrefour" },
-    { kw: "bourbon cream beverage", vol: "18.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Carrefour" },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", platform: "Instamart" },
+    { kw: "bourbon cream beverage", vol: "18.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Instamart" },
   ],
   Glucose: [
-    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon" },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Instamart" },
   ],
   Digestive: [
-    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Carrefour" },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Instamart" },
   ],
   Drinks: [
-    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Talabat" },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", platform: "Blinkit" },
   ],
   "Health & Fibre": [
-    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Noon Minutes" },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", platform: "Zepto" },
   ],
 };
 
@@ -58,24 +58,24 @@ const sosData = {
 };
 
 const poachingIncidents = [
-  { keyword: "britannia good day", competitor: "Coca-Cola", platforms: ["Carrefour", "Noon"], firstDetected: "Mar 12", severity: "High" },
-  { keyword: "britannia beverages", competitor: "Almarai", platforms: ["Talabat"], firstDetected: "Mar 14", severity: "Medium" },
-  { keyword: "britannia bourbon", competitor: "Lacnor", platforms: ["Noon Minutes", "Carrefour"], firstDetected: "Mar 15", severity: "Low" },
+  { keyword: "britannia good day", competitor: "Coca-Cola", platforms: ["Instamart", "Instamart"], firstDetected: "Mar 12", severity: "High" },
+  { keyword: "britannia beverages", competitor: "Almarai", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
+  { keyword: "britannia bourbon", competitor: "Lacnor", platforms: ["Zepto", "Instamart"], firstDetected: "Mar 15", severity: "Low" },
 ];
 
 const retailerIssues = [
-  { platform: "Noon Minutes", desc: "SoS on Noon Minutes down 12% WoW for Brand Search terms", keywords: 8 },
-  { platform: "Talabat", desc: "Not appearing in top 10 on Talabat for 8 category keywords", keywords: 8 },
+  { platform: "Zepto", desc: "SoS on Zepto down 12% WoW for Brand Search terms", keywords: 8 },
+  { platform: "Blinkit", desc: "Not appearing in top 10 on Blinkit for 8 category keywords", keywords: 8 },
 ];
 
 // Competition rank improvements
 const compRankImprovements = [
-  { product: "Coca-Cola Butter Drinks 200g", brand: "Coca-Cola", platform: "Carrefour", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
-  { product: "Almarai Juice 1L", brand: "Almarai", platform: "Noon", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
-  { product: "Rauch Butter Drinks 150g", brand: "Rauch", platform: "Talabat", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
-  { product: "Masafi Digestive 200g", brand: "Masafi", platform: "Carrefour", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
-  { product: "Coca-Cola Premium 75g", brand: "Coca-Cola", platform: "Noon Minutes", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
-  { product: "Almarai Hide & Seek 100g", brand: "Almarai", platform: "Talabat", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
+  { product: "Coca-Cola Butter Drinks 200g", brand: "Coca-Cola", platform: "Instamart", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
+  { product: "Almarai Juice 1L", brand: "Almarai", platform: "Instamart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
+  { product: "Rauch Butter Drinks 150g", brand: "Rauch", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
+  { product: "Masafi Digestive 200g", brand: "Masafi", platform: "Instamart", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
+  { product: "Coca-Cola Premium 75g", brand: "Coca-Cola", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
+  { product: "Almarai Hide & Seek 100g", brand: "Almarai", platform: "Blinkit", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
 ];
 
 // SoS analytics data
@@ -88,15 +88,15 @@ const sosOverTime = Array.from({ length: 30 }, (_, i) => ({
   categoryAvg: Math.round(20 + Math.random() * 2),
 }));
 
-const sosRetailerHeatmap = ["Talabat", "Noon Minutes", "Talabat", "Carrefour", "Noon"].map(r => ({
+const sosRetailerHeatmap = ["Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"].map(r => ({
   retailer: r,
   weeks: Array.from({ length: 8 }, () => Math.round(15 + Math.random() * 25)),
 }));
 
 const poachingHistory = [
-  { keyword: "britannia good day", competitor: "Coca-Cola", platform: "Carrefour", duration: 12, impact: "-3% SoS", status: "Active" },
-  { keyword: "britannia beverages", competitor: "Almarai", platform: "Talabat", duration: 5, impact: "-1% SoS", status: "Active" },
-  { keyword: "britannia bourbon", competitor: "Lacnor", platform: "Noon", duration: 18, impact: "-2% SoS", status: "Resolved" },
+  { keyword: "britannia good day", competitor: "Coca-Cola", platform: "Instamart", duration: 12, impact: "-3% SoS", status: "Active" },
+  { keyword: "britannia beverages", competitor: "Almarai", platform: "Blinkit", duration: 5, impact: "-1% SoS", status: "Active" },
+  { keyword: "britannia bourbon", competitor: "Lacnor", platform: "Instamart", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
 /* ── Merged keyword + shelf coverage data with binary + avg rank ── */
@@ -106,35 +106,35 @@ const shelfCoverageData: Record<string, {
   wow: string;
   opp: string;
   oppColor: string;
-  Carrefour: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Noon: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  Talabat: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  "Noon Minutes": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
-  "Talabat Pro": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Instamart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Instamart: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  Blinkit: { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  "Zepto": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
+  "Zepto": { organic: boolean; sponsored: boolean; avgOrgRank: number | null; avgSponRank: number | null };
 }[]> = {
   "All Categories": [
-    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Carrefour: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Noon: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Noon: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
-    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
-    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Carrefour: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Noon: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "butter beverages online", vol: "28.4K", wow: "+47%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 3 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Instamart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Instamart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "beverage gift pack", vol: "8.9K", wow: "-4%", opp: "LOW", oppColor: "text-muted-foreground bg-surface-3", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 1 }, Instamart: { organic: true, sponsored: false, avgOrgRank: 4, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   "Cream Beverages": [
-    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Noon: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "cream beverages combo", vol: "44.1K", wow: "+31%", opp: "HIGH", oppColor: "text-sw-green bg-sw-green-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 2, avgSponRank: 1 }, Instamart: { organic: true, sponsored: false, avgOrgRank: 6, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Glucose: [
-    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Noon: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
+    { kw: "glucose beverages bulk", vol: "52.3K", wow: "+9%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: true, avgOrgRank: 3, avgSponRank: 2 }, Instamart: { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 4 }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: true, sponsored: false, avgOrgRank: 8, avgSponRank: null } },
   ],
   Digestive: [
-    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "digestive beverages fibre", vol: "33.2K", wow: "+22%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   Drinks: [
-    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Carrefour: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "choco chip drinks pack", vol: "11.7K", wow: "+61%", opp: "EMERGING", oppColor: "text-sw-purple bg-sw-purple-dim", Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: true, avgOrgRank: null, avgSponRank: 5 }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
   "Health & Fibre": [
-    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Carrefour: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Noon: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Talabat: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Noon Minutes": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Talabat Pro": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
+    { kw: "sugar free beverages", vol: "19.8K", wow: "+28%", opp: "MED", oppColor: "text-sw-amber bg-sw-amber-dim", Instamart: { organic: true, sponsored: false, avgOrgRank: 5, avgSponRank: null }, Instamart: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, Blinkit: { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null }, "Zepto": { organic: false, sponsored: false, avgOrgRank: null, avgSponRank: null } },
   ],
 };
 
@@ -145,7 +145,7 @@ const DiscoveryView: React.FC = () => {
   const [sosPlatformFilter, setSosPlatformFilter] = useState("All");
   const [showCompRankDetail, setShowCompRankDetail] = useState(false);
 
-  const allPlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"] as const;
+  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"] as const;
   const visiblePlatforms = selectedPlatform === "All Platforms"
     ? allPlatforms
     : allPlatforms.filter(p => p === selectedPlatform);
@@ -423,7 +423,7 @@ const DiscoveryView: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["All", "Talabat", "Noon Minutes", "Talabat", "Carrefour", "Noon"].map(p => (
+                  {["All", "Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"].map(p => (
                     <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
                   ))}
                 </SelectContent>

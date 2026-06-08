@@ -15,7 +15,7 @@ const AdOptimisationSection = () => {
   const [ruleCreated, setRuleCreated] = useState(false);
   const [customRules, setCustomRules] = useState<{ name: string; metric: string; operator: string; value: string; action: string; actionValue: string; platforms: string[] }[]>([]);
   const [ruleForm, setRuleForm] = useState({
-    name: "", metric: "ROAS", operator: "less_than", value: "", action: "pause_keyword", actionValue: "", platforms: ["Carrefour"] as string[],
+    name: "", metric: "ROAS", operator: "less_than", value: "", action: "pause_keyword", actionValue: "", platforms: ["Instamart"] as string[],
   });
 
   const currentMultipliers = strategyBidMultipliers[selectedStrategy] || {};
@@ -44,16 +44,16 @@ const AdOptimisationSection = () => {
       id: "ad-1", signal: "Low ROAS keywords — auto-pause recommended",
       signalDetail: "3 keywords running below 1.5x ROAS for 5+ days",
       strategy: "Budget Reallocation", campaignType: "Pause low performers, boost high ROAS",
-      platforms: ["Carrefour", "Noon"],
+      platforms: ["Instamart", "Instamart"],
       keywords: ["energy supplement", "health drink powder", "vitamin mix"],
-      estimatedImpact: "Save AED 15K/week and redirect to 4x+ ROAS keywords", urgency: "high",
+      estimatedImpact: "Save ₹ 15K/week and redirect to 4x+ ROAS keywords", urgency: "high",
       icon: <Target className="h-4 w-4 text-warning" />,
     },
     {
       id: "ad-2", signal: "Competitor reduced ad spend on 'protein bar'",
       signalDetail: "Competitor B dropped sponsored visibility 60% this week",
       strategy: "Opportunistic Conquesting", campaignType: "Exact Match + Category Targeting",
-      platforms: ["Carrefour", "Talabat"],
+      platforms: ["Instamart", "Blinkit"],
       keywords: ["protein bar", "whey protein bar", "gym snack bar"],
       estimatedImpact: "+25% impression share on protein bar category", urgency: "critical",
       icon: <Zap className="h-4 w-4 text-destructive" />,
@@ -72,7 +72,7 @@ const AdOptimisationSection = () => {
 
       <div className="grid grid-cols-4 gap-4">
         <KPICard title="Avg ROAS" value="3.7x" change={12} changeLabel="vs last month" icon={<TrendingUp className="h-5 w-5" />} variant="success" />
-        <KPICard title="Monthly Spend" value="AED 5L" change={-5} changeLabel="optimized down" icon={<DollarSign className="h-5 w-5" />} variant="primary" />
+        <KPICard title="Monthly Spend" value="₹ 5L" change={-5} changeLabel="optimized down" icon={<DollarSign className="h-5 w-5" />} variant="primary" />
         <KPICard title="Active Campaigns" value="8" change={2} changeLabel="across platforms" icon={<Megaphone className="h-5 w-5" />} />
         <KPICard title="Est. Clicks" value="45.2K" change={8} changeLabel="this month" icon={<BarChart3 className="h-5 w-5" />} variant="warning" />
       </div>
@@ -87,9 +87,9 @@ const AdOptimisationSection = () => {
               <h3 className="font-heading font-semibold text-foreground mb-4">Active Campaigns</h3>
               <div className="space-y-3">
                 {[
-                  { name: 'Summer Sale - Energy Drinks', status: 'Active', budget: 'AED 50,000', roas: '4.2x' },
-                  { name: 'Competitor Conquesting - RedBull', status: 'Active', budget: 'AED 30,000', roas: '2.8x' },
-                  { name: 'Brand Defense', status: 'Paused', budget: 'AED 20,000', roas: '5.1x' },
+                  { name: 'Summer Sale - Energy Drinks', status: 'Active', budget: '₹ 50,000', roas: '4.2x' },
+                  { name: 'Competitor Conquesting - RedBull', status: 'Active', budget: '₹ 30,000', roas: '2.8x' },
+                  { name: 'Brand Defense', status: 'Paused', budget: '₹ 20,000', roas: '5.1x' },
                 ].map((c, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border">
                     <div>
@@ -133,7 +133,7 @@ const AdOptimisationSection = () => {
                   <div className="w-3 h-3 rounded-full bg-success"></div>
                 </div>
               ))}
-              <button onClick={() => { setShowRuleModal(true); setRuleCreated(false); setRuleForm({ name: "", metric: "ROAS", operator: "less_than", value: "", action: "pause_keyword", actionValue: "", platforms: ["Carrefour"] }); }}
+              <button onClick={() => { setShowRuleModal(true); setRuleCreated(false); setRuleForm({ name: "", metric: "ROAS", operator: "less_than", value: "", action: "pause_keyword", actionValue: "", platforms: ["Instamart"] }); }}
                 className="mt-4 w-full py-2.5 border-2 border-dashed border-border rounded-lg text-muted-foreground text-sm hover:bg-muted transition-colors flex items-center justify-center gap-1.5">
                 <Plus className="h-3.5 w-3.5" /> Add New Rule
               </button>
@@ -152,7 +152,7 @@ const AdOptimisationSection = () => {
                   <div className="flex justify-between mb-3 items-center">
                     <span className="font-bold text-foreground text-sm">Total Monthly Budget</span>
                     <div className="flex items-center bg-card px-3 py-1.5 rounded-lg border border-border shadow-card">
-                      <span className="text-muted-foreground mr-1">AED </span>
+                      <span className="text-muted-foreground mr-1">₹ </span>
                       <input type="number" defaultValue={500000} className="font-bold text-foreground w-24 text-right outline-none bg-transparent" />
                     </div>
                   </div>
@@ -160,7 +160,7 @@ const AdOptimisationSection = () => {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { label: "Forecasted Revenue", value: "AED 18.5L", color: "border-l-primary" },
+                    { label: "Forecasted Revenue", value: "₹ 18.5L", color: "border-l-primary" },
                     { label: "Forecasted ROAS", value: "3.7x", color: "border-l-success" },
                     { label: "Est. Clicks", value: "45.2K", color: "border-l-info" },
                   ].map((item, i) => (
@@ -177,10 +177,10 @@ const AdOptimisationSection = () => {
               <p className="text-xs text-muted-foreground mb-4">Recommended split</p>
               <div className="space-y-3">
                 {[
-                  { name: 'Carrefour Ads', pct: 60, color: 'hsl(25, 95%, 53%)' },
-                  { name: 'Noon Ads', pct: 25, color: 'hsl(217, 91%, 60%)' },
-                  { name: 'Talabat', pct: 10, color: 'hsl(38, 92%, 50%)' },
-                  { name: 'Noon Minutes', pct: 5, color: 'hsl(270, 70%, 50%)' }
+                  { name: 'Instamart Ads', pct: 60, color: 'hsl(25, 95%, 53%)' },
+                  { name: 'Instamart Ads', pct: 25, color: 'hsl(217, 91%, 60%)' },
+                  { name: 'Blinkit', pct: 10, color: 'hsl(38, 92%, 50%)' },
+                  { name: 'Zepto', pct: 5, color: 'hsl(270, 70%, 50%)' }
                 ].map((ch, i) => (
                   <div key={i}>
                     <div className="flex justify-between text-xs mb-1">
@@ -256,11 +256,11 @@ const AdOptimisationSection = () => {
                   </thead>
                   <tbody className="divide-y divide-border/50">
                     {[
-                      { platform: 'Carrefour', keyword: 'energy drink', city: 'Abu Dhabi', spend: 'AED 5K', roas: 4.2 },
-                      { platform: 'Carrefour', keyword: 'energy drink', city: 'Dubai', spend: 'AED 3.2K', roas: 3.8 },
-                      { platform: 'Noon', keyword: 'my brand', city: 'Riyadh', spend: 'AED 1.5K', roas: 5.5 },
-                      { platform: 'Talabat', keyword: 'refreshment', city: 'Abu Dhabi', spend: 'AED 800', roas: 2.1 },
-                      { platform: 'Carrefour', keyword: 'redbull', city: 'Khalifa City', spend: 'AED 2.1K', roas: 1.8 },
+                      { platform: 'Instamart', keyword: 'energy drink', city: 'Delhi NCR', spend: '₹ 5K', roas: 4.2 },
+                      { platform: 'Instamart', keyword: 'energy drink', city: 'Mumbai', spend: '₹ 3.2K', roas: 3.8 },
+                      { platform: 'Instamart', keyword: 'my brand', city: 'Riyadh', spend: '₹ 1.5K', roas: 5.5 },
+                      { platform: 'Blinkit', keyword: 'refreshment', city: 'Delhi NCR', spend: '₹ 800', roas: 2.1 },
+                      { platform: 'Instamart', keyword: 'redbull', city: 'Khalifa City', spend: '₹ 2.1K', roas: 1.8 },
                     ].map((row, i) => (
                       <tr key={i} className="hover:bg-muted/30 transition-colors">
                         <td className="p-2.5 text-foreground">{row.platform}</td>
@@ -307,7 +307,7 @@ const AddRuleModal = ({
   onClose: () => void;
   onSave: (rule: typeof form) => void;
 }) => {
-  const allPlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes"];
+  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto"];
   const metrics = ["ROAS", "CPC", "CTR", "Impressions", "Spend", "ACoS", "Conversion Rate"];
   const operators = [
     { id: "less_than", label: "Less than (<)" },
@@ -442,22 +442,22 @@ const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
   const [step, setStep] = useState<'choose' | 'autonomous' | 'history' | 'manual'>('choose');
   const [campaignCreated, setCampaignCreated] = useState(false);
   const [manualForm, setManualForm] = useState({
-    name: '', type: 'Sponsored Products', platforms: ['Carrefour'] as string[],
+    name: '', type: 'Sponsored Products', platforms: ['Instamart'] as string[],
     budget: '', duration: '7', keywords: '',
   });
 
-  const allPlatforms = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "BigBasket"];
+  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "BigBasket"];
 
   const historicalCampaigns = [
-    { name: 'Summer Sale - Energy Drinks', date: 'Jun 2025', roas: '4.2x', spend: 'AED 50K' },
-    { name: 'Competitor Conquesting - RedBull', date: 'May 2025', roas: '2.8x', spend: 'AED 30K' },
-    { name: 'Diwali Festival Push', date: 'Oct 2024', roas: '5.6x', spend: 'AED 1.2L' },
+    { name: 'Summer Sale - Energy Drinks', date: 'Jun 2025', roas: '4.2x', spend: '₹ 50K' },
+    { name: 'Competitor Conquesting - RedBull', date: 'May 2025', roas: '2.8x', spend: '₹ 30K' },
+    { name: 'Diwali Festival Push', date: 'Oct 2024', roas: '5.6x', spend: '₹ 1.2L' },
   ];
 
   const aiSuggestions = [
-    { name: 'Stock Recovery Blitz', reason: 'Competitor X out of stock on 3 SKUs in Abu Dhabi', platforms: ['Carrefour', 'Talabat'], budget: 'AED 25K', estRoas: '4.5x', keywords: ['energy drink', 'protein shake', 'health drink'] },
-    { name: 'Price Advantage Campaign', reason: 'Your MRP is 12% lower than Competitor Y on Noon', platforms: ['Noon'], budget: 'AED 15K', estRoas: '3.8x', keywords: ['affordable energy', 'best price protein'] },
-    { name: 'Weekend Warrior Push', reason: '40% higher conversions on weekends historically', platforms: ['Carrefour', 'Noon Minutes', 'Talabat'], budget: 'AED 20K', estRoas: '5.1x', keywords: ['weekend deal', 'quick delivery drink'] },
+    { name: 'Stock Recovery Blitz', reason: 'Competitor X out of stock on 3 SKUs in Delhi NCR', platforms: ['Instamart', 'Blinkit'], budget: '₹ 25K', estRoas: '4.5x', keywords: ['energy drink', 'protein shake', 'health drink'] },
+    { name: 'Price Advantage Campaign', reason: 'Your MRP is 12% lower than Competitor Y on Instamart', platforms: ['Instamart'], budget: '₹ 15K', estRoas: '3.8x', keywords: ['affordable energy', 'best price protein'] },
+    { name: 'Weekend Warrior Push', reason: '40% higher conversions on weekends historically', platforms: ['Instamart', 'Zepto', 'Blinkit'], budget: '₹ 20K', estRoas: '5.1x', keywords: ['weekend deal', 'quick delivery drink'] },
   ];
 
   const togglePlatform = (p: string) => {
@@ -596,7 +596,7 @@ const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Daily Budget (AED )</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Daily Budget (₹ )</label>
                   <input type="number" value={manualForm.budget} onChange={e => setManualForm({ ...manualForm, budget: e.target.value })} placeholder="5000"
                     className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/30" />
                 </div>

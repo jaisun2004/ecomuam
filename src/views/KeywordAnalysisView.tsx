@@ -67,37 +67,37 @@ type CampaignRow = { campaign: string; platform: string; spend: string; clicks: 
 
 const mockCampaignsByKeyword: Record<string, CampaignRow[]> = {
   "butter beverages": [
-    { campaign: "Pepsi 1L — SP Exact", platform: "Carrefour", spend: "AED 42K", clicks: 3200, ctr: "2.8%", roas: 5.2, budget: 2500 },
-    { campaign: "Pepsi 1L — SP Broad", platform: "Carrefour", spend: "AED 38K", clicks: 2100, ctr: "2.1%", roas: 4.1, budget: 2200 },
-    { campaign: "Butter Beverages — SB Defence", platform: "Carrefour", spend: "AED 25K", clicks: 1400, ctr: "1.6%", roas: 3.4, budget: 1800 },
+    { campaign: "Pepsi 1L — SP Exact", platform: "Instamart", spend: "₹ 42K", clicks: 3200, ctr: "2.8%", roas: 5.2, budget: 2500 },
+    { campaign: "Pepsi 1L — SP Broad", platform: "Instamart", spend: "₹ 38K", clicks: 2100, ctr: "2.1%", roas: 4.1, budget: 2200 },
+    { campaign: "Butter Beverages — SB Defence", platform: "Instamart", spend: "₹ 25K", clicks: 1400, ctr: "1.6%", roas: 3.4, budget: 1800 },
   ],
   "cream beverages": [
-    { campaign: "Cream Range — SP Exact", platform: "Carrefour", spend: "AED 38K", clicks: 2100, ctr: "1.9%", roas: 3.1, budget: 2000 },
-    { campaign: "Mountain Dew — SP Phrase", platform: "Carrefour", spend: "AED 30K", clicks: 1700, ctr: "2.0%", roas: 2.6, budget: 1800 },
+    { campaign: "Cream Range — SP Exact", platform: "Instamart", spend: "₹ 38K", clicks: 2100, ctr: "1.9%", roas: 3.1, budget: 2000 },
+    { campaign: "Mountain Dew — SP Phrase", platform: "Instamart", spend: "₹ 30K", clicks: 1700, ctr: "2.0%", roas: 2.6, budget: 1800 },
   ],
   "glucose beverages": [
-    { campaign: "Glucose Category — SP", platform: "Carrefour", spend: "AED 28K", clicks: 1400, ctr: "1.2%", roas: 1.8, budget: 1600 },
+    { campaign: "Glucose Category — SP", platform: "Instamart", spend: "₹ 28K", clicks: 1400, ctr: "1.2%", roas: 1.8, budget: 1600 },
   ],
   "digestive beverages": [
-    { campaign: "Aquafina — Brand SP", platform: "Carrefour", spend: "AED 55K", clicks: 4100, ctr: "3.4%", roas: 6.1, budget: 3000 },
-    { campaign: "Digestive — SP Exact", platform: "Carrefour", spend: "AED 30K", clicks: 2200, ctr: "2.9%", roas: 5.0, budget: 2200 },
+    { campaign: "Aquafina — Brand SP", platform: "Instamart", spend: "₹ 55K", clicks: 4100, ctr: "3.4%", roas: 6.1, budget: 3000 },
+    { campaign: "Digestive — SP Exact", platform: "Instamart", spend: "₹ 30K", clicks: 2200, ctr: "2.9%", roas: 5.0, budget: 2200 },
   ],
   "choco chip drinks": [
-    { campaign: "Mountain Dew Choco — SP", platform: "Noon", spend: "AED 31K", clicks: 2800, ctr: "2.2%", roas: 4.0, budget: 2200 },
+    { campaign: "Mountain Dew Choco — SP", platform: "Instamart", spend: "₹ 31K", clicks: 2800, ctr: "2.2%", roas: 4.0, budget: 2200 },
   ],
   "beverage combo pack": [
-    { campaign: "Variety Pack — SP", platform: "Carrefour", spend: "AED 22K", clicks: 1100, ctr: "1.4%", roas: 2.0, budget: 1500 },
+    { campaign: "Variety Pack — SP", platform: "Instamart", spend: "₹ 22K", clicks: 1100, ctr: "1.4%", roas: 2.0, budget: 1500 },
   ],
   "sugar free beverages": [
-    { campaign: "Aquafina SF — SP", platform: "Carrefour", spend: "AED 18K", clicks: 800, ctr: "0.9%", roas: 1.4, budget: 1400 },
+    { campaign: "Aquafina SF — SP", platform: "Instamart", spend: "₹ 18K", clicks: 800, ctr: "0.9%", roas: 1.4, budget: 1400 },
   ],
   "kids beverages": [
-    { campaign: "Tiger Kids — SP Exact", platform: "Carrefour", spend: "AED 16K", clicks: 1200, ctr: "2.4%", roas: 4.5, budget: 1600 },
+    { campaign: "Tiger Kids — SP Exact", platform: "Instamart", spend: "₹ 16K", clicks: 1200, ctr: "2.4%", roas: 4.5, budget: 1600 },
   ],
 };
 
-const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
-const platformColors: Record<string, string> = { Carrefour: "#FF9900", Noon: "#2F77FF", Talabat: "#FDDC2B", "Noon Minutes": "#833AB4", "Talabat Pro": "#FC8019" };
+const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Instamart: "#2F77FF", Blinkit: "#FDDC2B", "Zepto": "#833AB4", "Zepto": "#FC8019" };
 
 type KwRow = { campaign: string; keyword: string; matchType: "Exact" | "Phrase" | "Broad"; currentBid: number; suggestedBid: number; isVariant?: boolean };
 
@@ -146,7 +146,7 @@ interface KeywordRank {
 }
 
 const keywordDataByPlatform: Record<string, KeywordRank[]> = {
-  Carrefour: [
+  Instamart: [
     { keyword: "butter beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Almarai", compRank: 3, searchVol: "84K", searchVolNum: 84, shareOfSearch: 22, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "cream beverages", sponsoredRank: 3, organicRank: 8, topCompetitor: "Coca-Cola", compRank: 2, searchVol: "62K", searchVolNum: 62, shareOfSearch: 11, trend: "down", action: "Boost campaign", canReduceSpend: false },
     { keyword: "glucose beverages", sponsoredRank: 6, organicRank: 14, topCompetitor: "Almarai", compRank: 1, searchVol: "120K", searchVolNum: 120, shareOfSearch: 5, trend: "down", action: "New campaign needed", canReduceSpend: false },
@@ -156,22 +156,22 @@ const keywordDataByPlatform: Record<string, KeywordRank[]> = {
     { keyword: "sugar free beverages", sponsoredRank: 8, organicRank: 18, topCompetitor: "Rauch", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
     { keyword: "kids beverages", sponsoredRank: 2, organicRank: 3, topCompetitor: "Almarai", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Noon: [
+  Instamart: [
     { keyword: "butter beverages", sponsoredRank: 2, organicRank: 5, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "52K", searchVolNum: 52, shareOfSearch: 16, trend: "down", action: "Boost campaign", canReduceSpend: false },
     { keyword: "cream beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Almarai", compRank: 3, searchVol: "41K", searchVolNum: 41, shareOfSearch: 18, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "glucose beverages", sponsoredRank: 4, organicRank: 9, topCompetitor: "Almarai", compRank: 1, searchVol: "88K", searchVolNum: 88, shareOfSearch: 9, trend: "flat", action: "Optimise bids", canReduceSpend: false },
     { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Masafi", compRank: 1, searchVol: "32K", searchVolNum: 32, shareOfSearch: 25, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  Talabat: [
+  Blinkit: [
     { keyword: "butter beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Almarai", compRank: 2, searchVol: "18K", searchVolNum: 18, shareOfSearch: 35, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "cream beverages", sponsoredRank: 3, organicRank: 6, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "12K", searchVolNum: 12, shareOfSearch: 12, trend: "down", action: "Boost campaign", canReduceSpend: false },
     { keyword: "digestive beverages", sponsoredRank: 1, organicRank: 1, topCompetitor: "Masafi", compRank: 2, searchVol: "8K", searchVolNum: 8, shareOfSearch: 42, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
-  "Noon Minutes": [
+  "Zepto": [
     { keyword: "butter beverages", sponsoredRank: 2, organicRank: 4, topCompetitor: "Almarai", compRank: 1, searchVol: "14K", searchVolNum: 14, shareOfSearch: 20, trend: "flat", action: "Optimise bids", canReduceSpend: false },
     { keyword: "glucose beverages", sponsoredRank: 5, organicRank: 12, topCompetitor: "Almarai", compRank: 1, searchVol: "22K", searchVolNum: 22, shareOfSearch: 6, trend: "down", action: "New campaign needed", canReduceSpend: false },
   ],
-  "Talabat Pro": [
+  "Zepto": [
     { keyword: "butter beverages", sponsoredRank: 1, organicRank: 2, topCompetitor: "Coca-Cola", compRank: 1, searchVol: "11K", searchVolNum: 11, shareOfSearch: 24, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "cream beverages", sponsoredRank: 3, organicRank: 7, topCompetitor: "Almarai", compRank: 2, searchVol: "9K", searchVolNum: 9, shareOfSearch: 10, trend: "down", action: "Boost campaign", canReduceSpend: false },
   ],
@@ -185,20 +185,20 @@ const rankTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const campaignKeywordPerf = [
-  { keyword: "butter beverages", campaign: "Butter Beverages — SP", platform: "Carrefour", spend: "AED 42K", clicks: 3200, ctr: "2.8%", roas: "5.2x", rank: 2, action: "Reduce spend — organic rank strong" },
-  { keyword: "cream beverages", campaign: "Cream Range — SP", platform: "Carrefour", spend: "AED 38K", clicks: 2100, ctr: "1.9%", roas: "3.1x", rank: 8, action: "Increase bid — off page 1 organically" },
-  { keyword: "glucose beverages", campaign: "Glucose Category — SP", platform: "Carrefour", spend: "AED 28K", clicks: 1400, ctr: "1.2%", roas: "1.8x", rank: 14, action: "Restructure — poor ROAS, needs content fix first" },
-  { keyword: "digestive beverages", campaign: "Aquafina — Brand SP", platform: "Carrefour", spend: "AED 55K", clicks: 4100, ctr: "3.4%", roas: "6.1x", rank: 1, action: "Reduce spend — #1 organically" },
-  { keyword: "choco chip drinks", campaign: "Mountain Dew Choco — SP", platform: "Noon", spend: "AED 31K", clicks: 2800, ctr: "2.2%", roas: "4.0x", rank: 5, action: "Hold — organic rank moderate" },
-  { keyword: "sugar free beverages", campaign: "Aquafina SF — SP", platform: "Carrefour", spend: "AED 18K", clicks: 800, ctr: "0.9%", roas: "1.4x", rank: 18, action: "Pause — content score too low, fix listing first" },
+  { keyword: "butter beverages", campaign: "Butter Beverages — SP", platform: "Instamart", spend: "₹ 42K", clicks: 3200, ctr: "2.8%", roas: "5.2x", rank: 2, action: "Reduce spend — organic rank strong" },
+  { keyword: "cream beverages", campaign: "Cream Range — SP", platform: "Instamart", spend: "₹ 38K", clicks: 2100, ctr: "1.9%", roas: "3.1x", rank: 8, action: "Increase bid — off page 1 organically" },
+  { keyword: "glucose beverages", campaign: "Glucose Category — SP", platform: "Instamart", spend: "₹ 28K", clicks: 1400, ctr: "1.2%", roas: "1.8x", rank: 14, action: "Restructure — poor ROAS, needs content fix first" },
+  { keyword: "digestive beverages", campaign: "Aquafina — Brand SP", platform: "Instamart", spend: "₹ 55K", clicks: 4100, ctr: "3.4%", roas: "6.1x", rank: 1, action: "Reduce spend — #1 organically" },
+  { keyword: "choco chip drinks", campaign: "Mountain Dew Choco — SP", platform: "Instamart", spend: "₹ 31K", clicks: 2800, ctr: "2.2%", roas: "4.0x", rank: 5, action: "Hold — organic rank moderate" },
+  { keyword: "sugar free beverages", campaign: "Aquafina SF — SP", platform: "Instamart", spend: "₹ 18K", clicks: 800, ctr: "0.9%", roas: "1.4x", rank: 18, action: "Pause — content score too low, fix listing first" },
 ];
 
 const keywordCampaignImpact = [
-  { keyword: "butter beverages", activeCampaigns: 3, totalSpend: "AED 1.2L", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
-  { keyword: "cream beverages", activeCampaigns: 2, totalSpend: "AED 68K", avgRoas: "3.1x", organicRank: 8, recommendation: "Increase bid on best-performing campaign, pause the other" },
-  { keyword: "glucose beverages", activeCampaigns: 1, totalSpend: "AED 28K", avgRoas: "1.8x", organicRank: 14, recommendation: "Fix content score (42/100) before spending more on ads" },
-  { keyword: "digestive beverages", activeCampaigns: 2, totalSpend: "AED 85K", avgRoas: "6.1x", organicRank: 1, recommendation: "Reduce to 1 campaign — #1 organically, save AED 40K/mo" },
-  { keyword: "kids beverages", activeCampaigns: 1, totalSpend: "AED 22K", avgRoas: "4.2x", organicRank: 3, recommendation: "Reduce spend gradually — organic rank strong at #3" },
+  { keyword: "butter beverages", activeCampaigns: 3, totalSpend: "₹ 1.2L", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
+  { keyword: "cream beverages", activeCampaigns: 2, totalSpend: "₹ 68K", avgRoas: "3.1x", organicRank: 8, recommendation: "Increase bid on best-performing campaign, pause the other" },
+  { keyword: "glucose beverages", activeCampaigns: 1, totalSpend: "₹ 28K", avgRoas: "1.8x", organicRank: 14, recommendation: "Fix content score (42/100) before spending more on ads" },
+  { keyword: "digestive beverages", activeCampaigns: 2, totalSpend: "₹ 85K", avgRoas: "6.1x", organicRank: 1, recommendation: "Reduce to 1 campaign — #1 organically, save ₹ 40K/mo" },
+  { keyword: "kids beverages", activeCampaigns: 1, totalSpend: "₹ 22K", avgRoas: "4.2x", organicRank: 3, recommendation: "Reduce spend gradually — organic rank strong at #3" },
 ];
 
 // Keywords losing rank/share
@@ -210,7 +210,7 @@ const losingKeywords = [
 ];
 
 const KeywordAnalysisView: React.FC = () => {
-  const [selectedPlatform, setSelectedPlatform] = useState("Carrefour");
+  const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [tab, setTab] = useState("overview");
   const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
   const [reviewItem, setReviewItem] = useState<ReviewPayload | null>(null);
@@ -508,8 +508,8 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
   if (!item) return null;
 
   const campaigns: CampaignRow[] = mockCampaignsByKeyword[item.keyword] ?? [{
-    campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Carrefour" : item.platform,
-    spend: "AED —", clicks: 0, ctr: "—", roas: 0, budget: 2000,
+    campaign: `${item.keyword} — Auto SP`, platform: item.platform === "All" ? "Instamart" : item.platform,
+    spend: "₹ —", clicks: 0, ctr: "—", roas: 0, budget: 2000,
   }];
   const bestCampaignRoas = campaigns.length > 1 ? Math.max(...campaigns.map(c => c.roas)) : -1;
   const products = mockProductsByKeyword[item.keyword] ?? [];
@@ -555,7 +555,7 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                     <th className="text-left px-3 py-2 font-normal">Platform</th>
                     <th className="text-right px-3 py-2 font-normal">Spend / mo</th>
                     <th className="text-right px-3 py-2 font-normal">ROAS</th>
-                    <th className="text-right px-3 py-2 font-normal">Daily Budget (AED )</th>
+                    <th className="text-right px-3 py-2 font-normal">Daily Budget (₹ )</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -606,10 +606,10 @@ const ReviewActionDialog: React.FC<ReviewDialogProps> = ({ item, onClose }) => {
                       <p className="text-[10px] text-muted-foreground mt-0.5 truncate">Campaign: <span className="text-foreground">{r.campaign}</span></p>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] flex-shrink-0">
-                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">AED {r.currentBid}</span></span>
-                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">AED {r.suggestedBid}</span></span>
+                      <span className="text-muted-foreground">Current: <span className="font-mono line-through">₹ {r.currentBid}</span></span>
+                      <span className="text-muted-foreground">Suggested: <span className="font-mono text-primary">₹ {r.suggestedBid}</span></span>
                       <label className="flex items-center gap-1.5">
-                        <span className="text-muted-foreground">New AED </span>
+                        <span className="text-muted-foreground">New ₹ </span>
                         <Input
                           type="number"
                           value={bids[key] ?? String(r.suggestedBid)}

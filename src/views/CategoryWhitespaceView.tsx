@@ -5,20 +5,20 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Megaphone } from "lucide-react";
 
 const opportunities = [
-  { emoji: "🍪", title: "Sugar-Free Beverages", desc: "42% search growth, <3 sellers on Talabat, 0 Q-commerce competitors in sugar-free category. High demand from health-conscious buyers.", tags: ["BLINKIT GAP", "HIGH IMPACT"], gradient: "from-sw-cyan/20 to-sw-cyan/5" },
+  { emoji: "🍪", title: "Sugar-Free Beverages", desc: "42% search growth, <3 sellers on Blinkit, 0 Q-commerce competitors in sugar-free category. High demand from health-conscious buyers.", tags: ["BLINKIT GAP", "HIGH IMPACT"], gradient: "from-sw-cyan/20 to-sw-cyan/5" },
   { emoji: "👩", title: "Protein Beverages for Women", desc: "28K monthly searches, only 1 SKU in portfolio targeting this segment. Growing health snacking trend.", tags: ["CONTENT GAP", "HIGH IMPACT"], gradient: "from-sw-purple/20 to-sw-purple/5" },
-  { emoji: "🌾", title: "Multigrain Snack Packs", desc: "Summer travel surge incoming. 35% WoW growth in multigrain snack searches, no sponsored listings on Noon Minutes yet.", tags: ["SEASONAL", "ACT NOW"], gradient: "from-sw-amber/20 to-sw-amber/5" },
+  { emoji: "🌾", title: "Multigrain Snack Packs", desc: "Summer travel surge incoming. 35% WoW growth in multigrain snack searches, no sponsored listings on Zepto yet.", tags: ["SEASONAL", "ACT NOW"], gradient: "from-sw-amber/20 to-sw-amber/5" },
   { emoji: "🍫", title: "Dark Chocolate Drinks", desc: "Premium segment with 55% margins. Only Dark Fantasy dominates — room for PepsiCo Pepsi Choco variant.", tags: ["PREMIUM", "HIGH MARGIN"], gradient: "from-sw-green/20 to-sw-green/5" },
   { emoji: "🧒", title: "Kids' Beverage Combos", desc: "Back-to-school demand rising 22% MoM. Mirinda + Jim Jam combo packs have zero competition on quick commerce.", tags: ["Q-COMMERCE", "SEASONAL"], gradient: "from-sw-cyan/20 to-sw-cyan/5" },
-  { emoji: "🏷️", title: "Value Packs (AED 10–AED 20 range)", desc: "Budget segment has 3x volume of premium. Tiger Glucose 5-pack not listed on any Q-commerce platform.", tags: ["VOLUME PLAY", "QUICK WIN"], gradient: "from-sw-purple/20 to-sw-purple/5" },
+  { emoji: "🏷️", title: "Value Packs (₹ 10–₹ 20 range)", desc: "Budget segment has 3x volume of premium. Tiger Glucose 5-pack not listed on any Q-commerce platform.", tags: ["VOLUME PLAY", "QUICK WIN"], gradient: "from-sw-purple/20 to-sw-purple/5" },
 ];
 
 const whitespaceBySub = [
-  { sub: "Cream Beverages", gap: "No organic cream beverage in market", platforms: ["Talabat", "Noon Minutes"], searchVol: "18K", competition: "Low" },
-  { sub: "Digestive", gap: "No oat-based digestive variant", platforms: ["Carrefour", "Noon"], searchVol: "12K", competition: "Medium" },
-  { sub: "Drinks", gap: "No eggless premium cookie at <AED 100", platforms: ["Carrefour", "Talabat"], searchVol: "22K", competition: "Low" },
-  { sub: "Glucose", gap: "No fortified glucose beverage", platforms: ["Talabat", "Noon Minutes", "Talabat"], searchVol: "45K", competition: "Very Low" },
-  { sub: "Health & Fibre", gap: "No gluten-free option available", platforms: ["Carrefour", "Noon"], searchVol: "8K", competition: "None" },
+  { sub: "Cream Beverages", gap: "No organic cream beverage in market", platforms: ["Blinkit", "Zepto"], searchVol: "18K", competition: "Low" },
+  { sub: "Digestive", gap: "No oat-based digestive variant", platforms: ["Instamart", "Instamart"], searchVol: "12K", competition: "Medium" },
+  { sub: "Drinks", gap: "No eggless premium cookie at <₹ 100", platforms: ["Instamart", "Blinkit"], searchVol: "22K", competition: "Low" },
+  { sub: "Glucose", gap: "No fortified glucose beverage", platforms: ["Blinkit", "Zepto", "Blinkit"], searchVol: "45K", competition: "Very Low" },
+  { sub: "Health & Fibre", gap: "No gluten-free option available", platforms: ["Instamart", "Instamart"], searchVol: "8K", competition: "None" },
 ];
 
 const CategoryWhitespaceView: React.FC = () => {

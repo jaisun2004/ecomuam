@@ -20,20 +20,20 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-type Platform = "Talabat" | "Talabat Pro" | "Noon" | "Noon Minutes" | "Carrefour";
+type Platform = "Blinkit" | "Zepto" | "Instamart" | "Zepto" | "Instamart";
 type RecoCategory = "Budget" | "City" | "Remove Keywords" | "Bid Changes";
 
-const PLATFORMS: Platform[] = ["Talabat", "Talabat Pro", "Noon", "Noon Minutes", "Carrefour"];
+const PLATFORMS: Platform[] = ["Blinkit", "Zepto", "Instamart", "Zepto", "Instamart"];
 const CATEGORIES: RecoCategory[] = ["Budget", "City", "Remove Keywords", "Bid Changes"];
 
-const CITIES = ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Al Ain", "Ras Al Khaimah", "Fujairah"];
+const CITIES = ["Mumbai", "Delhi NCR", "Bangalore", "Pune", "Al Ain", "Ras Al Khaimah", "Fujairah"];
 
 const PLATFORM_TINT: Record<Platform, string> = {
-  Talabat: "bg-sw-amber-dim text-sw-amber",
-  "Talabat Pro": "bg-sw-purple-dim text-sw-purple",
-  Noon: "bg-sw-cyan-dim text-sw-cyan",
-  "Noon Minutes": "bg-primary/15 text-primary",
-  Carrefour: "bg-sw-green-dim text-sw-green",
+  Blinkit: "bg-sw-amber-dim text-sw-amber",
+  "Zepto": "bg-sw-purple-dim text-sw-purple",
+  Instamart: "bg-sw-cyan-dim text-sw-cyan",
+  "Zepto": "bg-primary/15 text-primary",
+  Instamart: "bg-sw-green-dim text-sw-green",
 };
 
 const CATEGORY_META: Record<RecoCategory, { icon: React.ElementType; tint: string; accent: string; desc: string }> = {
@@ -108,12 +108,12 @@ function makeReco(i: number): Reco {
         { label: "Lost impr. share", value: isUp ? "31% (budget)" : "4%" },
       ];
       changes = [
-        { field: "Daily Budget (AED)", current: `${cur}`, recommended: `${Math.round(cur * (1 + (isUp ? 1 : -1) * pct / 100))}` },
+        { field: "Daily Budget (₹)", current: `${cur}`, recommended: `${Math.round(cur * (1 + (isUp ? 1 : -1) * pct / 100))}` },
         { field: "Pacing", current: isUp ? "Capped 13:42" : "Even", recommended: isUp ? "Even — full day" : "Even — protected" },
       ];
       estImpact = isUp
         ? `+${8 + (i % 14)}% incremental orders at current ROAS`
-        : `Recover AED ${(2 + (i % 4)) * 800}/wk of inefficient spend`;
+        : `Recover ₹ ${(2 + (i % 4)) * 800}/wk of inefficient spend`;
       break;
     }
     case "City": {
@@ -127,7 +127,7 @@ function makeReco(i: number): Reco {
       signals = [
         { label: `${city} ROAS (21d)`,  value: isSwitchOff ? "1.6x · target 3.5x" : "—" },
         { label: `${city} SoS`,         value: isSwitchOff ? "8% · benchmark 20%" : "Demand +34% MoM" },
-        { label: "Spend last 21d",      value: isSwitchOff ? `AED ${(3 + (i % 4)) * 1200}` : "AED 0" },
+        { label: "Spend last 21d",      value: isSwitchOff ? `₹ ${(3 + (i % 4)) * 1200}` : "₹ 0" },
       ];
       changes = isSwitchOff
         ? [
@@ -136,10 +136,10 @@ function makeReco(i: number): Reco {
           ]
         : [
             { field: "Geo Targeting", current: city ? `Excludes ${city}` : "—", recommended: `${city} added (5 km radius)` },
-            { field: "Daily Budget (AED)", current: `${300 + (i % 6) * 50}`, recommended: `${400 + (i % 6) * 50}` },
+            { field: "Daily Budget (₹)", current: `${300 + (i % 6) * 50}`, recommended: `${400 + (i % 6) * 50}` },
           ];
       estImpact = isSwitchOff
-        ? `Reclaim AED ${(3 + (i % 6)) * 1000}/wk for higher-ROAS cities`
+        ? `Reclaim ₹ ${(3 + (i % 6)) * 1000}/wk for higher-ROAS cities`
         : `Capture est. ${600 + (i % 5) * 200} new orders/mo`;
       break;
     }
@@ -149,15 +149,15 @@ function makeReco(i: number): Reco {
       headline = `Remove ${1 + (i % 3) + 1} low-intent keywords draining spend`;
       rationale = "These keywords consume budget without converting. Search-term analysis confirms intent mismatch vs the SKU.";
       signals = [
-        { label: `"${k1}"`,    value: `AED ${120 + (i % 5) * 30} spend · 0 orders 30d` },
+        { label: `"${k1}"`,    value: `₹ ${120 + (i % 5) * 30} spend · 0 orders 30d` },
         { label: `"${k2}"`,    value: `CTR 0.4% · ROAS 0.3x` },
-        { label: "Combined drag", value: `~AED ${(2 + (i % 5)) * 600}/mo` },
+        { label: "Combined drag", value: `~₹ ${(2 + (i % 5)) * 600}/mo` },
       ];
       changes = [
         { field: "Keywords removed", current: "Active", recommended: `${k1}, ${k2}` },
         { field: "Negative list", current: `${10 + (i % 8)}`, recommended: `${12 + (i % 8)}` },
       ];
-      estImpact = `Save AED ${(2 + (i % 5)) * 600}/mo · ROAS +${3 + (i % 4)}%`;
+      estImpact = `Save ₹ ${(2 + (i % 5)) * 600}/mo · ROAS +${3 + (i % 4)}%`;
       break;
     }
     case "Bid Changes": {
@@ -173,10 +173,10 @@ function makeReco(i: number): Reco {
       signals = [
         { label: "Avg rank (14d)",  value: isUp ? "2.1 → 4.6" : "1.3 (stable)" },
         { label: "Auction win %",   value: isUp ? "38% (was 71%)" : "84%" },
-        { label: "CPC vs target",   value: isUp ? "AED 0.9 / target 1.2" : `AED ${cur.toFixed(2)} / target 1.0` },
+        { label: "CPC vs target",   value: isUp ? "₹ 0.9 / target 1.2" : `₹ ${cur.toFixed(2)} / target 1.0` },
       ];
       changes = [
-        { field: "Keyword bid (AED)", current: cur.toFixed(2), recommended: rec.toFixed(2) },
+        { field: "Keyword bid (₹)", current: cur.toFixed(2), recommended: rec.toFixed(2) },
         { field: "Bid strategy", current: "Manual CPC", recommended: isUp ? "Manual CPC (+lift)" : "Target ROAS 3.5x" },
       ];
       estImpact = isUp
@@ -224,7 +224,7 @@ interface MonthTarget {
   direction: "up" | "down"; // up = higher is better
 }
 const MONTH_TARGETS: MonthTarget[] = [
-  { key: "spend",  label: "Spend (MTD)", current: 684_000, target: 900_000, unit: "AED", format: n => `AED ${(n/1000).toFixed(0)}K`, direction: "up" },
+  { key: "spend",  label: "Spend (MTD)", current: 684_000, target: 900_000, unit: "₹", format: n => `₹ ${(n/1000).toFixed(0)}K`, direction: "up" },
   { key: "roas",   label: "ROAS",        current: 4.2,     target: 3.5,     unit: "x",   format: n => `${n.toFixed(1)}x`,            direction: "up" },
   { key: "acos",   label: "ACoS",        current: 22,      target: 18,      unit: "%",   format: n => `${n.toFixed(0)}%`,            direction: "down" },
   { key: "orders", label: "Orders (MTD)",current: 142_300, target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },

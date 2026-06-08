@@ -69,7 +69,7 @@ const buildCompetitorRankSeries = (days: number) => {
 const reductionCandidates = [
   {
     name: "7UP — Generic Search",
-    platform: "Carrefour",
+    platform: "Instamart",
     dailySpend: 6800,
     suggestedSpend: 4760,
     roas: 1.4,
@@ -79,7 +79,7 @@ const reductionCandidates = [
   },
   {
     name: "Pepsi — Broad Match",
-    platform: "Noon",
+    platform: "Instamart",
     dailySpend: 8900,
     suggestedSpend: 7120,
     roas: 1.7,
@@ -89,7 +89,7 @@ const reductionCandidates = [
   },
   {
     name: "Aquafina — Category Top Slot",
-    platform: "Talabat",
+    platform: "Blinkit",
     dailySpend: 5400,
     suggestedSpend: 3780,
     roas: 1.9,
@@ -99,7 +99,7 @@ const reductionCandidates = [
   },
 ].sort((a, b) => b.monthlySavings - a.monthlySavings);
 
-const platformOptions = ["Carrefour", "Noon", "Talabat", "Noon Minutes", "Talabat"];
+const platformOptions = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit"];
 const skuOptions = ["Pepsi 1L", "7UP 1L", "Aquafina 1.5L", "Lipton Ice Tea Peach 320ml"];
 const presets = ["7D", "30D", "90D"] as const;
 type Preset = (typeof presets)[number];
@@ -298,7 +298,7 @@ const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain })
           <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider mb-1">Organic momentum detected</p>
           <p className="text-sm text-foreground">
             Organic rank improved by <span className="font-semibold text-sw-green">{organicGain} positions</span>.
-            Reduce spend on the {reductionCandidates.length} campaigns below to save ~<span className="font-semibold text-sw-green">AED {(totalSavings / 1000).toFixed(0)}k/month</span> without losing rank.
+            Reduce spend on the {reductionCandidates.length} campaigns below to save ~<span className="font-semibold text-sw-green">₹ {(totalSavings / 1000).toFixed(0)}k/month</span> without losing rank.
           </p>
           <div className="mt-3 space-y-1.5">
             {reductionCandidates.map((c) => (
@@ -309,13 +309,13 @@ const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain })
                     <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground uppercase">{c.platform}</span>
                   </div>
                   <p className="text-[10px] font-mono text-muted-foreground mt-0.5">
-                    Spend AED {c.dailySpend.toLocaleString()}/d → <span className="text-sw-green font-semibold">AED {c.suggestedSpend.toLocaleString()}/d</span> · ROAS {c.roas}x
+                    Spend ₹ {c.dailySpend.toLocaleString()}/d → <span className="text-sw-green font-semibold">₹ {c.suggestedSpend.toLocaleString()}/d</span> · ROAS {c.roas}x
                   </p>
                   <p className="text-[10px] text-muted-foreground/90 italic mt-0.5">{c.why}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                   <span className="text-[11px] font-mono font-semibold text-sw-green">↓ {c.reductionPct}%</span>
-                  <span className="text-[10px] font-mono text-muted-foreground">~AED {(c.monthlySavings / 1000).toFixed(0)}k/mo</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">~₹ {(c.monthlySavings / 1000).toFixed(0)}k/mo</span>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -323,7 +323,7 @@ const OrganicMomentumCard: React.FC<{ organicGain: number }> = ({ organicGain })
                     onClick={() =>
                       toast({
                         title: "Budget reduction queued",
-                        description: `${c.name}: -${c.reductionPct}% (AED ${c.dailySpend.toLocaleString()} → AED ${c.suggestedSpend.toLocaleString()}/day)`,
+                        description: `${c.name}: -${c.reductionPct}% (₹ ${c.dailySpend.toLocaleString()} → ₹ ${c.suggestedSpend.toLocaleString()}/day)`,
                       })
                     }
                   >
