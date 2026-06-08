@@ -286,17 +286,17 @@ const h = (n: number) => NOW - n * 3_600_000;
 const d = (n: number) => NOW - n * 86_400_000;
 
 const SEED_LOG: LogEntry[] = [
-  // Pepsi 1L — Blinkit
-  { id: "l1", ts: m(12),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Mumbai",     category: "Bid Changes",     summary: "Raised bid ₹1.20 → ₹1.42 (+18%)", user: "AI Auto" },
-  { id: "l2", ts: m(38),  campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "cola drink",          city: "Delhi NCR",  category: "Budget",          summary: "Daily budget ₹400 → ₹520 (+30%)", user: "priya.s" },
-  { id: "l3", ts: h(2),   campaign: "Pepsi — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "diet pepsi",          city: "Mumbai",     category: "Remove Keywords", summary: "Removed 2 low-intent keywords", user: "AI Auto" },
-  // Lay's — Zepto
-  { id: "l4", ts: h(4),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Bangalore",  category: "City",            summary: "Expanded geo into Bangalore (5 km)", user: "rohit.k" },
-  { id: "l5", ts: h(6),   campaign: "Lay's — Performance Zepto #117",    platform: "Zepto",    keyword: "midnight snack chips",city: "Pune",       category: "Bid Changes",     summary: "Trimmed bid ₹2.10 → ₹1.85 (−12%)", user: "AI Auto" },
-  // 7UP — Instamart
-  { id: "l6", ts: h(20),  campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "lemon soda 500ml",    city: "Hyderabad",  category: "Budget",          summary: "Trimmed daily budget −15%", user: "priya.s" },
-  { id: "l7", ts: d(1),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Hyderabad",  category: "Remove Keywords", summary: "Negative-keyworded 3 wasted terms", user: "AI Auto" },
-  { id: "l8", ts: d(2),   campaign: "7UP — Non-Brand Instamart #134",    platform: "Instamart",keyword: "fizzy juice",         city: "Chennai",    category: "City",            summary: "Disabled Chennai geo (ROAS 1.6x)", user: "rohit.k" },
+  // Parle-G — Blinkit
+  { id: "l1", ts: m(12),  campaign: "Parle-G — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "glucose biscuits",     city: "Mumbai",     category: "Bid Changes",     summary: "Raised bid ₹1.20 → ₹1.42 (+18%)", user: "AI Auto" },
+  { id: "l2", ts: m(38),  campaign: "Parle-G — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "glucose biscuits",     city: "Delhi NCR",  category: "Budget",          summary: "Daily budget ₹400 → ₹520 (+30%)", user: "priya.s" },
+  { id: "l3", ts: h(2),   campaign: "Parle-G — Brand Search Blinkit #102", platform: "Blinkit",  keyword: "marie biscuits",       city: "Mumbai",     category: "Remove Keywords", summary: "Removed 2 low-intent keywords", user: "AI Auto" },
+  // Hide & Seek — Zepto
+  { id: "l4", ts: h(4),   campaign: "Hide & Seek — Performance Zepto #117", platform: "Zepto",   keyword: "chocolate biscuits 200g",city: "Bangalore", category: "City",            summary: "Expanded geo into Bangalore (5 km)", user: "rohit.k" },
+  { id: "l5", ts: h(6),   campaign: "Hide & Seek — Performance Zepto #117", platform: "Zepto",   keyword: "chocolate biscuits 200g",city: "Pune",      category: "Bid Changes",     summary: "Trimmed bid ₹2.10 → ₹1.85 (−12%)", user: "AI Auto" },
+  // Good Day — Instamart
+  { id: "l6", ts: h(20),  campaign: "Good Day — Non-Brand Instamart #134", platform: "Instamart",keyword: "cookies pack",         city: "Hyderabad",  category: "Budget",          summary: "Trimmed daily budget −15%", user: "priya.s" },
+  { id: "l7", ts: d(1),   campaign: "Good Day — Non-Brand Instamart #134", platform: "Instamart",keyword: "tea time biscuits",    city: "Hyderabad",  category: "Remove Keywords", summary: "Negative-keyworded 3 wasted terms", user: "AI Auto" },
+  { id: "l8", ts: d(2),   campaign: "Good Day — Non-Brand Instamart #134", platform: "Instamart",keyword: "tea time biscuits",    city: "Chennai",    category: "City",            summary: "Disabled Chennai geo (ROAS 1.6x)", user: "rohit.k" },
 ];
 
 const formatRelative = (ts: number) => {
