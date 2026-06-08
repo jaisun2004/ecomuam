@@ -12,26 +12,26 @@ import { toast } from "sonner";
 
 const bidProductsByKeyword: Record<string, { sku: string; title: string; rank: number; roas: number }[]> = {
   "butter biscuits online": [
-    { sku: "B-GD-200", title: "Parle-G 1L Biscuits 200g", rank: 2, roas: 6.4 },
-    { sku: "B-GD-500", title: "Parle-G 1L Biscuits 500g Family Pack", rank: 5, roas: 5.1 },
-    { sku: "B-GD-CMB", title: "Parle-G 1L Combo (3-Pack)", rank: 7, roas: 4.0 },
+    { sku: "B-GD-200", title: "Parle-G 120g Biscuits 200g", rank: 2, roas: 6.4 },
+    { sku: "B-GD-500", title: "Parle-G 250g Biscuits 500g Family Pack", rank: 5, roas: 5.1 },
+    { sku: "B-GD-CMB", title: "Parle-G 120g Combo (3-Pack)", rank: 7, roas: 4.0 },
   ],
   "cream biscuits": [
-    { sku: "B-BB-150", title: "Mountain Dew Biscuits 150g", rank: 8, roas: 3.4 },
-    { sku: "B-BB-300", title: "Mountain Dew Biscuits 300g Value", rank: 11, roas: 2.6 },
+    { sku: "B-BB-150", title: "Bourbon Biscuits 150g", rank: 8, roas: 3.4 },
+    { sku: "B-BB-300", title: "Bourbon Biscuits 300g Value", rank: 11, roas: 2.6 },
   ],
   "glucose biscuits bulk": [
     { sku: "B-MG-250", title: "Marie Gold Glucose 250g", rank: 14, roas: 1.4 },
     { sku: "B-MG-1KG", title: "Marie Gold Glucose 1Kg Bulk", rank: 16, roas: 1.7 },
   ],
   "digestive biscuits": [
-    { sku: "B-NC-100", title: "Aquafina 1.5L", rank: 1, roas: 6.2 },
-    { sku: "B-NC-250", title: "Aquafina 1.5L 250g", rank: 1, roas: 5.4 },
-    { sku: "B-NC-MLT", title: "Aquafina Multigrain Digestive 200g", rank: 4, roas: 4.6 },
+    { sku: "B-NC-100", title: "Britannia Marie 150g", rank: 1, roas: 6.2 },
+    { sku: "B-NC-250", title: "Britannia Marie 150g 250g", rank: 1, roas: 5.4 },
+    { sku: "B-NC-MLT", title: "Britannia Marie Multigrain Digestive 200g", rank: 4, roas: 4.6 },
   ],
   "choco chip biscuits": [
-    { sku: "B-DF-100", title: "Mountain Dew Choco Chip Biscuits 100g", rank: 5, roas: 4.9 },
-    { sku: "B-DF-250", title: "Mountain Dew Choco Chip Biscuits 250g", rank: 8, roas: 3.8 },
+    { sku: "B-DF-100", title: "Bourbon Choco Chip Biscuits 100g", rank: 5, roas: 4.9 },
+    { sku: "B-DF-250", title: "Bourbon Choco Chip Biscuits 250g", rank: 8, roas: 3.8 },
   ],
   "biscuits combo pack": [
     { sku: "B-VP-500", title: "Parle Variety Pack 500g", rank: 11, roas: 1.9 },
@@ -43,24 +43,24 @@ type BidCampaignRow = { campaign: string; spend: string; roas: number; budget: n
 
 const bidCampaignsByKeyword: Record<string, BidCampaignRow[]> = {
   "butter biscuits online": [
-    { campaign: "Parle-G 1L — SP Exact", spend: "₹ 42K", roas: 6.4, budget: 2500 },
-    { campaign: "Parle-G 1L — SP Broad", spend: "₹ 38K", roas: 5.1, budget: 2200 },
+    { campaign: "Parle-G 250g — SP Exact", spend: "₹ 42K", roas: 6.4, budget: 2500 },
+    { campaign: "Parle-G 120g — SP Broad", spend: "₹ 38K", roas: 5.1, budget: 2200 },
     { campaign: "Butter Biscuits — SB Defence", spend: "₹ 25K", roas: 4.0, budget: 1800 },
   ],
   "cream biscuits": [
-    { campaign: "Mountain Dew — SP Exact", spend: "₹ 30K", roas: 3.4, budget: 2000 },
+    { campaign: "Bourbon — SP Exact", spend: "₹ 30K", roas: 3.4, budget: 2000 },
     { campaign: "Cream Range — SP Broad", spend: "₹ 22K", roas: 2.6, budget: 1700 },
   ],
   "glucose biscuits bulk": [
     { campaign: "Marie Gold — SP Bulk", spend: "₹ 28K", roas: 1.4, budget: 1600 },
   ],
   "digestive biscuits": [
-    { campaign: "Aquafina — Brand SP", spend: "₹ 55K", roas: 6.2, budget: 3000 },
+    { campaign: "Britannia Marie — Brand SP", spend: "₹ 55K", roas: 6.2, budget: 3000 },
     { campaign: "Digestive — SP Exact", spend: "₹ 30K", roas: 5.0, budget: 2200 },
     { campaign: "Multigrain Digestive — SP", spend: "₹ 18K", roas: 4.6, budget: 1700 },
   ],
   "choco chip biscuits": [
-    { campaign: "Mountain Dew Choco — SP Exact", spend: "₹ 31K", roas: 4.9, budget: 2200 },
+    { campaign: "Bourbon Choco — SP Exact", spend: "₹ 31K", roas: 4.9, budget: 2200 },
     { campaign: "Choco Chip — SP Phrase", spend: "₹ 20K", roas: 3.8, budget: 1700 },
   ],
   "biscuits combo pack": [
@@ -84,11 +84,11 @@ const revenueData = [
 ];
 
 const campaigns = [
-  { name: "Parle-G 1L — Sponsored", platform: "Instamart", platformColor: "#FF9900", roas: "5.1x", spend: "₹ 82K", status: "LIVE", ai: true },
+  { name: "Parle-G 250g — Sponsored", platform: "Instamart", platformColor: "#FF9900", roas: "5.1x", spend: "₹ 82K", status: "LIVE", ai: true },
   { name: "Q-Commerce Biscuits Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹ 50K", status: "LIVE", ai: true },
   { name: "Marie Gold Retargeting", platform: "Instamart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹ 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
-  { name: "Mountain Dew Brand Awareness", platform: "Instamart", platformColor: "#E1306C", roas: "4.4x", spend: "₹ 50K", status: "LIVE", ai: false },
-  { name: "Aquafina New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹ 30K", status: "LIVE", ai: true },
+  { name: "Bourbon Brand Awareness", platform: "Instamart", platformColor: "#E1306C", roas: "4.4x", spend: "₹ 50K", status: "LIVE", ai: false },
+  { name: "Britannia Marie New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹ 30K", status: "LIVE", ai: true },
 ];
 
 const platformROAS = [
@@ -101,9 +101,9 @@ const platformROAS = [
 
 const budgetAlloc = [
   { name: "Instamart Ads", pct: 38, spend: "₹ 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
-  { name: "Instamart/Meta", pct: 22, spend: "₹ 4.1L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
+  { name: "Instamart/Meta", pct: 22, spend: "₹ 4.120g", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
   { name: "Blinkit Ads", pct: 18, spend: "₹ 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
-  { name: "Instamart Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
+  { name: "Instamart Ads", pct: 12, spend: "₹ 2.200g", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
   { name: "Zepto Ads", pct: 10, spend: "₹ 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
 ];
 
@@ -119,7 +119,7 @@ const keywords = [
 const copilotCards = [
   { impact: "HIGH IMPACT", emoji: "💰", text: "Shift ₹ 25,000 from Instamart Marie Gold (ROAS 2.1x) to Instamart Parle-G (ROAS 5.1x). Projected ROAS improvement: +0.4x blended.", confidence: 91, action: "Apply Now" },
   { impact: "HIGH IMPACT", emoji: "🔍", text: "Add 8 new long-tail keywords to Instamart Parle-G campaign. 'butter biscuits family pack' has 0% competition and 45K monthly searches.", confidence: 86, action: "Add Keywords" },
-  { impact: "MED IMPACT", emoji: "⚡", text: "Aquafina trending +47% on Blinkit South Mumbai. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
+  { impact: "MED IMPACT", emoji: "⚡", text: "Britannia Marie trending +47% on Blinkit South Mumbai. Launch 7-day burst campaign now before stock drops below 30%.", confidence: 78, action: "Launch Campaign" },
 ];
 
 /* ── Hierarchical Report Data ── */
@@ -159,7 +159,7 @@ const reportData: ReportPlatform[] = [
     platform: "Instamart", color: "#FF9900", totalSpend: "₹ 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
       {
-        name: "Parle-G 1L — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green",
+        name: "Parle-G 250g — Sponsored", status: "LIVE", spend: "₹ 4.200g", roas: "5.1x", roasColor: "text-sw-green",
         impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
           {
@@ -167,18 +167,18 @@ const reportData: ReportPlatform[] = [
             cities: [
               { city: "Mumbai", impressions: "98K", clicks: "4.1K", spend: "₹ 52K", roas: "6.5x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" },
-                  { code: "SKU-GD100", title: "Parle-G 1L 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Parle-G 120g", spend: "₹ 32K", roas: "6.6x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Parle-G 250g 100g", spend: "₹ 20K", roas: "6.5x", roasColor: "text-sw-green" },
                 ]},
               { city: "Delhi NCR", impressions: "82K", clicks: "3.2K", spend: "₹ 44K", roas: "6.4x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" },
-                  { code: "SKU-GD100", title: "Parle-G 1L 100g", spend: "₹ 16K", roas: "6.3x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Parle-G 120g", spend: "₹ 28K", roas: "6.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD100", title: "Parle-G 250g 100g", spend: "₹ 16K", roas: "6.3x", roasColor: "text-sw-green" },
                 ]},
             ],
           },
           {
-            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹ 2.1L", roas: "3.1x", roasColor: "text-sw-amber",
+            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹ 2.120g", roas: "3.1x", roasColor: "text-sw-amber",
           },
         ],
       },
@@ -187,11 +187,11 @@ const reportData: ReportPlatform[] = [
         impressions: "284K", clicks: "8.2K", ctr: "2.9%",
         keywords: [
           {
-            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.200g", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
               { city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-MG250", title: "Marie Gold 1L", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 250g", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -211,7 +211,7 @@ const reportData: ReportPlatform[] = [
             cities: [
               { city: "Mumbai", impressions: "92K", clicks: "3.8K", spend: "₹ 72K", roas: "4.3x", roasColor: "text-sw-green",
                 products: [
-                  { code: "SKU-GD200", title: "Parle-G 1L", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" },
+                  { code: "SKU-GD200", title: "Parle-G 120g", spend: "₹ 48K", roas: "4.4x", roasColor: "text-sw-green" },
                   { code: "SKU-5050", title: "Lipton Ice Tea Peach 320ml", spend: "₹ 24K", roas: "4.2x", roasColor: "text-sw-green" },
                 ]},
             ],
@@ -224,7 +224,7 @@ const reportData: ReportPlatform[] = [
     ],
   },
   {
-    platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.200g", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
       {
         name: "Marie Gold Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red",
@@ -235,7 +235,7 @@ const reportData: ReportPlatform[] = [
             cities: [
               { city: "Mumbai", impressions: "82K", clicks: "1.8K", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
-                  { code: "SKU-MG250", title: "Marie Gold 1L", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" },
+                  { code: "SKU-MG250", title: "Marie Gold 250g", spend: "₹ 52K", roas: "1.4x", roasColor: "text-sw-red" },
                 ]},
             ],
           },
@@ -247,11 +247,11 @@ const reportData: ReportPlatform[] = [
 
 /* ── Day Parting Data ── */
 const dayPartingSlots = [
-  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 1L — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
-  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 1L — Sponsored", "Mountain Dew Brand Awareness", "Aquafina New Users"], budgetPct: 25 },
-  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Mountain Dew Brand Awareness"], budgetPct: 15 },
-  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 1L — Sponsored", "Q-Commerce Biscuits Push", "Aquafina New Users", "Mountain Dew Brand Awareness"], budgetPct: 30 },
-  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 1L — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
+  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
+  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 250g — Sponsored", "Bourbon Brand Awareness", "Britannia Marie New Users"], budgetPct: 25 },
+  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
+  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push", "Britannia Marie New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
+  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 250g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
   { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
@@ -572,13 +572,13 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 
   const aiSuggestions = [
     { name: "Stock Recovery Blitz", signal: "Marie Gold OOS on Blinkit — 6 pincodes", roas: "4.8x", budget: "₹ 15K", duration: "3 days", keywords: ["butter biscuits", "cream biscuits"] },
-    { name: "Price Advantage Push", signal: "Parle-G 14% cheaper than Coca-Cookies", roas: "5.2x", budget: "₹ 20K", duration: "7 days", keywords: ["glucose biscuits", "digestive biscuits"] },
-    { name: "Trending Capture", signal: "Aquafina trending +47% on Blinkit", roas: "3.9x", budget: "₹ 12K", duration: "5 days", keywords: ["digestive biscuits", "health biscuits"] },
+    { name: "Price Advantage Push", signal: "Parle-G 14% cheaper than Britannia", roas: "5.2x", budget: "₹ 20K", duration: "7 days", keywords: ["glucose biscuits", "digestive biscuits"] },
+    { name: "Trending Capture", signal: "Britannia Marie trending +47% on Blinkit", roas: "3.9x", budget: "₹ 12K", duration: "5 days", keywords: ["digestive biscuits", "health biscuits"] },
   ];
 
   const historyCampaigns = [
-    { name: "Parle-G Summer Push 2025", platform: "Instamart", spend: "₹ 3.2L", roas: "4.9x", duration: "14 days" },
-    { name: "Festive Season Blast", platform: "Instamart", spend: "₹ 5.1L", roas: "5.6x", duration: "21 days" },
+    { name: "Parle-G Summer Push 2025", platform: "Instamart", spend: "₹ 3.200g", roas: "4.9x", duration: "14 days" },
+    { name: "Festive Season Blast", platform: "Instamart", spend: "₹ 5.120g", roas: "5.6x", duration: "21 days" },
     { name: "Q-Commerce Biscuits Pilot", platform: "Blinkit", spend: "₹ 1.8L", roas: "3.4x", duration: "7 days" },
   ];
 
@@ -793,11 +793,11 @@ const CampaignView: React.FC = () => {
   const [undoToast, setUndoToast] = useState<string | null>(null);
 
   const digestActions = [
-    { id: 0, campaign: "Parle-G 1L — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
+    { id: 0, campaign: "Parle-G 250g — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
     { id: 1, campaign: "Q-Commerce Biscuits Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
-    { id: 3, campaign: "Mountain Dew Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
-    { id: 4, campaign: "Aquafina New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
+    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.200g spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 3, campaign: "Bourbon Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
+    { id: 4, campaign: "Britannia Marie New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
 
   const visibleDigest = digestActions.filter(d => !dismissedDigest[d.id]);
@@ -1040,7 +1040,7 @@ const CampaignView: React.FC = () => {
                 Tier 1 conflict active — 2 insights blocked
               </h3>
               <p className="text-[11px] text-muted-foreground mt-1">
-                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Marie Gold Retargeting, Aquafina New Users · Est. auto-clearance: {g.estResolutionTime}
+                <strong>Availability threshold</strong> (stock &lt; 20%) fired · Affecting: Marie Gold Retargeting, Britannia Marie New Users · Est. auto-clearance: {g.estResolutionTime}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -1144,7 +1144,7 @@ const CampaignView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Total Ad Spend (30D)" value="₹ 18.4L" delta="▲ ₹ 2.1L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
+        <KPICard title="Total Ad Spend (30D)" value="₹ 18.4L" delta="▲ ₹ 2.120g vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x · 93% of goal" accentColor="bg-sw-green" delay={0.05} />
         <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹ 3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
         <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Across all campaigns" accentColor="bg-sw-cyan" delay={0.15} />

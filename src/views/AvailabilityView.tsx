@@ -15,82 +15,82 @@ const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
 
 const oosProductsToday = [
   { sku: "Lipton Ice Tea Peach 320ml", platform: "Instamart", since: "6h ago" },
-  { sku: "Marie Gold 1L", platform: "Blinkit", since: "3h ago" },
-  { sku: "Marie Gold 1L", platform: "Blinkit", since: "1h ago" },
-  { sku: "Sunfeast Orange 1L", platform: "Zepto", since: "4h ago" },
-  { sku: "Aquafina 1.5L", platform: "Instamart", since: "2h ago" },
+  { sku: "Marie Gold 250g", platform: "Blinkit", since: "3h ago" },
+  { sku: "Marie Gold 120g", platform: "Blinkit", since: "1h ago" },
+  { sku: "Sunfeast Orange 250g", platform: "Zepto", since: "4h ago" },
+  { sku: "Britannia Marie 150g", platform: "Instamart", since: "2h ago" },
 ];
 
 const platformAvailability = [
   { name: "Instamart", overall: 86, color: "#FF9900", skus: [
-    { sku: "Parle-G 1L", avail: 97 }, { sku: "Marie Gold 1L", avail: 100 }, { sku: "Aquafina 1.5L", avail: 72 },
-    { sku: "Sunfeast Orange 1L", avail: 95 }, { sku: "Lipton Ice Tea Peach", avail: 54 }, { sku: "Sunfeast Orange 1L", avail: 98 },
+    { sku: "Parle-G 120g", avail: 97 }, { sku: "Marie Gold 250g", avail: 100 }, { sku: "Britannia Marie 150g", avail: 72 },
+    { sku: "Sunfeast Orange 120g", avail: 95 }, { sku: "Lipton Ice Tea Peach", avail: 54 }, { sku: "Sunfeast Orange 250g", avail: 98 },
   ]},
   { name: "Instamart", overall: 68, color: "#2F77FF", skus: [
-    { sku: "Parle-G 1L", avail: 74 }, { sku: "Marie Gold 1L", avail: 92 }, { sku: "Aquafina 1.5L", avail: 61 },
-    { sku: "Sunfeast Orange 1L", avail: 88 }, { sku: "Lipton Ice Tea Peach", avail: 12 }, { sku: "Sunfeast Orange 1L", avail: 78 },
+    { sku: "Parle-G 120g", avail: 74 }, { sku: "Marie Gold 250g", avail: 92 }, { sku: "Britannia Marie 150g", avail: 61 },
+    { sku: "Sunfeast Orange 120g", avail: 88 }, { sku: "Lipton Ice Tea Peach", avail: 12 }, { sku: "Sunfeast Orange 250g", avail: 78 },
   ]},
   { name: "Blinkit", overall: 41, color: "#FDDC2B", skus: [
-    { sku: "Parle-G 1L", avail: 55 }, { sku: "Marie Gold 1L", avail: 38 }, { sku: "Sunfeast Orange 1L", avail: 71 },
+    { sku: "Parle-G 120g", avail: 55 }, { sku: "Marie Gold 250g", avail: 38 }, { sku: "Sunfeast Orange 120g", avail: 71 },
   ]},
   { name: "Zepto", overall: 56, color: "#833AB4", skus: [
-    { sku: "Parle-G 1L", avail: 93 }, { sku: "Marie Gold 1L", avail: 77 }, { sku: "Sunfeast Orange 1L", avail: 52 },
+    { sku: "Parle-G 250g", avail: 93 }, { sku: "Marie Gold 120g", avail: 77 }, { sku: "Sunfeast Orange 250g", avail: 52 },
   ]},
   { name: "Blinkit", overall: 21, color: "#FC8019", skus: [
-    { sku: "Parle-G 1L", avail: 34 }, { sku: "Marie Gold 1L", avail: 9 }, { sku: "Sunfeast Orange 1L", avail: 41 },
+    { sku: "Parle-G 120g", avail: 34 }, { sku: "Marie Gold 250g", avail: 9 }, { sku: "Sunfeast Orange 120g", avail: 41 },
   ]},
 ];
 
 const stockForecast = [
   { sku: "Lipton Ice Tea Peach 320ml", platform: "Blinkit", currentStock: 12, daysToOOS: 2.3, trend: "critical" },
-  { sku: "Sunfeast Orange 1L", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
-  { sku: "Marie Gold 1L", platform: "Blinkit", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
-  { sku: "Aquafina 1.5L", platform: "Instamart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
-  { sku: "Sunfeast Orange 1L", platform: "Instamart", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
+  { sku: "Sunfeast Orange 250g", platform: "Zepto", currentStock: 28, daysToOOS: 5.1, trend: "warning" },
+  { sku: "Marie Gold 120g", platform: "Blinkit", currentStock: 8, daysToOOS: 1.2, trend: "critical" },
+  { sku: "Britannia Marie 150g", platform: "Instamart", currentStock: 34, daysToOOS: 7.8, trend: "ok" },
+  { sku: "Sunfeast Orange 250g", platform: "Instamart", currentStock: 45, daysToOOS: 12.4, trend: "ok" },
 ];
 
 const darkstoreGaps = [
   {
     city: "Mumbai", totalDarkstores: 142,
     products: [
-      { sku: "Parle-G 1L", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
-      { sku: "Marie Gold 1L", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
+      { sku: "Parle-G 120g", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
+      { sku: "Marie Gold 250g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
       { sku: "Lipton Ice Tea Peach", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
-      { sku: "Aquafina 1.5L", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Sunfeast Orange 1L", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
-      { sku: "Sunfeast Orange 1L", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Britannia Marie 150g", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Sunfeast Orange 120g", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
+      { sku: "Sunfeast Orange 250g", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Delhi NCR", totalDarkstores: 98,
     products: [
-      { sku: "Parle-G 1L", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 1L", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
+      { sku: "Parle-G 120g", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
       { sku: "Lipton Ice Tea Peach", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
-      { sku: "Aquafina 1.5L", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Sunfeast Orange 1L", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
-      { sku: "Sunfeast Orange 1L", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Britannia Marie 150g", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Sunfeast Orange 120g", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
+      { sku: "Sunfeast Orange 250g", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Riyadh", totalDarkstores: 76,
     products: [
-      { sku: "Parle-G 1L", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 1L", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
+      { sku: "Parle-G 120g", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
       { sku: "Lipton Ice Tea Peach", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
-      { sku: "Aquafina 1.5L", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
+      { sku: "Britannia Marie 150g", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
     ],
   },
 ];
 
 /* Competition availability data */
 const competitionAvailability = [
-  { competitor: "Coca-Cookies", platform: "Instamart", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Coca-Cookies 1L", trend: "stable" },
-  { competitor: "Coca-Cookies", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Coca-Cookies Zero 330ml", trend: "improving" },
-  { competitor: "Almarai", platform: "Instamart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Almarai Juice 1L", trend: "stable" },
-  { competitor: "Almarai", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Almarai Laban 250ml", trend: "declining" },
-  { competitor: "Lacnor", platform: "Blinkit", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Coca-Cookies Premium", trend: "improving" },
-  { competitor: "Rauch", platform: "Instamart", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 1L", trend: "stable" },
+  { competitor: "Britannia", platform: "Instamart", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Britannia 120g", trend: "stable" },
+  { competitor: "Britannia", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Britannia Zero 330ml", trend: "improving" },
+  { competitor: "Britannia", platform: "Instamart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Britannia Cookies 250g", trend: "stable" },
+  { competitor: "Britannia", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Britannia Laban 250g", trend: "declining" },
+  { competitor: "Lacnor", platform: "Blinkit", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Britannia Premium", trend: "improving" },
+  { competitor: "Rauch", platform: "Instamart", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 120g", trend: "stable" },
 ];
 
 const AvailabilityView: React.FC = () => {
@@ -102,7 +102,7 @@ const AvailabilityView: React.FC = () => {
 
   const [tab, setTab] = useState("overview");
 
-  const allSkus = ["Parle-G 1L", "Marie Gold 1L", "Aquafina 1.5L", "Sunfeast Orange 1L", "Lipton Ice Tea Peach", "Sunfeast Orange 1L"];
+  const allSkus = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Lipton Ice Tea Peach", "Sunfeast Orange 120g"];
 
   return (
     <div className="space-y-6 pb-20">
@@ -302,7 +302,7 @@ const AvailabilityView: React.FC = () => {
       <PanelCard title="Replenishment Lead-Time Heatmap" badge="Days to restock" badgeColor="purple" delay={0.45}>
         <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
         {(() => {
-          const skus = ["Parle-G 1L", "Marie Gold 1L", "Mountain Dew 1L", "Aquafina 1.5L", "Sunfeast Orange 1L", "Lipton Ice Tea Peach 320ml"];
+          const skus = ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 150g", "Sunfeast Orange 120g", "Lipton Ice Tea Peach 320ml"];
           const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
           const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
           const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
@@ -352,7 +352,7 @@ const AvailabilityView: React.FC = () => {
 const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
 
-  const skuNames = ["Parle-G 1L", "Marie Gold 1L", "Aquafina 1.5L", "Sunfeast Orange 1L", "Lipton Ice Tea Peach", "Sunfeast Orange 1L"];
+  const skuNames = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Lipton Ice Tea Peach", "Sunfeast Orange 120g"];
   const heatmapData = useMemo(() => skuNames.map(sku => ({
     sku,
     days: Array.from({ length: 30 }, () => Math.round(Math.random() * 100)),
@@ -365,15 +365,15 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
   };
 
   const affectedCampaigns = ["Parle-G — Sponsored", "Q-Commerce Biscuits Push"];
-  const tier2Locks = ["Manual pause — Aquafina Retargeting"];
+  const tier2Locks = ["Manual pause — Britannia Marie Retargeting"];
 
   const competitionAvailData = [
-    { competitor: "Coca-Cookies", platform: "Instamart", compAvail: 96, yourAvail: 86, product: "Coca-Cookies 1L", keywords: ["sunfeast butter biscuits", "sunfeast biscuits"], trend: "stable" },
-    { competitor: "Coca-Cookies", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Coca-Cookies Zero 330ml", keywords: ["sunfeast cream biscuits", "cream biscuits"], trend: "improving" },
-    { competitor: "Almarai", platform: "Instamart", compAvail: 92, yourAvail: 68, product: "Almarai Juice 1L", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
-    { competitor: "Almarai", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Almarai Laban 250ml", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
-    { competitor: "Lacnor", platform: "Blinkit", compAvail: 72, yourAvail: 21, product: "Coca-Cookies Premium", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
-    { competitor: "Rauch", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Rauch Multivit 1L", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
+    { competitor: "Britannia", platform: "Instamart", compAvail: 96, yourAvail: 86, product: "Britannia 250g", keywords: ["sunfeast butter biscuits", "sunfeast biscuits"], trend: "stable" },
+    { competitor: "Britannia", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Britannia Zero 330ml", keywords: ["sunfeast cream biscuits", "cream biscuits"], trend: "improving" },
+    { competitor: "Britannia", platform: "Instamart", compAvail: 92, yourAvail: 68, product: "Britannia Cookies 120g", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
+    { competitor: "Britannia", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Britannia Laban 250g", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
+    { competitor: "Lacnor", platform: "Blinkit", compAvail: 72, yourAvail: 21, product: "Britannia Premium", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
+    { competitor: "Rauch", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Rauch Multivit 250g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
   ];
 
   return (
@@ -484,10 +484,10 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
           </thead>
           <tbody>
             {[
-              { city: "Bandra West", platform: "Blinkit", compOos: 4, yourAvail: 96, campaign: "Boost Parle-G 1L — Bandra West", auto: true },
-              { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Mountain Dew vs Coca-Cookies", auto: true },
-              { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Aquafina 1.5L Share Capture", auto: true },
-              { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Almarai Conquest", auto: false },
+              { city: "Bandra West", platform: "Blinkit", compOos: 4, yourAvail: 96, campaign: "Boost Parle-G 120g — Bandra West", auto: true },
+              { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Bourbon vs Britannia", auto: true },
+              { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Britannia Marie 150g Share Capture", auto: true },
+              { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Britannia Conquest", auto: false },
               { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Lipton Ice Tea Push", auto: false },
               { city: "Delhi NCR Khalifa", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Rauch Defensive", auto: true },
             ].map((r, i) => {
@@ -527,9 +527,9 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
         <div className="space-y-2">
           {[
-            { competitor: "Coca-Cookies", product: "Coca-Cookies Zero 330ml", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
-            { competitor: "Almarai", product: "Almarai Juice 1L", platform: "Blinkit", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
-            { competitor: "Lacnor", product: "Coca-Cookies Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+            { competitor: "Britannia", product: "Britannia Zero 330ml", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
+            { competitor: "Britannia", product: "Britannia Cookies 250g", platform: "Blinkit", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
+            { competitor: "Lacnor", product: "Britannia Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
           ].map((item, i) => (
             <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
               <div className="flex items-center justify-between mb-1">

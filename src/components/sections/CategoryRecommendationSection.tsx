@@ -15,11 +15,11 @@ const categoryTriggers: CampaignTrigger[] = [
     icon: <Zap className="h-4 w-4 text-warning" />,
   },
   {
-    id: "cat-2", signal: "Competitor delisted Cookies 1.5L variant",
-    signalDetail: "Competitor A removed their Cookies 1.5L — opportunity to capture search traffic",
+    id: "cat-2", signal: "Competitor delisted Cookies 150g variant",
+    signalDetail: "Competitor A removed their Cookies 150g — opportunity to capture search traffic",
     strategy: "Competitor Delist Capture", campaignType: "Keyword Targeting on competitor brand terms",
     platforms: ["Instamart", "Instamart"],
-    keywords: ["cookies 1.5l", "large cookies bottle", "party cookies", "cookies family pack"],
+    keywords: ["cookies 150g", "large cookies bottle", "party cookies", "cookies family pack"],
     estimatedImpact: "+₹ 2.8L revenue from competitor's abandoned traffic", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
@@ -34,7 +34,7 @@ const flavorOpportunities = [
 
 const packSizeOpportunities = [
   { label: 'Multipack (6x250ml)', growth: 12.5 },
-  { label: 'Party Pack (2L)', growth: 8.2 },
+  { label: 'Party Pack (200g)', growth: 8.2 },
   { label: 'On-the-go (200ml)', growth: -2.0 },
 ];
 
@@ -160,9 +160,9 @@ const CategoryRecommendationSection = () => {
                 </thead>
                 <tbody className="text-sm divide-y divide-border/50">
                   {[
-                    { variant: 'Cookies 1.5L', vol: 'Low', volColor: 'text-destructive', margin: '12%', marginColor: 'text-warning', rec: 'Delist', recColor: 'bg-destructive/10 text-destructive' },
+                    { variant: 'Cookies 150g', vol: 'Low', volColor: 'text-destructive', margin: '12%', marginColor: 'text-warning', rec: 'Delist', recColor: 'bg-destructive/10 text-destructive' },
                     { variant: 'Lemon 200ml', vol: 'Med', volColor: 'text-warning', margin: '5%', marginColor: 'text-destructive', rec: 'Reprice', recColor: 'bg-warning/10 text-warning' },
-                    { variant: 'Energy 500ml', vol: 'High', volColor: 'text-success', margin: '28%', marginColor: 'text-success', rec: 'Scale', recColor: 'bg-success/10 text-success' },
+                    { variant: 'Energy 250g', vol: 'High', volColor: 'text-success', margin: '28%', marginColor: 'text-success', rec: 'Scale', recColor: 'bg-success/10 text-success' },
                   ].map((item, idx) => (
                     <tr key={idx} className="hover:bg-muted/30 transition-colors">
                       <td className="p-3 text-foreground font-medium">{item.variant}</td>

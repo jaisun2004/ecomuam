@@ -20,11 +20,11 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const heatmapGrid = daysOfWeek.map(() => Array.from({ length: 24 }, () => Math.round(Math.random() * 100)));
 
 const contestedKeywords = [
-  { keyword: "butter biscuits", yourPos: "#2", topComp: "Almarai", compBidIndex: "1.4x", overlap: 28, yourShare: "28%", action: "Raise bid" },
-  { keyword: "cream biscuits", yourPos: "#5", topComp: "Coca-Cookies", compBidIndex: "1.6x", overlap: 30, yourShare: "18%", action: "Add to defence" },
-  { keyword: "glucose biscuits", yourPos: "#4", topComp: "Almarai", compBidIndex: "1.2x", overlap: 22, yourShare: "19%", action: "Monitor" },
-  { keyword: "digestive biscuits", yourPos: "#1", topComp: "Masafi", compBidIndex: "0.9x", overlap: 18, yourShare: "33%", action: "Monitor" },
-  { keyword: "choco chip biscuits", yourPos: "#6", topComp: "Coca-Cookies Premium", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
+  { keyword: "butter biscuits", yourPos: "#2", topComp: "Britannia", compBidIndex: "1.4x", overlap: 28, yourShare: "28%", action: "Raise bid" },
+  { keyword: "cream biscuits", yourPos: "#5", topComp: "Britannia", compBidIndex: "1.6x", overlap: 30, yourShare: "18%", action: "Add to defence" },
+  { keyword: "glucose biscuits", yourPos: "#4", topComp: "Britannia", compBidIndex: "1.2x", overlap: 22, yourShare: "19%", action: "Monitor" },
+  { keyword: "digestive biscuits", yourPos: "#1", topComp: "Patanjali", compBidIndex: "0.9x", overlap: 18, yourShare: "33%", action: "Monitor" },
+  { keyword: "choco chip biscuits", yourPos: "#6", topComp: "Britannia Premium", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
 ];
 
 const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto"];
@@ -47,25 +47,25 @@ const competitorSpendTrend = [
 ];
 
 const competitorAdProfiles = [
-  { name: "Coca-Cookies", color: "#FF5722", estSpend: "₹ 5.5L/wk", platforms: ["Instamart", "Instamart", "Blinkit"], topKeywords: ["butter biscuits", "cream biscuits", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
-  { name: "Almarai", color: "#FF9800", estSpend: "₹ 2.8L/wk", platforms: ["Instamart", "Instamart"], topKeywords: ["glucose biscuits", "parle-g", "butter biscuits"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
-  { name: "Rauch", color: "#4CAF50", estSpend: "₹ 1.5L/wk", platforms: ["Instamart", "Instamart", "Zepto"], topKeywords: ["biscuits", "choco chip", "sugar free biscuits"], keywordCount: 22, pattern: "Value play — aggressive on premium biscuits segment.", budgetExhausted: false, sponsoredActive: true },
-  { name: "Masafi", color: "#9C27B0", estSpend: "₹ 1.8L/wk", platforms: ["Instamart", "Blinkit"], topKeywords: ["digestive biscuits", "whole wheat biscuits", "healthy biscuits"], keywordCount: 18, pattern: "Health segment focus — targeting Aquafina directly.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Britannia", color: "#FF5722", estSpend: "₹ 5.5L/wk", platforms: ["Instamart", "Instamart", "Blinkit"], topKeywords: ["butter biscuits", "cream biscuits", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Britannia", color: "#FF9800", estSpend: "₹ 2.8L/wk", platforms: ["Instamart", "Instamart"], topKeywords: ["glucose biscuits", "parle-g", "butter biscuits"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Rauch", color: "#4CAF50", estSpend: "₹ 150g/wk", platforms: ["Instamart", "Instamart", "Zepto"], topKeywords: ["biscuits", "choco chip", "sugar free biscuits"], keywordCount: 22, pattern: "Value play — aggressive on premium biscuits segment.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Patanjali", color: "#9C27B0", estSpend: "₹ 1.8L/wk", platforms: ["Instamart", "Blinkit"], topKeywords: ["digestive biscuits", "whole wheat biscuits", "healthy biscuits"], keywordCount: 18, pattern: "Health segment focus — targeting Britannia Marie directly.", budgetExhausted: true, sponsoredActive: false },
 ];
 
 const budgetExhaustionByKeyword: Record<string, { competitor: string; platform: string; keyword: string; lastSeen: string; sponsoredRank: string; opportunity: string }[]> = {
   "butter biscuits": [
-    { competitor: "Almarai", platform: "Instamart", keyword: "butter biscuits", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid ₹ 18→₹ 12, maintain position at lower cost" },
-    { competitor: "Masafi", platform: "Blinkit", keyword: "butter biscuits", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹ 22→₹ 15, capture their traffic" },
+    { competitor: "Britannia", platform: "Instamart", keyword: "butter biscuits", lastSeen: "2h ago", sponsoredRank: "Not visible since 2PM", opportunity: "Reduce your bid ₹ 18→₹ 12, maintain position at lower cost" },
+    { competitor: "Patanjali", platform: "Blinkit", keyword: "butter biscuits", lastSeen: "4h ago", sponsoredRank: "Dropped from #2 to absent", opportunity: "Lower bid ₹ 22→₹ 15, capture their traffic" },
   ],
   "cream biscuits": [
     { competitor: "Rauch", platform: "Instamart", keyword: "cream biscuits", lastSeen: "1h ago", sponsoredRank: "Flickering #3–absent", opportunity: "Hold current bid, competitor running out mid-day" },
   ],
   "glucose biscuits": [
-    { competitor: "Almarai", platform: "Instamart", keyword: "glucose biscuits", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid ₹ 30→₹ 20, save ₹ 8K/day" },
+    { competitor: "Britannia", platform: "Instamart", keyword: "glucose biscuits", lastSeen: "3h ago", sponsoredRank: "Absent since 4PM", opportunity: "Reduce bid ₹ 30→₹ 20, save ₹ 8K/day" },
   ],
   "digestive biscuits": [
-    { competitor: "Masafi", platform: "Instamart", keyword: "digestive biscuits", lastSeen: "1h ago", sponsoredRank: "Flickering", opportunity: "Hold bid — Masafi running out mid-day" },
+    { competitor: "Patanjali", platform: "Instamart", keyword: "digestive biscuits", lastSeen: "1h ago", sponsoredRank: "Flickering", opportunity: "Hold bid — Patanjali running out mid-day" },
   ],
   "choco chip biscuits": [
     { competitor: "Rauch", platform: "Instamart", keyword: "choco chip biscuits", lastSeen: "5h ago", sponsoredRank: "Absent", opportunity: "Reduce bid ₹ 20→₹ 12" },
@@ -73,10 +73,10 @@ const budgetExhaustionByKeyword: Record<string, { competitor: string; platform: 
 };
 
 const keywordConquestOpps = [
-  { keyword: "sunfeast dark fantasy", volume: "28K", competition: "Coca-Cookies", compSoS: "62%", yourSoS: "0%", bidEst: "₹ 18", projROAS: "4.2x" },
-  { keyword: "parle g biscuits", volume: "44K", competition: "Almarai", compSoS: "72%", yourSoS: "0%", bidEst: "₹ 12", projROAS: "3.8x" },
+  { keyword: "sunfeast dark fantasy", volume: "28K", competition: "Britannia", compSoS: "62%", yourSoS: "0%", bidEst: "₹ 18", projROAS: "4.2x" },
+  { keyword: "parle g biscuits", volume: "44K", competition: "Britannia", compSoS: "72%", yourSoS: "0%", bidEst: "₹ 12", projROAS: "3.8x" },
   { keyword: "best butter biscuits india", volume: "32K", competition: "Multiple", compSoS: "41%", yourSoS: "12%", bidEst: "₹ 15", projROAS: "5.1x" },
-  { keyword: "healthy biscuits for kids", volume: "18K", competition: "Almarai", compSoS: "34%", yourSoS: "8%", bidEst: "₹ 10", projROAS: "4.4x" },
+  { keyword: "healthy biscuits for kids", volume: "18K", competition: "Britannia", compSoS: "34%", yourSoS: "8%", bidEst: "₹ 10", projROAS: "4.4x" },
 ];
 
 const CompetitorAdsView: React.FC = () => {
@@ -118,7 +118,7 @@ const CompetitorAdsView: React.FC = () => {
           </div>
           <div className="rounded-xl border border-subtle bg-surface-1 p-3">
             <p className="text-[10px] text-muted-foreground mb-1">Competitor Spend Index</p>
-            <p className="font-mono text-sm font-bold text-foreground">Coca-Cookies: ~1.4x</p>
+            <p className="font-mono text-sm font-bold text-foreground">Britannia: ~1.4x</p>
             <p className="text-[9px] text-sw-red flex items-center gap-0.5"><TrendingUp size={9} /> spending more</p>
           </div>
           <div className="rounded-xl border border-subtle bg-surface-1 p-3">
@@ -229,14 +229,14 @@ const CompetitorAdsView: React.FC = () => {
                 <XAxis dataKey="hour" tick={{ fontSize: 8, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
-                <Bar dataKey="sunfeast" fill="#FF5722" opacity={0.7} radius={[2, 2, 0, 0]} name="Coca-Cookies" />
-                <Bar dataKey="parle" fill="#FF9800" opacity={0.7} radius={[2, 2, 0, 0]} name="Almarai" />
+                <Bar dataKey="sunfeast" fill="#FF5722" opacity={0.7} radius={[2, 2, 0, 0]} name="Britannia" />
+                <Bar dataKey="parle" fill="#FF9800" opacity={0.7} radius={[2, 2, 0, 0]} name="Britannia" />
                 <Bar dataKey="unibic" fill="#4CAF50" opacity={0.7} radius={[2, 2, 0, 0]} name="Rauch" />
               </BarChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Coca-Cookies</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Almarai</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Britannia</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Britannia</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> Rauch</span>
             </div>
           </PanelCard>
@@ -250,13 +250,13 @@ const CompetitorAdsView: React.FC = () => {
                 <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "hsl(225,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 8, fontSize: 11 }} />
-                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Coca-Cookies" />
-                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Almarai" />
+                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} name="Britannia" />
+                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} name="Britannia" />
                 <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} name="Rauch" />
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-3 p-3 rounded-xl bg-sw-amber-dim border border-sw-amber/20">
-              <p className="text-[11px] text-foreground">⚠ Coca-Cookies increasing spend 40% MoM — aggressive biscuits category capture. Consider defensive bidding on top 5 keywords.</p>
+              <p className="text-[11px] text-foreground">⚠ Britannia increasing spend 40% MoM — aggressive biscuits category capture. Consider defensive bidding on top 5 keywords.</p>
             </div>
           </PanelCard>
 
@@ -295,15 +295,15 @@ const CompetitorAdsView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} unit="%" />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="hsl(var(--sw-purple))" strokeWidth={2} dot={false} name="Your Brand" />
-                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} dot={false} name="Coca-Cookies" />
-                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} dot={false} name="Almarai" />
+                <Line type="monotone" dataKey="sunfeast" stroke="#FF5722" strokeWidth={2} dot={false} name="Britannia" />
+                <Line type="monotone" dataKey="parle" stroke="#FF9800" strokeWidth={2} dot={false} name="Britannia" />
                 <Line type="monotone" dataKey="unibic" stroke="#4CAF50" strokeWidth={2} dot={false} name="Rauch" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-purple" /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Coca-Cookies</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Almarai</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5722" }} /> Britannia</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF9800" }} /> Britannia</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#4CAF50" }} /> Rauch</span>
             </div>
           </PanelCard>

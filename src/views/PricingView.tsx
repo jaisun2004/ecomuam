@@ -9,32 +9,32 @@ import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell, ShieldAl
 import { toast } from "@/hooks/use-toast";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
-const skuOptions = ["Parle-G 1L", "Marie Gold 1L", "Aquafina 500ml", "Mountain Dew 1L", "Lipton Ice Tea 320ml"];
+const skuOptions = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 250g", "Bourbon 250g", "Lipton Ice Tea 320ml"];
 const platformOptions = ["Instamart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
 const priceHistoryBySku: Record<string, Record<string, any[]>> = {
-  "Parle-G 1L": {
+  "Parle-G 120g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 10 ? 38 : 40, comp2: 44, comp3: 35 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 44, comp1: i >= 8 ? 39 : 42, comp2: 46, comp3: 36 })),
   },
-  "Marie Gold 1L": {
+  "Marie Gold 250g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 8 ? 30 : 32, comp2: 38, comp3: 28 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: i >= 8 ? 31 : 33, comp2: 39, comp3: 29 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 32, comp2: 40, comp3: 30 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 38, comp1: 34, comp2: 42, comp3: 31 })),
   },
-  "Aquafina 500ml": {
+  "Britannia Marie 250g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 45, comp1: i >= 15 ? 40 : 42, comp2: 48, comp3: 38 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 46, comp1: 41, comp2: 49, comp3: 39 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 47, comp1: 42, comp2: 50, comp3: 40 })),
     "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 48, comp1: 44, comp2: 52, comp3: 41 })),
   },
-  "Mountain Dew 1L": {
+  "Bourbon 120g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 30, comp1: i >= 10 ? 28 : 29, comp2: 32, comp3: 25 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 31, comp1: 29, comp2: 33, comp3: 26 })),
     "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 32, comp1: 30, comp2: 34, comp3: 27 })),
@@ -49,37 +49,37 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
 };
 
 const compNamesBySku: Record<string, string[]> = {
-  "Parle-G 1L": ["Coca-Cookies", "Almarai", "Rauch"],
-  "Marie Gold 1L": ["Coca-Cookies", "Almarai", "Lacnor"],
-  "Aquafina 500ml": ["Masafi", "Rauch", "Coca-Cookies"],
-  "Mountain Dew 1L": ["Almarai", "Coca-Cookies", "Lacnor"],
-  "Lipton Ice Tea 320ml": ["Almarai", "Coca-Cookies", "Lacnor"],
+  "Parle-G 250g": ["Britannia", "Britannia", "Rauch"],
+  "Marie Gold 120g": ["Britannia", "Britannia", "Lacnor"],
+  "Britannia Marie 250g": ["Patanjali", "Rauch", "Britannia"],
+  "Bourbon 250g": ["Britannia", "Britannia", "Lacnor"],
+  "Lipton Ice Tea 320ml": ["Britannia", "Britannia", "Lacnor"],
 };
 
 const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
   "All SKUs": {
     Instamart: [
-      { brand: "Parle Parle-G 1L", you: true, price: "₹ 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cookies 1L", you: false, price: "₹ 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Almarai Juice 1L", you: false, price: "₹ 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Rauch Multivit 1L", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Parle Parle-G 120g", you: true, price: "₹ 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Britannia 250g", you: false, price: "₹ 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Britannia Cookies 120g", you: false, price: "₹ 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Rauch Multivit 250g", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
     Blinkit: [
-      { brand: "Parle Parle-G 1L", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cookies 1L", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Parle Parle-G 120g", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Britannia 250g", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "1,820", pos: "#1", posColor: "text-sw-red", sos: "42%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
     Zepto: [
-      { brand: "Parle Parle-G 1L", you: true, price: "₹ 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Coca-Cookies 1L", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Parle Parle-G 120g", you: true, price: "₹ 43", priceColor: "text-primary", rating: "4.1★", ratingColor: "text-sw-green", reviews: "218", pos: "#3", posColor: "text-sw-amber", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Britannia 250g", you: false, price: "₹ 38", priceColor: "text-sw-red", rating: "4.2★", ratingColor: "text-sw-green", reviews: "1,120", pos: "#1", posColor: "text-sw-red", sos: "45%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
   },
 };
 
 const priceAlerts = [
-  { sku: "Marie Gold 1L", competitor: "Coca-Cookies", platform: "Instamart", yourPrice: "₹ 35", compPrice: "₹ 30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
-  { sku: "Aquafina 500ml", competitor: "Masafi", platform: "Instamart", yourPrice: "₹ 45", compPrice: "₹ 40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
-  { sku: "Mountain Dew 1L", competitor: "Almarai", platform: "Instamart", yourPrice: "₹ 30", compPrice: "₹ 28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
-  { sku: "Lipton Ice Tea 320ml", competitor: "Almarai", platform: "Zepto", yourPrice: "₹ 20", compPrice: "₹ 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
+  { sku: "Marie Gold 120g", competitor: "Britannia", platform: "Instamart", yourPrice: "₹ 35", compPrice: "₹ 30", gap: "+16.7%", impact: "Conversion -22%", severity: "high" },
+  { sku: "Britannia Marie 250g", competitor: "Patanjali", platform: "Instamart", yourPrice: "₹ 45", compPrice: "₹ 40", gap: "+12.5%", impact: "Conversion -15%", severity: "high" },
+  { sku: "Bourbon 250g", competitor: "Britannia", platform: "Instamart", yourPrice: "₹ 30", compPrice: "₹ 28", gap: "+7.1%", impact: "Conversion -6%", severity: "medium" },
+  { sku: "Lipton Ice Tea 320ml", competitor: "Britannia", platform: "Zepto", yourPrice: "₹ 20", compPrice: "₹ 18", gap: "+11.1%", impact: "Conversion -4%", severity: "low" },
 ];
 
 const platformPricing = [
@@ -92,25 +92,25 @@ const platformPricing = [
 
 const platformPricingDetail: Record<string, { sku: string; yourPrice: string; compPrice: string; parity: boolean; competitor: string }[]> = {
   Instamart: [
-    { sku: "Parle-G 1L", yourPrice: "₹ 40", compPrice: "₹ 35", parity: false, competitor: "Coca-Cookies" },
-    { sku: "Marie Gold 1L", yourPrice: "₹ 35", compPrice: "₹ 30", parity: false, competitor: "Coca-Cookies" },
-    { sku: "Aquafina 500ml", yourPrice: "₹ 45", compPrice: "₹ 45", parity: true, competitor: "Masafi" },
-    { sku: "Mountain Dew 1L", yourPrice: "₹ 30", compPrice: "₹ 32", parity: true, competitor: "Almarai" },
+    { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 35", parity: false, competitor: "Britannia" },
+    { sku: "Marie Gold 250g", yourPrice: "₹ 35", compPrice: "₹ 30", parity: false, competitor: "Britannia" },
+    { sku: "Britannia Marie 250g", yourPrice: "₹ 45", compPrice: "₹ 45", parity: true, competitor: "Patanjali" },
+    { sku: "Bourbon 120g", yourPrice: "₹ 30", compPrice: "₹ 32", parity: true, competitor: "Britannia" },
   ],
   Blinkit: [
-    { sku: "Parle-G 1L", yourPrice: "₹ 42", compPrice: "₹ 38", parity: false, competitor: "Coca-Cookies" },
-    { sku: "Mountain Dew 1L", yourPrice: "₹ 32", compPrice: "₹ 30", parity: false, competitor: "Almarai" },
+    { sku: "Parle-G 250g", yourPrice: "₹ 42", compPrice: "₹ 38", parity: false, competitor: "Britannia" },
+    { sku: "Bourbon 120g", yourPrice: "₹ 32", compPrice: "₹ 30", parity: false, competitor: "Britannia" },
   ],
   Zepto: [
-    { sku: "Parle-G 1L", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Coca-Cookies" },
-    { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Almarai" },
+    { sku: "Parle-G 250g", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Britannia" },
+    { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Britannia" },
   ],
 };
 
 const priceAdvantageData = [
-  { sku: "Parle-G 1L", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Rauch", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
-  { sku: "Mountain Dew 1L", yourPrice: "₹ 30", compPrice: "₹ 34", competitor: "Coca-Cookies", platform: "Instamart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹ 2.80", estRoas: "4.6x" },
-  { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Almarai", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹ 1.90", estRoas: "6.1x" },
+  { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Rauch", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
+  { sku: "Bourbon 250g", yourPrice: "₹ 30", compPrice: "₹ 34", competitor: "Britannia", platform: "Instamart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹ 2.80", estRoas: "4.6x" },
+  { sku: "Lipton Ice Tea 320ml", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Britannia", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹ 1.90", estRoas: "6.1x" },
 ];
 
 const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
@@ -120,19 +120,19 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const elasticityData = [
-  { sku: "Parle-G 1L", sensitivity: 0.82 },
-  { sku: "Marie Gold 1L", sensitivity: 0.65 },
-  { sku: "Aquafina 500ml", sensitivity: 0.91 },
-  { sku: "Mountain Dew 1L", sensitivity: 0.48 },
+  { sku: "Parle-G 120g", sensitivity: 0.82 },
+  { sku: "Marie Gold 250g", sensitivity: 0.65 },
+  { sku: "Britannia Marie 250g", sensitivity: 0.91 },
+  { sku: "Bourbon 120g", sensitivity: 0.48 },
   { sku: "Lipton Ice Tea 320ml", sensitivity: 0.35 },
 ];
 
 const priceGapTable = [
-  { sku: "Marie Gold 1L", yours: "₹ 35", lowest: "₹ 30", gap: "+16.7%", action: "Match Price" },
-  { sku: "Aquafina 500ml", yours: "₹ 45", lowest: "₹ 40", gap: "+12.5%", action: "Match Price" },
-  { sku: "Mountain Dew 1L", yours: "₹ 30", lowest: "₹ 28", gap: "+7.1%", action: "Monitor" },
+  { sku: "Marie Gold 250g", yours: "₹ 35", lowest: "₹ 30", gap: "+16.7%", action: "Match Price" },
+  { sku: "Britannia Marie 250g", yours: "₹ 45", lowest: "₹ 40", gap: "+12.5%", action: "Match Price" },
+  { sku: "Bourbon 120g", yours: "₹ 30", lowest: "₹ 28", gap: "+7.1%", action: "Monitor" },
   { sku: "Lipton Ice Tea 320ml", yours: "₹ 20", lowest: "₹ 18", gap: "+11.1%", action: "Monitor" },
-  { sku: "Parle-G 1L", yours: "₹ 40", lowest: "₹ 35", gap: "+14.3%", action: "Match Price" },
+  { sku: "Parle-G 250g", yours: "₹ 40", lowest: "₹ 35", gap: "+14.3%", action: "Match Price" },
 ];
 
 // Price index trend by SKU for analytics filter
@@ -152,7 +152,7 @@ const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
-  const [selectedSku, setSelectedSku] = useState("Parle-G 1L");
+  const [selectedSku, setSelectedSku] = useState("Parle-G 120g");
   const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
   const [priceHistoryToggle, setPriceHistoryToggle] = useState<"sku" | "platform">("sku");
@@ -164,9 +164,9 @@ const PricingView: React.FC = () => {
   const [ppiMode, setPpiMode] = useState<"competitors" | "own">("competitors");
   const [ppiSku, setPpiSku] = useState(skuOptions[0]);
 
-  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Parle-G 1L"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Parle-G 250g"];
   const competitorMatrix = (competitorMatrixByGroup["All SKUs"] || {})[selectedPlatform] || [];
-  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 1L"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 1L"])["All"];
+  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 120g"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 250g"])["All"];
 
   const filteredPlatformPricing = showNeedAttention ? platformPricing.filter(p => p.needsAttention) : platformPricing;
 
@@ -256,10 +256,10 @@ const PricingView: React.FC = () => {
           <p className="text-[10px] text-muted-foreground mb-3">Pricing signals that translate directly to a campaign-level action.</p>
           <div className="space-y-2">
             {[
-              { insight: "Parle-G 1L is 12% cheaper than Coca-Cookies on Zepto", delta: "−12%", platform: "Zepto", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
+              { insight: "Parle-G 120g is 12% cheaper than Britannia on Zepto", delta: "−12%", platform: "Zepto", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
               { insight: "Lacnor raised price 8% on Blinkit — defensive window open on cookies keywords", delta: "+8%", platform: "Blinkit", action: "Raise bid on competing keywords", icon: TrendingUp, tone: "amber" },
-              { insight: "Aquafina 1.5L underpriced vs market by 15% on Instamart — margin leaking", delta: "−15%", platform: "Instamart", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
-              { insight: "Tropicana OJ at parity with Almarai on Instamart — hold pricing, push share-of-shelf", delta: "0%", platform: "Instamart", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
+              { insight: "Britannia Marie 150g underpriced vs market by 15% on Instamart — margin leaking", delta: "−15%", platform: "Instamart", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
+              { insight: "Tropicana OJ at parity with Britannia on Instamart — hold pricing, push share-of-shelf", delta: "0%", platform: "Instamart", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
             ].map((row, i) => {
               const Icon = row.icon;
               const toneBg = row.tone === "green" ? "bg-sw-green-dim text-sw-green" : row.tone === "amber" ? "bg-sw-amber-dim text-sw-amber" : row.tone === "red" ? "bg-sw-red-dim text-sw-red" : "bg-sw-purple-dim text-sw-purple";

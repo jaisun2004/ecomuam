@@ -16,7 +16,7 @@ const plRowsByTime: Record<string, { platform: string; color: string; spend: str
   ],
   "30D": [
     { platform: "Instamart", color: "#FF9900", spend: "₹ 7.8L", returns: "7.1%", retColor: "text-sw-amber", margin: "38%", mColor: "text-sw-green font-bold" },
-    { platform: "Instamart", color: "#2F77FF", spend: "₹ 5.2L", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
+    { platform: "Instamart", color: "#2F77FF", spend: "₹ 5.200g", returns: "9.4%", retColor: "text-sw-red", margin: "28%", mColor: "text-sw-amber font-bold" },
     { platform: "Blinkit", color: "#FDDC2B", spend: "₹ 2.9L", returns: "2.1%", retColor: "text-sw-green", margin: "42%", mColor: "text-sw-green font-bold" },
     { platform: "Zepto", color: "#833AB4", spend: "₹ 1.8L", returns: "1.8%", retColor: "text-sw-green", margin: "44%", mColor: "text-sw-green font-bold" },
   ],

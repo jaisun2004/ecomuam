@@ -10,16 +10,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 const dimensions = ["Title", "Hero Image", "Search Listing", "Page Content", "Competitor Aggression"];
 
 export const skuData = [
-  { id: "sku-001", sku: "Parle-G 1L", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Instamart", category: "Biscuits", priceParity: "match", availability: 96 },
-  { id: "sku-002", sku: "Marie Gold 1L", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Instamart", category: "Glucose", priceParity: "above", availability: 88 },
+  { id: "sku-001", sku: "Parle-G 120g", thumb: "🍪", title: 16, heroImage: 18, searchListing: 12, pageContent: 17, competitorAggression: 14, lastUpdated: "Mar 14", platform: "Instamart", category: "Biscuits", priceParity: "match", availability: 96 },
+  { id: "sku-002", sku: "Marie Gold 250g", thumb: "🍪", title: 14, heroImage: 15, searchListing: 8, pageContent: 13, competitorAggression: 16, lastUpdated: "Mar 12", platform: "Instamart", category: "Glucose", priceParity: "above", availability: 88 },
   { id: "sku-003", sku: "Lipton Ice Tea Peach 320ml", thumb: "🍘", title: 8, heroImage: 10, searchListing: 6, pageContent: 9, competitorAggression: 18, lastUpdated: "Mar 10", platform: "Instamart", category: "Cream", priceParity: "below", availability: 72 },
-  { id: "sku-004", sku: "Aquafina 1.5L", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health", priceParity: "match", availability: 94 },
-  { id: "sku-005", sku: "Mountain Dew 1L", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream", priceParity: "below", availability: 98 },
+  { id: "sku-004", sku: "Britannia Marie 150g", thumb: "🌾", title: 17, heroImage: 12, searchListing: 14, pageContent: 16, competitorAggression: 10, lastUpdated: "Mar 15", platform: "Blinkit", category: "Health", priceParity: "match", availability: 94 },
+  { id: "sku-005", sku: "Bourbon 120g", thumb: "🍫", title: 19, heroImage: 17, searchListing: 16, pageContent: 18, competitorAggression: 12, lastUpdated: "Mar 13", platform: "Zepto", category: "Cream", priceParity: "below", availability: 98 },
   { id: "sku-006", sku: "Sunfeast 150g", thumb: "🥛", title: 11, heroImage: 9, searchListing: 10, pageContent: 11, competitorAggression: 15, lastUpdated: "Mar 11", platform: "Blinkit", category: "Kids", priceParity: "above", availability: 65 },
 ];
 
 export const competitorScores: Record<string, Record<string, { title: number; heroImage: number; searchListing: number; pageContent: number; competitorAggression: number }>> = {
-  "Coca-Cookies": {
+  "Britannia": {
     "sku-001": { title: 18, heroImage: 17, searchListing: 15, pageContent: 16, competitorAggression: 12 },
     "sku-002": { title: 16, heroImage: 14, searchListing: 12, pageContent: 15, competitorAggression: 14 },
     "sku-003": { title: 12, heroImage: 14, searchListing: 10, pageContent: 12, competitorAggression: 16 },
@@ -27,7 +27,7 @@ export const competitorScores: Record<string, Record<string, { title: number; he
     "sku-005": { title: 17, heroImage: 15, searchListing: 14, pageContent: 16, competitorAggression: 10 },
     "sku-006": { title: 14, heroImage: 13, searchListing: 11, pageContent: 13, competitorAggression: 13 },
   },
-  "Almarai": {
+  "Britannia": {
     "sku-001": { title: 19, heroImage: 19, searchListing: 17, pageContent: 18, competitorAggression: 10 },
     "sku-002": { title: 18, heroImage: 17, searchListing: 14, pageContent: 17, competitorAggression: 12 },
     "sku-003": { title: 14, heroImage: 16, searchListing: 12, pageContent: 14, competitorAggression: 14 },
@@ -83,23 +83,23 @@ const FilterDropdown: React.FC<{
 const titleIssues: Record<string, { issues: string[]; suggested: string }> = {
   "Lipton Ice Tea Peach 320ml": { issues: ["Too short", "Missing keywords", "No size/variant"], suggested: "Parle Lipton Ice Tea Peach 320ml | Salted Butter Biscuits | Crunchy Snack | Family Pack" },
   "Sunfeast 150g": { issues: ["Missing keywords", "No brand name"], suggested: "Parle Sunfeast 150g | Milk Cream Biscuits | Kids Favourite | Rich in Calcium" },
-  "Marie Gold 1L": { issues: ["No size/variant"], suggested: "Parle Marie Gold 1L | Lite Biscuits | 0% Trans Fat | Fibre Rich | Tea-time Snack" },
+  "Marie Gold 250g": { issues: ["No size/variant"], suggested: "Parle Marie Gold 120g | Lite Biscuits | 0% Trans Fat | Fibre Rich | Tea-time Snack" },
 };
 
 const heroImageIssues: Record<string, string[]> = {
   "Lipton Ice Tea Peach 320ml": ["Low resolution", "No product focus", "No size callout visible"],
   "Sunfeast 150g": ["Busy background", "No size callout visible"],
-  "Aquafina 1.5L": ["No product focus"],
+  "Britannia Marie 150g": ["No product focus"],
 };
 
 const searchKeywords: Record<string, { kw: string; rank: number }[]> = {
   "Lipton Ice Tea Peach 320ml": [{ kw: "salted biscuits", rank: 14 }, { kw: "butter biscuits", rank: 22 }, { kw: "cream biscuits", rank: 8 }, { kw: "maska chaska", rank: 18 }, { kw: "Lipton Ice Tea biscuits", rank: 11 }],
-  "Marie Gold 1L": [{ kw: "marie biscuits", rank: 6 }, { kw: "glucose biscuits", rank: 12 }, { kw: "tea time biscuits", rank: 15 }],
+  "Marie Gold 250g": [{ kw: "marie biscuits", rank: 6 }, { kw: "glucose biscuits", rank: 12 }, { kw: "tea time biscuits", rank: 15 }],
 };
 
 const competitorAggression = [
-  { brand: "Coca-Cookies", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter biscuits", "cream biscuits"], impact: "-2 rank" },
-  { brand: "Almarai", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
+  { brand: "Britannia", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter biscuits", "cream biscuits"], impact: "-2 rank" },
+  { brand: "Britannia", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
   { brand: "Lacnor", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive biscuits"], impact: "None" },
 ];
 
@@ -107,21 +107,21 @@ const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket:
 
 // Cross-platform consistency data
 const crossPlatformData = [
-  { sku: "Parle-G 1L", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Instamart", gap: 29, issue: true },
-  { sku: "Marie Gold 1L", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Instamart", gap: 14, issue: true },
+  { sku: "Parle-G 120g", amazon: 77, flipkart: 72, blinkit: 68, zepto: 55, instamart: 48, bestPlatform: "Instamart", gap: 29, issue: true },
+  { sku: "Marie Gold 250g", amazon: 66, flipkart: 66, blinkit: 60, zepto: 58, instamart: 52, bestPlatform: "Instamart", gap: 14, issue: true },
   { sku: "Lipton Ice Tea Peach 320ml", amazon: 51, flipkart: 48, blinkit: 42, zepto: 38, instamart: 35, bestPlatform: "Instamart", gap: 16, issue: true },
-  { sku: "Aquafina 1.5L", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Instamart", gap: 5, issue: false },
-  { sku: "Mountain Dew 1L", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Instamart", gap: 8, issue: false },
+  { sku: "Britannia Marie 150g", amazon: 69, flipkart: 68, blinkit: 66, zepto: 65, instamart: 64, bestPlatform: "Instamart", gap: 5, issue: false },
+  { sku: "Bourbon 120g", amazon: 82, flipkart: 80, blinkit: 78, zepto: 76, instamart: 74, bestPlatform: "Instamart", gap: 8, issue: false },
   { sku: "Sunfeast 150g", amazon: 56, flipkart: 44, blinkit: 38, zepto: 32, instamart: 28, bestPlatform: "Instamart", gap: 28, issue: true },
 ];
 
 // Category benchmark + campaign performance data
 const benchmarkData = [
-  { sku: "Parle-G 1L", yourScore: 77, categoryAvg: 68, compAvg: 74, campaign: "Parle-G SP", campaignActive: true, roas: "4.8x", campaignStatus: "Strong" },
-  { sku: "Marie Gold 1L", yourScore: 66, categoryAvg: 68, compAvg: 72, campaign: "Marie Range SP", campaignActive: true, roas: "2.9x", campaignStatus: "Underperforming" },
+  { sku: "Parle-G 250g", yourScore: 77, categoryAvg: 68, compAvg: 74, campaign: "Parle-G SP", campaignActive: true, roas: "4.8x", campaignStatus: "Strong" },
+  { sku: "Marie Gold 120g", yourScore: 66, categoryAvg: 68, compAvg: 72, campaign: "Marie Range SP", campaignActive: true, roas: "2.9x", campaignStatus: "Underperforming" },
   { sku: "Lipton Ice Tea Peach 320ml", yourScore: 51, categoryAvg: 68, compAvg: 70, campaign: "Lipton Ice Tea Launch", campaignActive: false, roas: "—", campaignStatus: "Paused" },
-  { sku: "Aquafina 1.5L", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "Aquafina Brand SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
-  { sku: "Mountain Dew 1L", yourScore: 82, categoryAvg: 68, compAvg: 71, campaign: "Mountain Dew Premium SP", campaignActive: true, roas: "6.1x", campaignStatus: "Excellent" },
+  { sku: "Britannia Marie 150g", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "Britannia Marie Brand SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
+  { sku: "Bourbon 250g", yourScore: 82, categoryAvg: 68, compAvg: 71, campaign: "Bourbon Premium SP", campaignActive: true, roas: "6.1x", campaignStatus: "Excellent" },
   { sku: "Sunfeast 150g", yourScore: 56, categoryAvg: 68, compAvg: 66, campaign: "Sunfeast Kids", campaignActive: true, roas: "1.6x", campaignStatus: "Poor — fix content first" },
 ];
 
@@ -244,9 +244,9 @@ Strong SKUs (80+): ${skuData.filter(s => getOverall(s) >= 80).length}
 CHANGES SINCE LAST AUDIT (Mar 14)
 -----------------------------------
 • Average portfolio score: No significant change detected
-• Competitor aggression: Coca-Cookies increased content updates by 22%
+• Competitor aggression: Britannia increased content updates by 22%
 • New keyword opportunities identified for 3 SKUs
-• Hero image compliance improved for Aquafina 1.5L
+• Hero image compliance improved for Britannia Marie 150g
 
 SKU-LEVEL RECOMMENDATIONS
 --------------------------

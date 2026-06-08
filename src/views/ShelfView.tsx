@@ -9,7 +9,7 @@ import { Megaphone, ChevronDown, ChevronRight, MapPin, TrendingUp, TrendingDown,
 
 /* ── mock data ── */
 const heatmapData = {
-  skus: ["Parle-G 1L", "Marie Gold 1L", "Mountain Dew 1L", "Aquafina 500ml", "Lipton Ice Tea 320ml", "Sunfeast 150g"],
+  skus: ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 250g", "Lipton Ice Tea 320ml", "Sunfeast 150g"],
   platforms: [
     { name: "Instamart", color: "#FF9900", values: [97, 100, 72, 95, 54, 98] },
     { name: "Instamart", color: "#2F77FF", values: [74, 92, 61, 88, 12, 78] },
@@ -39,25 +39,25 @@ const platformsList = [
 
 const searchDataByPlatform: Record<string, { kw: string; you: number; comp: number; compName: string; status: string; poaching?: boolean }[]> = {
   Instamart: [
-    { kw: "butter biscuits", you: 28, comp: 41, compName: "Coca-Cookies", status: "losing" },
-    { kw: "cream biscuits", you: 44, comp: 31, compName: "Coca-Cookies", status: "winning" },
-    { kw: "glucose biscuits", you: 19, comp: 38, compName: "Almarai", status: "losing", poaching: true },
-    { kw: "digestive biscuits", you: 33, comp: 29, compName: "Masafi", status: "winning" },
-    { kw: "kids biscuits", you: 21, comp: 44, compName: "Almarai", status: "losing", poaching: true },
+    { kw: "butter biscuits", you: 28, comp: 41, compName: "Britannia", status: "losing" },
+    { kw: "cream biscuits", you: 44, comp: 31, compName: "Britannia", status: "winning" },
+    { kw: "glucose biscuits", you: 19, comp: 38, compName: "Britannia", status: "losing", poaching: true },
+    { kw: "digestive biscuits", you: 33, comp: 29, compName: "Patanjali", status: "winning" },
+    { kw: "kids biscuits", you: 21, comp: 44, compName: "Britannia", status: "losing", poaching: true },
   ],
   Blinkit: [
-    { kw: "butter biscuits", you: 35, comp: 30, compName: "Coca-Cookies", status: "winning" },
-    { kw: "cream biscuits", you: 41, comp: 22, compName: "Almarai", status: "winning" },
-    { kw: "glucose biscuits", you: 8, comp: 51, compName: "Almarai", status: "losing", poaching: true },
-    { kw: "digestive biscuits", you: 44, comp: 18, compName: "Masafi", status: "winning" },
-    { kw: "kids biscuits", you: 12, comp: 55, compName: "Coca-Cookies", status: "losing", poaching: true },
+    { kw: "butter biscuits", you: 35, comp: 30, compName: "Britannia", status: "winning" },
+    { kw: "cream biscuits", you: 41, comp: 22, compName: "Britannia", status: "winning" },
+    { kw: "glucose biscuits", you: 8, comp: 51, compName: "Britannia", status: "losing", poaching: true },
+    { kw: "digestive biscuits", you: 44, comp: 18, compName: "Patanjali", status: "winning" },
+    { kw: "kids biscuits", you: 12, comp: 55, compName: "Britannia", status: "losing", poaching: true },
   ],
   Zepto: [
-    { kw: "butter biscuits", you: 31, comp: 33, compName: "Coca-Cookies", status: "losing" },
-    { kw: "cream biscuits", you: 39, comp: 28, compName: "Almarai", status: "winning" },
-    { kw: "glucose biscuits", you: 22, comp: 35, compName: "Almarai", status: "losing" },
-    { kw: "digestive biscuits", you: 27, comp: 40, compName: "Masafi", status: "losing", poaching: true },
-    { kw: "kids biscuits", you: 18, comp: 47, compName: "Coca-Cookies", status: "losing" },
+    { kw: "butter biscuits", you: 31, comp: 33, compName: "Britannia", status: "losing" },
+    { kw: "cream biscuits", you: 39, comp: 28, compName: "Britannia", status: "winning" },
+    { kw: "glucose biscuits", you: 22, comp: 35, compName: "Britannia", status: "losing" },
+    { kw: "digestive biscuits", you: 27, comp: 40, compName: "Patanjali", status: "losing", poaching: true },
+    { kw: "kids biscuits", you: 18, comp: 47, compName: "Britannia", status: "losing" },
   ],
 };
 
@@ -107,17 +107,17 @@ const getShareColor = (v: number) => {
 };
 
 const contentSkus = [
-  { emoji: "🍪", name: "Parle-G 1L", platforms: "Instamart · Instamart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
+  { emoji: "🍪", name: "Parle-G 120g", platforms: "Instamart · Instamart · Blinkit", score: 80, color: "hsl(160,70%,48%)" },
   { emoji: "🍘", name: "Lipton Ice Tea Peach 320ml", platforms: "Instamart · Instamart", score: 50, color: "hsl(38,92%,50%)" },
   { emoji: "🥛", name: "Sunfeast 150g", platforms: "Instamart only", score: 20, color: "hsl(0,76%,57%)" },
-  { emoji: "🍫", name: "Mountain Dew 1L", platforms: "Instamart · Instamart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
+  { emoji: "🍫", name: "Bourbon 250g", platforms: "Instamart · Instamart · Zepto", score: 70, color: "hsl(160,70%,48%)" },
 ];
 
 const pricingRows = [
-  { sku: "Parle-G 1L", yours: "₹ 40", comp: "₹ 45", diff: "-11.1%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Marie Gold 1L", yours: "₹ 35", comp: "₹ 30", diff: "+16.7%", diffType: "red" as const, action: "Match Price" },
-  { sku: "Mountain Dew 1L", yours: "₹ 30", comp: "₹ 32", diff: "-6.3%", diffType: "green" as const, action: "Hold Price" },
-  { sku: "Aquafina 500ml", yours: "₹ 45", comp: "₹ 38", diff: "+18.4%", diffType: "red" as const, action: "Adjust ↓" },
+  { sku: "Parle-G 120g", yours: "₹ 40", comp: "₹ 45", diff: "-11.1%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "Marie Gold 250g", yours: "₹ 35", comp: "₹ 30", diff: "+16.7%", diffType: "red" as const, action: "Match Price" },
+  { sku: "Bourbon 120g", yours: "₹ 30", comp: "₹ 32", diff: "-6.3%", diffType: "green" as const, action: "Hold Price" },
+  { sku: "Britannia Marie 250g", yours: "₹ 45", comp: "₹ 38", diff: "+18.4%", diffType: "red" as const, action: "Adjust ↓" },
   { sku: "Sunfeast 150g", yours: "₹ 25", comp: "₹ 25", diff: "0%", diffType: "grey" as const, action: "Hold Price" },
 ];
 
@@ -131,23 +131,23 @@ const searchPositions = [
 
 /* SoS retailer-level issues */
 const sosRetailerIssues = [
-  { platform: "Instamart", issue: "SoS dropped 12% WoW", type: "drop", kw: "butter biscuits", detail: "Competitor bid aggression detected — Coca-Cookies increased bids by 2.4x on 3 top keywords" },
+  { platform: "Instamart", issue: "SoS dropped 12% WoW", type: "drop", kw: "butter biscuits", detail: "Competitor bid aggression detected — Britannia increased bids by 2.4x on 3 top keywords" },
   { platform: "Blinkit", issue: "0% SoS on 3 keywords", type: "missing", kw: "cream biscuits, glucose biscuits, kids biscuits", detail: "No active sponsored listings. Competitors capturing 100% of search traffic" },
-  { platform: "Zepto", issue: "Poaching on digestive biscuits", type: "poaching", kw: "digestive biscuits", detail: "Masafi bidding on your brand keyword. Capturing 40% of branded searches" },
+  { platform: "Zepto", issue: "Poaching on digestive biscuits", type: "poaching", kw: "digestive biscuits", detail: "Patanjali bidding on your brand keyword. Capturing 40% of branded searches" },
 ];
 
 const competitorAggression = [
-  { competitor: "Coca-Cookies", platform: "Instamart", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
-  { competitor: "Masafi", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
-  { competitor: "Almarai", platform: "Instamart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
+  { competitor: "Britannia", platform: "Instamart", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
+  { competitor: "Patanjali", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
+  { competitor: "Britannia", platform: "Instamart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
   { competitor: "Rauch", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
 ];
 
 const poachingKeywords = [
-  { keyword: "britannia good day", poacher: "Coca-Cookies", platform: "Instamart", yourSoS: 62, theirSoS: 28, trend: "rising" },
-  { keyword: "britannia bourbon", poacher: "Almarai", platform: "Instamart", yourSoS: 45, theirSoS: 38, trend: "rising" },
-  { keyword: "britannia marie gold", poacher: "Coca-Cookies", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
-  { keyword: "britannia nutrichoice", poacher: "Masafi", platform: "Instamart", yourSoS: 71, theirSoS: 18, trend: "declining" },
+  { keyword: "britannia good day", poacher: "Britannia", platform: "Instamart", yourSoS: 62, theirSoS: 28, trend: "rising" },
+  { keyword: "britannia bourbon", poacher: "Britannia", platform: "Instamart", yourSoS: 45, theirSoS: 38, trend: "rising" },
+  { keyword: "britannia marie gold", poacher: "Britannia", platform: "Zepto", yourSoS: 55, theirSoS: 31, trend: "stable" },
+  { keyword: "britannia nutrichoice", poacher: "Patanjali", platform: "Instamart", yourSoS: 71, theirSoS: 18, trend: "declining" },
 ];
 
 const ProgressRing = ({ score, color, size = 48 }: { score: number; color: string; size?: number }) => {
@@ -254,9 +254,9 @@ const ShelfView: React.FC = () => {
       {/* ── LIVE INTELLIGENCE FEED (pushed to top) ── */}
       <PanelCard title="Live Intelligence Feed" badge="4 need action" badgeColor="red" delay={0.18}>
         <div className="grid grid-cols-2 gap-3">
-          <AlertItem severity="critical" icon="🚨" title="OOS on Blinkit" detail="Marie Gold 1L went out of stock in 6 Delhi NCR pin codes." meta="2m ago · Blinkit" action="Alert Team" actionDone="✓ Team Notified" />
-          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="Coca-Cookies cut Dark Fantasy price by ₹ 5 on Instamart. 14% above market." meta="18m ago · Instamart" action="Review" actionDone="✓ Reviewed" />
-          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Parle-G 1L' moved from #7 to #3 on Instamart after content update." meta="1h ago · Instamart" action="View" />
+          <AlertItem severity="critical" icon="🚨" title="OOS on Blinkit" detail="Marie Gold 250g went out of stock in 6 Delhi NCR pin codes." meta="2m ago · Blinkit" action="Alert Team" actionDone="✓ Team Notified" />
+          <AlertItem severity="warning" icon="⚠️" title="Competitor price drop" detail="Britannia cut Dark Fantasy price by ₹ 5 on Instamart. 14% above market." meta="18m ago · Instamart" action="Review" actionDone="✓ Reviewed" />
+          <AlertItem severity="success" icon="📈" title="Search rank improved" detail="'Parle-G 120g' moved from #7 to #3 on Instamart after content update." meta="1h ago · Instamart" action="View" />
           <AlertItem severity="info" icon="💡" title="Cream biscuits trending" detail="+47% search volume spike in 'cream biscuits' on Blinkit. Stock at 12%." meta="3h ago · Blinkit" action="Top-up →" />
         </div>
       </PanelCard>

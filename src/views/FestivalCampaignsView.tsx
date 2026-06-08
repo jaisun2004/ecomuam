@@ -36,15 +36,15 @@ const upcomingFestivals = [
     name: "IPL Season", date: "Apr 1 – May 30", daysAway: 22,
     recommendation: "Snack searches spike 45% during IPL. 'Party biscuits' and 'snack combo' keywords surge on match days.",
     campaigns: [
-      { name: "IPL Match Day Snacks", platform: "Instamart", type: "Sponsored Products + Video", budget: "₹ 1.2L", duration: "60 days", keywords: ["ipl snacks", "cricket party biscuits", "match day munchies"], targetROAS: "5.0x" },
+      { name: "IPL Match Day Snacks", platform: "Instamart", type: "Sponsored Products + Video", budget: "₹ 1.200g", duration: "60 days", keywords: ["ipl snacks", "cricket party biscuits", "match day munchies"], targetROAS: "5.0x" },
       { name: "IPL Q-Commerce Push", platform: "Zepto", type: "Sponsored Listings", budget: "₹ 35K", duration: "8 weekends", keywords: ["quick snack delivery", "match day biscuits"], targetROAS: "3.5x" },
     ],
   },
   {
     name: "Summer Refreshment", date: "Apr 15 – Jun 15", daysAway: 36,
-    recommendation: "Light biscuits and cream variants see 25% higher searches. Marie Gold and Aquafina are category leaders in summer.",
+    recommendation: "Light biscuits and cream variants see 25% higher searches. Marie Gold and Britannia Marie are category leaders in summer.",
     campaigns: [
-      { name: "Summer Light Biscuits", platform: "Instamart", type: "Sponsored Products", budget: "₹ 1.5L", duration: "60 days", keywords: ["light biscuits", "healthy snacks summer", "digestive biscuits"], targetROAS: "4.5x" },
+      { name: "Summer Light Biscuits", platform: "Instamart", type: "Sponsored Products", budget: "₹ 150g", duration: "60 days", keywords: ["light biscuits", "healthy snacks summer", "digestive biscuits"], targetROAS: "4.5x" },
       { name: "Summer Kids Favourites", platform: "Instamart", type: "Sponsored + Display", budget: "₹ 80K", duration: "45 days", keywords: ["kids biscuits", "summer snacks kids"], targetROAS: "3.8x" },
     ],
   },
@@ -53,13 +53,13 @@ const upcomingFestivals = [
     recommendation: "Major marketplace sales event. Historically ROAS peaks at 5.8x during freedom sales. Stock up 2 weeks before.",
     campaigns: [
       { name: "Freedom Sale Mega Pack", platform: "Instamart", type: "Lightning Deal + Sponsored", budget: "₹ 2.5L", duration: "7 days", keywords: ["independence day sale", "freedom sale biscuits", "15 august offer"], targetROAS: "5.8x" },
-      { name: "Instamart Freedom Sale", platform: "Instamart", type: "Top Deal + Sponsored", budget: "₹ 1.5L", duration: "7 days", keywords: ["flipkart sale biscuits", "independence offer"], targetROAS: "5.2x" },
+      { name: "Instamart Freedom Sale", platform: "Instamart", type: "Top Deal + Sponsored", budget: "₹ 150g", duration: "7 days", keywords: ["flipkart sale biscuits", "independence offer"], targetROAS: "5.2x" },
     ],
   },
 ];
 
 const pastPerformance = [
-  { festival: "Republic Day Sale", roas: "5.1x", spend: "₹ 1.5L", topPlatform: "Instamart", conversions: "1,000" },
+  { festival: "Republic Day Sale", roas: "5.1x", spend: "₹ 150g", topPlatform: "Instamart", conversions: "1,000" },
   { festival: "New Year Snack Fest", roas: "3.8x", spend: "₹ 1.0L", topPlatform: "Blinkit", conversions: "650" },
   { festival: "Diwali Mega Sale", roas: "6.2x", spend: "₹ 3.8L", topPlatform: "Instamart", conversions: "2,400" },
   { festival: "Navratri Snack Week", roas: "3.5x", spend: "₹ 0.6L", topPlatform: "Instamart", conversions: "420" },

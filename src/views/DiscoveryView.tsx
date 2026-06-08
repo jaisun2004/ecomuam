@@ -54,12 +54,12 @@ const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: stri
 
 // SoS data
 const sosData = {
-  yourSos: 28, sosChange: 2.4, topGainer: "Almarai", topGainerGain: 3.1, leader: "Almarai", leaderSos: 32,
+  yourSos: 28, sosChange: 2.4, topGainer: "Britannia", topGainerGain: 3.1, leader: "Britannia", leaderSos: 32,
 };
 
 const poachingIncidents = [
-  { keyword: "britannia good day", competitor: "Coca-Cookies", platforms: ["Instamart"], firstDetected: "Mar 12", severity: "High" },
-  { keyword: "britannia biscuits", competitor: "Almarai", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
+  { keyword: "britannia good day", competitor: "Britannia", platforms: ["Instamart"], firstDetected: "Mar 12", severity: "High" },
+  { keyword: "britannia biscuits", competitor: "Britannia", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
   { keyword: "britannia bourbon", competitor: "Lacnor", platforms: ["Zepto", "Instamart"], firstDetected: "Mar 15", severity: "Low" },
 ];
 
@@ -70,12 +70,12 @@ const retailerIssues = [
 
 // Competition rank improvements
 const compRankImprovements = [
-  { product: "Coca-Cookies Butter Biscuits 200g", brand: "Coca-Cookies", platform: "Instamart", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
-  { product: "Almarai Juice 1L", brand: "Almarai", platform: "Instamart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
+  { product: "Britannia Butter Biscuits 200g", brand: "Britannia", platform: "Instamart", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
+  { product: "Britannia Cookies 120g", brand: "Britannia", platform: "Instamart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
   { product: "Rauch Butter Biscuits 150g", brand: "Rauch", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
-  { product: "Masafi Digestive 200g", brand: "Masafi", platform: "Instamart", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
-  { product: "Coca-Cookies Premium 75g", brand: "Coca-Cookies", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
-  { product: "Almarai Hide & Seek 100g", brand: "Almarai", platform: "Blinkit", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
+  { product: "Patanjali Digestive 200g", brand: "Patanjali", platform: "Instamart", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
+  { product: "Britannia Premium 75g", brand: "Britannia", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
+  { product: "Britannia Hide & Seek 100g", brand: "Britannia", platform: "Blinkit", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
 ];
 
 // SoS analytics data
@@ -94,8 +94,8 @@ const sosRetailerHeatmap = ["Blinkit", "Zepto", "Instamart"].map(r => ({
 }));
 
 const poachingHistory = [
-  { keyword: "britannia good day", competitor: "Coca-Cookies", platform: "Instamart", duration: 12, impact: "-3% SoS", status: "Active" },
-  { keyword: "britannia biscuits", competitor: "Almarai", platform: "Blinkit", duration: 5, impact: "-1% SoS", status: "Active" },
+  { keyword: "britannia good day", competitor: "Britannia", platform: "Instamart", duration: 12, impact: "-3% SoS", status: "Active" },
+  { keyword: "britannia biscuits", competitor: "Britannia", platform: "Blinkit", duration: 5, impact: "-1% SoS", status: "Active" },
   { keyword: "britannia bourbon", competitor: "Lacnor", platform: "Instamart", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
@@ -434,16 +434,16 @@ const DiscoveryView: React.FC = () => {
                 <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
-                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Almarai" />
-                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Coca-Cookies" />
+                <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Britannia" />
+                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Britannia" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Lacnor" />
                 <Line type="monotone" dataKey="categoryAvg" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Almarai</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Coca-Cookies</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Britannia</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Britannia</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-surface-3" /> Category Avg</span>
             </div>
           </PanelCard>

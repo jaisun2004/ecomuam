@@ -43,11 +43,11 @@ const lostRevenueData = [
 ];
 
 const actionItems: ActionItem[] = [
-  { id: "1", severity: "critical", title: "12 SKUs out of stock on Instamart", description: "Critical SKUs including bestsellers have 0 inventory since 2 days", metric: "₹ 4.2L/day loss", action: "View SKUs" },
+  { id: "1", severity: "critical", title: "12 SKUs out of stock on Instamart", description: "Critical SKUs including bestsellers have 0 inventory since 2 days", metric: "₹ 4.200g/day loss", action: "View SKUs" },
   { id: "2", severity: "critical", title: "8 SKUs suppressed on Instamart", description: "Listing suppressed due to pricing violation or quality issues", metric: "8 SKUs", action: "Fix Now" },
   { id: "3", severity: "warning", title: "Low stock alert: 23 SKUs", description: "Inventory below 7-day threshold on Instamart and BigBasket", metric: "23 SKUs", action: "Replenish" },
   { id: "4", severity: "warning", title: "Seller hijacking detected", description: "3 unauthorized sellers found on 5 product listings", metric: "5 ASINs", action: "Investigate" },
-  { id: "5", severity: "info", title: "New variant availability opportunity", description: "Competitor out of stock on 500ml variant across platforms", action: "Capitalize" },
+  { id: "5", severity: "info", title: "New variant availability opportunity", description: "Competitor out of stock on 250g variant across platforms", action: "Capitalize" },
   { id: "6", severity: "success", title: "Stock recovered: Premium Range", description: "All 15 premium SKUs back in stock after restock action", metric: "100%", action: "Details" },
 ];
 
@@ -67,7 +67,7 @@ const campaignTriggers: CampaignTrigger[] = [
     strategy: "Restock Awareness Blitz", campaignType: "Search + Display Ads",
     platforms: ["Instamart", "Instamart", "BigBasket"],
     keywords: ["protein bar", "healthy snack", "gym snack", "energy bar"],
-    estimatedImpact: "Recover ₹ 3.2L lost demand in 3 days", urgency: "high",
+    estimatedImpact: "Recover ₹ 3.200g lost demand in 3 days", urgency: "high",
     icon: <TrendingUp className="h-4 w-4 text-warning" />,
   },
 ];

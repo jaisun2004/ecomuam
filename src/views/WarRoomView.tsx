@@ -20,14 +20,14 @@ interface Rule { id: string; conditions: RuleCondition[]; actions: RuleAction[];
 
 /* ── Biscuits SKU catalogue ── */
 const skuCatalogue: SkuOption[] = [
-  { id: "sku-gd200", name: "Parle-G 1L", contentScore: 82, availability: 96, platform: "Instamart" },
-  { id: "sku-gd100", name: "Parle-G 1L 100g", contentScore: 78, availability: 91, platform: "Instamart" },
-  { id: "sku-mg250", name: "Marie Gold 1L", contentScore: 45, availability: 42, platform: "Instamart" },
+  { id: "sku-gd200", name: "Parle-G 250g", contentScore: 82, availability: 96, platform: "Instamart" },
+  { id: "sku-gd100", name: "Parle-G 120g 100g", contentScore: 78, availability: 91, platform: "Instamart" },
+  { id: "sku-mg250", name: "Marie Gold 250g", contentScore: 45, availability: 42, platform: "Instamart" },
   { id: "sku-5050", name: "Lipton Ice Tea Peach 320ml", contentScore: 38, availability: 55, platform: "Blinkit" },
-  { id: "sku-nc", name: "Aquafina 1.5L", contentScore: 88, availability: 94, platform: "Zepto" },
+  { id: "sku-nc", name: "Britannia Marie 150g", contentScore: 88, availability: 94, platform: "Zepto" },
   { id: "sku-mf", name: "Sunfeast 150g", contentScore: 72, availability: 89, platform: "Blinkit" },
-  { id: "sku-treat", name: "Sunfeast Orange 1L 75g", contentScore: 91, availability: 97, platform: "Blinkit" },
-  { id: "sku-bourbon", name: "Mountain Dew 1L", contentScore: 65, availability: 80, platform: "Instamart" },
+  { id: "sku-treat", name: "Sunfeast Orange 120g 75g", contentScore: 91, availability: 97, platform: "Blinkit" },
+  { id: "sku-bourbon", name: "Bourbon 250g", contentScore: 65, availability: 80, platform: "Instamart" },
   { id: "sku-jim", name: "Jim Jam Cream 100g", contentScore: 52, availability: 68, platform: "Instamart" },
   { id: "sku-tiger", name: "Tiger Glucose Biscuits 250g", contentScore: 34, availability: 38, platform: "Zepto" },
 ];
@@ -121,7 +121,7 @@ const WarRoomView: React.FC = () => {
 
   const budgetSplitData = [
     { phase: "Pre-launch", amount: "₹ 10,000", pct: "20%", rationale: "Content fixes for Marie Gold (₹ 5K) + Availability fix for Lipton Ice Tea (₹ 5K)" },
-    { phase: "Live", amount: "₹ 30,000", pct: "60%", rationale: "Parle-G Boost (₹ 15K) + Aquafina Boost (₹ 15K) — highest ROAS products" },
+    { phase: "Live", amount: "₹ 30,000", pct: "60%", rationale: "Parle-G Boost (₹ 15K) + Britannia Marie Boost (₹ 15K) — highest ROAS products" },
     { phase: "Optimise", amount: "₹ 10,000", pct: "20%", rationale: "Bid optimisation (₹ 6K) + Daypart shift (₹ 4K) based on conversion patterns" },
   ];
 
