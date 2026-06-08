@@ -21,17 +21,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-type Platform = "Blinkit" | "Zepto" | "Instamart" | "Zepto" | "Instamart";
+type Platform = "Blinkit" | "Zepto" | "Instamart";
 type RecoCategory = "Budget" | "City" | "Remove Keywords" | "Bid Changes";
 
-const PLATFORMS: Platform[] = ["Blinkit", "Zepto", "Instamart", "Zepto", "Instamart"];
+const PLATFORMS: Platform[] = ["Blinkit", "Zepto", "Instamart"];
 const CATEGORIES: RecoCategory[] = ["Budget", "City", "Remove Keywords", "Bid Changes"];
 
-const CITIES = ["Mumbai", "Delhi NCR", "Bangalore", "Pune", "Al Ain", "Ras Al Khaimah", "Fujairah"];
+const CITIES = ["Mumbai", "Delhi NCR", "Bangalore", "Pune", "Hyderabad", "Chennai", "Kolkata"];
 
 const PLATFORM_TINT: Record<Platform, string> = {
   Blinkit: "bg-sw-amber-dim text-sw-amber",
-  "Zepto": "bg-sw-purple-dim text-sw-purple",
+  Zepto: "bg-sw-purple-dim text-sw-purple",
   Instamart: "bg-sw-cyan-dim text-sw-cyan",
 };
 
