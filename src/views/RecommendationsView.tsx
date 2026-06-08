@@ -636,6 +636,107 @@ const RecommendationsView: React.FC = () => {
         })}
       </div>
 
+      {/* Section C — Recently Approved Recommendations (Audit log: Campaign → Keyword → City) */}
+      <section className="rounded-2xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="px-5 py-4 border-b border-subtle flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ClipboardCheck size={15} className="text-sw-green" />
+            <h2 className="font-display font-semibold text-[14px] text-foreground">Recently Approved Recommendations</h2>
+            <span className="text-[11px] text-muted-foreground">— audit log of applied changes, grouped Campaign → Keyword → City</span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
+            <History size={11} /> {approvedLog.length} entries
+          </span>
+        </div>
+
+        {approvedLog.length === 0 ? (
+          <div className="px-5 py-8 text-center text-[12px] text-muted-foreground">
+            No recommendations applied yet. Apply one above and it will appear here.
+          </div>
+        ) : (
+          <div className="divide-y divide-subtle">
+            {Array.from(groupedLog.entries()).map(([campaign, c]) => {
+              const isOpen = logExpandedCampaigns.has(campaign);
+              const totalChanges = Array.from(c.keywords.values()).reduce((s, arr) => s + arr.length, 0);
+              const lastTs = Math.max(...Array.from(c.keywords.values()).flat().map(e => e.ts));
+              return (
+                <div key={campaign}>
+                  <button
+                    onClick={() => toggleLogCampaign(campaign)}
+                    className="w-full flex items-center gap-3 px-5 py-3 hover:bg-surface-2/40 transition-colors text-left"
+                  >
+                    <ChevronDown size={14} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${PLATFORM_TINT[c.platform]}`}>{c.platform}</span>
+                    <span className="text-[13px] font-medium text-foreground truncate flex-1">{campaign}</span>
+                    <span className="text-[10.5px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
+                      {c.keywords.size} kw · {totalChanges} changes
+                    </span>
+                    <span className="text-[10.5px] text-muted-foreground w-20 text-right">{formatRelative(lastTs)}</span>
+                  </button>
+
+                  {isOpen && (
+                    <div className="bg-surface-2/30 border-t border-subtle">
+                      {Array.from(c.keywords.entries()).map(([kw, entries]) => {
+                        const kwKey = `${campaign}::${kw}`;
+                        const kwOpen = logExpandedKeywords.has(kwKey);
+                        const byCity = new Map<string, LogEntry[]>();
+                        entries.forEach(e => {
+                          if (!byCity.has(e.city)) byCity.set(e.city, []);
+                          byCity.get(e.city)!.push(e);
+                        });
+                        return (
+                          <div key={kwKey} className="border-t border-subtle/60 first:border-t-0">
+                            <button
+                              onClick={() => toggleLogKeyword(kwKey)}
+                              className="w-full flex items-center gap-3 pl-12 pr-5 py-2 hover:bg-surface-2/60 transition-colors text-left"
+                            >
+                              <ChevronDown size={12} className={`text-muted-foreground transition-transform ${kwOpen ? "" : "-rotate-90"}`} />
+                              <KeyRound size={11} className="text-muted-foreground" />
+                              <span className="text-[12px] text-foreground font-mono truncate flex-1">"{kw}"</span>
+                              <span className="text-[10.5px] text-muted-foreground">
+                                {byCity.size} {byCity.size === 1 ? "city" : "cities"} · {entries.length} action{entries.length > 1 ? "s" : ""}
+                              </span>
+                            </button>
+
+                            {kwOpen && (
+                              <div className="pl-[76px] pr-5 pb-2">
+                                {Array.from(byCity.entries()).map(([city, cityEntries]) => (
+                                  <div key={city} className="mt-1.5">
+                                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mb-1">
+                                      <MapPin size={10} />
+                                      <span className="font-medium text-foreground">{city}</span>
+                                      <span>· {cityEntries.length} change{cityEntries.length > 1 ? "s" : ""}</span>
+                                    </div>
+                                    <ul className="space-y-1">
+                                      {cityEntries.map(e => (
+                                        <li key={e.id} className="flex items-start gap-2 text-[11.5px] pl-4 border-l-2 border-subtle py-1">
+                                          <span className={`mt-1 inline-block h-1.5 w-1.5 rounded-full shrink-0 ${CATEGORY_DOT[e.category]}`} />
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-foreground truncate">{e.summary}</p>
+                                            <p className="text-[10.5px] text-muted-foreground mt-0.5">
+                                              <span className="font-mono">{e.category}</span> · by <span className="text-foreground">{e.user}</span> · {formatRelative(e.ts)}
+                                            </p>
+                                          </div>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+
       {/* Apply Confirmation */}
       <Dialog open={!!openApply} onOpenChange={(o) => !o && setOpenApply(null)}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
