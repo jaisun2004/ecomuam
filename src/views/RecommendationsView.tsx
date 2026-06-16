@@ -598,9 +598,9 @@ const RecommendationsView: React.FC = () => {
       {/* Header */}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display font-bold text-2xl text-foreground">Recommendations</h1>
+          <h1 className="font-display font-bold text-2xl text-foreground">All Campaigns</h1>
           <p className="text-[13px] text-muted-foreground mt-1">
-            {livePool.length} AI suggestions for active campaigns
+            {campaigns.length} campaigns · {livePool.length} active AI recommendations
             {newCount > 0 && (
               <span className="inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium">
                 <span className="relative flex h-1.5 w-1.5">
