@@ -362,6 +362,11 @@ const RecommendationsView: React.FC = () => {
   const [tab, setTab] = useState<"all" | "high" | "budget" | "extend">("all");
   const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
 
+  const livePool = useMemo(
+    () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
+    [dismissed, applied]
+  );
+
   const matchesTab = (r: Reco, t: "all" | "high" | "budget" | "extend") => {
     if (t === "all") return true;
     if (t === "high") return r.confidence >= 5 || r.warnings.length > 0;
@@ -377,12 +382,8 @@ const RecommendationsView: React.FC = () => {
     extend: livePool.filter(r => matchesTab(r, "extend")).length,
   }), [livePool]);
 
-  const livePool = useMemo(
-    () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
-    [dismissed, applied]
-  );
-
   const filtered = useMemo(() => livePool.filter(r => {
+    if (!matchesTab(r, tab)) return false;
     if (platform !== "all" && r.platform !== platform) return false;
     if (category !== "all" && r.category !== category) return false;
     if (q) {
@@ -390,7 +391,7 @@ const RecommendationsView: React.FC = () => {
       if (!r.campaign.toLowerCase().includes(s) && !r.sku.toLowerCase().includes(s) && !r.headline.toLowerCase().includes(s)) return false;
     }
     return true;
-  }), [livePool, platform, category, q]);
+  }), [livePool, platform, category, q, tab]);
 
   const byCategory = useMemo(() => {
     const m: Record<RecoCategory, Reco[]> = { "Budget": [], "City": [], "Remove Keywords": [], "Bid Changes": [] };
