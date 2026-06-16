@@ -359,7 +359,23 @@ const RecommendationsView: React.FC = () => {
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
+  const [tab, setTab] = useState<"all" | "high" | "budget" | "extend">("all");
   const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
+
+  const matchesTab = (r: Reco, t: "all" | "high" | "budget" | "extend") => {
+    if (t === "all") return true;
+    if (t === "high") return r.confidence >= 5 || r.warnings.length > 0;
+    if (t === "budget") return r.category === "Budget";
+    if (t === "extend") return /expand|increase|scale|extend/i.test(r.headline);
+    return true;
+  };
+
+  const tabCounts = useMemo(() => ({
+    all: livePool.length,
+    high: livePool.filter(r => matchesTab(r, "high")).length,
+    budget: livePool.filter(r => matchesTab(r, "budget")).length,
+    extend: livePool.filter(r => matchesTab(r, "extend")).length,
+  }), [livePool]);
 
   const livePool = useMemo(
     () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
