@@ -325,14 +325,13 @@ const LAST_UPDATED_TS = m(4);
 // Deterministic current-campaign performance metrics per recommendation id
 interface RecoMetrics { spend: string; sales: string; orders: string; impressions: string; roas: string; }
 const hashStr = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
-const getMetrics = (r: Reco): RecoMetrics => {
-  const seed = hashStr(r.id);
-  const spend = 8000 + (seed % 42000);            // ₹ 8K – 50K
-  const roasN = 2.4 + ((seed >> 3) % 38) / 10;    // 2.4x – 6.2x
+const fmtK = (n: number) => n >= 100_000 ? `${(n / 100_000).toFixed(2)}L` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : `${n}`;
+const metricsFromSeed = (seed: number): RecoMetrics => {
+  const spend = 8000 + (seed % 42000);
+  const roasN = 2.4 + ((seed >> 3) % 38) / 10;
   const sales = Math.round(spend * roasN);
-  const orders = Math.round(sales / (180 + ((seed >> 5) % 120))); // AOV 180-300
+  const orders = Math.round(sales / (180 + ((seed >> 5) % 120)));
   const impressions = 40_000 + ((seed >> 7) % 460_000);
-  const fmtK = (n: number) => n >= 100_000 ? `${(n / 100_000).toFixed(2)}L` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : `${n}`;
   return {
     spend: `₹ ${fmtK(spend)}`,
     sales: `₹ ${fmtK(sales)}`,
@@ -341,6 +340,46 @@ const getMetrics = (r: Reco): RecoMetrics => {
     roas: `${roasN.toFixed(1)}x`,
   };
 };
+const getMetrics = (r: Reco): RecoMetrics => metricsFromSeed(hashStr(r.id));
+const getCampaignMetrics = (campaign: string): RecoMetrics => metricsFromSeed(hashStr(campaign));
+
+/* Issue labels — derived from a campaign's active recommendations */
+type IssueTone = "red" | "amber" | "purple" | "cyan" | "green";
+const TONE_CLS: Record<IssueTone, string> = {
+  red:    "bg-sw-red-dim text-sw-red",
+  amber:  "bg-sw-amber-dim text-sw-amber",
+  purple: "bg-sw-purple-dim text-sw-purple",
+  cyan:   "bg-sw-cyan-dim text-sw-cyan",
+  green:  "bg-sw-green-dim text-sw-green",
+};
+const getIssueLabels = (recos: Reco[]): { label: string; tone: IssueTone }[] => {
+  const out = new Map<string, IssueTone>();
+  recos.forEach(r => {
+    // Warning-driven labels
+    r.warnings.forEach(w => {
+      if (w.kind === "availability") out.set("OOS risk", "red");
+      if (w.kind === "pricing")      out.set("Price gap", "amber");
+      if (w.kind === "sos")          out.set("Low SoS", "purple");
+    });
+    // Category-driven labels
+    if (r.category === "Budget") {
+      if (/increase|scale|raise|expand/i.test(r.headline)) out.set("Underpacing", "amber");
+      else if (/trim|lower|reduce|cut/i.test(r.headline)) out.set("Overspending", "cyan");
+      else out.set("Budget drift", "amber");
+    }
+    if (r.category === "Bid Changes") {
+      if (/raise|lift|increase/i.test(r.headline)) out.set("Low bids", "amber");
+      else out.set("Inflated CPC", "cyan");
+    }
+    if (r.category === "Remove Keywords") out.set("Wasted spend", "red");
+    if (r.category === "City") {
+      if (/switch off|disable|pause/i.test(r.headline)) out.set("Weak geo", "red");
+      else out.set("Untapped geo", "green");
+    }
+  });
+  return Array.from(out.entries()).slice(0, 4).map(([label, tone]) => ({ label, tone }));
+};
+
 
 
 const RecommendationsView: React.FC = () => {
@@ -360,9 +399,13 @@ const RecommendationsView: React.FC = () => {
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
-  const [tab, setTab] = useState<"all" | "high" | "budget" | "extend">("all");
+  const [tab, setTab] = useState<"high" | "all" | "budget" | "extend">("high");
   const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
   const [campaignPage, setCampaignPage] = useState(1);
+  const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(new Set());
+  const toggleExpandCampaign = (k: string) => setExpandedCampaigns(p => {
+    const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n;
+  });
 
   const livePool = useMemo(
     () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
@@ -630,8 +673,8 @@ const RecommendationsView: React.FC = () => {
       <div className="border-b border-subtle">
         <div className="flex items-center gap-1 -mb-px overflow-x-auto">
           {([
-            { id: "all", label: "All Campaigns", count: tabCounts.all },
             { id: "high", label: "High Importance Recommendations", count: tabCounts.high },
+            { id: "all", label: "All Campaigns", count: tabCounts.all },
             { id: "budget", label: "Budget Alerts", count: tabCounts.budget },
             { id: "extend", label: "Extend Date", count: tabCounts.extend },
           ] as const).map(t => {
@@ -766,56 +809,174 @@ const RecommendationsView: React.FC = () => {
               const has = c.recos.length > 0;
               const ids = c.recos.map(r => r.id);
               const isSel = has && ids.every(id => selected.has(id));
+              const isOpen = has && expandedCampaigns.has(c.campaign);
+              const issues = getIssueLabels(c.recos);
+              const cMtr = getCampaignMetrics(c.campaign);
+              // Group recos by category for bucketing display
+              const recosByCat = new Map<RecoCategory, Reco[]>();
+              c.recos.forEach(r => {
+                if (!recosByCat.has(r.category)) recosByCat.set(r.category, []);
+                recosByCat.get(r.category)!.push(r);
+              });
               return (
-                <div
-                  key={c.campaign}
-                  className={`grid grid-cols-[28px_1fr_120px_90px_60px] items-center gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
-                    has ? "hover:bg-surface-2/40 cursor-pointer" : "opacity-70"
-                  } ${isSel ? "bg-primary/5" : ""}`}
-                  onClick={() => { if (has) setOpenCampaign(c.campaign); }}
-                >
-                  <span onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={isSel}
-                      disabled={!has}
-                      onCheckedChange={() => toggleCampaign(c)}
-                      aria-label="Select campaign"
-                    />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
-                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                      {c.sku}{c.city ? ` · ${c.city}` : ""}
-                    </p>
+                <React.Fragment key={c.campaign}>
+                  <div
+                    className={`grid grid-cols-[28px_1fr_120px_90px_60px] items-start gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
+                      has ? "hover:bg-surface-2/40 cursor-pointer" : "opacity-70"
+                    } ${isSel ? "bg-primary/5" : ""} ${isOpen ? "bg-surface-2/50" : ""}`}
+                    onClick={() => { if (has) toggleExpandCampaign(c.campaign); }}
+                  >
+                    <span onClick={(e) => e.stopPropagation()} className="pt-0.5">
+                      <Checkbox
+                        checked={isSel}
+                        disabled={!has}
+                        onCheckedChange={() => toggleCampaign(c)}
+                        aria-label="Select campaign"
+                      />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
+                        {issues.map(iss => (
+                          <span key={iss.label} className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${TONE_CLS[iss.tone]}`}>
+                            {iss.label}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                        {c.sku}{c.city ? ` · ${c.city}` : ""}
+                      </p>
+                    </div>
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono w-fit ${PLATFORM_TINT[c.platform]}`}>
+                      {c.platform}
+                    </span>
+                    <span className="text-center">
+                      {has ? (
+                        <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold font-mono">
+                          {c.recos.length}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-muted-foreground/60 font-mono">—</span>
+                      )}
+                    </span>
+                    <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        disabled={!has}
+                        onClick={() => has && toggleExpandCampaign(c.campaign)}
+                        title={has ? `${isOpen ? "Collapse" : "Expand"} ${c.recos.length} recommendation${c.recos.length > 1 ? "s" : ""}` : "No recommendations"}
+                        className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors ${
+                          has
+                            ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
+                            : "bg-surface-2 text-muted-foreground/30 cursor-not-allowed"
+                        }`}
+                      >
+                        <Sparkles size={14} />
+                      </button>
+                      {has && (
+                        <ChevronDown size={14} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                      )}
+                    </div>
                   </div>
-                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono w-fit ${PLATFORM_TINT[c.platform]}`}>
-                    {c.platform}
-                  </span>
-                  <span className="text-center">
-                    {has ? (
-                      <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold font-mono">
-                        {c.recos.length}
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-muted-foreground/60 font-mono">—</span>
-                    )}
-                  </span>
-                  <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      disabled={!has}
-                      onClick={() => has && setOpenCampaign(c.campaign)}
-                      title={has ? `View ${c.recos.length} recommendation${c.recos.length > 1 ? "s" : ""}` : "No recommendations"}
-                      className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors ${
-                        has
-                          ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
-                          : "bg-surface-2 text-muted-foreground/30 cursor-not-allowed"
-                      }`}
-                    >
-                      <Sparkles size={14} />
-                    </button>
-                  </div>
-                </div>
+
+                  {isOpen && (
+                    <div className="border-t border-subtle bg-surface-2/30 px-5 py-4 space-y-3">
+                      {/* Campaign KPIs */}
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-1.5">
+                          Campaign performance · last 14d
+                        </p>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                          {[
+                            { k: "ROAS",        v: cMtr.roas },
+                            { k: "Impressions", v: cMtr.impressions },
+                            { k: "Spend",       v: cMtr.spend },
+                            { k: "Sales",       v: cMtr.sales },
+                            { k: "Orders",      v: cMtr.orders },
+                          ].map(cell => (
+                            <div key={cell.k} className="px-2 py-1.5 rounded-md border border-subtle bg-surface-1">
+                              <p className="text-[9.5px] uppercase tracking-wider text-muted-foreground font-mono">{cell.k}</p>
+                              <p className="text-[12px] font-mono text-foreground mt-0.5">{cell.v}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Recommendations grouped by category bucket */}
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-1.5">
+                          Recommendations · {c.recos.length} active, grouped by type
+                        </p>
+                        <div className="space-y-2.5">
+                          {Array.from(recosByCat.entries()).map(([cat, recos]) => {
+                            const meta = CATEGORY_META[cat];
+                            const Icon = meta.icon;
+                            return (
+                              <div key={cat} className="rounded-lg border border-subtle bg-surface-1 overflow-hidden">
+                                <div className={`flex items-center gap-2 px-3 py-1.5 border-b border-subtle ${meta.tint}`}>
+                                  <Icon size={12} />
+                                  <span className="text-[11.5px] font-medium">{cat}</span>
+                                  <span className="text-[10px] font-mono opacity-80">· {recos.length}</span>
+                                </div>
+                                <ul className="divide-y divide-subtle">
+                                  {recos.map(r => (
+                                    <li key={r.id} className="flex items-start gap-3 px-3 py-2">
+                                      <span onClick={(e) => e.stopPropagation()} className="pt-0.5">
+                                        <Checkbox
+                                          checked={selected.has(r.id)}
+                                          onCheckedChange={() => toggleSel(r.id)}
+                                          aria-label="Select recommendation"
+                                        />
+                                      </span>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                                          <ConfidenceDots n={r.confidence} />
+                                          {r.warnings.map((w, wi) => {
+                                            const WIcon = WARN_META[w.kind].icon;
+                                            return (
+                                              <span key={wi} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] ${WARN_META[w.kind].cls}`}>
+                                                <WIcon size={9} /> {w.label}
+                                              </span>
+                                            );
+                                          })}
+                                        </div>
+                                        <p className="text-[12.5px] font-medium text-foreground leading-tight">{r.headline}</p>
+                                        <p className="text-[11px] text-sw-green mt-0.5">{r.estImpact}</p>
+                                      </div>
+                                      <div className="flex items-center gap-1 shrink-0">
+                                        <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] gap-1 text-muted-foreground"
+                                          onClick={(e) => { e.stopPropagation(); setOpenGlass(r.id); }}>
+                                          <Info size={12} /> Why
+                                        </Button>
+                                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground"
+                                          onClick={(e) => { e.stopPropagation(); setDismissed(p => new Set(p).add(r.id)); toast("Dismissed"); }}
+                                          title="Dismiss">
+                                          <X size={13} />
+                                        </Button>
+                                        <Button size="sm" className="h-7 px-3 text-[11px]"
+                                          onClick={(e) => { e.stopPropagation(); setOpenApply([r.id]); }}>
+                                          Apply
+                                        </Button>
+                                      </div>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {c.recos.length > 1 && (
+                          <div className="flex justify-end mt-2">
+                            <Button size="sm" className="h-7 text-[11px] gap-1.5"
+                              onClick={(e) => { e.stopPropagation(); setOpenApply(c.recos.map(r => r.id)); }}>
+                              <CheckCircle2 size={12} /> Apply all {c.recos.length}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </React.Fragment>
               );
             })}
 
