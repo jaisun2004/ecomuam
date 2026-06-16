@@ -24,7 +24,7 @@ const navSections = [
   {
     label: "OPTIMISATION",
     items: [
-      { id: "recommendations", icon: Sparkles, label: "All Campaigns", notify: true },
+      { id: "recommendations", icon: Sparkles, label: "Recommendations", notify: true },
       { id: "budget", icon: Zap, label: "Budget Optimiser", notify: false },
     ],
   },
