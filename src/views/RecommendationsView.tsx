@@ -401,7 +401,23 @@ const RecommendationsView: React.FC = () => {
     return m;
   }, [filtered]);
 
-  // All-campaigns view: every unique campaign in MOCK, with attached live recommendations
+  // Additional campaigns that have NO active recommendations (icon disabled)
+  const EXTRA_CAMPAIGNS: Array<{ campaign: string; platform: Platform; sku: string; city?: string }> = [
+    { campaign: "Parle-G — Brand Defense Blinkit #401",    platform: "Blinkit",   sku: "Parle-G Gold 200g" },
+    { campaign: "Hide & Seek — Always-On Zepto #402",      platform: "Zepto",     sku: "Hide & Seek Chocolate 200g" },
+    { campaign: "Good Day — Steady-State Instamart #403",  platform: "Instamart", sku: "Good Day Cashew 200g" },
+    { campaign: "Bourbon — Brand Pulse Blinkit #404",      platform: "Blinkit",   sku: "Bourbon Cream 150g" },
+    { campaign: "Marie Gold — Loyalty Zepto #405",         platform: "Zepto",     sku: "Marie Gold 250g" },
+    { campaign: "NutriChoice — Health Shelf Instamart #406", platform: "Instamart", sku: "NutriChoice Digestive 250g" },
+    { campaign: "Milk Bikis — Kids Pulse Blinkit #407",    platform: "Blinkit",   sku: "Milk Bikis 150g" },
+    { campaign: "Oreo — Brand Lock Zepto #408",            platform: "Zepto",     sku: "Oreo Vanilla 120g" },
+    { campaign: "Monaco — Snack Lane Instamart #409",      platform: "Instamart", sku: "Monaco Classic 150g" },
+    { campaign: "Treat Jim Jam — Kids Combo Blinkit #410", platform: "Blinkit",   sku: "Treat Jim Jam 150g" },
+    { campaign: "Krackjack — Tea-Time Zepto #411",         platform: "Zepto",     sku: "Krackjack 200g" },
+    { campaign: "Dark Fantasy — Premium Instamart #412",   platform: "Instamart", sku: "Dark Fantasy Choco Fills 75g" },
+  ];
+
+  // All-campaigns view: every unique campaign + extra no-reco campaigns, with tab-filtered recos
   const allCampaigns = useMemo(() => {
     const map = new Map<string, { campaign: string; platform: Platform; sku: string; city?: string; recos: Reco[] }>();
     MOCK.forEach(r => {
@@ -409,14 +425,23 @@ const RecommendationsView: React.FC = () => {
         map.set(r.campaign, { campaign: r.campaign, platform: r.platform, sku: r.sku, city: r.city, recos: [] });
       }
     });
+    EXTRA_CAMPAIGNS.forEach(c => {
+      if (!map.has(c.campaign)) map.set(c.campaign, { ...c, recos: [] });
+    });
     const liveByCampaign = new Map<string, Reco[]>();
     livePool.forEach(r => {
       if (!liveByCampaign.has(r.campaign)) liveByCampaign.set(r.campaign, []);
       liveByCampaign.get(r.campaign)!.push(r);
     });
-    map.forEach((v, k) => { v.recos = liveByCampaign.get(k) || []; });
+    map.forEach((v, k) => {
+      const live = liveByCampaign.get(k) || [];
+      v.recos = live.filter(r => matchesTab(r, tab));
+    });
     let arr = Array.from(map.values());
     if (platform !== "all") arr = arr.filter(c => c.platform === platform);
+    if (category !== "all") {
+      arr = arr.map(c => ({ ...c, recos: c.recos.filter(r => r.category === category) }));
+    }
     if (q) {
       const s = q.toLowerCase();
       arr = arr.filter(c => c.campaign.toLowerCase().includes(s) || c.sku.toLowerCase().includes(s));
@@ -424,7 +449,7 @@ const RecommendationsView: React.FC = () => {
     // Campaigns with recommendations first
     arr.sort((a, b) => (b.recos.length > 0 ? 1 : 0) - (a.recos.length > 0 ? 1 : 0) || a.campaign.localeCompare(b.campaign));
     return arr;
-  }, [livePool, platform, q]);
+  }, [livePool, platform, category, q, tab]);
 
   const openCampaignData = openCampaign ? allCampaigns.find(c => c.campaign === openCampaign) : null;
 
