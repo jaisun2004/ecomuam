@@ -872,6 +872,83 @@ const RecommendationsView: React.FC = () => {
       </section>
 
 
+      {/* Per-campaign recommendations */}
+      <Dialog open={!!openCampaign} onOpenChange={(o) => !o && setOpenCampaign(null)}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              Recommendations for this campaign
+            </DialogTitle>
+            <DialogDescription>
+              {openedCampaign && (
+                <>
+                  <span className={`inline-block px-1.5 py-0 rounded text-[10px] font-mono mr-1.5 align-middle ${PLATFORM_TINT[openedCampaign.platform]}`}>{openedCampaign.platform}</span>
+                  <span className="text-foreground font-medium">{openedCampaign.campaign}</span>
+                  <span className="text-muted-foreground"> · {openedCampaign.sku}</span>
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          {openedCampaign && (
+            <>
+              {/* Current campaign performance */}
+              <div className="grid grid-cols-5 gap-2 mt-2">
+                {([
+                  { k: "ROAS",        v: openedCampaign.metrics.roas },
+                  { k: "Impressions", v: openedCampaign.metrics.impressions },
+                  { k: "Spend",       v: openedCampaign.metrics.spend },
+                  { k: "Sales",       v: openedCampaign.metrics.sales },
+                  { k: "Orders",      v: openedCampaign.metrics.orders },
+                ] as const).map(c => (
+                  <div key={c.k} className="px-2 py-1.5 rounded-md border border-subtle bg-surface-2/40">
+                    <p className="text-[9.5px] uppercase tracking-wider text-muted-foreground font-mono">{c.k}</p>
+                    <p className="text-[12px] font-mono text-foreground mt-0.5">{c.v}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 border border-subtle rounded-lg overflow-hidden">
+                {openedCampaign.recos.map(r => (
+                  <div
+                    key={r.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => { setOpenCampaign(null); setOpenApply([r.id]); }}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpenCampaign(null); setOpenApply([r.id]); } }}
+                    className="group flex items-center gap-3 px-4 py-2.5 border-b border-subtle last:border-b-0 hover:bg-surface-2/40 transition-colors cursor-pointer"
+                  >
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono shrink-0 ${CATEGORY_META[r.category].tint}`}>{r.category}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-medium text-foreground truncate leading-tight">{r.headline}</p>
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">{r.rationale}</p>
+                    </div>
+                    <ConfidenceDots n={r.confidence} />
+                    <span className="text-[11px] text-sw-green truncate max-w-[180px]" title={r.estImpact}>{r.estImpact}</span>
+                    <Button size="sm" className="h-7 px-3 text-[11px] shrink-0" onClick={(e) => { e.stopPropagation(); setOpenCampaign(null); setOpenApply([r.id]); }}>
+                      Apply
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <DialogFooter className="mt-2">
+            <Button variant="ghost" onClick={() => setOpenCampaign(null)}>Close</Button>
+            {openedCampaign && openedCampaign.recos.length > 0 && (
+              <Button
+                onClick={() => { const ids = openedCampaign.recos.map(r => r.id); setOpenCampaign(null); setOpenApply(ids); }}
+                className="gap-1.5"
+              >
+                <CheckCircle2 size={13} /> Review & Apply all {openedCampaign.recos.length}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Apply Confirmation */}
       <Dialog open={!!openApply} onOpenChange={(o) => !o && setOpenApply(null)}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
