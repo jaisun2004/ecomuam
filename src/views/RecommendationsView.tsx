@@ -1091,6 +1091,74 @@ const RecommendationsView: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Per-campaign recommendations list */}
+      <Dialog open={!!openCampaign} onOpenChange={(o) => !o && setOpenCampaign(null)}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              Recommendations for this campaign
+            </DialogTitle>
+            <DialogDescription>
+              {openCampaignData && (
+                <span className="flex items-center gap-2 flex-wrap mt-1">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${PLATFORM_TINT[openCampaignData.platform]}`}>{openCampaignData.platform}</span>
+                  <span className="text-[12px] text-foreground font-medium">{openCampaignData.campaign}</span>
+                  <span className="text-[11px] text-muted-foreground">· {openCampaignData.sku}{openCampaignData.city ? ` · ${openCampaignData.city}` : ""}</span>
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          {openCampaignData && openCampaignData.recos.length > 0 ? (
+            <div className="space-y-2 mt-2">
+              {openCampaignData.recos.map(r => {
+                const meta = CATEGORY_META[r.category];
+                const Icon = meta.icon;
+                return (
+                  <button
+                    key={r.id}
+                    onClick={() => { setOpenCampaign(null); setOpenApply([r.id]); }}
+                    className="w-full flex items-start gap-3 p-3 rounded-lg border border-subtle bg-surface-1 hover:bg-surface-2/40 transition-colors text-left"
+                  >
+                    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg shrink-0 ${meta.tint}`}>
+                      <Icon size={13} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-2 text-muted-foreground">{r.category}</span>
+                        <ConfidenceDots n={r.confidence} />
+                        {r.warnings.map((w, wi) => {
+                          const WIcon = WARN_META[w.kind].icon;
+                          return (
+                            <span key={wi} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] ${WARN_META[w.kind].cls}`}>
+                              <WIcon size={9} /> {w.label}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <p className="text-[13px] font-medium text-foreground leading-tight">{r.headline}</p>
+                      <p className="text-[11px] text-sw-green mt-1">{r.estImpact}</p>
+                    </div>
+                    <ChevronRight size={14} className="text-muted-foreground mt-1 shrink-0" />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="px-3 py-8 text-center text-[12px] text-muted-foreground">
+              <CheckCircle2 size={18} className="mx-auto mb-2 text-sw-green" />
+              No active recommendations for this campaign.
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOpenCampaign(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
