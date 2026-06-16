@@ -416,6 +416,65 @@ const RecommendationsView: React.FC = () => {
 
   const newCount = livePool.filter(r => r.isNew).length;
 
+  interface CampaignAgg {
+    campaign: string;
+    platform: Platform;
+    sku: string;
+    recos: Reco[];
+    metrics: RecoMetrics;
+    hasWarnings: boolean;
+  }
+
+  const campaigns = useMemo<CampaignAgg[]>(() => {
+    const map = new Map<string, CampaignAgg>();
+    // Campaigns derived from live recommendations
+    livePool.forEach(r => {
+      if (!map.has(r.campaign)) {
+        map.set(r.campaign, {
+          campaign: r.campaign,
+          platform: r.platform,
+          sku: r.sku,
+          recos: [],
+          metrics: getMetrics(r),
+          hasWarnings: false,
+        });
+      }
+      const agg = map.get(r.campaign)!;
+      agg.recos.push(r);
+      if (r.warnings.length) agg.hasWarnings = true;
+    });
+    // Campaigns with no recommendations
+    EMPTY_CAMPAIGNS.forEach(ec => {
+      if (!map.has(ec.campaign)) {
+        map.set(ec.campaign, {
+          campaign: ec.campaign,
+          platform: ec.platform,
+          sku: ec.sku,
+          recos: [],
+          metrics: getMetrics({ id: ec.campaign } as Reco),
+          hasWarnings: false,
+        });
+      }
+    });
+    let arr = Array.from(map.values());
+    // Apply platform / search filters (category & tab filters only matter when recos exist)
+    arr = arr.filter(c => {
+      if (platform !== "all" && c.platform !== platform) return false;
+      if (q) {
+        const s = q.toLowerCase();
+        if (!c.campaign.toLowerCase().includes(s) && !c.sku.toLowerCase().includes(s)) return false;
+      }
+      if (category !== "all") return c.recos.some(r => r.category === category);
+      if (tab !== "all") return c.recos.some(r => matchesTab(r, tab));
+      return true;
+    });
+    // Sort: campaigns with recos first (most recos), then alphabetical
+    arr.sort((a, b) => b.recos.length - a.recos.length || a.campaign.localeCompare(b.campaign));
+    return arr;
+  }, [livePool, platform, q, category, tab]);
+
+  const openedCampaign = openCampaign ? campaigns.find(c => c.campaign === openCampaign) : null;
+
   const toggleSel = (id: string) => setSelected(p => {
     const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n;
   });
