@@ -683,12 +683,28 @@ const RecommendationsView: React.FC = () => {
         </span>
       </div>
 
-      {/* Section B — All Campaigns view (tab === "all") */}
-      {tab === "all" ? (() => {
+      {/* Section B — Unified All-Campaigns view (works for every tab) */}
+      {(() => {
         const totalPages = Math.max(1, Math.ceil(allCampaigns.length / PAGE_SIZE));
         const p = Math.min(campaignPage, totalPages);
         const pageItems = allCampaigns.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
-        const withRecos = allCampaigns.filter(c => c.recos.length > 0).length;
+        const withRecos = allCampaigns.filter(c => c.recos.length > 0);
+        const pageWithRecos = pageItems.filter(c => c.recos.length > 0);
+        const allRecoIdsOnPage = pageWithRecos.flatMap(c => c.recos.map(r => r.id));
+        const pageAllSelected = allRecoIdsOnPage.length > 0 && allRecoIdsOnPage.every(id => selected.has(id));
+        const tabLabel = ({ all: "All", high: "High-importance", budget: "Budget", extend: "Extend / scale" } as const)[tab];
+
+        const toggleCampaign = (c: typeof pageItems[number]) => {
+          if (c.recos.length === 0) return;
+          const ids = c.recos.map(r => r.id);
+          const allSel = ids.every(id => selected.has(id));
+          setSelected(prev => {
+            const n = new Set(prev);
+            ids.forEach(id => allSel ? n.delete(id) : n.add(id));
+            return n;
+          });
+        };
+
         return (
           <section className="bg-surface-1 border border-subtle rounded-2xl overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-3 border-b border-subtle">
@@ -698,30 +714,74 @@ const RecommendationsView: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <p className="font-display font-semibold text-[14px] text-foreground">All Campaigns</p>
                 <p className="text-[11px] text-muted-foreground">
-                  {allCampaigns.length} campaigns · {withRecos} have active recommendations — click the
+                  {allCampaigns.length} campaigns · {withRecos.length} with {tabLabel.toLowerCase()} recommendations — tick rows to bulk-apply, or click the
                   <Sparkles size={10} className="inline mx-1 -mt-0.5 text-primary" />icon to review
                 </p>
               </div>
+              {withRecos.length > 0 && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 text-[11px] gap-1.5 text-primary hover:text-primary"
+                  onClick={() => {
+                    const ids = withRecos.flatMap(c => c.recos.map(r => r.id));
+                    setSelected(new Set(ids));
+                  }}
+                >
+                  <CheckCircle2 size={12} /> Select all {withRecos.reduce((s, c) => s + c.recos.length, 0)}
+                </Button>
+              )}
               <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
                 {allCampaigns.length} total
               </span>
             </div>
-            <div className="grid grid-cols-[1fr_120px_90px_60px] items-center gap-4 px-5 py-2 bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
+
+            <div className="grid grid-cols-[28px_1fr_120px_90px_60px] items-center gap-4 px-5 py-2 bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <Checkbox
+                checked={pageAllSelected}
+                onCheckedChange={() => {
+                  setSelected(prev => {
+                    const n = new Set(prev);
+                    allRecoIdsOnPage.forEach(id => pageAllSelected ? n.delete(id) : n.add(id));
+                    return n;
+                  });
+                }}
+                disabled={allRecoIdsOnPage.length === 0}
+                aria-label="Select all on page"
+              />
               <span>Campaign</span>
               <span>Platform</span>
               <span className="text-center">Recos</span>
               <span className="text-right">Action</span>
             </div>
+
+            {pageItems.length === 0 && (
+              <div className="px-5 py-10 text-center text-[12px] text-muted-foreground border-t border-subtle">
+                <CheckCircle2 size={18} className="mx-auto mb-1.5 text-sw-green" />
+                No campaigns match the current filters.
+              </div>
+            )}
+
             {pageItems.map(c => {
               const has = c.recos.length > 0;
+              const ids = c.recos.map(r => r.id);
+              const isSel = has && ids.every(id => selected.has(id));
               return (
                 <div
                   key={c.campaign}
-                  className={`grid grid-cols-[1fr_120px_90px_60px] items-center gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
-                    has ? "hover:bg-surface-2/40 cursor-pointer" : ""
-                  }`}
+                  className={`grid grid-cols-[28px_1fr_120px_90px_60px] items-center gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
+                    has ? "hover:bg-surface-2/40 cursor-pointer" : "opacity-70"
+                  } ${isSel ? "bg-primary/5" : ""}`}
                   onClick={() => { if (has) setOpenCampaign(c.campaign); }}
                 >
+                  <span onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={isSel}
+                      disabled={!has}
+                      onCheckedChange={() => toggleCampaign(c)}
+                      aria-label="Select campaign"
+                    />
+                  </span>
                   <div className="min-w-0">
                     <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
                     <p className="text-[11px] text-muted-foreground truncate mt-0.5">
@@ -749,7 +809,7 @@ const RecommendationsView: React.FC = () => {
                       className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors ${
                         has
                           ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
-                          : "bg-surface-2 text-muted-foreground/40 cursor-not-allowed"
+                          : "bg-surface-2 text-muted-foreground/30 cursor-not-allowed"
                       }`}
                     >
                       <Sparkles size={14} />
@@ -758,6 +818,7 @@ const RecommendationsView: React.FC = () => {
                 </div>
               );
             })}
+
             {allCampaigns.length > PAGE_SIZE && (
               <div className="flex items-center justify-between px-5 py-2 border-t border-subtle text-[11px] text-muted-foreground">
                 <span>Page {p} of {totalPages} · showing {pageItems.length} of {allCampaigns.length}</span>
@@ -775,94 +836,8 @@ const RecommendationsView: React.FC = () => {
             )}
           </section>
         );
-      })() : (
-      /* Grouped by recommendation category (other tabs) */
-      <div className="space-y-3">
-        {CATEGORIES.map(cat => {
-          const items = byCategory[cat];
-          if (items.length === 0 && category !== "all" && category !== cat) return null;
-          const meta = CATEGORY_META[cat];
-          const Icon = meta.icon;
-          const isOpen = expanded.has(cat);
-          const p = page[cat] ?? 1;
-          const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-          const pageItems = items.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
-          const allSelected = pageItems.length > 0 && pageItems.every(r => selected.has(r.id));
+      })()}
 
-          return (
-            <section key={cat} className={`bg-surface-1 border ${meta.accent} rounded-2xl overflow-hidden`}>
-              <button
-                onClick={() => toggleCat(cat)}
-                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-surface-2/40 transition-colors text-left"
-              >
-                <ChevronDown size={15} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
-                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg ${meta.tint}`}>
-                  <Icon size={14} />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-display font-semibold text-[14px] text-foreground">{cat}</span>
-                    <span className="text-[11px] text-muted-foreground">— {meta.desc}</span>
-                  </div>
-                </div>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
-                  {items.length} {items.length === 1 ? "action" : "actions"}
-                </span>
-                {items.some(r => selected.has(r.id)) && (
-                  <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-primary/10 text-primary">
-                    {items.filter(r => selected.has(r.id)).length} selected
-                  </span>
-                )}
-              </button>
-
-              {isOpen && (
-                items.length === 0 ? (
-                  <div className="px-5 py-6 text-center text-[12px] text-muted-foreground border-t border-subtle">
-                    <CheckCircle2 size={16} className="mx-auto mb-1.5 text-sw-green" />
-                    No {cat.toLowerCase()} recommendations right now.
-                  </div>
-                ) : (
-                  <>
-                    <div className="grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2 border-t border-subtle bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
-                      <Checkbox
-                        checked={allSelected}
-                        onCheckedChange={() => setSelected(pp => {
-                          const n = new Set(pp);
-                          pageItems.forEach(r => allSelected ? n.delete(r.id) : n.add(r.id));
-                          return n;
-                        })}
-                        aria-label="Select page"
-                      />
-                      <span>Recommendation</span>
-                      <span>Est. Impact</span>
-                      <span>Conf.</span>
-                      <span>Risks</span>
-                      <span />
-                    </div>
-                    {pageItems.map(r => <RecoRow key={r.id} r={r} />)}
-                    {items.length > PAGE_SIZE && (
-                      <div className="flex items-center justify-between px-5 py-2 border-t border-subtle text-[11px] text-muted-foreground">
-                        <span>Page {p} of {totalPages} · showing {pageItems.length} of {items.length}</span>
-                        <div className="flex items-center gap-1">
-                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p === 1}
-                            onClick={() => setPage(pp => ({ ...pp, [cat]: Math.max(1, p - 1) }))}>
-                            <ChevronLeft size={13} />
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p >= totalPages}
-                            onClick={() => setPage(pp => ({ ...pp, [cat]: Math.min(totalPages, p + 1) }))}>
-                            <ChevronRight size={13} />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )
-              )}
-            </section>
-          );
-        })}
-      </div>
-      )}
 
       {/* Section C — Recently Approved Recommendations (Audit log: Campaign → Keyword → City) */}
       <section className="rounded-2xl border border-subtle bg-surface-1 overflow-hidden">
