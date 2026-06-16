@@ -699,96 +699,77 @@ const RecommendationsView: React.FC = () => {
           </SelectContent>
         </Select>
         <span className="text-[11px] text-muted-foreground ml-auto">
-          {filtered.length} of {livePool.length}
+          {campaigns.length} campaigns
         </span>
       </div>
 
-      {/* Section B — Grouped by recommendation category (hierarchy) */}
-      <div className="space-y-3">
-        {CATEGORIES.map(cat => {
-          const items = byCategory[cat];
-          if (items.length === 0 && category !== "all" && category !== cat) return null;
-          const meta = CATEGORY_META[cat];
-          const Icon = meta.icon;
-          const isOpen = expanded.has(cat);
-          const p = page[cat] ?? 1;
-          const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-          const pageItems = items.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
-          const allSelected = pageItems.length > 0 && pageItems.every(r => selected.has(r.id));
-
+      {/* Section B — All Campaigns list */}
+      <section className="rounded-2xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="grid grid-cols-[1fr_90px_70px_80px_90px_120px_44px] items-center gap-4 px-5 py-2 bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground border-b border-subtle">
+          <span>Campaign</span>
+          <span className="text-right">Spend</span>
+          <span className="text-right">ROAS</span>
+          <span className="text-right">Orders</span>
+          <span className="text-right">Impressions</span>
+          <span className="text-center">Recommendations</span>
+          <span />
+        </div>
+        {campaigns.length === 0 ? (
+          <div className="px-5 py-10 text-center text-[12px] text-muted-foreground">
+            No campaigns match the current filters.
+          </div>
+        ) : campaigns.map(c => {
+          const recoCount = c.recos.length;
+          const enabled = recoCount > 0;
+          const open = () => enabled && setOpenCampaign(c.campaign);
           return (
-            <section key={cat} className={`bg-surface-1 border ${meta.accent} rounded-2xl overflow-hidden`}>
-              <button
-                onClick={() => toggleCat(cat)}
-                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-surface-2/40 transition-colors text-left"
-              >
-                <ChevronDown size={15} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
-                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg ${meta.tint}`}>
-                  <Icon size={14} />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-display font-semibold text-[14px] text-foreground">{cat}</span>
-                    <span className="text-[11px] text-muted-foreground">— {meta.desc}</span>
-                  </div>
-                </div>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
-                  {items.length} {items.length === 1 ? "action" : "actions"}
-                </span>
-                {items.some(r => selected.has(r.id)) && (
-                  <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-primary/10 text-primary">
-                    {items.filter(r => selected.has(r.id)).length} selected
+            <div
+              key={c.campaign}
+              role={enabled ? "button" : undefined}
+              tabIndex={enabled ? 0 : -1}
+              onClick={open}
+              onKeyDown={(e) => { if (enabled && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); open(); } }}
+              className={`grid grid-cols-[1fr_90px_70px_80px_90px_120px_44px] items-center gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${enabled ? "hover:bg-surface-2/40 cursor-pointer" : "opacity-90"}`}
+            >
+              <div className="min-w-0">
+                <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
+                <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                  <span className={`inline-block px-1.5 py-0 rounded text-[10px] font-mono mr-1.5 align-middle ${PLATFORM_TINT[c.platform]}`}>{c.platform}</span>
+                  {c.sku}
+                </p>
+              </div>
+              <span className="text-right text-[12px] font-mono text-foreground">{c.metrics.spend}</span>
+              <span className="text-right text-[12px] font-mono text-foreground">{c.metrics.roas}</span>
+              <span className="text-right text-[12px] font-mono text-foreground">{c.metrics.orders}</span>
+              <span className="text-right text-[12px] font-mono text-foreground">{c.metrics.impressions}</span>
+              <div className="flex items-center justify-center">
+                {enabled ? (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium">
+                    <Sparkles size={11} />
+                    {recoCount} {recoCount === 1 ? "reco" : "recos"}
+                    {c.hasWarnings && <AlertTriangle size={10} className="text-sw-amber" />}
                   </span>
-                )}
-              </button>
-
-              {isOpen && (
-                items.length === 0 ? (
-                  <div className="px-5 py-6 text-center text-[12px] text-muted-foreground border-t border-subtle">
-                    <CheckCircle2 size={16} className="mx-auto mb-1.5 text-sw-green" />
-                    No {cat.toLowerCase()} recommendations right now.
-                  </div>
                 ) : (
-                  <>
-                    <div className="grid grid-cols-[20px_1fr_120px_64px_60px_180px] items-center gap-4 px-5 py-2 border-t border-subtle bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
-                      <Checkbox
-                        checked={allSelected}
-                        onCheckedChange={() => setSelected(pp => {
-                          const n = new Set(pp);
-                          pageItems.forEach(r => allSelected ? n.delete(r.id) : n.add(r.id));
-                          return n;
-                        })}
-                        aria-label="Select page"
-                      />
-                      <span>Recommendation</span>
-                      <span>Est. Impact</span>
-                      <span>Conf.</span>
-                      <span>Risks</span>
-                      <span />
-                    </div>
-                    {pageItems.map(r => <RecoRow key={r.id} r={r} />)}
-                    {items.length > PAGE_SIZE && (
-                      <div className="flex items-center justify-between px-5 py-2 border-t border-subtle text-[11px] text-muted-foreground">
-                        <span>Page {p} of {totalPages} · showing {pageItems.length} of {items.length}</span>
-                        <div className="flex items-center gap-1">
-                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p === 1}
-                            onClick={() => setPage(pp => ({ ...pp, [cat]: Math.max(1, p - 1) }))}>
-                            <ChevronLeft size={13} />
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p >= totalPages}
-                            onClick={() => setPage(pp => ({ ...pp, [cat]: Math.min(totalPages, p + 1) }))}>
-                            <ChevronRight size={13} />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )
-              )}
-            </section>
+                  <span className="text-[11px] text-muted-foreground/60">—</span>
+                )}
+              </div>
+              <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={`h-8 w-8 p-0 ${enabled ? "text-primary hover:bg-primary/10" : "text-muted-foreground/40 cursor-not-allowed"}`}
+                  disabled={!enabled}
+                  onClick={open}
+                  title={enabled ? `View ${recoCount} recommendation${recoCount > 1 ? "s" : ""}` : "No recommendations"}
+                  aria-label={enabled ? `View recommendations for ${c.campaign}` : "No recommendations"}
+                >
+                  <Sparkles size={15} />
+                </Button>
+              </div>
+            </div>
           );
         })}
-      </div>
+      </section>
 
       {/* Section C — Recently Approved Recommendations (Audit log: Campaign → Keyword → City) */}
       <section className="rounded-2xl border border-subtle bg-surface-1 overflow-hidden">
