@@ -673,8 +673,8 @@ const RecommendationsView: React.FC = () => {
       <div className="border-b border-subtle">
         <div className="flex items-center gap-1 -mb-px overflow-x-auto">
           {([
-            { id: "all", label: "All Campaigns", count: tabCounts.all },
             { id: "high", label: "High Importance Recommendations", count: tabCounts.high },
+            { id: "all", label: "All Campaigns", count: tabCounts.all },
             { id: "budget", label: "Budget Alerts", count: tabCounts.budget },
             { id: "extend", label: "Extend Date", count: tabCounts.extend },
           ] as const).map(t => {
