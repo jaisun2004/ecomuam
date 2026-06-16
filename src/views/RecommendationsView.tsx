@@ -359,6 +359,7 @@ const RecommendationsView: React.FC = () => {
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
+  const [tab, setTab] = useState<"all" | "high" | "budget" | "extend">("all");
   const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
 
   const livePool = useMemo(
@@ -366,7 +367,23 @@ const RecommendationsView: React.FC = () => {
     [dismissed, applied]
   );
 
+  const matchesTab = (r: Reco, t: "all" | "high" | "budget" | "extend") => {
+    if (t === "all") return true;
+    if (t === "high") return r.confidence >= 5 || r.warnings.length > 0;
+    if (t === "budget") return r.category === "Budget";
+    if (t === "extend") return /expand|increase|scale|extend/i.test(r.headline);
+    return true;
+  };
+
+  const tabCounts = useMemo(() => ({
+    all: livePool.length,
+    high: livePool.filter(r => matchesTab(r, "high")).length,
+    budget: livePool.filter(r => matchesTab(r, "budget")).length,
+    extend: livePool.filter(r => matchesTab(r, "extend")).length,
+  }), [livePool]);
+
   const filtered = useMemo(() => livePool.filter(r => {
+    if (!matchesTab(r, tab)) return false;
     if (platform !== "all" && r.platform !== platform) return false;
     if (category !== "all" && r.category !== category) return false;
     if (q) {
@@ -374,7 +391,7 @@ const RecommendationsView: React.FC = () => {
       if (!r.campaign.toLowerCase().includes(s) && !r.sku.toLowerCase().includes(s) && !r.headline.toLowerCase().includes(s)) return false;
     }
     return true;
-  }), [livePool, platform, category, q]);
+  }), [livePool, platform, category, q, tab]);
 
   const byCategory = useMemo(() => {
     const m: Record<RecoCategory, Reco[]> = { "Budget": [], "City": [], "Remove Keywords": [], "Bid Changes": [] };
@@ -555,8 +572,40 @@ const RecommendationsView: React.FC = () => {
         </div>
       </section>
 
+      {/* Recommendation type tabs */}
+      <div className="border-b border-subtle">
+        <div className="flex items-center gap-1 -mb-px overflow-x-auto">
+          {([
+            { id: "all", label: "All Recommendations", count: tabCounts.all },
+            { id: "high", label: "High Importance Recommendations", count: tabCounts.high },
+            { id: "budget", label: "Budget Alerts", count: tabCounts.budget },
+            { id: "extend", label: "Extend Date", count: tabCounts.extend },
+          ] as const).map(t => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`relative inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors ${
+                  active ? "text-sw-green" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span>{t.label}</span>
+                {t.count > 0 && t.id !== "all" && (
+                  <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10.5px] font-semibold ${
+                    active ? "bg-sw-green text-white" : "bg-muted text-muted-foreground"
+                  }`}>{t.count}</span>
+                )}
+                {active && <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-sw-green rounded-full" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-2">
+
         <div className="relative flex-1 min-w-[260px] max-w-md">
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search SKU, city, keyword…" className="h-9 pl-9 text-[13px]" />

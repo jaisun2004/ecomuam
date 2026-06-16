@@ -27,7 +27,7 @@ export const competitorScores: Record<string, Record<string, { title: number; he
     "sku-005": { title: 17, heroImage: 15, searchListing: 14, pageContent: 16, competitorAggression: 10 },
     "sku-006": { title: 14, heroImage: 13, searchListing: 11, pageContent: 13, competitorAggression: 13 },
   },
-  "Britannia": {
+  "Parle": {
     "sku-001": { title: 19, heroImage: 19, searchListing: 17, pageContent: 18, competitorAggression: 10 },
     "sku-002": { title: 18, heroImage: 17, searchListing: 14, pageContent: 17, competitorAggression: 12 },
     "sku-003": { title: 14, heroImage: 16, searchListing: 12, pageContent: 14, competitorAggression: 14 },
