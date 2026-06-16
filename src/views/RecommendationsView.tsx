@@ -350,6 +350,7 @@ const RecommendationsView: React.FC = () => {
   const [openApply, setOpenApply] = useState<string[] | null>(null);
   const [openWarn, setOpenWarn] = useState<{ recoId: string; warnIdx: number } | null>(null);
   const [openGlass, setOpenGlass] = useState<string | null>(null);
+  const [openCampaign, setOpenCampaign] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<RecoCategory>>(new Set(CATEGORIES));
   const [approvedLog, setApprovedLog] = useState<LogEntry[]>(SEED_LOG);
   const [logExpandedCampaigns, setLogExpandedCampaigns] = useState<Set<string>>(new Set([SEED_LOG[0].campaign]));
@@ -361,6 +362,7 @@ const RecommendationsView: React.FC = () => {
   const [category, setCategory] = useState<string>("all");
   const [tab, setTab] = useState<"all" | "high" | "budget" | "extend">("all");
   const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
+  const [campaignPage, setCampaignPage] = useState(1);
 
   const livePool = useMemo(
     () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
