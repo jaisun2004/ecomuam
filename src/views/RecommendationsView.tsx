@@ -658,7 +658,100 @@ const RecommendationsView: React.FC = () => {
         </span>
       </div>
 
-      {/* Section B — Grouped by recommendation category (hierarchy) */}
+      {/* Section B — All Campaigns view (tab === "all") */}
+      {tab === "all" ? (() => {
+        const totalPages = Math.max(1, Math.ceil(allCampaigns.length / PAGE_SIZE));
+        const p = Math.min(campaignPage, totalPages);
+        const pageItems = allCampaigns.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+        const withRecos = allCampaigns.filter(c => c.recos.length > 0).length;
+        return (
+          <section className="bg-surface-1 border border-subtle rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-3 px-5 py-3 border-b border-subtle">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary">
+                <TargetIcon size={14} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-display font-semibold text-[14px] text-foreground">All Campaigns</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {allCampaigns.length} campaigns · {withRecos} have active recommendations — click the
+                  <Sparkles size={10} className="inline mx-1 -mt-0.5 text-primary" />icon to review
+                </p>
+              </div>
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-muted-foreground">
+                {allCampaigns.length} total
+              </span>
+            </div>
+            <div className="grid grid-cols-[1fr_120px_90px_60px] items-center gap-4 px-5 py-2 bg-surface-2/60 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <span>Campaign</span>
+              <span>Platform</span>
+              <span className="text-center">Recos</span>
+              <span className="text-right">Action</span>
+            </div>
+            {pageItems.map(c => {
+              const has = c.recos.length > 0;
+              return (
+                <div
+                  key={c.campaign}
+                  className={`grid grid-cols-[1fr_120px_90px_60px] items-center gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
+                    has ? "hover:bg-surface-2/40 cursor-pointer" : ""
+                  }`}
+                  onClick={() => { if (has) setOpenCampaign(c.campaign); }}
+                >
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
+                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                      {c.sku}{c.city ? ` · ${c.city}` : ""}
+                    </p>
+                  </div>
+                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono w-fit ${PLATFORM_TINT[c.platform]}`}>
+                    {c.platform}
+                  </span>
+                  <span className="text-center">
+                    {has ? (
+                      <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold font-mono">
+                        {c.recos.length}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-muted-foreground/60 font-mono">—</span>
+                    )}
+                  </span>
+                  <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      disabled={!has}
+                      onClick={() => has && setOpenCampaign(c.campaign)}
+                      title={has ? `View ${c.recos.length} recommendation${c.recos.length > 1 ? "s" : ""}` : "No recommendations"}
+                      className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors ${
+                        has
+                          ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
+                          : "bg-surface-2 text-muted-foreground/40 cursor-not-allowed"
+                      }`}
+                    >
+                      <Sparkles size={14} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            {allCampaigns.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-5 py-2 border-t border-subtle text-[11px] text-muted-foreground">
+                <span>Page {p} of {totalPages} · showing {pageItems.length} of {allCampaigns.length}</span>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p === 1}
+                    onClick={() => setCampaignPage(Math.max(1, p - 1))}>
+                    <ChevronLeft size={13} />
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0" disabled={p >= totalPages}
+                    onClick={() => setCampaignPage(Math.min(totalPages, p + 1))}>
+                    <ChevronRight size={13} />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      })() : (
+      /* Grouped by recommendation category (other tabs) */
       <div className="space-y-3">
         {CATEGORIES.map(cat => {
           const items = byCategory[cat];
@@ -744,6 +837,7 @@ const RecommendationsView: React.FC = () => {
           );
         })}
       </div>
+      )}
 
       {/* Section C — Recently Approved Recommendations (Audit log: Campaign → Keyword → City) */}
       <section className="rounded-2xl border border-subtle bg-surface-1 overflow-hidden">
