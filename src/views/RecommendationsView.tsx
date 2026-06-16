@@ -350,6 +350,7 @@ const RecommendationsView: React.FC = () => {
   const [openApply, setOpenApply] = useState<string[] | null>(null);
   const [openWarn, setOpenWarn] = useState<{ recoId: string; warnIdx: number } | null>(null);
   const [openGlass, setOpenGlass] = useState<string | null>(null);
+  const [openCampaign, setOpenCampaign] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<RecoCategory>>(new Set(CATEGORIES));
   const [approvedLog, setApprovedLog] = useState<LogEntry[]>(SEED_LOG);
   const [logExpandedCampaigns, setLogExpandedCampaigns] = useState<Set<string>>(new Set([SEED_LOG[0].campaign]));
