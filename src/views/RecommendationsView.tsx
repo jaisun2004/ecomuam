@@ -399,9 +399,13 @@ const RecommendationsView: React.FC = () => {
   const [q, setQ] = useState("");
   const [platform, setPlatform] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
-  const [tab, setTab] = useState<"all" | "high" | "budget" | "extend">("all");
+  const [tab, setTab] = useState<"high" | "all" | "budget" | "extend">("high");
   const [page, setPage] = useState<Record<RecoCategory, number>>({ "Budget": 1, "City": 1, "Remove Keywords": 1, "Bid Changes": 1 });
   const [campaignPage, setCampaignPage] = useState(1);
+  const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(new Set());
+  const toggleExpandCampaign = (k: string) => setExpandedCampaigns(p => {
+    const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n;
+  });
 
   const livePool = useMemo(
     () => MOCK.filter(r => !dismissed.has(r.id) && !applied.has(r.id)),
