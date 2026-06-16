@@ -809,56 +809,174 @@ const RecommendationsView: React.FC = () => {
               const has = c.recos.length > 0;
               const ids = c.recos.map(r => r.id);
               const isSel = has && ids.every(id => selected.has(id));
+              const isOpen = has && expandedCampaigns.has(c.campaign);
+              const issues = getIssueLabels(c.recos);
+              const cMtr = getCampaignMetrics(c.campaign);
+              // Group recos by category for bucketing display
+              const recosByCat = new Map<RecoCategory, Reco[]>();
+              c.recos.forEach(r => {
+                if (!recosByCat.has(r.category)) recosByCat.set(r.category, []);
+                recosByCat.get(r.category)!.push(r);
+              });
               return (
-                <div
-                  key={c.campaign}
-                  className={`grid grid-cols-[28px_1fr_120px_90px_60px] items-center gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
-                    has ? "hover:bg-surface-2/40 cursor-pointer" : "opacity-70"
-                  } ${isSel ? "bg-primary/5" : ""}`}
-                  onClick={() => { if (has) setOpenCampaign(c.campaign); }}
-                >
-                  <span onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={isSel}
-                      disabled={!has}
-                      onCheckedChange={() => toggleCampaign(c)}
-                      aria-label="Select campaign"
-                    />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
-                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                      {c.sku}{c.city ? ` · ${c.city}` : ""}
-                    </p>
+                <React.Fragment key={c.campaign}>
+                  <div
+                    className={`grid grid-cols-[28px_1fr_120px_90px_60px] items-start gap-4 px-5 py-2.5 border-t border-subtle transition-colors ${
+                      has ? "hover:bg-surface-2/40 cursor-pointer" : "opacity-70"
+                    } ${isSel ? "bg-primary/5" : ""} ${isOpen ? "bg-surface-2/50" : ""}`}
+                    onClick={() => { if (has) toggleExpandCampaign(c.campaign); }}
+                  >
+                    <span onClick={(e) => e.stopPropagation()} className="pt-0.5">
+                      <Checkbox
+                        checked={isSel}
+                        disabled={!has}
+                        onCheckedChange={() => toggleCampaign(c)}
+                        aria-label="Select campaign"
+                      />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-[13px] font-medium text-foreground truncate leading-tight">{c.campaign}</p>
+                        {issues.map(iss => (
+                          <span key={iss.label} className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${TONE_CLS[iss.tone]}`}>
+                            {iss.label}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                        {c.sku}{c.city ? ` · ${c.city}` : ""}
+                      </p>
+                    </div>
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono w-fit ${PLATFORM_TINT[c.platform]}`}>
+                      {c.platform}
+                    </span>
+                    <span className="text-center">
+                      {has ? (
+                        <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold font-mono">
+                          {c.recos.length}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-muted-foreground/60 font-mono">—</span>
+                      )}
+                    </span>
+                    <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        disabled={!has}
+                        onClick={() => has && toggleExpandCampaign(c.campaign)}
+                        title={has ? `${isOpen ? "Collapse" : "Expand"} ${c.recos.length} recommendation${c.recos.length > 1 ? "s" : ""}` : "No recommendations"}
+                        className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors ${
+                          has
+                            ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
+                            : "bg-surface-2 text-muted-foreground/30 cursor-not-allowed"
+                        }`}
+                      >
+                        <Sparkles size={14} />
+                      </button>
+                      {has && (
+                        <ChevronDown size={14} className={`text-muted-foreground transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                      )}
+                    </div>
                   </div>
-                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono w-fit ${PLATFORM_TINT[c.platform]}`}>
-                    {c.platform}
-                  </span>
-                  <span className="text-center">
-                    {has ? (
-                      <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold font-mono">
-                        {c.recos.length}
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-muted-foreground/60 font-mono">—</span>
-                    )}
-                  </span>
-                  <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      disabled={!has}
-                      onClick={() => has && setOpenCampaign(c.campaign)}
-                      title={has ? `View ${c.recos.length} recommendation${c.recos.length > 1 ? "s" : ""}` : "No recommendations"}
-                      className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors ${
-                        has
-                          ? "bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
-                          : "bg-surface-2 text-muted-foreground/30 cursor-not-allowed"
-                      }`}
-                    >
-                      <Sparkles size={14} />
-                    </button>
-                  </div>
-                </div>
+
+                  {isOpen && (
+                    <div className="border-t border-subtle bg-surface-2/30 px-5 py-4 space-y-3">
+                      {/* Campaign KPIs */}
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-1.5">
+                          Campaign performance · last 14d
+                        </p>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                          {[
+                            { k: "ROAS",        v: cMtr.roas },
+                            { k: "Impressions", v: cMtr.impressions },
+                            { k: "Spend",       v: cMtr.spend },
+                            { k: "Sales",       v: cMtr.sales },
+                            { k: "Orders",      v: cMtr.orders },
+                          ].map(cell => (
+                            <div key={cell.k} className="px-2 py-1.5 rounded-md border border-subtle bg-surface-1">
+                              <p className="text-[9.5px] uppercase tracking-wider text-muted-foreground font-mono">{cell.k}</p>
+                              <p className="text-[12px] font-mono text-foreground mt-0.5">{cell.v}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Recommendations grouped by category bucket */}
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono mb-1.5">
+                          Recommendations · {c.recos.length} active, grouped by type
+                        </p>
+                        <div className="space-y-2.5">
+                          {Array.from(recosByCat.entries()).map(([cat, recos]) => {
+                            const meta = CATEGORY_META[cat];
+                            const Icon = meta.icon;
+                            return (
+                              <div key={cat} className="rounded-lg border border-subtle bg-surface-1 overflow-hidden">
+                                <div className={`flex items-center gap-2 px-3 py-1.5 border-b border-subtle ${meta.tint}`}>
+                                  <Icon size={12} />
+                                  <span className="text-[11.5px] font-medium">{cat}</span>
+                                  <span className="text-[10px] font-mono opacity-80">· {recos.length}</span>
+                                </div>
+                                <ul className="divide-y divide-subtle">
+                                  {recos.map(r => (
+                                    <li key={r.id} className="flex items-start gap-3 px-3 py-2">
+                                      <span onClick={(e) => e.stopPropagation()} className="pt-0.5">
+                                        <Checkbox
+                                          checked={selected.has(r.id)}
+                                          onCheckedChange={() => toggleSel(r.id)}
+                                          aria-label="Select recommendation"
+                                        />
+                                      </span>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                                          <ConfidenceDots n={r.confidence} />
+                                          {r.warnings.map((w, wi) => {
+                                            const WIcon = WARN_META[w.kind].icon;
+                                            return (
+                                              <span key={wi} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] ${WARN_META[w.kind].cls}`}>
+                                                <WIcon size={9} /> {w.label}
+                                              </span>
+                                            );
+                                          })}
+                                        </div>
+                                        <p className="text-[12.5px] font-medium text-foreground leading-tight">{r.headline}</p>
+                                        <p className="text-[11px] text-sw-green mt-0.5">{r.estImpact}</p>
+                                      </div>
+                                      <div className="flex items-center gap-1 shrink-0">
+                                        <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] gap-1 text-muted-foreground"
+                                          onClick={(e) => { e.stopPropagation(); setOpenGlass(r.id); }}>
+                                          <Info size={12} /> Why
+                                        </Button>
+                                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground"
+                                          onClick={(e) => { e.stopPropagation(); setDismissed(p => new Set(p).add(r.id)); toast("Dismissed"); }}
+                                          title="Dismiss">
+                                          <X size={13} />
+                                        </Button>
+                                        <Button size="sm" className="h-7 px-3 text-[11px]"
+                                          onClick={(e) => { e.stopPropagation(); setOpenApply([r.id]); }}>
+                                          Apply
+                                        </Button>
+                                      </div>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {c.recos.length > 1 && (
+                          <div className="flex justify-end mt-2">
+                            <Button size="sm" className="h-7 text-[11px] gap-1.5"
+                              onClick={(e) => { e.stopPropagation(); setOpenApply(c.recos.map(r => r.id)); }}>
+                              <CheckCircle2 size={12} /> Apply all {c.recos.length}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </React.Fragment>
               );
             })}
 
