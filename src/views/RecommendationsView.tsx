@@ -572,8 +572,40 @@ const RecommendationsView: React.FC = () => {
         </div>
       </section>
 
+      {/* Recommendation type tabs */}
+      <div className="border-b border-subtle">
+        <div className="flex items-center gap-1 -mb-px overflow-x-auto">
+          {([
+            { id: "all", label: "All Recommendations", count: tabCounts.all },
+            { id: "high", label: "High Importance Recommendations", count: tabCounts.high },
+            { id: "budget", label: "Budget Alerts", count: tabCounts.budget },
+            { id: "extend", label: "Extend Date", count: tabCounts.extend },
+          ] as const).map(t => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`relative inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors ${
+                  active ? "text-sw-green" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span>{t.label}</span>
+                {t.count > 0 && t.id !== "all" && (
+                  <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10.5px] font-semibold ${
+                    active ? "bg-sw-green text-white" : "bg-muted text-muted-foreground"
+                  }`}>{t.count}</span>
+                )}
+                {active && <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-sw-green rounded-full" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-2">
+
         <div className="relative flex-1 min-w-[260px] max-w-md">
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search SKU, city, keyword…" className="h-9 pl-9 text-[13px]" />
