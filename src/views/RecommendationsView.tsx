@@ -325,14 +325,13 @@ const LAST_UPDATED_TS = m(4);
 // Deterministic current-campaign performance metrics per recommendation id
 interface RecoMetrics { spend: string; sales: string; orders: string; impressions: string; roas: string; }
 const hashStr = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
-const getMetrics = (r: Reco): RecoMetrics => {
-  const seed = hashStr(r.id);
-  const spend = 8000 + (seed % 42000);            // ₹ 8K – 50K
-  const roasN = 2.4 + ((seed >> 3) % 38) / 10;    // 2.4x – 6.2x
+const fmtK = (n: number) => n >= 100_000 ? `${(n / 100_000).toFixed(2)}L` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : `${n}`;
+const metricsFromSeed = (seed: number): RecoMetrics => {
+  const spend = 8000 + (seed % 42000);
+  const roasN = 2.4 + ((seed >> 3) % 38) / 10;
   const sales = Math.round(spend * roasN);
-  const orders = Math.round(sales / (180 + ((seed >> 5) % 120))); // AOV 180-300
+  const orders = Math.round(sales / (180 + ((seed >> 5) % 120)));
   const impressions = 40_000 + ((seed >> 7) % 460_000);
-  const fmtK = (n: number) => n >= 100_000 ? `${(n / 100_000).toFixed(2)}L` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : `${n}`;
   return {
     spend: `₹ ${fmtK(spend)}`,
     sales: `₹ ${fmtK(sales)}`,
@@ -341,6 +340,46 @@ const getMetrics = (r: Reco): RecoMetrics => {
     roas: `${roasN.toFixed(1)}x`,
   };
 };
+const getMetrics = (r: Reco): RecoMetrics => metricsFromSeed(hashStr(r.id));
+const getCampaignMetrics = (campaign: string): RecoMetrics => metricsFromSeed(hashStr(campaign));
+
+/* Issue labels — derived from a campaign's active recommendations */
+type IssueTone = "red" | "amber" | "purple" | "cyan" | "green";
+const TONE_CLS: Record<IssueTone, string> = {
+  red:    "bg-sw-red-dim text-sw-red",
+  amber:  "bg-sw-amber-dim text-sw-amber",
+  purple: "bg-sw-purple-dim text-sw-purple",
+  cyan:   "bg-sw-cyan-dim text-sw-cyan",
+  green:  "bg-sw-green-dim text-sw-green",
+};
+const getIssueLabels = (recos: Reco[]): { label: string; tone: IssueTone }[] => {
+  const out = new Map<string, IssueTone>();
+  recos.forEach(r => {
+    // Warning-driven labels
+    r.warnings.forEach(w => {
+      if (w.kind === "availability") out.set("OOS risk", "red");
+      if (w.kind === "pricing")      out.set("Price gap", "amber");
+      if (w.kind === "sos")          out.set("Low SoS", "purple");
+    });
+    // Category-driven labels
+    if (r.category === "Budget") {
+      if (/increase|scale|raise|expand/i.test(r.headline)) out.set("Underpacing", "amber");
+      else if (/trim|lower|reduce|cut/i.test(r.headline)) out.set("Overspending", "cyan");
+      else out.set("Budget drift", "amber");
+    }
+    if (r.category === "Bid Changes") {
+      if (/raise|lift|increase/i.test(r.headline)) out.set("Low bids", "amber");
+      else out.set("Inflated CPC", "cyan");
+    }
+    if (r.category === "Remove Keywords") out.set("Wasted spend", "red");
+    if (r.category === "City") {
+      if (/switch off|disable|pause/i.test(r.headline)) out.set("Weak geo", "red");
+      else out.set("Untapped geo", "green");
+    }
+  });
+  return Array.from(out.entries()).slice(0, 4).map(([label, tone]) => ({ label, tone }));
+};
+
 
 
 const RecommendationsView: React.FC = () => {
