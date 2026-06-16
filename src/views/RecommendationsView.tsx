@@ -342,6 +342,20 @@ const getMetrics = (r: Reco): RecoMetrics => {
   };
 };
 
+// Campaigns with no current recommendations (still shown in the All Campaigns list)
+interface EmptyCampaign { campaign: string; platform: Platform; sku: string; }
+const EMPTY_CAMPAIGNS: EmptyCampaign[] = [
+  { campaign: "Parle-G — Brand Defense Blinkit #201",     platform: "Blinkit",   sku: "Parle-G Gold 200g" },
+  { campaign: "Marie Gold — Always-On Zepto #208",        platform: "Zepto",     sku: "Marie Gold 250g" },
+  { campaign: "Bourbon — Evergreen Instamart #214",       platform: "Instamart", sku: "Bourbon Cream 150g" },
+  { campaign: "Monaco — Brand Search Blinkit #221",       platform: "Blinkit",   sku: "Monaco Classic 150g" },
+  { campaign: "Oreo — Performance Zepto #226",            platform: "Zepto",     sku: "Oreo Vanilla 120g" },
+  { campaign: "NutriChoice — Health Shelf Instamart #231",platform: "Instamart", sku: "NutriChoice Digestive 250g" },
+  { campaign: "Milk Bikis — Kids Snack Blinkit #237",     platform: "Blinkit",   sku: "Milk Bikis 150g" },
+  { campaign: "Krackjack — Tea Time Zepto #244",          platform: "Zepto",     sku: "Krackjack 200g" },
+];
+
+
 
 const RecommendationsView: React.FC = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
