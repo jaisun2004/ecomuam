@@ -401,6 +401,33 @@ const RecommendationsView: React.FC = () => {
     return m;
   }, [filtered]);
 
+  // All-campaigns view: every unique campaign in MOCK, with attached live recommendations
+  const allCampaigns = useMemo(() => {
+    const map = new Map<string, { campaign: string; platform: Platform; sku: string; city?: string; recos: Reco[] }>();
+    MOCK.forEach(r => {
+      if (!map.has(r.campaign)) {
+        map.set(r.campaign, { campaign: r.campaign, platform: r.platform, sku: r.sku, city: r.city, recos: [] });
+      }
+    });
+    const liveByCampaign = new Map<string, Reco[]>();
+    livePool.forEach(r => {
+      if (!liveByCampaign.has(r.campaign)) liveByCampaign.set(r.campaign, []);
+      liveByCampaign.get(r.campaign)!.push(r);
+    });
+    map.forEach((v, k) => { v.recos = liveByCampaign.get(k) || []; });
+    let arr = Array.from(map.values());
+    if (platform !== "all") arr = arr.filter(c => c.platform === platform);
+    if (q) {
+      const s = q.toLowerCase();
+      arr = arr.filter(c => c.campaign.toLowerCase().includes(s) || c.sku.toLowerCase().includes(s));
+    }
+    // Campaigns with recommendations first
+    arr.sort((a, b) => (b.recos.length > 0 ? 1 : 0) - (a.recos.length > 0 ? 1 : 0) || a.campaign.localeCompare(b.campaign));
+    return arr;
+  }, [livePool, platform, q]);
+
+  const openCampaignData = openCampaign ? allCampaigns.find(c => c.campaign === openCampaign) : null;
+
   const newCount = livePool.filter(r => r.isNew).length;
 
   const toggleSel = (id: string) => setSelected(p => {
