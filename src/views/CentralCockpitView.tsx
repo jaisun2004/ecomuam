@@ -39,7 +39,7 @@ type ScreenFlag = {
 type ScreenPanel = {
   id: string;
   name: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<any>;
   routeId: string;
   kpis: KpiFlag[];
   flags: ScreenFlag[];
