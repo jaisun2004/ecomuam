@@ -436,27 +436,21 @@ const CentralCockpitView: React.FC = () => {
       <section>
         <div className="flex items-baseline justify-between mb-3">
           <div>
-            <h2 className="font-display text-sm font-semibold text-foreground">Campaign-Level Flags</h2>
+            <h2 className="font-display text-sm font-semibold text-foreground">Flagged Campaigns</h2>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              Campaigns with active issues — jump straight into Campaign Manager
+              Campaigns with active issues — click to open
             </p>
           </div>
-          <button
-            onClick={() => g.navigateTo("campaigns")}
-            className="text-[11px] font-medium flex items-center gap-1"
-            style={{ color: "#4F7FFF" }}
-          >
-            Open Campaign Manager <ArrowRight size={11} />
-          </button>
         </div>
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
           {filteredCampaigns.length === 0 ? (
             <div className="px-4 py-6 text-center text-[12px] text-muted-foreground">No campaign flags at this filter</div>
           ) : (
             filteredCampaigns.map(c => (
-              <div
+              <button
                 key={c.id}
-                className="px-4 py-3 flex items-center gap-3"
+                onClick={() => g.navigateTo(c.routeId, c.target)}
+                className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors"
                 style={{ borderLeft: `3px solid ${sevColor(c.severity)}` }}
               >
                 <div className="flex-1 min-w-0">
@@ -485,14 +479,8 @@ const CentralCockpitView: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                <button
-                  onClick={() => g.navigateTo(c.routeId, c.target)}
-                  className="text-[11px] font-medium flex items-center gap-1 flex-shrink-0"
-                  style={{ color: "#4F7FFF" }}
-                >
-                  Act <ArrowRight size={11} />
-                </button>
-              </div>
+                <ArrowRight size={14} className="text-muted-foreground flex-shrink-0" />
+              </button>
             ))
           )}
         </div>
