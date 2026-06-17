@@ -347,7 +347,10 @@ const CentralCockpitView: React.FC = () => {
                 className="rounded-xl border border-subtle bg-surface-1 overflow-hidden"
                 style={{ borderLeft: `3px solid ${sevColor(worst)}` }}
               >
-                <div className="px-4 py-3 flex items-center gap-3">
+                <button
+                  onClick={() => g.navigateTo(p.routeId)}
+                  className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors"
+                >
                   <Icon size={16} className="text-muted-foreground flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -363,14 +366,8 @@ const CentralCockpitView: React.FC = () => {
                       {flagCount > 0 ? `${flagCount} flag${flagCount > 1 ? "s" : ""}` : "No flags"} · {p.kpis.length} KPIs
                     </p>
                   </div>
-                  <button
-                    onClick={() => g.navigateTo(p.routeId)}
-                    className="text-[11px] font-medium flex items-center gap-1 flex-shrink-0"
-                    style={{ color: "#4F7FFF" }}
-                  >
-                    Drill down <ArrowRight size={11} />
-                  </button>
-                </div>
+                  <ArrowRight size={14} className="text-muted-foreground flex-shrink-0" />
+                </button>
 
                 {/* KPIs */}
                 <div className="px-4 pb-3 grid grid-cols-3 gap-2">
@@ -423,13 +420,6 @@ const CentralCockpitView: React.FC = () => {
                             <span className="text-[12px] flex-1" style={{ color: "hsl(220,20%,15%)" }}>
                               {f.desc}
                             </span>
-                            <button
-                              onClick={() => g.navigateTo(p.routeId, f.target)}
-                              className="text-[11px] font-medium flex-shrink-0"
-                              style={{ color: "#4F7FFF" }}
-                            >
-                              Act →
-                            </button>
                           </div>
                         ))}
                       </div>
