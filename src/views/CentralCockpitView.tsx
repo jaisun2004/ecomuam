@@ -280,7 +280,7 @@ const CentralCockpitView: React.FC = () => {
             <Gauge size={20} className="text-primary" /> Central Cockpit
           </h1>
           <p className="text-[12px] text-muted-foreground mt-1">
-            KPI & flag panel across every screen — drill down to act
+            KPIs and flags at a glance — click any area to drill in
           </p>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
@@ -292,20 +292,20 @@ const CentralCockpitView: React.FC = () => {
       {/* Summary strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <SummaryTile
-          label="Screens in Critical"
+          label="Critical"
           value={summary.critical}
           color="#FF5C5C"
           active={filter === "critical"}
           onClick={() => setFilter(filter === "critical" ? "all" : "critical")}
         />
         <SummaryTile
-          label="Screens to Watch"
+          label="Watch"
           value={summary.warning}
           color="#F5A623"
           active={filter === "warning"}
           onClick={() => setFilter(filter === "warning" ? "all" : "warning")}
         />
-        <SummaryTile label="Screens Clear" value={summary.ok} color="#2ECF8E" />
+        <SummaryTile label="Clear" value={summary.ok} color="#2ECF8E" />
         <SummaryTile
           label="Flagged Campaigns"
           value={summary.campCrit + summary.campWarn}
@@ -323,10 +323,10 @@ const CentralCockpitView: React.FC = () => {
         </div>
       )}
 
-      {/* Screen panels */}
+      {/* Area panels */}
       <section>
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="font-display text-sm font-semibold text-foreground">Screens — KPI & Flags</h2>
+          <h2 className="font-display text-sm font-semibold text-foreground">KPIs & Flags</h2>
           <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
             {filteredPanels.length} of {PANELS.length}
           </p>
@@ -347,7 +347,10 @@ const CentralCockpitView: React.FC = () => {
                 className="rounded-xl border border-subtle bg-surface-1 overflow-hidden"
                 style={{ borderLeft: `3px solid ${sevColor(worst)}` }}
               >
-                <div className="px-4 py-3 flex items-center gap-3">
+                <button
+                  onClick={() => g.navigateTo(p.routeId)}
+                  className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors"
+                >
                   <Icon size={16} className="text-muted-foreground flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -363,14 +366,8 @@ const CentralCockpitView: React.FC = () => {
                       {flagCount > 0 ? `${flagCount} flag${flagCount > 1 ? "s" : ""}` : "No flags"} · {p.kpis.length} KPIs
                     </p>
                   </div>
-                  <button
-                    onClick={() => g.navigateTo(p.routeId)}
-                    className="text-[11px] font-medium flex items-center gap-1 flex-shrink-0"
-                    style={{ color: "#4F7FFF" }}
-                  >
-                    Drill down <ArrowRight size={11} />
-                  </button>
-                </div>
+                  <ArrowRight size={14} className="text-muted-foreground flex-shrink-0" />
+                </button>
 
                 {/* KPIs */}
                 <div className="px-4 pb-3 grid grid-cols-3 gap-2">
@@ -423,13 +420,6 @@ const CentralCockpitView: React.FC = () => {
                             <span className="text-[12px] flex-1" style={{ color: "hsl(220,20%,15%)" }}>
                               {f.desc}
                             </span>
-                            <button
-                              onClick={() => g.navigateTo(p.routeId, f.target)}
-                              className="text-[11px] font-medium flex-shrink-0"
-                              style={{ color: "#4F7FFF" }}
-                            >
-                              Act →
-                            </button>
                           </div>
                         ))}
                       </div>
@@ -446,27 +436,21 @@ const CentralCockpitView: React.FC = () => {
       <section>
         <div className="flex items-baseline justify-between mb-3">
           <div>
-            <h2 className="font-display text-sm font-semibold text-foreground">Campaign-Level Flags</h2>
+            <h2 className="font-display text-sm font-semibold text-foreground">Flagged Campaigns</h2>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              Campaigns with active issues — jump straight into Campaign Manager
+              Campaigns with active issues — click to open
             </p>
           </div>
-          <button
-            onClick={() => g.navigateTo("campaigns")}
-            className="text-[11px] font-medium flex items-center gap-1"
-            style={{ color: "#4F7FFF" }}
-          >
-            Open Campaign Manager <ArrowRight size={11} />
-          </button>
         </div>
         <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden divide-y divide-subtle/50">
           {filteredCampaigns.length === 0 ? (
             <div className="px-4 py-6 text-center text-[12px] text-muted-foreground">No campaign flags at this filter</div>
           ) : (
             filteredCampaigns.map(c => (
-              <div
+              <button
                 key={c.id}
-                className="px-4 py-3 flex items-center gap-3"
+                onClick={() => g.navigateTo(c.routeId, c.target)}
+                className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors"
                 style={{ borderLeft: `3px solid ${sevColor(c.severity)}` }}
               >
                 <div className="flex-1 min-w-0">
@@ -495,14 +479,8 @@ const CentralCockpitView: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                <button
-                  onClick={() => g.navigateTo(c.routeId, c.target)}
-                  className="text-[11px] font-medium flex items-center gap-1 flex-shrink-0"
-                  style={{ color: "#4F7FFF" }}
-                >
-                  Act <ArrowRight size={11} />
-                </button>
-              </div>
+                <ArrowRight size={14} className="text-muted-foreground flex-shrink-0" />
+              </button>
             ))
           )}
         </div>
