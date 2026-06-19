@@ -200,11 +200,15 @@ const AvailabilityView: React.FC = () => {
                 <td className="py-2.5 text-muted-foreground">{item.platform}</td>
                 <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
                 <td className="py-2.5 text-right">
-                  <button
-                    onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku } })}
-                    className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
-                    Pause Campaigns →
-                  </button>
+                  {pausedOos[`${item.sku}|${item.platform}`] ? (
+                    <span className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-green/15 text-sw-green">✓ Campaigns Paused</span>
+                  ) : (
+                    <button
+                      onClick={() => openOosReview(item.sku, item.platform)}
+                      className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
+                      Pause Campaigns →
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
