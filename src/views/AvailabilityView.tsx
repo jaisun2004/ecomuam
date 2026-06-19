@@ -394,6 +394,51 @@ const AvailabilityView: React.FC = () => {
       </>) : (
         <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
       )}
+
+      <Dialog open={!!oosReview} onOpenChange={(o) => !o && setOosReview(null)}>
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Review campaigns to pause</DialogTitle>
+            <DialogDescription>
+              {oosReview && (
+                <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> is OOS on <span className="font-medium text-foreground">{oosReview.platform}</span>. Select campaigns to turn OFF.</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            {(oosReview ? campaignsForOOS[`${oosReview.sku}|${oosReview.platform}`] ?? [] : []).map(c => (
+              <label key={c.id} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
+                <Checkbox
+                  checked={!!oosSelected[c.id]}
+                  onCheckedChange={(v) => setOosSelected(s => ({ ...s, [c.id]: !!v }))}
+                  className="mt-0.5"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-medium text-foreground">{c.name}</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
+                    <span>Type: <span className="text-foreground">{c.type}</span></span>
+                    <span>Daily budget: <span className="text-foreground">{c.dailyBudget}</span></span>
+                    <span>Bid: <span className="text-foreground">{c.bid}</span></span>
+                    <span className="px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">{c.status}</span>
+                  </div>
+                </div>
+              </label>
+            ))}
+            {oosReview && (campaignsForOOS[`${oosReview.sku}|${oosReview.platform}`] ?? []).length === 0 && (
+              <div className="text-[12px] text-muted-foreground p-3">No active campaigns found for this product on {oosReview.platform}.</div>
+            )}
+          </div>
+          <DialogFooter>
+            <button onClick={() => setOosReview(null)} className="px-3 py-2 rounded-lg text-[12px] font-medium bg-surface-2 text-foreground hover:bg-surface-3">Cancel</button>
+            <button
+              onClick={confirmOosPause}
+              disabled={!Object.values(oosSelected).some(Boolean)}
+              className="px-3 py-2 rounded-lg text-[12px] font-medium bg-sw-red text-white hover:bg-sw-red/90 disabled:opacity-50 disabled:cursor-not-allowed">
+              Accept & Turn OFF ({Object.values(oosSelected).filter(Boolean).length})
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
