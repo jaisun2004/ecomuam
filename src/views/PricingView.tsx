@@ -799,67 +799,28 @@ const PricingView: React.FC = () => {
       )}
 
       <Dialog open={!!openCampaign} onOpenChange={(o) => !o && setOpenCampaign(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-sm">Review Price-Win Campaign</DialogTitle>
           </DialogHeader>
           {openCampaign && (
-            <div className="space-y-3 text-xs">
-              <div className="p-3 rounded-lg bg-sw-green-dim/40 border border-sw-green/20">
-                <p className="text-foreground">{openCampaign.insight}</p>
-                <div className="flex gap-4 mt-2 font-mono text-[11px]">
-                  <span>You: <span className="text-sw-green">{openCampaign.ownPrice}</span></span>
-                  <span>{openCampaign.competitor}: <span className="text-muted-foreground">{openCampaign.compPrice}</span></span>
-                  <span className="ml-auto px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green">{openCampaign.delta}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                {[
-                  ["Campaign name", openCampaign.campaignName],
-                  ["Type", openCampaign.campaignType],
-                  ["Platform", openCampaign.platform],
-                  ["SKU", openCampaign.sku],
-                  ["Daily budget", openCampaign.budget],
-                  ["Default bid", openCampaign.bid],
-                  ["Duration", openCampaign.duration],
-                  ["Placements", openCampaign.placements],
-                  ["Cities", openCampaign.cities],
-                ].map(([k, v]) => (
-                  <div key={k as string}>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{k}</div>
-                    <div className="text-foreground font-mono">{v}</div>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Target keywords</div>
-                <div className="flex flex-wrap gap-1">
-                  {openCampaign.keywords.map((kw: string) => (
-                    <span key={kw} className="px-2 py-0.5 rounded-full bg-surface-3 text-[10px] font-mono">{kw}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          <DialogFooter className="gap-2">
-            <button
-              onClick={() => setOpenCampaign(null)}
-              className="px-3 py-1.5 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-2">
-              Cancel
-            </button>
-            <button
-              onClick={() => {
+            <CampaignReviewForm
+              source={openCampaign}
+              onCancel={() => setOpenCampaign(null)}
+              onConfirm={(draft) => {
                 if (openCampaign?._index != null) {
                   setCampaignStates(p => ({ ...p, [openCampaign._index]: true }));
                 }
-                toast({ title: "Campaign launched", description: openCampaign?.campaignName });
+                toast({
+                  title: "Campaign launched",
+                  description: `${draft.campaignName} · ₹${draft.budget}/day · ${draft.keywords.length} keywords · ${draft.isNational ? "National" : draft.cities}`,
+                });
                 setOpenCampaign(null);
               }}
-              className="px-3 py-1.5 rounded-lg text-xs bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1">
-              <Megaphone size={12} /> Confirm & Launch
-            </button>
-          </DialogFooter>
+            />
+          )}
         </DialogContent>
+
       </Dialog>
     </div>
   );
