@@ -7,6 +7,31 @@ import { AlertTriangle, Megaphone, MapPin, Store, Info, Truck, Zap } from "lucid
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+
+// Mock campaigns running for a given SKU + platform
+const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string }[]> = {
+  "Hide & Seek Choco 120g|Instamart": [
+    { id: "c1", name: "HS-Choco_Search_Instamart_Always-On", type: "Search", dailyBudget: "₹ 1,800", bid: "₹ 14", status: "Active" },
+    { id: "c2", name: "HS-Choco_Category_Instamart_Premium", type: "Category", dailyBudget: "₹ 1,200", bid: "₹ 11", status: "Active" },
+  ],
+  "Marie Gold 250g|Blinkit": [
+    { id: "c3", name: "MarieGold_Search_Blinkit_BAU", type: "Search", dailyBudget: "₹ 2,400", bid: "₹ 16", status: "Active" },
+    { id: "c4", name: "MarieGold_Brand-Shelf_Blinkit", type: "Brand Shelf", dailyBudget: "₹ 900", bid: "₹ 9", status: "Active" },
+    { id: "c5", name: "MarieGold_HomeCarousel_Blinkit", type: "Home Carousel", dailyBudget: "₹ 1,500", bid: "₹ 22", status: "Active" },
+  ],
+  "Marie Gold 120g|Blinkit": [
+    { id: "c6", name: "MarieGold120_Search_Blinkit", type: "Search", dailyBudget: "₹ 1,600", bid: "₹ 13", status: "Active" },
+  ],
+  "Sunfeast Orange 250g|Zepto": [
+    { id: "c7", name: "Sunfeast-Orange_Search_Zepto", type: "Search", dailyBudget: "₹ 2,100", bid: "₹ 15", status: "Active" },
+    { id: "c8", name: "Sunfeast-Orange_Category_Zepto", type: "Category", dailyBudget: "₹ 1,100", bid: "₹ 10", status: "Active" },
+  ],
+  "Britannia Marie 150g|Instamart": [
+    { id: "c9", name: "BritanniaMarie_Search_Instamart", type: "Search", dailyBudget: "₹ 1,400", bid: "₹ 12", status: "Active" },
+  ],
+};
 
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
