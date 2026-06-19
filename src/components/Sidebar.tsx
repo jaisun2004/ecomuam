@@ -12,7 +12,6 @@ const navSections = [
       { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
       { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
-      { id: "categoryassortment", icon: LayoutList, label: "Category Assortment", notify: false },
     ],
   },
   {
