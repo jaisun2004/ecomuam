@@ -652,12 +652,9 @@ const PricingView: React.FC = () => {
             </button>
             <button
               onClick={() => {
-                const idx = [openCampaign?.campaignName].length; // placeholder
-                setCampaignStates(p => {
-                  const next = { ...p };
-                  // mark by campaignName index lookup
-                  return next;
-                });
+                if (openCampaign?._index != null) {
+                  setCampaignStates(p => ({ ...p, [openCampaign._index]: true }));
+                }
                 toast({ title: "Campaign launched", description: openCampaign?.campaignName });
                 setOpenCampaign(null);
               }}
