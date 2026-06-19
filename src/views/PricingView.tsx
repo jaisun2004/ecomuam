@@ -321,7 +321,7 @@ const PricingView: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-muted-foreground">{row.platform} · {row.sku}</span>
                     <button
-                      onClick={() => setOpenCampaign(row)}
+                      onClick={() => setOpenCampaign({ ...row, _index: i })}
                       disabled={done}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-medium inline-flex items-center gap-1 ${done ? "bg-sw-green-dim text-sw-green" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
                       <Megaphone size={10} /> {done ? "✓ Triggered" : "Launch Price-Win Campaign"}
