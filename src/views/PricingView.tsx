@@ -153,6 +153,7 @@ const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
+  const [openCampaign, setOpenCampaign] = useState<any | null>(null);
   const [selectedSku, setSelectedSku] = useState("Parle-G 120g");
   const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
