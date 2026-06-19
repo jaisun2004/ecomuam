@@ -126,6 +126,26 @@ const AvailabilityView: React.FC = () => {
   const dedupActive = g.hasActiveAvailabilityStop();
 
   const [tab, setTab] = useState("overview");
+  const [oosReview, setOosReview] = useState<{ sku: string; platform: string } | null>(null);
+  const [oosSelected, setOosSelected] = useState<Record<string, boolean>>({});
+  const [pausedOos, setPausedOos] = useState<Record<string, boolean>>({});
+
+  const openOosReview = (sku: string, platform: string) => {
+    const key = `${sku}|${platform}`;
+    const camps = campaignsForOOS[key] ?? [];
+    const sel: Record<string, boolean> = {};
+    camps.forEach(c => (sel[c.id] = true));
+    setOosSelected(sel);
+    setOosReview({ sku, platform });
+  };
+
+  const confirmOosPause = () => {
+    if (!oosReview) return;
+    const ids = Object.entries(oosSelected).filter(([, v]) => v).map(([k]) => k);
+    setPausedOos(p => ({ ...p, [`${oosReview.sku}|${oosReview.platform}`]: true }));
+    toast({ title: "Campaigns paused", description: `${ids.length} campaign(s) turned OFF for ${oosReview.sku} on ${oosReview.platform}.` });
+    setOosReview(null);
+  };
 
   const allSkus = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Hide & Seek Choco", "Sunfeast Orange 120g"];
 
