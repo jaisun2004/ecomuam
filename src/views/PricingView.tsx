@@ -4,6 +4,7 @@ import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import DateRangeSubtitle from "@/components/DateRangeSubtitle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell, ShieldAlert, Tag } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -152,6 +153,7 @@ const PricingView: React.FC = () => {
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
+  const [openCampaign, setOpenCampaign] = useState<any | null>(null);
   const [selectedSku, setSelectedSku] = useState("Parle-G 120g");
   const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
@@ -252,32 +254,77 @@ const PricingView: React.FC = () => {
 
       {/* Price Alerts + Platform Pricing Index */}
       <div className="grid grid-cols-2 gap-4">
-        <PanelCard title="Price-Driven Campaign Opportunities" badge="Action-ready" badgeColor="green" delay={0.3}>
-          <p className="text-[10px] text-muted-foreground mb-3">Pricing signals that translate directly to a campaign-level action.</p>
+        <PanelCard title="Price-Driven Campaign Opportunities" badge="Own product cheaper" badgeColor="green" delay={0.3}>
+          <p className="text-[10px] text-muted-foreground mb-3">Only SKUs where your price beats competition — ready to convert into a price-win campaign.</p>
           <div className="space-y-2">
             {[
-              { insight: "Parle-G 120g is 12% cheaper than Britannia on Zepto", delta: "−12%", platform: "Zepto", action: "Launch Price-Win Campaign", icon: Megaphone, tone: "green" },
-              { insight: "Lacnor raised price 8% on Blinkit — defensive window open on cookies keywords", delta: "+8%", platform: "Blinkit", action: "Raise bid on competing keywords", icon: TrendingUp, tone: "amber" },
-              { insight: "Britannia Marie 150g underpriced vs market by 15% on Instamart — margin leaking", delta: "−15%", platform: "Instamart", action: "Cap discount, redirect spend", icon: ShieldAlert, tone: "red" },
-              { insight: "Tropicana OJ at parity with Britannia on Instamart — hold pricing, push share-of-shelf", delta: "0%", platform: "Instamart", action: "Boost SoS campaign", icon: Tag, tone: "purple" },
+              {
+                insight: "Parle-G 120g is 12% cheaper than Britannia on Zepto",
+                delta: "−12%",
+                platform: "Zepto",
+                sku: "Parle-G 120g",
+                ownPrice: "₹38",
+                compPrice: "₹43",
+                competitor: "Britannia Tiger 120g",
+                campaignName: "PriceWin_ParleG120_Zepto",
+                campaignType: "Sponsored Product — Price Win",
+                keywords: ["glucose biscuit", "parle g", "cheap biscuit", "tea time biscuit"],
+                budget: "₹2,500/day",
+                bid: "₹6.50 CPC",
+                duration: "14 days",
+                placements: "Search Top + Category",
+                cities: "Bengaluru, Hyderabad, Mumbai",
+              },
+              {
+                insight: "Marie Gold 250g is 9% cheaper than Britannia Marie on Blinkit",
+                delta: "−9%",
+                platform: "Blinkit",
+                sku: "Marie Gold 250g",
+                ownPrice: "₹32",
+                compPrice: "₹35",
+                competitor: "Britannia Marie 250g",
+                campaignName: "PriceWin_MarieGold250_Blinkit",
+                campaignType: "Sponsored Product — Price Win",
+                keywords: ["marie biscuit", "marie gold", "tea biscuit"],
+                budget: "₹2,000/day",
+                bid: "₹5.80 CPC",
+                duration: "10 days",
+                placements: "Search Top + Brand Shelf",
+                cities: "Delhi NCR, Pune",
+              },
+              {
+                insight: "Bourbon 120g is 7% cheaper than Hide & Seek on Instamart",
+                delta: "−7%",
+                platform: "Instamart",
+                sku: "Bourbon 120g",
+                ownPrice: "₹28",
+                compPrice: "₹30",
+                competitor: "Hide & Seek 120g",
+                campaignName: "PriceWin_Bourbon120_Instamart",
+                campaignType: "Sponsored Product — Price Win",
+                keywords: ["chocolate biscuit", "bourbon", "cream biscuit"],
+                budget: "₹1,800/day",
+                bid: "₹5.20 CPC",
+                duration: "7 days",
+                placements: "Category Top",
+                cities: "Mumbai, Chennai",
+              },
             ].map((row, i) => {
-              const Icon = row.icon;
-              const toneBg = row.tone === "green" ? "bg-sw-green-dim text-sw-green" : row.tone === "amber" ? "bg-sw-amber-dim text-sw-amber" : row.tone === "red" ? "bg-sw-red-dim text-sw-red" : "bg-sw-purple-dim text-sw-purple";
               const done = !!campaignStates[i];
               return (
                 <div key={i} className="p-3 rounded-xl bg-surface-2 border border-subtle">
                   <div className="flex items-start gap-2 mb-2">
-                    <Icon size={12} className="text-sw-amber mt-0.5 flex-shrink-0" />
+                    <Megaphone size={12} className="text-sw-green mt-0.5 flex-shrink-0" />
                     <p className="text-xs text-foreground flex-1">{row.insight}</p>
-                    <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${toneBg} flex-shrink-0`}>{row.delta}</span>
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green flex-shrink-0">{row.delta}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">{row.platform}</span>
+                    <span className="text-[10px] text-muted-foreground">{row.platform} · {row.sku}</span>
                     <button
-                      onClick={() => { setCampaignStates(p => ({ ...p, [i]: true })); toast({ title: "Campaign action queued", description: row.action }); }}
+                      onClick={() => setOpenCampaign({ ...row, _index: i })}
                       disabled={done}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-medium inline-flex items-center gap-1 ${done ? "bg-sw-green-dim text-sw-green" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
-                      <Megaphone size={10} /> {done ? "✓ Triggered" : row.action}
+                      <Megaphone size={10} /> {done ? "✓ Triggered" : "Launch Price-Win Campaign"}
                     </button>
                   </div>
                 </div>
@@ -285,6 +332,7 @@ const PricingView: React.FC = () => {
             })}
           </div>
         </PanelCard>
+
 
         <PanelCard title="Platform Price Index" badge={ppiMode === "competitors" ? "vs Competition" : "Own SKU × Platforms"} badgeColor="accent" delay={0.35}>
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
@@ -552,6 +600,70 @@ const PricingView: React.FC = () => {
           </PanelCard>
         </div>
       )}
+
+      <Dialog open={!!openCampaign} onOpenChange={(o) => !o && setOpenCampaign(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Review Price-Win Campaign</DialogTitle>
+          </DialogHeader>
+          {openCampaign && (
+            <div className="space-y-3 text-xs">
+              <div className="p-3 rounded-lg bg-sw-green-dim/40 border border-sw-green/20">
+                <p className="text-foreground">{openCampaign.insight}</p>
+                <div className="flex gap-4 mt-2 font-mono text-[11px]">
+                  <span>You: <span className="text-sw-green">{openCampaign.ownPrice}</span></span>
+                  <span>{openCampaign.competitor}: <span className="text-muted-foreground">{openCampaign.compPrice}</span></span>
+                  <span className="ml-auto px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green">{openCampaign.delta}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                {[
+                  ["Campaign name", openCampaign.campaignName],
+                  ["Type", openCampaign.campaignType],
+                  ["Platform", openCampaign.platform],
+                  ["SKU", openCampaign.sku],
+                  ["Daily budget", openCampaign.budget],
+                  ["Default bid", openCampaign.bid],
+                  ["Duration", openCampaign.duration],
+                  ["Placements", openCampaign.placements],
+                  ["Cities", openCampaign.cities],
+                ].map(([k, v]) => (
+                  <div key={k as string}>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{k}</div>
+                    <div className="text-foreground font-mono">{v}</div>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Target keywords</div>
+                <div className="flex flex-wrap gap-1">
+                  {openCampaign.keywords.map((kw: string) => (
+                    <span key={kw} className="px-2 py-0.5 rounded-full bg-surface-3 text-[10px] font-mono">{kw}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            <button
+              onClick={() => setOpenCampaign(null)}
+              className="px-3 py-1.5 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-2">
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                if (openCampaign?._index != null) {
+                  setCampaignStates(p => ({ ...p, [openCampaign._index]: true }));
+                }
+                toast({ title: "Campaign launched", description: openCampaign?.campaignName });
+                setOpenCampaign(null);
+              }}
+              className="px-3 py-1.5 rounded-lg text-xs bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1">
+              <Megaphone size={12} /> Confirm & Launch
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
