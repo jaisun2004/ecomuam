@@ -4,6 +4,7 @@ import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import DateRangeSubtitle from "@/components/DateRangeSubtitle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, BarChart, Bar } from "recharts";
 import { Megaphone, TrendingDown, TrendingUp, AlertTriangle, Eye, Bell, ShieldAlert, Tag } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
