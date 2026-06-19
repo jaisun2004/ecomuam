@@ -10,7 +10,6 @@ import {
   Tag,
   Sparkles,
   BarChart3,
-  Layers,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -130,23 +129,6 @@ const PANELS: AreaPanel[] = [
     stats: [
       { value: "11", label: "Products below score threshold", items: ["Hide & Seek 120g", "Monaco Classic", "Krackjack 200g"] },
       { value: "5", label: "Products with missing assets", items: ["Parle-G 50g", "Hide & Seek Fab", "20-20 Cookies"] },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category Assortment",
-    icon: Layers,
-    routeId: "shelf",
-    trendTitle: "Share of shelf · last 7d",
-    current: "32%",
-    delta: "-3 pts WoW",
-    deltaPositive: false,
-    series: [
-      { key: "sos", label: "Share of shelf %", color: COLORS.primary, data: [36, 35, 34, 34, 33, 33, 32] },
-    ],
-    stats: [
-      { value: "3", label: "Categories with shelf drop", items: ["Glucose Biscuits", "Cream Biscuits", "Cookies"] },
-      { value: "8", label: "Products missing from category shelf", items: ["Monaco 120g (Zepto)", "Hide & Seek Fab (Blinkit)", "20-20 (Instamart)"] },
     ],
   },
   {

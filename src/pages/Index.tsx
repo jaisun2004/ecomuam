@@ -20,7 +20,7 @@ import ContentAuditView from "@/views/ContentAuditView";
 import ContentAuditSkuDetailView from "@/views/ContentAuditSkuDetailView";
 import TaxonomyConfigView from "@/views/TaxonomyConfigView";
 import CrawlingInputsView from "@/views/CrawlingInputsView";
-import CategoryAssortmentView from "@/views/CategoryAssortmentView";
+
 import StrategicPlanningView from "@/views/StrategicPlanningView";
 import ApprovalFlowView from "@/views/ApprovalFlowView";
 import KeywordAnalysisView from "@/views/KeywordAnalysisView";
@@ -48,7 +48,7 @@ const views: Record<string, React.FC> = {
   contentaudit: ContentAuditView,
   taxonomy: TaxonomyConfigView,
   crawling: CrawlingInputsView,
-  categoryassortment: CategoryAssortmentView,
+  
   strategicplanning: StrategicPlanningView,
   approvalflow: ApprovalFlowView,
   keywordanalysis: KeywordAnalysisView,
