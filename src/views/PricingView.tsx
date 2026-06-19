@@ -149,7 +149,201 @@ const priceIndexBySku: Record<string, any[]> = {
   ])),
 };
 
-const PricingView: React.FC = () => {
+const PLACEMENT_OPTIONS = ["Search Top", "Category", "Brand Shelf", "Home Carousel", "Product Page"];
+
+type CampaignDraft = {
+  campaignName: string;
+  campaignType: string;
+  platform: string;
+  sku: string;
+  budget: number;
+  duration: string;
+  isNational: boolean;
+  cities: string;
+  excludedPlacements: string[];
+  keywords: { kw: string; bid: number }[];
+};
+
+const CampaignReviewForm: React.FC<{
+  source: any;
+  onCancel: () => void;
+  onConfirm: (draft: CampaignDraft) => void;
+}> = ({ source, onCancel, onConfirm }) => {
+  const parseNum = (s: string) => parseFloat(String(s).replace(/[^0-9.]/g, "")) || 0;
+  const [draft, setDraft] = React.useState<CampaignDraft>({
+    campaignName: source.campaignName,
+    campaignType: source.campaignType,
+    platform: source.platform,
+    sku: source.sku,
+    budget: parseNum(source.budget),
+    duration: source.duration,
+    isNational: true,
+    cities: source.cities,
+    excludedPlacements: [],
+    keywords: source.keywords.map((kw: string) => ({ kw, bid: parseNum(source.bid) })),
+  });
+  const [newKw, setNewKw] = React.useState("");
+
+  const update = (patch: Partial<CampaignDraft>) => setDraft(d => ({ ...d, ...patch }));
+
+  return (
+    <div className="space-y-3 text-xs">
+      <div className="p-3 rounded-lg bg-sw-green-dim/40 border border-sw-green/20">
+        <p className="text-foreground">{source.insight}</p>
+        <div className="flex gap-4 mt-2 font-mono text-[11px]">
+          <span>You: <span className="text-sw-green">{source.ownPrice}</span></span>
+          <span>{source.competitor}: <span className="text-muted-foreground">{source.compPrice}</span></span>
+          <span className="ml-auto px-1.5 py-0.5 rounded-full bg-sw-green-dim text-sw-green">{source.delta}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        <div>
+          <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Campaign name</div>
+          <div className="text-foreground font-mono">{draft.campaignName}</div>
+        </div>
+        <div>
+          <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Platform · SKU</div>
+          <div className="text-foreground font-mono">{draft.platform} · {draft.sku}</div>
+        </div>
+        <div>
+          <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Daily budget (₹)</div>
+          <input
+            type="number"
+            value={draft.budget}
+            onChange={(e) => update({ budget: parseFloat(e.target.value) || 0 })}
+            className="w-full px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-xs"
+          />
+        </div>
+        <div>
+          <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Duration</div>
+          <input
+            value={draft.duration}
+            onChange={(e) => update({ duration: e.target.value })}
+            className="w-full px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-xs"
+          />
+        </div>
+      </div>
+
+      <div className="p-2 rounded-lg bg-surface-2 border border-subtle">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={draft.isNational}
+            onChange={(e) => update({ isNational: e.target.checked })}
+            className="accent-primary"
+          />
+          <span className="text-foreground">Run as national campaign</span>
+        </label>
+        {!draft.isNational && (
+          <div className="mt-2">
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Cities</div>
+            <input
+              value={draft.cities}
+              onChange={(e) => update({ cities: e.target.value })}
+              className="w-full px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-xs"
+            />
+          </div>
+        )}
+      </div>
+
+      <div>
+        <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Exclude placements</div>
+        <div className="flex flex-wrap gap-1.5">
+          {PLACEMENT_OPTIONS.map(p => {
+            const excluded = draft.excludedPlacements.includes(p);
+            return (
+              <button
+                key={p}
+                onClick={() => update({
+                  excludedPlacements: excluded
+                    ? draft.excludedPlacements.filter(x => x !== p)
+                    : [...draft.excludedPlacements, p],
+                })}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-mono border transition-colors ${
+                  excluded
+                    ? "bg-sw-red-dim text-sw-red border-sw-red/30 line-through"
+                    : "bg-surface-3 text-foreground border-subtle hover:bg-surface-2"
+                }`}
+              >
+                {p}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Keywords & bids (₹ CPC)</div>
+        <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
+          {draft.keywords.map((k, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <input
+                value={k.kw}
+                onChange={(e) => {
+                  const next = [...draft.keywords];
+                  next[idx] = { ...next[idx], kw: e.target.value };
+                  update({ keywords: next });
+                }}
+                className="flex-1 px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-[11px]"
+              />
+              <input
+                type="number"
+                step="0.1"
+                value={k.bid}
+                onChange={(e) => {
+                  const next = [...draft.keywords];
+                  next[idx] = { ...next[idx], bid: parseFloat(e.target.value) || 0 };
+                  update({ keywords: next });
+                }}
+                className="w-20 px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-[11px]"
+              />
+              <button
+                onClick={() => update({ keywords: draft.keywords.filter((_, i) => i !== idx) })}
+                className="text-muted-foreground hover:text-sw-red text-xs px-1"
+                aria-label="Remove keyword"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <input
+            value={newKw}
+            onChange={(e) => setNewKw(e.target.value)}
+            placeholder="Add keyword"
+            className="flex-1 px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-[11px]"
+          />
+          <button
+            onClick={() => {
+              if (!newKw.trim()) return;
+              update({ keywords: [...draft.keywords, { kw: newKw.trim(), bid: parseNum(source.bid) }] });
+              setNewKw("");
+            }}
+            className="px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground text-[11px] hover:bg-surface-2"
+          >
+            + Add
+          </button>
+        </div>
+      </div>
+
+      <DialogFooter className="gap-2">
+        <button
+          onClick={onCancel}
+          className="px-3 py-1.5 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-2">
+          Cancel
+        </button>
+        <button
+          onClick={() => onConfirm(draft)}
+          className="px-3 py-1.5 rounded-lg text-xs bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1">
+          <Megaphone size={12} /> Confirm & Launch
+        </button>
+      </DialogFooter>
+    </div>
+  );
+};
+
   const [actionStates, setActionStates] = useState<Record<number, boolean>>({});
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
