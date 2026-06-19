@@ -7,6 +7,31 @@ import { AlertTriangle, Megaphone, MapPin, Store, Info, Truck, Zap } from "lucid
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+
+// Mock campaigns running for a given SKU + platform
+const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string }[]> = {
+  "Hide & Seek Choco 120g|Instamart": [
+    { id: "c1", name: "HS-Choco_Search_Instamart_Always-On", type: "Search", dailyBudget: "₹ 1,800", bid: "₹ 14", status: "Active" },
+    { id: "c2", name: "HS-Choco_Category_Instamart_Premium", type: "Category", dailyBudget: "₹ 1,200", bid: "₹ 11", status: "Active" },
+  ],
+  "Marie Gold 250g|Blinkit": [
+    { id: "c3", name: "MarieGold_Search_Blinkit_BAU", type: "Search", dailyBudget: "₹ 2,400", bid: "₹ 16", status: "Active" },
+    { id: "c4", name: "MarieGold_Brand-Shelf_Blinkit", type: "Brand Shelf", dailyBudget: "₹ 900", bid: "₹ 9", status: "Active" },
+    { id: "c5", name: "MarieGold_HomeCarousel_Blinkit", type: "Home Carousel", dailyBudget: "₹ 1,500", bid: "₹ 22", status: "Active" },
+  ],
+  "Marie Gold 120g|Blinkit": [
+    { id: "c6", name: "MarieGold120_Search_Blinkit", type: "Search", dailyBudget: "₹ 1,600", bid: "₹ 13", status: "Active" },
+  ],
+  "Sunfeast Orange 250g|Zepto": [
+    { id: "c7", name: "Sunfeast-Orange_Search_Zepto", type: "Search", dailyBudget: "₹ 2,100", bid: "₹ 15", status: "Active" },
+    { id: "c8", name: "Sunfeast-Orange_Category_Zepto", type: "Category", dailyBudget: "₹ 1,100", bid: "₹ 10", status: "Active" },
+  ],
+  "Britannia Marie 150g|Instamart": [
+    { id: "c9", name: "BritanniaMarie_Search_Instamart", type: "Search", dailyBudget: "₹ 1,400", bid: "₹ 12", status: "Active" },
+  ],
+};
 
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
@@ -101,6 +126,26 @@ const AvailabilityView: React.FC = () => {
   const dedupActive = g.hasActiveAvailabilityStop();
 
   const [tab, setTab] = useState("overview");
+  const [oosReview, setOosReview] = useState<{ sku: string; platform: string } | null>(null);
+  const [oosSelected, setOosSelected] = useState<Record<string, boolean>>({});
+  const [pausedOos, setPausedOos] = useState<Record<string, boolean>>({});
+
+  const openOosReview = (sku: string, platform: string) => {
+    const key = `${sku}|${platform}`;
+    const camps = campaignsForOOS[key] ?? [];
+    const sel: Record<string, boolean> = {};
+    camps.forEach(c => (sel[c.id] = true));
+    setOosSelected(sel);
+    setOosReview({ sku, platform });
+  };
+
+  const confirmOosPause = () => {
+    if (!oosReview) return;
+    const ids = Object.entries(oosSelected).filter(([, v]) => v).map(([k]) => k);
+    setPausedOos(p => ({ ...p, [`${oosReview.sku}|${oosReview.platform}`]: true }));
+    toast({ title: "Campaigns paused", description: `${ids.length} campaign(s) turned OFF for ${oosReview.sku} on ${oosReview.platform}.` });
+    setOosReview(null);
+  };
 
   const allSkus = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Hide & Seek Choco", "Sunfeast Orange 120g"];
 
@@ -155,11 +200,15 @@ const AvailabilityView: React.FC = () => {
                 <td className="py-2.5 text-muted-foreground">{item.platform}</td>
                 <td className="py-2.5 text-right font-mono text-sw-red">{item.since}</td>
                 <td className="py-2.5 text-right">
-                  <button
-                    onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "oos-bulk-off", params: { skus: item.sku } })}
-                    className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
-                    Pause Campaigns →
-                  </button>
+                  {pausedOos[`${item.sku}|${item.platform}`] ? (
+                    <span className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-green/15 text-sw-green">✓ Campaigns Paused</span>
+                  ) : (
+                    <button
+                      onClick={() => openOosReview(item.sku, item.platform)}
+                      className="text-[10px] font-medium px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">
+                      Pause Campaigns →
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -345,6 +394,51 @@ const AvailabilityView: React.FC = () => {
       </>) : (
         <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
       )}
+
+      <Dialog open={!!oosReview} onOpenChange={(o) => !o && setOosReview(null)}>
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Review campaigns to pause</DialogTitle>
+            <DialogDescription>
+              {oosReview && (
+                <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> is OOS on <span className="font-medium text-foreground">{oosReview.platform}</span>. Select campaigns to turn OFF.</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            {(oosReview ? campaignsForOOS[`${oosReview.sku}|${oosReview.platform}`] ?? [] : []).map(c => (
+              <label key={c.id} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
+                <Checkbox
+                  checked={!!oosSelected[c.id]}
+                  onCheckedChange={(v) => setOosSelected(s => ({ ...s, [c.id]: !!v }))}
+                  className="mt-0.5"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-medium text-foreground">{c.name}</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
+                    <span>Type: <span className="text-foreground">{c.type}</span></span>
+                    <span>Daily budget: <span className="text-foreground">{c.dailyBudget}</span></span>
+                    <span>Bid: <span className="text-foreground">{c.bid}</span></span>
+                    <span className="px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">{c.status}</span>
+                  </div>
+                </div>
+              </label>
+            ))}
+            {oosReview && (campaignsForOOS[`${oosReview.sku}|${oosReview.platform}`] ?? []).length === 0 && (
+              <div className="text-[12px] text-muted-foreground p-3">No active campaigns found for this product on {oosReview.platform}.</div>
+            )}
+          </div>
+          <DialogFooter>
+            <button onClick={() => setOosReview(null)} className="px-3 py-2 rounded-lg text-[12px] font-medium bg-surface-2 text-foreground hover:bg-surface-3">Cancel</button>
+            <button
+              onClick={confirmOosPause}
+              disabled={!Object.values(oosSelected).some(Boolean)}
+              className="px-3 py-2 rounded-lg text-[12px] font-medium bg-sw-red text-white hover:bg-sw-red/90 disabled:opacity-50 disabled:cursor-not-allowed">
+              Accept & Turn OFF ({Object.values(oosSelected).filter(Boolean).length})
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
