@@ -381,7 +381,7 @@ const PricingView: React.FC = () => {
         <KPICard title="Price Competitiveness" value="#2" delta="Best value in category" deltaType="positive" sub="Across 6 tracked SKUs" accentColor="bg-sw-green" delay={0} />
         <KPICard title="Price Changes (24h)" value="7" delta="⚠ 2 affect your SKUs" deltaType="warning" sub="Competitor moves today" accentColor="bg-sw-amber" delay={0.05} />
         <KPICard title="Avg Price Index" value="1.04x" delta="4% above market avg" deltaType="warning" sub="Across all platforms" accentColor="bg-primary" delay={0.1} />
-        <KPICard title="Conversion at Risk" value="−18%" delta="From pricing gaps" deltaType="negative" sub="Conversion loss from overpricing" accentColor="bg-sw-red" delay={0.15} />
+        <KPICard title="Avg Discount in Category" value="14%" delta="11%" deltaType="neutral" sub="Your brand is 3% below category average" accentColor="bg-primary" delay={0.15} />
       </div>
 
       {/* Competitor Matrix with SKU Group + Platform filters + Need Attention button */}
