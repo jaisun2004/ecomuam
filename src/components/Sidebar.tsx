@@ -147,21 +147,10 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
             {si > 0 && (
               <div className={`h-px bg-white/10 flex-shrink-0 ${expanded ? "my-2" : "w-8 my-0.5"}`} />
             )}
-            {expanded ? (
+            {expanded && (
               <p className="text-[10px] font-mono text-white/40 tracking-widest uppercase px-2 py-1.5 flex-shrink-0">
                 {section.label}
               </p>
-            ) : (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="text-[6px] font-mono text-white/40 tracking-widest uppercase mb-0.5 cursor-default">
-                    {section.label.slice(0, 3)}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="bg-surface-3 text-foreground border-border-visible text-xs">
-                  {section.label}
-                </TooltipContent>
-              </Tooltip>
             )}
             {section.items.map((item) => renderItem(item))}
           </React.Fragment>
