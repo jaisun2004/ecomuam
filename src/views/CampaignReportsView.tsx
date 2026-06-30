@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PanelCard from "@/components/sw/PanelCard";
 import KPICard from "@/components/sw/KPICard";
-import { ChevronDown, ChevronRight, ArrowLeft } from "lucide-react";
+import { ChevronDown, ChevronRight, ArrowLeft, PauseCircle } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 /* ── Report Data ── */
 type ReportKeyword = {
