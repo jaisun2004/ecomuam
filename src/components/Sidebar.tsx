@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck, Trophy, Sparkles } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck, Trophy, Sparkles, ScrollText, ClipboardList, Image as ImageIcon, ShieldCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -33,6 +33,16 @@ const navSections = [
       { id: "guardrails", icon: Shield, label: "Guardrails", notify: false },
       { id: "taxonomy", icon: Settings, label: "Taxonomy Config", notify: false },
       { id: "crawling", icon: Database, label: "Crawling Inputs", notify: false },
+    ],
+  },
+  {
+    label: "GOVERNANCE",
+    items: [
+      { id: "governance", icon: ShieldCheck, label: "Overview", notify: true },
+      { id: "governance-rules", icon: ScrollText, label: "Rules", notify: false },
+      { id: "governance-plans", icon: ClipboardList, label: "Approved Plans", notify: false },
+      { id: "governance-audit", icon: FileCheck, label: "Campaign Audit", notify: true },
+      { id: "governance-creative", icon: ImageIcon, label: "Creative Compliance", notify: true },
     ],
   },
   {

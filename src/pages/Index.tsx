@@ -28,6 +28,11 @@ import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
 import CampaignReportsView from "@/views/CampaignReportsView";
 import BestsellerIntelligenceView from "@/views/BestsellerIntelligenceView";
 import RecommendationsView from "@/views/RecommendationsView";
+import GovernanceOverview from "@/views/GovernanceOverview";
+import GovernanceRulesView from "@/views/GovernanceRulesView";
+import GovernancePlansView from "@/views/GovernancePlansView";
+import GovernanceAuditView from "@/views/GovernanceAuditView";
+import GovernanceCreativeView from "@/views/GovernanceCreativeView";
 import { GuardrailProvider, useGuardrails } from "@/contexts/GuardrailContext";
 
 const views: Record<string, React.FC> = {
@@ -56,6 +61,11 @@ const views: Record<string, React.FC> = {
   campaignreports: CampaignReportsView,
   bestseller: BestsellerIntelligenceView,
   recommendations: RecommendationsView,
+  governance: GovernanceOverview,
+  "governance-rules": GovernanceRulesView,
+  "governance-plans": GovernancePlansView,
+  "governance-audit": GovernanceAuditView,
+  "governance-creative": GovernanceCreativeView,
 };
 
 const IndexInner = () => {
