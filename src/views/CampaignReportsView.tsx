@@ -83,6 +83,30 @@ const CampaignReportsView: React.FC = () => {
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
   const [expandedCities, setExpandedCities] = useState<Record<string, boolean>>({});
+  const [paused, setPaused] = useState<Record<string, boolean>>({});
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [confirm, setConfirm] = useState<{ names: string[] } | null>(null);
+
+  const allCampaigns = reportData.flatMap(p => p.campaigns.map(c => ({ ...c, platform: p.platform, color: p.color })));
+  const livePausableKeys = allCampaigns.filter(c => c.status === "LIVE" && !paused[c.name]).map(c => c.name);
+  const selectedKeys = Object.keys(selected).filter(k => selected[k]);
+  const allSelected = livePausableKeys.length > 0 && livePausableKeys.every(k => selected[k]);
+
+  const toggleSelect = (name: string) => setSelected(p => ({ ...p, [name]: !p[name] }));
+  const toggleSelectAll = () => {
+    if (allSelected) setSelected({});
+    else setSelected(Object.fromEntries(livePausableKeys.map(k => [k, true])));
+  };
+  const requestPause = (names: string[]) => setConfirm({ names });
+  const doPause = () => {
+    if (!confirm) return;
+    setPaused(p => ({ ...p, ...Object.fromEntries(confirm.names.map(n => [n, true])) }));
+    setSelected({});
+    toast({ title: `Paused ${confirm.names.length} campaign${confirm.names.length > 1 ? "s" : ""}`, description: confirm.names.join(", ") });
+    setConfirm(null);
+  };
+
+  const statusOf = (c: { name: string; status: string }) => paused[c.name] ? "PAUSED" : c.status;
 
   const togglePlatform = (i: number) => setExpandedPlatforms(p => ({ ...p, [i]: !p[i] }));
   const toggleCampaign = (k: string) => setExpandedCampaigns(p => ({ ...p, [k]: !p[k] }));
