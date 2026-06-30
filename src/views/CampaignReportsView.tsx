@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PanelCard from "@/components/sw/PanelCard";
 import KPICard from "@/components/sw/KPICard";
-import { ChevronDown, ChevronRight, ArrowLeft } from "lucide-react";
+import { ChevronDown, ChevronRight, ArrowLeft, PauseCircle } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
 import { useGuardrails } from "@/contexts/GuardrailContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 /* ── Report Data ── */
 type ReportKeyword = {
@@ -81,6 +83,30 @@ const CampaignReportsView: React.FC = () => {
   const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
   const [expandedKeywords, setExpandedKeywords] = useState<Record<string, boolean>>({});
   const [expandedCities, setExpandedCities] = useState<Record<string, boolean>>({});
+  const [paused, setPaused] = useState<Record<string, boolean>>({});
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [confirm, setConfirm] = useState<{ names: string[] } | null>(null);
+
+  const allCampaigns = reportData.flatMap(p => p.campaigns.map(c => ({ ...c, platform: p.platform, color: p.color })));
+  const livePausableKeys = allCampaigns.filter(c => c.status === "LIVE" && !paused[c.name]).map(c => c.name);
+  const selectedKeys = Object.keys(selected).filter(k => selected[k]);
+  const allSelected = livePausableKeys.length > 0 && livePausableKeys.every(k => selected[k]);
+
+  const toggleSelect = (name: string) => setSelected(p => ({ ...p, [name]: !p[name] }));
+  const toggleSelectAll = () => {
+    if (allSelected) setSelected({});
+    else setSelected(Object.fromEntries(livePausableKeys.map(k => [k, true])));
+  };
+  const requestPause = (names: string[]) => setConfirm({ names });
+  const doPause = () => {
+    if (!confirm) return;
+    setPaused(p => ({ ...p, ...Object.fromEntries(confirm.names.map(n => [n, true])) }));
+    setSelected({});
+    toast({ title: `Paused ${confirm.names.length} campaign${confirm.names.length > 1 ? "s" : ""}`, description: confirm.names.join(", ") });
+    setConfirm(null);
+  };
+
+  const statusOf = (c: { name: string; status: string }) => paused[c.name] ? "PAUSED" : c.status;
 
   const togglePlatform = (i: number) => setExpandedPlatforms(p => ({ ...p, [i]: !p[i] }));
   const toggleCampaign = (k: string) => setExpandedCampaigns(p => ({ ...p, [k]: !p[k] }));
@@ -229,32 +255,83 @@ const CampaignReportsView: React.FC = () => {
 
       {/* Performance summary table */}
       <PanelCard title="Campaign performance summary" badge="All campaigns" badgeColor="accent" delay={0.2}>
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[11px] text-muted-foreground">{selectedKeys.length} selected · {livePausableKeys.length} live campaigns</span>
+          <button
+            onClick={() => requestPause(selectedKeys)}
+            disabled={selectedKeys.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red/15 text-sw-red hover:bg-sw-red/25 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <PauseCircle size={12} /> Pause selected ({selectedKeys.length})
+          </button>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border">
-                {["Campaign", "Platform", "Status", "Spend", "Imp", "Clicks", "CTR", "ROAS"].map(h => (
+                <th className="py-2 px-3 w-8">
+                  <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} className="cursor-pointer" />
+                </th>
+                {["Campaign", "Platform", "Status", "Spend", "Imp", "Clicks", "CTR", "ROAS", "Action"].map(h => (
                   <th key={h} className="text-left py-2 px-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {reportData.flatMap(p => p.campaigns.map(c => ({ ...c, platform: p.platform, color: p.color }))).map((c, i) => (
-                <tr key={i} className={`border-b border-border/50 ${i % 2 === 0 ? "bg-surface-2/30" : ""}`}>
-                  <td className="py-2 px-3 text-foreground font-medium">{c.name}</td>
-                  <td className="py-2 px-3"><span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />{c.platform}</span></td>
-                  <td className="py-2 px-3"><span className={`font-mono text-[9px] px-1.5 py-0.5 rounded ${c.status === "LIVE" ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"}`}>{c.status}</span></td>
-                  <td className="py-2 px-3 font-mono text-foreground">{c.spend}</td>
-                  <td className="py-2 px-3 font-mono text-foreground">{c.impressions}</td>
-                  <td className="py-2 px-3 font-mono text-foreground">{c.clicks}</td>
-                  <td className="py-2 px-3 font-mono text-foreground">{c.ctr}</td>
-                  <td className={`py-2 px-3 font-mono font-bold ${c.roasColor}`}>{c.roas}</td>
-                </tr>
-              ))}
+              {allCampaigns.map((c, i) => {
+                const status = statusOf(c);
+                const isLive = status === "LIVE";
+                return (
+                  <tr key={i} className={`border-b border-border/50 ${i % 2 === 0 ? "bg-surface-2/30" : ""}`}>
+                    <td className="py-2 px-3">
+                      <input type="checkbox" disabled={!isLive} checked={!!selected[c.name]} onChange={() => toggleSelect(c.name)} className="cursor-pointer disabled:opacity-30" />
+                    </td>
+                    <td className="py-2 px-3 text-foreground font-medium">{c.name}</td>
+                    <td className="py-2 px-3"><span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />{c.platform}</span></td>
+                    <td className="py-2 px-3"><span className={`font-mono text-[9px] px-1.5 py-0.5 rounded ${isLive ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"}`}>{status}</span></td>
+                    <td className="py-2 px-3 font-mono text-foreground">{c.spend}</td>
+                    <td className="py-2 px-3 font-mono text-foreground">{c.impressions}</td>
+                    <td className="py-2 px-3 font-mono text-foreground">{c.clicks}</td>
+                    <td className="py-2 px-3 font-mono text-foreground">{c.ctr}</td>
+                    <td className={`py-2 px-3 font-mono font-bold ${c.roasColor}`}>{c.roas}</td>
+                    <td className="py-2 px-3">
+                      <button
+                        onClick={() => requestPause([c.name])}
+                        disabled={!isLive}
+                        className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium bg-sw-red/10 text-sw-red hover:bg-sw-red/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <PauseCircle size={10} /> Pause
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </PanelCard>
+
+      <Dialog open={!!confirm} onOpenChange={(o) => !o && setConfirm(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Pause {confirm?.names.length} campaign{(confirm?.names.length ?? 0) > 1 ? "s" : ""}?</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {confirm?.names.map(n => (
+              <div key={n} className="text-xs text-foreground bg-surface-2 rounded-lg px-3 py-2 border border-subtle">{n}</div>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground">Spend will stop immediately. You can resume from Campaign Manager.</p>
+          <DialogFooter className="gap-2">
+            <DialogClose asChild>
+              <button className="px-4 py-2 rounded-lg text-xs text-muted-foreground hover:bg-surface-2">Cancel</button>
+            </DialogClose>
+            <button onClick={doPause} className="px-4 py-2 rounded-lg text-xs font-medium bg-sw-red text-white hover:bg-sw-red/90">
+              Confirm pause
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 };
