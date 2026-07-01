@@ -2,6 +2,18 @@ export type Severity = "critical" | "warning" | "info";
 export type RuleCategory = "setup" | "creative";
 export type RuleAction = "flag" | "auto_pause" | "review";
 
+export type PlacementSurface =
+  | "Homepage Hero"
+  | "Homepage Carousel"
+  | "Category Page Banner"
+  | "Category Top Slot"
+  | "Featured Banner"
+  | "Search Top"
+  | "Brand Shelf"
+  | "PDP Cross-sell";
+
+export type ViolationImpact = "spend_at_risk" | "brand_risk" | "policy";
+
 export interface GovernanceRule {
   id: string;
   name: string;
@@ -46,9 +58,20 @@ export interface Violation {
   status: ViolationStatus;
   detectedAt: string;
   note?: string;
+  impact?: ViolationImpact;
 }
 
 export type CreativeStatus = "ok" | "mismatch" | "missing";
+export type CreativeVerdict = "pass" | "warning" | "blocked";
+export type CreativeState = "active" | "preflight";
+
+export interface CreativeCheckItem {
+  label: string;
+  required: string;
+  actual: string;
+  pass: boolean;
+  critical?: boolean;
+}
 
 export interface CreativeCheck {
   id: string;
@@ -63,4 +86,30 @@ export interface CreativeCheck {
   servedCTA: string;
   status: CreativeStatus;
   mismatchTypes: ("asset" | "landing_page" | "cta")[];
+  surface: PlacementSurface;
+  slot: string;
+  state: CreativeState;
+  scheduledGoLive?: string;
+  thumbColor: string;
+  verdict: CreativeVerdict;
+  platformChecks: CreativeCheckItem[];
+  brandChecks: CreativeCheckItem[];
+}
+
+export interface CompetitorBanner {
+  id: string;
+  competitor: string;
+  competitorBrand: string;
+  platform: string;
+  surface: PlacementSurface;
+  slot: string;
+  thumbColor: string;
+  headline: string;
+  shareOfVoice: number;
+  estSpendIndex: number;
+  daysLive: number;
+  ownSlot?: string;
+  ownShareOfVoice?: number;
+  positionalVerdict: "beating" | "behind" | "absent";
+  shareVerdict: "beating" | "behind" | "absent";
 }
