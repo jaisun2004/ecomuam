@@ -28,6 +28,7 @@ import CategoryWhitespaceView from "@/views/CategoryWhitespaceView";
 import CampaignReportsView from "@/views/CampaignReportsView";
 import BestsellerIntelligenceView from "@/views/BestsellerIntelligenceView";
 import RecommendationsView from "@/views/RecommendationsView";
+import ManualDataEntryView from "@/views/ManualDataEntryView";
 import GovernanceOverview from "@/views/GovernanceOverview";
 import GovernanceRulesView from "@/views/GovernanceRulesView";
 import GovernancePlansView from "@/views/GovernancePlansView";
