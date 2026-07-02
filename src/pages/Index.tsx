@@ -62,6 +62,7 @@ const views: Record<string, React.FC> = {
   campaignreports: CampaignReportsView,
   bestseller: BestsellerIntelligenceView,
   recommendations: RecommendationsView,
+  manualentry: ManualDataEntryView,
   governance: GovernanceOverview,
   "governance-rules": GovernanceRulesView,
   "governance-plans": GovernancePlansView,
