@@ -25,6 +25,7 @@ const navSections = [
     items: [
       { id: "recommendations", icon: Sparkles, label: "Recommendations", notify: true },
       { id: "budget", icon: Zap, label: "Budget Optimiser", notify: false },
+      { id: "manualentry", icon: ClipboardList, label: "Manual Data Entry", notify: false },
     ],
   },
   {
