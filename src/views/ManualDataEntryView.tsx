@@ -427,6 +427,9 @@ const ManualDataEntryView: React.FC = () => {
               {CHANGE_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Button variant="outline" size="sm" onClick={exportLog} className="ml-auto">
+            <Download size={14} className="mr-1.5" /> Export CSV
+          </Button>
         </div>
 
         <div className="overflow-x-auto">
