@@ -25,9 +25,25 @@ const CHANGE_TYPES = [
   "Schedule Changed",
 ] as const;
 
+const VALUE_MODES = ["Absolute", "Percentage"] as const;
+
+const CAMPAIGN_ISSUES = [
+  "Underpacing",
+  "Overpacing",
+  "Low SoS",
+  "Budget Finished",
+  "High ACoS",
+  "Low ROAS",
+  "OOS Risk",
+  "Competitor Pressure",
+  "Other",
+] as const;
+
 type Customer = typeof CUSTOMERS[number];
 type Platform = typeof PLATFORMS[number];
 type ChangeType = typeof CHANGE_TYPES[number];
+type ValueMode = typeof VALUE_MODES[number];
+type CampaignIssue = typeof CAMPAIGN_ISSUES[number];
 
 const CAMPAIGNS: Record<Customer, Record<Platform, string[]>> = {
   Britannia: {
@@ -59,16 +75,18 @@ interface Entry {
   platform: Platform;
   campaign: string;
   changeType: ChangeType;
+  valueMode: ValueMode | "—";
   value: string;
+  issue: CampaignIssue;
   why: string;
 }
 
 const seed: Entry[] = [
-  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", value: "+4.50", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
-  { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", value: "+25%", why: "Weekend pacing under 60%, ROAS 4.8x" },
-  { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", value: "cheap cookies", why: "Irrelevant traffic, ACoS 82%" },
-  { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", value: "—", why: "OOS in 6 dark stores, avoiding wasted spend" },
-  { id: "e5", ts: "2026-06-28 16:30", customer: "Anmol", platform: "Blinkit", campaign: "Glucose SP – National", changeType: "City Added", value: "Pune", why: "New distributor onboarded, extending coverage" },
+  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", valueMode: "Absolute", value: "4.50", issue: "Low SoS", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
+  { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", valueMode: "Percentage", value: "25", issue: "Underpacing", why: "Weekend pacing under 60%, ROAS 4.8x" },
+  { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", valueMode: "—", value: "cheap cookies", issue: "High ACoS", why: "Irrelevant traffic, ACoS 82%" },
+  { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", valueMode: "—", value: "—", issue: "OOS Risk", why: "OOS in 6 dark stores, avoiding wasted spend" },
+  { id: "e5", ts: "2026-06-28 16:30", customer: "Anmol", platform: "Blinkit", campaign: "Glucose SP – National", changeType: "City Added", valueMode: "—", value: "Pune", issue: "Other", why: "New distributor onboarded, extending coverage" },
 ];
 
 const typeTone = (t: ChangeType): string => {
@@ -78,6 +96,7 @@ const typeTone = (t: ChangeType): string => {
 };
 
 const noValue = (t: ChangeType) => t === "Campaign Paused" || t === "Campaign Resumed";
+const isNumericChange = (t: ChangeType) => t === "Bid Increase" || t === "Bid Decrease" || t === "Budget Increase" || t === "Budget Decrease";
 
 const now = () => {
   const d = new Date();
@@ -85,13 +104,13 @@ const now = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value", "Why"] as const;
+const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value Mode", "Value", "Campaign Issue", "Why"] as const;
 
 const escapeCell = (v: string) => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 
 const buildCsv = (rows: Entry[]): string => {
   const header = CSV_COLUMNS.join(",");
-  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.value, e.why].map(escapeCell).join(",")).join("\n");
+  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.valueMode, e.value, e.issue, e.why].map(escapeCell).join(",")).join("\n");
   return rows.length ? `${header}\n${body}` : header;
 };
 
@@ -103,7 +122,6 @@ const downloadCsv = (filename: string, csv: string) => {
   URL.revokeObjectURL(url);
 };
 
-// Simple CSV parser handling quotes, escapes, commas, newlines.
 const parseCsv = (text: string): string[][] => {
   const rows: string[][] = [];
   let cur: string[] = [];
@@ -127,7 +145,7 @@ const parseCsv = (text: string): string[][] => {
   return rows.filter((r) => r.some((f) => f.trim() !== ""));
 };
 
-const dateOf = (ts: string): string => (ts || "").slice(0, 10); // YYYY-MM-DD
+const dateOf = (ts: string): string => (ts || "").slice(0, 10);
 
 const ManualDataEntryView: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>(seed);
@@ -135,13 +153,16 @@ const ManualDataEntryView: React.FC = () => {
   const [platform, setPlatform] = useState<Platform | "">("");
   const [campaign, setCampaign] = useState<string>("");
   const [changeType, setChangeType] = useState<ChangeType | "">("");
+  const [valueMode, setValueMode] = useState<ValueMode | "">("");
   const [value, setValue] = useState("");
+  const [issue, setIssue] = useState<CampaignIssue | "">("");
   const [why, setWhy] = useState("");
 
   const [q, setQ] = useState("");
   const [fCustomer, setFCustomer] = useState<string>("all");
   const [fPlatform, setFPlatform] = useState<string>("all");
   const [fType, setFType] = useState<string>("all");
+  const [fIssue, setFIssue] = useState<string>("all");
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
 
@@ -154,26 +175,39 @@ const ManualDataEntryView: React.FC = () => {
   }, [customer, platform]);
 
   const reset = () => {
-    setCustomer(""); setPlatform(""); setCampaign(""); setChangeType(""); setValue(""); setWhy("");
+    setCustomer(""); setPlatform(""); setCampaign(""); setChangeType(""); setValueMode(""); setValue(""); setIssue(""); setWhy("");
   };
 
   const submit = () => {
-    if (!customer || !platform || !campaign || !changeType || !why.trim()) {
-      toast({ title: "Missing fields", description: "Customer, platform, campaign, change type and why are required." });
+    if (!customer || !platform || !campaign || !changeType || !issue || !why.trim()) {
+      toast({ title: "Missing fields", description: "Customer, platform, campaign, change type, campaign issue and why are required." });
       return;
     }
-    if (!noValue(changeType as ChangeType) && !value.trim()) {
-      toast({ title: "Value required", description: "Please enter the value for this change." });
-      return;
+    const ct = changeType as ChangeType;
+    if (!noValue(ct)) {
+      if (!value.trim()) {
+        toast({ title: "Value required", description: "Please enter the value for this change." });
+        return;
+      }
+      if (isNumericChange(ct) && !valueMode) {
+        toast({ title: "Value type required", description: "Choose Absolute or Percentage." });
+        return;
+      }
     }
+    const mode: ValueMode | "—" = noValue(ct) ? "—" : (isNumericChange(ct) ? (valueMode as ValueMode) : "—");
+    const displayValue = noValue(ct)
+      ? "—"
+      : (isNumericChange(ct) && mode === "Percentage" ? `${value.trim()}%` : value.trim());
     const e: Entry = {
       id: `e${Date.now()}`,
       ts: now(),
       customer: customer as Customer,
       platform: platform as Platform,
       campaign,
-      changeType: changeType as ChangeType,
-      value: noValue(changeType as ChangeType) ? "—" : value.trim(),
+      changeType: ct,
+      valueMode: mode,
+      value: displayValue,
+      issue: issue as CampaignIssue,
       why: why.trim(),
     };
     setEntries((prev) => [e, ...prev]);
@@ -189,13 +223,14 @@ const ManualDataEntryView: React.FC = () => {
       if (fCustomer !== "all" && e.customer !== fCustomer) return false;
       if (fPlatform !== "all" && e.platform !== fPlatform) return false;
       if (fType !== "all" && e.changeType !== fType) return false;
+      if (fIssue !== "all" && e.issue !== fIssue) return false;
       if (q.trim()) {
         const s = q.toLowerCase();
-        if (!(`${e.campaign} ${e.why} ${e.value}`.toLowerCase().includes(s))) return false;
+        if (!(`${e.campaign} ${e.why} ${e.value} ${e.issue}`.toLowerCase().includes(s))) return false;
       }
       return true;
     });
-  }, [entries, q, fCustomer, fPlatform, fType, fromDate, toDate]);
+  }, [entries, q, fCustomer, fPlatform, fType, fIssue, fromDate, toDate]);
 
   const downloadTemplate = () => {
     const example: Entry = {
@@ -205,7 +240,9 @@ const ManualDataEntryView: React.FC = () => {
       platform: "Blinkit",
       campaign: "Good Day SP – Mumbai",
       changeType: "Bid Increase",
-      value: "+4.50",
+      valueMode: "Absolute",
+      value: "4.50",
+      issue: "Low SoS",
       why: "Example row — replace or delete before importing",
     };
     downloadCsv(`manual-data-entry-template-${Date.now()}.csv`, buildCsv([example]));
@@ -245,7 +282,9 @@ const ManualDataEntryView: React.FC = () => {
       const plat = get("platform");
       const camp = get("campaign");
       const ct = get("change type");
+      const vm = get("value mode");
       const val = get("value");
+      const iss = get("campaign issue");
       const wh = get("why");
       const ts = get("timestamp");
 
@@ -254,9 +293,16 @@ const ManualDataEntryView: React.FC = () => {
       if (!(CHANGE_TYPES as readonly string[]).includes(ct)) { errors.push(`Row ${rowNum}: invalid Change Type "${ct}"`); continue; }
       const camps = CAMPAIGNS[cust as Customer][plat as Platform] || [];
       if (!camps.includes(camp)) { errors.push(`Row ${rowNum}: Campaign "${camp}" not valid for ${cust}/${plat}`); continue; }
+      if (!(CAMPAIGN_ISSUES as readonly string[]).includes(iss)) { errors.push(`Row ${rowNum}: invalid Campaign Issue "${iss}"`); continue; }
       if (!wh) { errors.push(`Row ${rowNum}: Why is required`); continue; }
       const isNoVal = noValue(ct as ChangeType);
+      const isNum = isNumericChange(ct as ChangeType);
       if (!isNoVal && !val) { errors.push(`Row ${rowNum}: Value required for ${ct}`); continue; }
+      let mode: ValueMode | "—" = "—";
+      if (!isNoVal && isNum) {
+        if (!(VALUE_MODES as readonly string[]).includes(vm)) { errors.push(`Row ${rowNum}: Value Mode must be Absolute or Percentage for ${ct}`); continue; }
+        mode = vm as ValueMode;
+      }
 
       valid.push({
         id: `imp${Date.now()}-${i}`,
@@ -265,7 +311,9 @@ const ManualDataEntryView: React.FC = () => {
         platform: plat as Platform,
         campaign: camp,
         changeType: ct as ChangeType,
+        valueMode: mode,
         value: isNoVal ? "—" : val,
+        issue: iss as CampaignIssue,
         why: wh.slice(0, 300),
       });
     }
@@ -279,13 +327,17 @@ const ManualDataEntryView: React.FC = () => {
     if (fileRef.current) fileRef.current.value = "";
   };
 
+  const ct = changeType as ChangeType;
+  const showValueMode = !!changeType && isNumericChange(ct);
+  const valueDisabled = !changeType || noValue(ct);
+
   const valuePlaceholder = (): string => {
     if (!changeType) return "Value";
-    if (changeType === "Bid Increase" || changeType === "Bid Decrease") return "e.g. +4.50 or -15%";
-    if (changeType === "Budget Increase" || changeType === "Budget Decrease") return "e.g. +25% or +5,000";
-    if (changeType === "Keyword Added" || changeType === "Keyword Removed") return "e.g. butter cookies";
-    if (changeType === "City Added" || changeType === "City Removed") return "e.g. Pune";
-    if (changeType === "Schedule Changed") return "e.g. 8:00–11:00 PM";
+    if (ct === "Bid Increase" || ct === "Bid Decrease") return valueMode === "Percentage" ? "e.g. 15" : "e.g. 4.50";
+    if (ct === "Budget Increase" || ct === "Budget Decrease") return valueMode === "Percentage" ? "e.g. 25" : "e.g. 5000";
+    if (ct === "Keyword Added" || ct === "Keyword Removed") return "e.g. butter cookies";
+    if (ct === "City Added" || ct === "City Removed") return "e.g. Pune";
+    if (ct === "Schedule Changed") return "e.g. 8:00–11:00 PM";
     return "—";
   };
 
@@ -338,22 +390,39 @@ const ManualDataEntryView: React.FC = () => {
           </div>
           <div className="lg:col-span-1">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Change type</label>
-            <Select value={changeType} onValueChange={(v) => setChangeType(v as ChangeType)}>
+            <Select value={changeType} onValueChange={(v) => { setChangeType(v as ChangeType); setValueMode(""); setValue(""); }}>
               <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
               <SelectContent>{CHANGE_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div className="lg:col-span-1">
+            <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Campaign issue</label>
+            <Select value={issue} onValueChange={(v) => setIssue(v as CampaignIssue)}>
+              <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+              <SelectContent>{CAMPAIGN_ISSUES.map((i) => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+
+          {showValueMode && (
+            <div className="lg:col-span-1">
+              <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value type</label>
+              <Select value={valueMode} onValueChange={(v) => setValueMode(v as ValueMode)}>
+                <SelectTrigger className="mt-1"><SelectValue placeholder="Absolute / %" /></SelectTrigger>
+                <SelectContent>{VALUE_MODES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+          )}
+          <div className={showValueMode ? "lg:col-span-1" : "lg:col-span-2"}>
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value</label>
             <Input
               className="mt-1"
-              value={noValue(changeType as ChangeType) ? "" : value}
+              value={valueDisabled ? "" : value}
               onChange={(e) => setValue(e.target.value)}
               placeholder={valuePlaceholder()}
-              disabled={!changeType || noValue(changeType as ChangeType)}
+              disabled={valueDisabled}
             />
           </div>
-          <div className="lg:col-span-5">
+          <div className={showValueMode ? "lg:col-span-3" : "lg:col-span-3"}>
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Why</label>
             <Textarea
               className="mt-1 min-h-[68px]"
@@ -404,7 +473,7 @@ const ManualDataEntryView: React.FC = () => {
           </div>
           <div className="relative flex-1 min-w-[220px]">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search campaign, value, why…" className="pl-8 h-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search campaign, value, why, issue…" className="pl-8 h-9" />
           </div>
           <Select value={fCustomer} onValueChange={setFCustomer}>
             <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
@@ -421,10 +490,17 @@ const ManualDataEntryView: React.FC = () => {
             </SelectContent>
           </Select>
           <Select value={fType} onValueChange={setFType}>
-            <SelectTrigger className="h-9 w-[180px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-9 w-[170px]"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All change types</SelectItem>
               {CHANGE_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={fIssue} onValueChange={setFIssue}>
+            <SelectTrigger className="h-9 w-[170px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All issues</SelectItem>
+              {CAMPAIGN_ISSUES.map((i) => <SelectItem key={i} value={i}>{i}</SelectItem>)}
             </SelectContent>
           </Select>
           <Button variant="outline" size="sm" onClick={exportLog} className="ml-auto">
@@ -441,14 +517,16 @@ const ManualDataEntryView: React.FC = () => {
                 <th className="p-2">Platform</th>
                 <th className="p-2">Campaign</th>
                 <th className="p-2">Change type</th>
+                <th className="p-2">Value type</th>
                 <th className="p-2">Value</th>
+                <th className="p-2">Issue</th>
                 <th className="p-2">Why</th>
                 <th className="p-2 w-10"></th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={8} className="p-6 text-center text-muted-foreground">No entries match your filters.</td></tr>
+                <tr><td colSpan={10} className="p-6 text-center text-muted-foreground">No entries match your filters.</td></tr>
               ) : filtered.map((e) => (
                 <tr key={e.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-2 font-mono text-xs text-muted-foreground whitespace-nowrap">{e.ts}</td>
@@ -456,8 +534,10 @@ const ManualDataEntryView: React.FC = () => {
                   <td className="p-2">{e.platform}</td>
                   <td className="p-2">{e.campaign}</td>
                   <td className="p-2"><Badge variant="outline" className={`${typeTone(e.changeType)} border`}>{e.changeType}</Badge></td>
+                  <td className="p-2 font-mono text-xs text-muted-foreground">{e.valueMode}</td>
                   <td className="p-2 font-mono">{e.value}</td>
-                  <td className="p-2 max-w-[320px] text-muted-foreground">{e.why}</td>
+                  <td className="p-2"><Badge variant="outline">{e.issue}</Badge></td>
+                  <td className="p-2 max-w-[280px] text-muted-foreground">{e.why}</td>
                   <td className="p-2">
                     <button
                       className="text-muted-foreground hover:text-destructive"
