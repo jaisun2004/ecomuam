@@ -1,41 +1,36 @@
-## Manual Data Entry Screen
+## Manual Data Entry — CSV import/export + change log controls
 
-Add a new screen under the **Optimisation** section in the sidebar for logging manual campaign changes on quick commerce platforms.
+All changes are in `src/views/ManualDataEntryView.tsx`. No other files touched.
 
-### Navigation
-- Add `manualentry` nav item in `src/components/Sidebar.tsx` under the OPTIMISATION bucket (below Budget Optimiser), using a `ClipboardEdit` (or `Pencil`) icon.
-- Register `ManualDataEntryView` in `src/pages/Index.tsx` view map.
+### 1. Header: split "Export CSV" into two buttons
+Replace the single top-right "Export CSV" with two buttons:
+- **Download template** (outline, `FileDown` icon) — exports an empty CSV with the exact column headers the importer expects, plus one commented example row showing valid dropdown values. This is the "insertable" format users fill in and re-import.
+- **Import CSV** (outline, `Upload` icon) — opens a hidden `<input type="file" accept=".csv">` and parses the file client-side.
 
-### Screen layout (`src/views/ManualDataEntryView.tsx`)
+### 2. Import CSV validation
+Parse rows with a small CSV parser (handles quoted fields, commas, escaped quotes) — no new deps.
 
-**Header**
-- Title: "Manual Data Entry"
-- Subtitle: "Log manual changes made to quick commerce campaigns"
-- Right side: "Export CSV" button
+Validation performed before any row is added:
+1. **Header check** — required columns must all be present (case-insensitive, trimmed): `Timestamp` (optional, auto-filled if blank), `Customer`, `Platform`, `Campaign`, `Change Type`, `Value`, `Why`. Extra columns are ignored; missing columns abort the whole import.
+2. **Dropdown value check** per row:
+   - `Customer` ∈ `CUSTOMERS`
+   - `Platform` ∈ `PLATFORMS`
+   - `Change Type` ∈ `CHANGE_TYPES`
+   - `Campaign` ∈ `CAMPAIGNS[customer][platform]`
+   - `Why` non-empty, trimmed, sliced to 300 chars
+   - `Value` required unless change type is `Campaign Paused` / `Campaign Resumed` (then coerced to `—`)
+3. **Result summary** — show a toast: `Imported X rows, skipped Y (see details)`. If any row fails, show a dismissible error panel above the change log listing row number + reason for each failure (max 10 shown, "+N more"). Valid rows are prepended to the log; invalid rows are not added.
+4. On header mismatch: show a single toast `Import failed: missing columns X, Y` and abort.
 
-**Entry form (top card)** — inline row that appends to the table on submit:
-| Field | Type | Options |
-|---|---|---|
-| Customer | Dropdown | Britannia, Sunfeast, Unibic, Anmol (mock list) |
-| Platform | Dropdown | Blinkit, Instamart, Zepto |
-| Campaign | Dropdown | Filtered by selected customer + platform (mock campaign list) |
-| Change Type | Dropdown (fixed) | Bid Increase, Bid Decrease, Budget Increase, Budget Decrease, Keyword Added, Keyword Removed, Campaign Paused, Campaign Resumed, City Added, City Removed, Schedule Changed |
-| Value | Input | Numeric with unit auto-selected by change type (₹ / % / text for keyword/city); disabled for pause/resume |
-| Why | Textarea | Free text, max 300 chars, required |
-| Add | Button | Validates and prepends to log table |
+### 3. Change log: local Export CSV + date range
+Add a compact toolbar row above the existing filter row (or inline with it) containing:
+- **Date range** — two `<Input type="date">` fields labeled `From` / `To`, filtering `entries` by the date portion of `ts`. Empty = unbounded. Placed at the left of the filter row.
+- **Export CSV** button on the right side of the log's `PanelCard` title area (using the card's title-row via a small header slot, or as the first item on the filter row) — exports **only the currently filtered** rows using the same column format as the template so the file round-trips through import.
 
-**Log table (below form)**
-Columns: Timestamp • Customer • Platform • Campaign • Change Type (colored chip) • Value • Why • Actions (delete row)
-- Sorted newest first, sticky header, search box, filter chips for Customer / Platform / Change Type.
-- Empty state when no entries.
+Filter pipeline order: date range → customer → platform → change type → search box. Existing filter chips and search are unchanged.
 
-### State & data
-- Local `useState` array of entries; seed with 5-6 mock entries so the table isn't empty.
-- Reuse existing shadcn `Select`, `Input`, `Textarea`, `Button`, `Table`, `Badge` components.
-- Follow project design tokens (purple sidebar theme, DM Sans, JetBrains Mono for numeric).
-- No backend / no Lovable Cloud — pure client state as per project's "Live Data Integration" constraint being about auto-crawled feeds; manual entry is the explicit purpose here.
-
-### Files touched
-- `src/components/Sidebar.tsx` — add nav item
-- `src/pages/Index.tsx` — import + register view
-- `src/views/ManualDataEntryView.tsx` — new file
+### Technical notes
+- Reuse the existing `exportCsv` logic but extract a small `buildCsv(rows)` helper inside the file so the template, header export, and log export all share the same column order.
+- Template row example uses realistic values already in the mock data.
+- `Timestamp` in imports: if blank or unparseable, use `now()`; if present, keep the string as-is (no strict date parsing, matches how seed data is stored).
+- No changes to types, seed data, or other views.

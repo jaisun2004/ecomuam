@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import PanelCard from "@/components/sw/PanelCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Download, Plus, Search } from "lucide-react";
+import { Trash2, Download, Plus, Search, Upload, FileDown, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const CUSTOMERS = ["Britannia", "Sunfeast", "Unibic", "Anmol"] as const;
@@ -77,7 +77,6 @@ const typeTone = (t: ChangeType): string => {
   return "bg-amber-500/15 text-amber-700 border-amber-500/30";
 };
 
-const needsNumericValue = (t: ChangeType) => t === "Bid Increase" || t === "Bid Decrease" || t === "Budget Increase" || t === "Budget Decrease";
 const noValue = (t: ChangeType) => t === "Campaign Paused" || t === "Campaign Resumed";
 
 const now = () => {
@@ -85,6 +84,50 @@ const now = () => {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
+
+const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value", "Why"] as const;
+
+const escapeCell = (v: string) => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+
+const buildCsv = (rows: Entry[]): string => {
+  const header = CSV_COLUMNS.join(",");
+  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.value, e.why].map(escapeCell).join(",")).join("\n");
+  return rows.length ? `${header}\n${body}` : header;
+};
+
+const downloadCsv = (filename: string, csv: string) => {
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+};
+
+// Simple CSV parser handling quotes, escapes, commas, newlines.
+const parseCsv = (text: string): string[][] => {
+  const rows: string[][] = [];
+  let cur: string[] = [];
+  let field = "";
+  let inQuotes = false;
+  const src = text.replace(/\r\n?/g, "\n");
+  for (let i = 0; i < src.length; i++) {
+    const c = src[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (src[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; }
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { cur.push(field); field = ""; }
+      else if (c === "\n") { cur.push(field); rows.push(cur); cur = []; field = ""; }
+      else field += c;
+    }
+  }
+  if (field.length > 0 || cur.length > 0) { cur.push(field); rows.push(cur); }
+  return rows.filter((r) => r.some((f) => f.trim() !== ""));
+};
+
+const dateOf = (ts: string): string => (ts || "").slice(0, 10); // YYYY-MM-DD
 
 const ManualDataEntryView: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>(seed);
@@ -99,6 +142,11 @@ const ManualDataEntryView: React.FC = () => {
   const [fCustomer, setFCustomer] = useState<string>("all");
   const [fPlatform, setFPlatform] = useState<string>("all");
   const [fType, setFType] = useState<string>("all");
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>("");
+
+  const [importErrors, setImportErrors] = useState<string[]>([]);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const campaignOptions = useMemo(() => {
     if (!customer || !platform) return [];
@@ -135,6 +183,9 @@ const ManualDataEntryView: React.FC = () => {
 
   const filtered = useMemo(() => {
     return entries.filter((e) => {
+      const d = dateOf(e.ts);
+      if (fromDate && d < fromDate) return false;
+      if (toDate && d > toDate) return false;
       if (fCustomer !== "all" && e.customer !== fCustomer) return false;
       if (fPlatform !== "all" && e.platform !== fPlatform) return false;
       if (fType !== "all" && e.changeType !== fType) return false;
@@ -144,17 +195,88 @@ const ManualDataEntryView: React.FC = () => {
       }
       return true;
     });
-  }, [entries, q, fCustomer, fPlatform, fType]);
+  }, [entries, q, fCustomer, fPlatform, fType, fromDate, toDate]);
 
-  const exportCsv = () => {
-    const header = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value", "Why"];
-    const rows = filtered.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.value, e.why]);
-    const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `manual-data-entry-${Date.now()}.csv`; a.click();
-    URL.revokeObjectURL(url);
+  const downloadTemplate = () => {
+    const example: Entry = {
+      id: "example",
+      ts: now(),
+      customer: "Britannia",
+      platform: "Blinkit",
+      campaign: "Good Day SP – Mumbai",
+      changeType: "Bid Increase",
+      value: "+₹4.50",
+      why: "Example row — replace or delete before importing",
+    };
+    downloadCsv(`manual-data-entry-template-${Date.now()}.csv`, buildCsv([example]));
+  };
+
+  const exportLog = () => {
+    downloadCsv(`manual-data-entry-${Date.now()}.csv`, buildCsv(filtered));
+  };
+
+  const handleImportClick = () => fileRef.current?.click();
+
+  const handleFile = async (file: File) => {
+    setImportErrors([]);
+    const text = await file.text();
+    const rows = parseCsv(text);
+    if (rows.length === 0) {
+      toast({ title: "Import failed", description: "File is empty." });
+      return;
+    }
+    const headerRow = rows[0].map((h) => h.trim());
+    const norm = headerRow.map((h) => h.toLowerCase());
+    const required = CSV_COLUMNS.map((c) => c.toLowerCase());
+    const missing = required.filter((r) => !norm.includes(r));
+    if (missing.length > 0) {
+      toast({ title: "Import failed", description: `Missing columns: ${missing.join(", ")}` });
+      return;
+    }
+    const idx = Object.fromEntries(required.map((r) => [r, norm.indexOf(r)])) as Record<string, number>;
+
+    const valid: Entry[] = [];
+    const errors: string[] = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      const get = (k: string) => (r[idx[k]] ?? "").trim();
+      const rowNum = i + 1;
+      const cust = get("customer");
+      const plat = get("platform");
+      const camp = get("campaign");
+      const ct = get("change type");
+      const val = get("value");
+      const wh = get("why");
+      const ts = get("timestamp");
+
+      if (!(CUSTOMERS as readonly string[]).includes(cust)) { errors.push(`Row ${rowNum}: invalid Customer "${cust}"`); continue; }
+      if (!(PLATFORMS as readonly string[]).includes(plat)) { errors.push(`Row ${rowNum}: invalid Platform "${plat}"`); continue; }
+      if (!(CHANGE_TYPES as readonly string[]).includes(ct)) { errors.push(`Row ${rowNum}: invalid Change Type "${ct}"`); continue; }
+      const camps = CAMPAIGNS[cust as Customer][plat as Platform] || [];
+      if (!camps.includes(camp)) { errors.push(`Row ${rowNum}: Campaign "${camp}" not valid for ${cust}/${plat}`); continue; }
+      if (!wh) { errors.push(`Row ${rowNum}: Why is required`); continue; }
+      const isNoVal = noValue(ct as ChangeType);
+      if (!isNoVal && !val) { errors.push(`Row ${rowNum}: Value required for ${ct}`); continue; }
+
+      valid.push({
+        id: `imp${Date.now()}-${i}`,
+        ts: ts || now(),
+        customer: cust as Customer,
+        platform: plat as Platform,
+        campaign: camp,
+        changeType: ct as ChangeType,
+        value: isNoVal ? "—" : val,
+        why: wh.slice(0, 300),
+      });
+    }
+
+    if (valid.length > 0) setEntries((prev) => [...valid, ...prev]);
+    setImportErrors(errors);
+    toast({
+      title: `Imported ${valid.length} row${valid.length === 1 ? "" : "s"}`,
+      description: errors.length > 0 ? `${errors.length} skipped — see details below.` : "All rows imported successfully.",
+    });
+    if (fileRef.current) fileRef.current.value = "";
   };
 
   const valuePlaceholder = (): string => {
@@ -169,14 +291,26 @@ const ManualDataEntryView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-2">
         <div>
           <h1 className="font-display text-2xl font-bold text-foreground">Manual Data Entry</h1>
           <p className="text-sm text-muted-foreground mt-1">Log manual changes made to quick commerce campaigns</p>
         </div>
-        <Button variant="outline" size="sm" onClick={exportCsv}>
-          <Download size={14} className="mr-1.5" /> Export CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={downloadTemplate}>
+            <FileDown size={14} className="mr-1.5" /> Download template
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleImportClick}>
+            <Upload size={14} className="mr-1.5" /> Import CSV
+          </Button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+          />
+        </div>
       </div>
 
       <PanelCard title="New change">
@@ -237,8 +371,44 @@ const ManualDataEntryView: React.FC = () => {
         </div>
       </PanelCard>
 
-      <PanelCard title={`Change log (${filtered.length})`}>
+      {importErrors.length > 0 && (
+        <div className="rounded-md border border-rose-500/30 bg-rose-500/10 p-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="text-sm font-medium text-rose-700">Import issues ({importErrors.length})</div>
+            <button className="text-rose-700 hover:opacity-70" onClick={() => setImportErrors([])} aria-label="Dismiss">
+              <X size={14} />
+            </button>
+          </div>
+          <ul className="mt-2 text-xs font-mono text-rose-700 space-y-0.5">
+            {importErrors.slice(0, 10).map((e, i) => <li key={i}>• {e}</li>)}
+            {importErrors.length > 10 && <li className="opacity-70">+{importErrors.length - 10} more</li>}
+          </ul>
+        </div>
+      )}
+
+      <PanelCard
+        title={`Change log (${filtered.length})`}
+        headerRight={
+          <Button variant="outline" size="sm" onClick={exportLog}>
+            <Download size={14} className="mr-1.5" /> Export CSV
+          </Button>
+        }
+      >
         <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="flex items-center gap-1.5">
+            <label className="text-[11px] font-mono text-muted-foreground uppercase">From</label>
+            <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="h-9 w-[140px]" />
+            <label className="text-[11px] font-mono text-muted-foreground uppercase ml-1">To</label>
+            <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="h-9 w-[140px]" />
+            {(fromDate || toDate) && (
+              <button
+                className="text-[11px] text-muted-foreground hover:text-foreground underline"
+                onClick={() => { setFromDate(""); setToDate(""); }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
           <div className="relative flex-1 min-w-[220px]">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search campaign, value, why…" className="pl-8 h-9" />
