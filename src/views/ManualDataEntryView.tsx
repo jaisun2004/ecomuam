@@ -328,7 +328,8 @@ const ManualDataEntryView: React.FC = () => {
   };
 
   const ct = changeType as ChangeType;
-  const showValueMode = !!changeType && isNumericChange(ct);
+  const showValueMode = true;
+  const valueModeDisabled = !changeType || !isNumericChange(ct);
   const valueDisabled = !changeType || noValue(ct);
 
   const valuePlaceholder = (): string => {
