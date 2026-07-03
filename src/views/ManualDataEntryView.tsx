@@ -386,14 +386,7 @@ const ManualDataEntryView: React.FC = () => {
         </div>
       )}
 
-      <PanelCard
-        title={`Change log (${filtered.length})`}
-        headerRight={
-          <Button variant="outline" size="sm" onClick={exportLog}>
-            <Download size={14} className="mr-1.5" /> Export CSV
-          </Button>
-        }
-      >
+      <PanelCard title={`Change log (${filtered.length})`}>
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <div className="flex items-center gap-1.5">
             <label className="text-[11px] font-mono text-muted-foreground uppercase">From</label>
