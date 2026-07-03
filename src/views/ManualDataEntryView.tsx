@@ -404,16 +404,14 @@ const ManualDataEntryView: React.FC = () => {
             </Select>
           </div>
 
-          {showValueMode && (
-            <div className="lg:col-span-1">
-              <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value type</label>
-              <Select value={valueMode} onValueChange={(v) => setValueMode(v as ValueMode)}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Absolute / %" /></SelectTrigger>
-                <SelectContent>{VALUE_MODES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-          )}
-          <div className={showValueMode ? "lg:col-span-1" : "lg:col-span-2"}>
+          <div className="lg:col-span-1">
+            <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value type</label>
+            <Select value={valueMode} onValueChange={(v) => setValueMode(v as ValueMode)} disabled={valueModeDisabled}>
+              <SelectTrigger className="mt-1"><SelectValue placeholder="Absolute / %" /></SelectTrigger>
+              <SelectContent>{VALUE_MODES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="lg:col-span-1">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value</label>
             <Input
               className="mt-1"
