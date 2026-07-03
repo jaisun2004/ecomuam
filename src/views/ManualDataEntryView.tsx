@@ -64,7 +64,7 @@ interface Entry {
 }
 
 const seed: Entry[] = [
-  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", value: "+₹4.50", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
+  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", value: "+4.50", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
   { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", value: "+25%", why: "Weekend pacing under 60%, ROAS 4.8x" },
   { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", value: "cheap cookies", why: "Irrelevant traffic, ACoS 82%" },
   { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", value: "—", why: "OOS in 6 dark stores, avoiding wasted spend" },
@@ -205,7 +205,7 @@ const ManualDataEntryView: React.FC = () => {
       platform: "Blinkit",
       campaign: "Good Day SP – Mumbai",
       changeType: "Bid Increase",
-      value: "+₹4.50",
+      value: "+4.50",
       why: "Example row — replace or delete before importing",
     };
     downloadCsv(`manual-data-entry-template-${Date.now()}.csv`, buildCsv([example]));
@@ -281,8 +281,8 @@ const ManualDataEntryView: React.FC = () => {
 
   const valuePlaceholder = (): string => {
     if (!changeType) return "Value";
-    if (changeType === "Bid Increase" || changeType === "Bid Decrease") return "e.g. +₹4.50 or -15%";
-    if (changeType === "Budget Increase" || changeType === "Budget Decrease") return "e.g. +25% or +₹5,000";
+    if (changeType === "Bid Increase" || changeType === "Bid Decrease") return "e.g. +4.50 or -15%";
+    if (changeType === "Budget Increase" || changeType === "Budget Decrease") return "e.g. +25% or +5,000";
     if (changeType === "Keyword Added" || changeType === "Keyword Removed") return "e.g. butter cookies";
     if (changeType === "City Added" || changeType === "City Removed") return "e.g. Pune";
     if (changeType === "Schedule Changed") return "e.g. 8:00–11:00 PM";
