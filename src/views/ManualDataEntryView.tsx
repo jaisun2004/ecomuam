@@ -68,6 +68,31 @@ const CAMPAIGNS: Record<Customer, Record<Platform, string[]>> = {
   },
 };
 
+const KEYWORDS: Record<string, string[]> = {
+  "Good Day SP – Mumbai": ["butter cookies", "good day", "cashew cookies", "premium biscuits"],
+  "Bourbon SB – Delhi NCR": ["bourbon", "chocolate biscuits", "cream biscuits"],
+  "Marie Gold National SP": ["marie gold", "marie biscuit", "tea time biscuits"],
+  "Good Day Cookies – Bangalore": ["good day", "butter cookies", "cashew cookies"],
+  "Milk Bikis SP – National": ["milk bikis", "kids biscuits", "milk biscuits"],
+  "Bourbon Combo – Metro": ["bourbon combo", "chocolate biscuits"],
+  "Tiger Glucose SP – Hyderabad": ["tiger glucose", "glucose biscuits", "energy biscuits"],
+  "Dark Fantasy SP – National": ["dark fantasy", "choco fills", "premium cookies"],
+  "Marie Light SB – Mumbai": ["marie light", "diet biscuits", "sugar free"],
+  "Bounce Cream SP – Delhi NCR": ["bounce", "cream biscuits", "sandwich biscuits"],
+  "Farmlite SB – Bangalore": ["farmlite", "digestive biscuits", "oats biscuits"],
+  "Dark Fantasy Choco Fills – Metro": ["dark fantasy", "choco fills", "molten chocolate"],
+  "Choco Chip SP – Mumbai": ["choco chip", "chocolate cookies", "unibic cookies"],
+  "Cashew Cookies SB – National": ["cashew cookies", "nut cookies", "premium cookies"],
+  "Butter Cookies SP – Bangalore": ["butter cookies", "danish butter", "cheap cookies"],
+  "Anzac Cookies – Delhi NCR": ["anzac", "oats cookies", "healthy cookies"],
+  "Glucose SP – National": ["glucose biscuits", "energy biscuits", "sugar biscuits"],
+  "Marie SP – Kolkata": ["marie biscuit", "tea biscuit"],
+  "Cream Biscuits SB – Chennai": ["cream biscuits", "sandwich biscuits"],
+  "Butter Bite SP – Metro": ["butter bite", "butter cookies"],
+};
+
+const NEW_KEYWORD = "New Keyword";
+
 interface Entry {
   id: string;
   ts: string;
@@ -77,16 +102,17 @@ interface Entry {
   changeType: ChangeType;
   valueMode: ValueMode | "—";
   value: string;
+  keyword: string;
   issue: CampaignIssue;
   why: string;
 }
 
 const seed: Entry[] = [
-  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", valueMode: "Absolute", value: "4.50", issue: "Low SoS", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
-  { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", valueMode: "Percentage", value: "25", issue: "Underpacing", why: "Weekend pacing under 60%, ROAS 4.8x" },
-  { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", valueMode: "—", value: "cheap cookies", issue: "High ACoS", why: "Irrelevant traffic, ACoS 82%" },
-  { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", valueMode: "—", value: "—", issue: "OOS Risk", why: "OOS in 6 dark stores, avoiding wasted spend" },
-  { id: "e5", ts: "2026-06-28 16:30", customer: "Anmol", platform: "Blinkit", campaign: "Glucose SP – National", changeType: "City Added", valueMode: "—", value: "Pune", issue: "Other", why: "New distributor onboarded, extending coverage" },
+  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", valueMode: "Absolute", value: "4.50", keyword: "butter cookies", issue: "Low SoS", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
+  { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", valueMode: "Percentage", value: "25%", keyword: "—", issue: "Underpacing", why: "Weekend pacing under 60%, ROAS 4.8x" },
+  { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", valueMode: "—", value: "cheap cookies", keyword: "cheap cookies", issue: "High ACoS", why: "Irrelevant traffic, ACoS 82%" },
+  { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", valueMode: "—", value: "—", keyword: "—", issue: "OOS Risk", why: "OOS in 6 dark stores, avoiding wasted spend" },
+  { id: "e5", ts: "2026-06-28 16:30", customer: "Anmol", platform: "Blinkit", campaign: "Glucose SP – National", changeType: "City Added", valueMode: "—", value: "Pune", keyword: "—", issue: "Other", why: "New distributor onboarded, extending coverage" },
 ];
 
 const typeTone = (t: ChangeType): string => {
@@ -97,6 +123,7 @@ const typeTone = (t: ChangeType): string => {
 
 const noValue = (t: ChangeType) => t === "Campaign Paused" || t === "Campaign Resumed";
 const isNumericChange = (t: ChangeType) => t === "Bid Increase" || t === "Bid Decrease" || t === "Budget Increase" || t === "Budget Decrease";
+const usesKeyword = (t: ChangeType) => t === "Bid Increase" || t === "Bid Decrease" || t === "Keyword Added" || t === "Keyword Removed";
 
 const now = () => {
   const d = new Date();
@@ -104,13 +131,13 @@ const now = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value Mode", "Value", "Campaign Issue", "Why"] as const;
+const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value Mode", "Value", "Keyword", "Campaign Issue", "Why"] as const;
 
 const escapeCell = (v: string) => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 
 const buildCsv = (rows: Entry[]): string => {
   const header = CSV_COLUMNS.join(",");
-  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.valueMode, e.value, e.issue, e.why].map(escapeCell).join(",")).join("\n");
+  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.valueMode, e.value, e.keyword, e.issue, e.why].map(escapeCell).join(",")).join("\n");
   return rows.length ? `${header}\n${body}` : header;
 };
 
@@ -155,6 +182,7 @@ const ManualDataEntryView: React.FC = () => {
   const [changeType, setChangeType] = useState<ChangeType | "">("");
   const [valueMode, setValueMode] = useState<ValueMode | "">("");
   const [value, setValue] = useState("");
+  const [keyword, setKeyword] = useState<string>("");
   const [issue, setIssue] = useState<CampaignIssue | "">("");
   const [why, setWhy] = useState("");
 
@@ -175,7 +203,7 @@ const ManualDataEntryView: React.FC = () => {
   }, [customer, platform]);
 
   const reset = () => {
-    setCustomer(""); setPlatform(""); setCampaign(""); setChangeType(""); setValueMode(""); setValue(""); setIssue(""); setWhy("");
+    setCustomer(""); setPlatform(""); setCampaign(""); setChangeType(""); setValueMode(""); setValue(""); setKeyword(""); setIssue(""); setWhy("");
   };
 
   const submit = () => {
@@ -184,9 +212,15 @@ const ManualDataEntryView: React.FC = () => {
       return;
     }
     const ct = changeType as ChangeType;
+    if (usesKeyword(ct) && !keyword) {
+      toast({ title: "Keyword required", description: "Please select a keyword for this change." });
+      return;
+    }
     if (!noValue(ct)) {
-      if (!value.trim()) {
-        toast({ title: "Value required", description: "Please enter the value for this change." });
+      // For Keyword Removed, value is auto-derived from keyword.
+      const needsValueInput = !(ct === "Keyword Removed");
+      if (needsValueInput && !value.trim()) {
+        toast({ title: "Value required", description: ct === "Keyword Added" ? "Enter the new keyword text." : "Please enter the value for this change." });
         return;
       }
       if (isNumericChange(ct) && !valueMode) {
@@ -195,9 +229,14 @@ const ManualDataEntryView: React.FC = () => {
       }
     }
     const mode: ValueMode | "—" = noValue(ct) ? "—" : (isNumericChange(ct) ? (valueMode as ValueMode) : "—");
-    const displayValue = noValue(ct)
-      ? "—"
-      : (isNumericChange(ct) && mode === "Percentage" ? `${value.trim()}%` : value.trim());
+    let displayValue: string;
+    if (noValue(ct)) displayValue = "—";
+    else if (ct === "Keyword Removed") displayValue = keyword;
+    else if (isNumericChange(ct) && mode === "Percentage") displayValue = `${value.trim()}%`;
+    else displayValue = value.trim();
+
+    const keywordOut = usesKeyword(ct) ? keyword : "—";
+
     const e: Entry = {
       id: `e${Date.now()}`,
       ts: now(),
@@ -207,6 +246,7 @@ const ManualDataEntryView: React.FC = () => {
       changeType: ct,
       valueMode: mode,
       value: displayValue,
+      keyword: keywordOut,
       issue: issue as CampaignIssue,
       why: why.trim(),
     };
@@ -242,6 +282,7 @@ const ManualDataEntryView: React.FC = () => {
       changeType: "Bid Increase",
       valueMode: "Absolute",
       value: "4.50",
+      keyword: "butter cookies",
       issue: "Low SoS",
       why: "Example row — replace or delete before importing",
     };
@@ -284,6 +325,7 @@ const ManualDataEntryView: React.FC = () => {
       const ct = get("change type");
       const vm = get("value mode");
       const val = get("value");
+      const kw = get("keyword");
       const iss = get("campaign issue");
       const wh = get("why");
       const ts = get("timestamp");
@@ -297,11 +339,21 @@ const ManualDataEntryView: React.FC = () => {
       if (!wh) { errors.push(`Row ${rowNum}: Why is required`); continue; }
       const isNoVal = noValue(ct as ChangeType);
       const isNum = isNumericChange(ct as ChangeType);
+      const usesKw = usesKeyword(ct as ChangeType);
       if (!isNoVal && !val) { errors.push(`Row ${rowNum}: Value required for ${ct}`); continue; }
       let mode: ValueMode | "—" = "—";
       if (!isNoVal && isNum) {
         if (!(VALUE_MODES as readonly string[]).includes(vm)) { errors.push(`Row ${rowNum}: Value Mode must be Absolute or Percentage for ${ct}`); continue; }
         mode = vm as ValueMode;
+      }
+      if (usesKw) {
+        if (!kw) { errors.push(`Row ${rowNum}: Keyword required for ${ct}`); continue; }
+        const camp_kws = KEYWORDS[camp] || [];
+        if (ct === "Keyword Added") {
+          if (kw !== NEW_KEYWORD) { errors.push(`Row ${rowNum}: Keyword for "Keyword Added" must be "${NEW_KEYWORD}"`); continue; }
+        } else {
+          if (!camp_kws.includes(kw)) { errors.push(`Row ${rowNum}: Keyword "${kw}" not valid for campaign "${camp}"`); continue; }
+        }
       }
 
       valid.push({
@@ -313,6 +365,7 @@ const ManualDataEntryView: React.FC = () => {
         changeType: ct as ChangeType,
         valueMode: mode,
         value: isNoVal ? "—" : val,
+        keyword: usesKw ? kw : "—",
         issue: iss as CampaignIssue,
         why: wh.slice(0, 300),
       });
@@ -330,13 +383,27 @@ const ManualDataEntryView: React.FC = () => {
   const ct = changeType as ChangeType;
   const showValueMode = true;
   const valueModeDisabled = !changeType || !isNumericChange(ct);
-  const valueDisabled = !changeType || noValue(ct);
+  const showKeyword = !!changeType && usesKeyword(ct);
+  const keywordOptions = useMemo(() => {
+    if (!showKeyword || !campaign) return [] as string[];
+    if (ct === "Keyword Added") return [NEW_KEYWORD];
+    return KEYWORDS[campaign] || [];
+  }, [showKeyword, campaign, ct]);
+  const keywordDisabled = !showKeyword || !campaign;
+  // Value is disabled for Campaign Paused/Resumed AND for Keyword Removed (auto = keyword).
+  // For Keyword Added, Value is only enabled once "New Keyword" is chosen.
+  const valueDisabled =
+    !changeType
+    || noValue(ct)
+    || ct === "Keyword Removed"
+    || (ct === "Keyword Added" && keyword !== NEW_KEYWORD);
 
   const valuePlaceholder = (): string => {
     if (!changeType) return "Value";
     if (ct === "Bid Increase" || ct === "Bid Decrease") return valueMode === "Percentage" ? "e.g. 15" : "e.g. 4.50";
     if (ct === "Budget Increase" || ct === "Budget Decrease") return valueMode === "Percentage" ? "e.g. 25" : "e.g. 5000";
-    if (ct === "Keyword Added" || ct === "Keyword Removed") return "e.g. butter cookies";
+    if (ct === "Keyword Added") return keyword === NEW_KEYWORD ? "Enter new keyword" : "Pick keyword first";
+    if (ct === "Keyword Removed") return keyword || "Pick keyword";
     if (ct === "City Added" || ct === "City Removed") return "e.g. Pune";
     if (ct === "Schedule Changed") return "e.g. 8:00–11:00 PM";
     return "—";
@@ -384,14 +451,14 @@ const ManualDataEntryView: React.FC = () => {
           </div>
           <div className="lg:col-span-2">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Campaign</label>
-            <Select value={campaign} onValueChange={setCampaign} disabled={!customer || !platform}>
+            <Select value={campaign} onValueChange={(v) => { setCampaign(v); setKeyword(""); }} disabled={!customer || !platform}>
               <SelectTrigger className="mt-1"><SelectValue placeholder={!customer || !platform ? "Pick customer & platform" : "Select campaign"} /></SelectTrigger>
               <SelectContent>{campaignOptions.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div className="lg:col-span-1">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Change type</label>
-            <Select value={changeType} onValueChange={(v) => { setChangeType(v as ChangeType); setValueMode(""); setValue(""); }}>
+            <Select value={changeType} onValueChange={(v) => { setChangeType(v as ChangeType); setValueMode(""); setValue(""); setKeyword(""); }}>
               <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
               <SelectContent>{CHANGE_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
             </Select>
@@ -404,6 +471,19 @@ const ManualDataEntryView: React.FC = () => {
             </Select>
           </div>
 
+          <div className="lg:col-span-1">
+            <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Keyword</label>
+            <Select
+              value={keyword}
+              onValueChange={(v) => { setKeyword(v); if (ct === "Keyword Added" && v !== NEW_KEYWORD) setValue(""); }}
+              disabled={keywordDisabled}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder={!showKeyword ? "N/A" : (!campaign ? "Pick campaign" : "Select")} />
+              </SelectTrigger>
+              <SelectContent>{keywordOptions.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
           <div className="lg:col-span-1">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value type</label>
             <Select value={valueMode} onValueChange={(v) => setValueMode(v as ValueMode)} disabled={valueModeDisabled}>
@@ -421,7 +501,7 @@ const ManualDataEntryView: React.FC = () => {
               disabled={valueDisabled}
             />
           </div>
-          <div className={showValueMode ? "lg:col-span-3" : "lg:col-span-3"}>
+          <div className="lg:col-span-2">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Why</label>
             <Textarea
               className="mt-1 min-h-[68px]"
@@ -516,6 +596,7 @@ const ManualDataEntryView: React.FC = () => {
                 <th className="p-2">Platform</th>
                 <th className="p-2">Campaign</th>
                 <th className="p-2">Change type</th>
+                <th className="p-2">Keyword</th>
                 <th className="p-2">Value type</th>
                 <th className="p-2">Value</th>
                 <th className="p-2">Issue</th>
@@ -525,7 +606,7 @@ const ManualDataEntryView: React.FC = () => {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={10} className="p-6 text-center text-muted-foreground">No entries match your filters.</td></tr>
+                <tr><td colSpan={11} className="p-6 text-center text-muted-foreground">No entries match your filters.</td></tr>
               ) : filtered.map((e) => (
                 <tr key={e.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-2 font-mono text-xs text-muted-foreground whitespace-nowrap">{e.ts}</td>
@@ -533,6 +614,7 @@ const ManualDataEntryView: React.FC = () => {
                   <td className="p-2">{e.platform}</td>
                   <td className="p-2">{e.campaign}</td>
                   <td className="p-2"><Badge variant="outline" className={`${typeTone(e.changeType)} border`}>{e.changeType}</Badge></td>
+                  <td className="p-2 font-mono text-xs">{e.keyword}</td>
                   <td className="p-2 font-mono text-xs text-muted-foreground">{e.valueMode}</td>
                   <td className="p-2 font-mono">{e.value}</td>
                   <td className="p-2"><Badge variant="outline">{e.issue}</Badge></td>
