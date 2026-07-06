@@ -458,7 +458,7 @@ const ManualDataEntryView: React.FC = () => {
           </div>
           <div className="lg:col-span-1">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Change type</label>
-            <Select value={changeType} onValueChange={(v) => { setChangeType(v as ChangeType); setValueMode(""); setValue(""); }}>
+            <Select value={changeType} onValueChange={(v) => { setChangeType(v as ChangeType); setValueMode(""); setValue(""); setKeyword(""); }}>
               <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
               <SelectContent>{CHANGE_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
             </Select>
@@ -471,6 +471,19 @@ const ManualDataEntryView: React.FC = () => {
             </Select>
           </div>
 
+          <div className="lg:col-span-1">
+            <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Keyword</label>
+            <Select
+              value={keyword}
+              onValueChange={(v) => { setKeyword(v); if (ct === "Keyword Added" && v !== NEW_KEYWORD) setValue(""); }}
+              disabled={keywordDisabled}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder={!showKeyword ? "N/A" : (!campaign ? "Pick campaign" : "Select")} />
+              </SelectTrigger>
+              <SelectContent>{keywordOptions.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
           <div className="lg:col-span-1">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Value type</label>
             <Select value={valueMode} onValueChange={(v) => setValueMode(v as ValueMode)} disabled={valueModeDisabled}>
