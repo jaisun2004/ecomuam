@@ -203,7 +203,7 @@ const ManualDataEntryView: React.FC = () => {
   }, [customer, platform]);
 
   const reset = () => {
-    setCustomer(""); setPlatform(""); setCampaign(""); setChangeType(""); setValueMode(""); setValue(""); setIssue(""); setWhy("");
+    setCustomer(""); setPlatform(""); setCampaign(""); setChangeType(""); setValueMode(""); setValue(""); setKeyword(""); setIssue(""); setWhy("");
   };
 
   const submit = () => {
@@ -212,9 +212,15 @@ const ManualDataEntryView: React.FC = () => {
       return;
     }
     const ct = changeType as ChangeType;
+    if (usesKeyword(ct) && !keyword) {
+      toast({ title: "Keyword required", description: "Please select a keyword for this change." });
+      return;
+    }
     if (!noValue(ct)) {
-      if (!value.trim()) {
-        toast({ title: "Value required", description: "Please enter the value for this change." });
+      // For Keyword Removed, value is auto-derived from keyword.
+      const needsValueInput = !(ct === "Keyword Removed");
+      if (needsValueInput && !value.trim()) {
+        toast({ title: "Value required", description: ct === "Keyword Added" ? "Enter the new keyword text." : "Please enter the value for this change." });
         return;
       }
       if (isNumericChange(ct) && !valueMode) {
@@ -223,9 +229,14 @@ const ManualDataEntryView: React.FC = () => {
       }
     }
     const mode: ValueMode | "—" = noValue(ct) ? "—" : (isNumericChange(ct) ? (valueMode as ValueMode) : "—");
-    const displayValue = noValue(ct)
-      ? "—"
-      : (isNumericChange(ct) && mode === "Percentage" ? `${value.trim()}%` : value.trim());
+    let displayValue: string;
+    if (noValue(ct)) displayValue = "—";
+    else if (ct === "Keyword Removed") displayValue = keyword;
+    else if (isNumericChange(ct) && mode === "Percentage") displayValue = `${value.trim()}%`;
+    else displayValue = value.trim();
+
+    const keywordOut = usesKeyword(ct) ? keyword : "—";
+
     const e: Entry = {
       id: `e${Date.now()}`,
       ts: now(),
@@ -235,6 +246,7 @@ const ManualDataEntryView: React.FC = () => {
       changeType: ct,
       valueMode: mode,
       value: displayValue,
+      keyword: keywordOut,
       issue: issue as CampaignIssue,
       why: why.trim(),
     };
