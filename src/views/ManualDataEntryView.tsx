@@ -501,7 +501,7 @@ const ManualDataEntryView: React.FC = () => {
               disabled={valueDisabled}
             />
           </div>
-          <div className={showValueMode ? "lg:col-span-3" : "lg:col-span-3"}>
+          <div className="lg:col-span-2">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Why</label>
             <Textarea
               className="mt-1 min-h-[68px]"
