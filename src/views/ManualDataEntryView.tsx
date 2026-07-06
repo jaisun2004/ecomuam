@@ -325,6 +325,7 @@ const ManualDataEntryView: React.FC = () => {
       const ct = get("change type");
       const vm = get("value mode");
       const val = get("value");
+      const kw = get("keyword");
       const iss = get("campaign issue");
       const wh = get("why");
       const ts = get("timestamp");
@@ -338,11 +339,21 @@ const ManualDataEntryView: React.FC = () => {
       if (!wh) { errors.push(`Row ${rowNum}: Why is required`); continue; }
       const isNoVal = noValue(ct as ChangeType);
       const isNum = isNumericChange(ct as ChangeType);
+      const usesKw = usesKeyword(ct as ChangeType);
       if (!isNoVal && !val) { errors.push(`Row ${rowNum}: Value required for ${ct}`); continue; }
       let mode: ValueMode | "—" = "—";
       if (!isNoVal && isNum) {
         if (!(VALUE_MODES as readonly string[]).includes(vm)) { errors.push(`Row ${rowNum}: Value Mode must be Absolute or Percentage for ${ct}`); continue; }
         mode = vm as ValueMode;
+      }
+      if (usesKw) {
+        if (!kw) { errors.push(`Row ${rowNum}: Keyword required for ${ct}`); continue; }
+        const camp_kws = KEYWORDS[camp] || [];
+        if (ct === "Keyword Added") {
+          if (kw !== NEW_KEYWORD) { errors.push(`Row ${rowNum}: Keyword for "Keyword Added" must be "${NEW_KEYWORD}"`); continue; }
+        } else {
+          if (!camp_kws.includes(kw)) { errors.push(`Row ${rowNum}: Keyword "${kw}" not valid for campaign "${camp}"`); continue; }
+        }
       }
 
       valid.push({
@@ -354,6 +365,7 @@ const ManualDataEntryView: React.FC = () => {
         changeType: ct as ChangeType,
         valueMode: mode,
         value: isNoVal ? "—" : val,
+        keyword: usesKw ? kw : "—",
         issue: iss as CampaignIssue,
         why: wh.slice(0, 300),
       });
