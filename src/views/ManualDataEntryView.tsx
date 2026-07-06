@@ -383,13 +383,27 @@ const ManualDataEntryView: React.FC = () => {
   const ct = changeType as ChangeType;
   const showValueMode = true;
   const valueModeDisabled = !changeType || !isNumericChange(ct);
-  const valueDisabled = !changeType || noValue(ct);
+  const showKeyword = !!changeType && usesKeyword(ct);
+  const keywordOptions = useMemo(() => {
+    if (!showKeyword || !campaign) return [] as string[];
+    if (ct === "Keyword Added") return [NEW_KEYWORD];
+    return KEYWORDS[campaign] || [];
+  }, [showKeyword, campaign, ct]);
+  const keywordDisabled = !showKeyword || !campaign;
+  // Value is disabled for Campaign Paused/Resumed AND for Keyword Removed (auto = keyword).
+  // For Keyword Added, Value is only enabled once "New Keyword" is chosen.
+  const valueDisabled =
+    !changeType
+    || noValue(ct)
+    || ct === "Keyword Removed"
+    || (ct === "Keyword Added" && keyword !== NEW_KEYWORD);
 
   const valuePlaceholder = (): string => {
     if (!changeType) return "Value";
     if (ct === "Bid Increase" || ct === "Bid Decrease") return valueMode === "Percentage" ? "e.g. 15" : "e.g. 4.50";
     if (ct === "Budget Increase" || ct === "Budget Decrease") return valueMode === "Percentage" ? "e.g. 25" : "e.g. 5000";
-    if (ct === "Keyword Added" || ct === "Keyword Removed") return "e.g. butter cookies";
+    if (ct === "Keyword Added") return keyword === NEW_KEYWORD ? "Enter new keyword" : "Pick keyword first";
+    if (ct === "Keyword Removed") return keyword || "Pick keyword";
     if (ct === "City Added" || ct === "City Removed") return "e.g. Pune";
     if (ct === "Schedule Changed") return "e.g. 8:00–11:00 PM";
     return "—";
