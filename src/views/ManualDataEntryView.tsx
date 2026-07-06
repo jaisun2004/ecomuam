@@ -123,6 +123,7 @@ const typeTone = (t: ChangeType): string => {
 
 const noValue = (t: ChangeType) => t === "Campaign Paused" || t === "Campaign Resumed";
 const isNumericChange = (t: ChangeType) => t === "Bid Increase" || t === "Bid Decrease" || t === "Budget Increase" || t === "Budget Decrease";
+const usesKeyword = (t: ChangeType) => t === "Bid Increase" || t === "Bid Decrease" || t === "Keyword Added" || t === "Keyword Removed";
 
 const now = () => {
   const d = new Date();
