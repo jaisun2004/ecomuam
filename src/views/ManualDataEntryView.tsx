@@ -596,6 +596,7 @@ const ManualDataEntryView: React.FC = () => {
                 <th className="p-2">Platform</th>
                 <th className="p-2">Campaign</th>
                 <th className="p-2">Change type</th>
+                <th className="p-2">Keyword</th>
                 <th className="p-2">Value type</th>
                 <th className="p-2">Value</th>
                 <th className="p-2">Issue</th>
@@ -605,7 +606,7 @@ const ManualDataEntryView: React.FC = () => {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={10} className="p-6 text-center text-muted-foreground">No entries match your filters.</td></tr>
+                <tr><td colSpan={11} className="p-6 text-center text-muted-foreground">No entries match your filters.</td></tr>
               ) : filtered.map((e) => (
                 <tr key={e.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-2 font-mono text-xs text-muted-foreground whitespace-nowrap">{e.ts}</td>
@@ -613,6 +614,7 @@ const ManualDataEntryView: React.FC = () => {
                   <td className="p-2">{e.platform}</td>
                   <td className="p-2">{e.campaign}</td>
                   <td className="p-2"><Badge variant="outline" className={`${typeTone(e.changeType)} border`}>{e.changeType}</Badge></td>
+                  <td className="p-2 font-mono text-xs">{e.keyword}</td>
                   <td className="p-2 font-mono text-xs text-muted-foreground">{e.valueMode}</td>
                   <td className="p-2 font-mono">{e.value}</td>
                   <td className="p-2"><Badge variant="outline">{e.issue}</Badge></td>
