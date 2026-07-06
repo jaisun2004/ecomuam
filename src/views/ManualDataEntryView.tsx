@@ -282,6 +282,7 @@ const ManualDataEntryView: React.FC = () => {
       changeType: "Bid Increase",
       valueMode: "Absolute",
       value: "4.50",
+      keyword: "butter cookies",
       issue: "Low SoS",
       why: "Example row — replace or delete before importing",
     };
