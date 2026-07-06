@@ -451,7 +451,7 @@ const ManualDataEntryView: React.FC = () => {
           </div>
           <div className="lg:col-span-2">
             <label className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">Campaign</label>
-            <Select value={campaign} onValueChange={setCampaign} disabled={!customer || !platform}>
+            <Select value={campaign} onValueChange={(v) => { setCampaign(v); setKeyword(""); }} disabled={!customer || !platform}>
               <SelectTrigger className="mt-1"><SelectValue placeholder={!customer || !platform ? "Pick customer & platform" : "Select campaign"} /></SelectTrigger>
               <SelectContent>{campaignOptions.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
