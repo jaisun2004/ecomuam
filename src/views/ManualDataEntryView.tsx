@@ -68,6 +68,31 @@ const CAMPAIGNS: Record<Customer, Record<Platform, string[]>> = {
   },
 };
 
+const KEYWORDS: Record<string, string[]> = {
+  "Good Day SP – Mumbai": ["butter cookies", "good day", "cashew cookies", "premium biscuits"],
+  "Bourbon SB – Delhi NCR": ["bourbon", "chocolate biscuits", "cream biscuits"],
+  "Marie Gold National SP": ["marie gold", "marie biscuit", "tea time biscuits"],
+  "Good Day Cookies – Bangalore": ["good day", "butter cookies", "cashew cookies"],
+  "Milk Bikis SP – National": ["milk bikis", "kids biscuits", "milk biscuits"],
+  "Bourbon Combo – Metro": ["bourbon combo", "chocolate biscuits"],
+  "Tiger Glucose SP – Hyderabad": ["tiger glucose", "glucose biscuits", "energy biscuits"],
+  "Dark Fantasy SP – National": ["dark fantasy", "choco fills", "premium cookies"],
+  "Marie Light SB – Mumbai": ["marie light", "diet biscuits", "sugar free"],
+  "Bounce Cream SP – Delhi NCR": ["bounce", "cream biscuits", "sandwich biscuits"],
+  "Farmlite SB – Bangalore": ["farmlite", "digestive biscuits", "oats biscuits"],
+  "Dark Fantasy Choco Fills – Metro": ["dark fantasy", "choco fills", "molten chocolate"],
+  "Choco Chip SP – Mumbai": ["choco chip", "chocolate cookies", "unibic cookies"],
+  "Cashew Cookies SB – National": ["cashew cookies", "nut cookies", "premium cookies"],
+  "Butter Cookies SP – Bangalore": ["butter cookies", "danish butter", "cheap cookies"],
+  "Anzac Cookies – Delhi NCR": ["anzac", "oats cookies", "healthy cookies"],
+  "Glucose SP – National": ["glucose biscuits", "energy biscuits", "sugar biscuits"],
+  "Marie SP – Kolkata": ["marie biscuit", "tea biscuit"],
+  "Cream Biscuits SB – Chennai": ["cream biscuits", "sandwich biscuits"],
+  "Butter Bite SP – Metro": ["butter bite", "butter cookies"],
+};
+
+const NEW_KEYWORD = "New Keyword";
+
 interface Entry {
   id: string;
   ts: string;
@@ -77,16 +102,17 @@ interface Entry {
   changeType: ChangeType;
   valueMode: ValueMode | "—";
   value: string;
+  keyword: string;
   issue: CampaignIssue;
   why: string;
 }
 
 const seed: Entry[] = [
-  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", valueMode: "Absolute", value: "4.50", issue: "Low SoS", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
-  { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", valueMode: "Percentage", value: "25", issue: "Underpacing", why: "Weekend pacing under 60%, ROAS 4.8x" },
-  { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", valueMode: "—", value: "cheap cookies", issue: "High ACoS", why: "Irrelevant traffic, ACoS 82%" },
-  { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", valueMode: "—", value: "—", issue: "OOS Risk", why: "OOS in 6 dark stores, avoiding wasted spend" },
-  { id: "e5", ts: "2026-06-28 16:30", customer: "Anmol", platform: "Blinkit", campaign: "Glucose SP – National", changeType: "City Added", valueMode: "—", value: "Pune", issue: "Other", why: "New distributor onboarded, extending coverage" },
+  { id: "e1", ts: "2026-06-30 14:22", customer: "Britannia", platform: "Blinkit", campaign: "Good Day SP – Mumbai", changeType: "Bid Increase", valueMode: "Absolute", value: "4.50", keyword: "butter cookies", issue: "Low SoS", why: "Losing top-slot to Parle-G on 'butter cookies' keyword" },
+  { id: "e2", ts: "2026-06-30 12:05", customer: "Sunfeast", platform: "Zepto", campaign: "Dark Fantasy Choco Fills – Metro", changeType: "Budget Increase", valueMode: "Percentage", value: "25%", keyword: "—", issue: "Underpacing", why: "Weekend pacing under 60%, ROAS 4.8x" },
+  { id: "e3", ts: "2026-06-29 18:41", customer: "Unibic", platform: "Instamart", campaign: "Butter Cookies SP – Bangalore", changeType: "Keyword Removed", valueMode: "—", value: "cheap cookies", keyword: "cheap cookies", issue: "High ACoS", why: "Irrelevant traffic, ACoS 82%" },
+  { id: "e4", ts: "2026-06-29 10:12", customer: "Britannia", platform: "Instamart", campaign: "Milk Bikis SP – National", changeType: "Campaign Paused", valueMode: "—", value: "—", keyword: "—", issue: "OOS Risk", why: "OOS in 6 dark stores, avoiding wasted spend" },
+  { id: "e5", ts: "2026-06-28 16:30", customer: "Anmol", platform: "Blinkit", campaign: "Glucose SP – National", changeType: "City Added", valueMode: "—", value: "Pune", keyword: "—", issue: "Other", why: "New distributor onboarded, extending coverage" },
 ];
 
 const typeTone = (t: ChangeType): string => {
