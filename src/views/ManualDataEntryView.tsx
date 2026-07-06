@@ -182,6 +182,7 @@ const ManualDataEntryView: React.FC = () => {
   const [changeType, setChangeType] = useState<ChangeType | "">("");
   const [valueMode, setValueMode] = useState<ValueMode | "">("");
   const [value, setValue] = useState("");
+  const [keyword, setKeyword] = useState<string>("");
   const [issue, setIssue] = useState<CampaignIssue | "">("");
   const [why, setWhy] = useState("");
 
