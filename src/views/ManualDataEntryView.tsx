@@ -130,13 +130,13 @@ const now = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value Mode", "Value", "Campaign Issue", "Why"] as const;
+const CSV_COLUMNS = ["Timestamp", "Customer", "Platform", "Campaign", "Change Type", "Value Mode", "Value", "Keyword", "Campaign Issue", "Why"] as const;
 
 const escapeCell = (v: string) => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 
 const buildCsv = (rows: Entry[]): string => {
   const header = CSV_COLUMNS.join(",");
-  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.valueMode, e.value, e.issue, e.why].map(escapeCell).join(",")).join("\n");
+  const body = rows.map((e) => [e.ts, e.customer, e.platform, e.campaign, e.changeType, e.valueMode, e.value, e.keyword, e.issue, e.why].map(escapeCell).join(",")).join("\n");
   return rows.length ? `${header}\n${body}` : header;
 };
 
