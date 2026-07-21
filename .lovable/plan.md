@@ -1,36 +1,70 @@
-## Manual Data Entry — CSV import/export + change log controls
+## Goal
+Produce a Word document (`.docx`) delivering business-use-case documentation for the tool, excluding Governance, Configuration, and Reports sections. One page per screen, plain language, analogies for complex visuals, and a "How a business team reads this" note per visual. Bullets used when explanations run over three sentences.
 
-All changes are in `src/views/ManualDataEntryView.tsx`. No other files touched.
+## Scope — Screens to Cover (one page each)
+Grouped by sidebar bucket, based on the app's active views:
 
-### 1. Header: split "Export CSV" into two buttons
-Replace the single top-right "Export CSV" with two buttons:
-- **Download template** (outline, `FileDown` icon) — exports an empty CSV with the exact column headers the importer expects, plus one commented example row showing valid dropdown values. This is the "insertable" format users fill in and re-import.
-- **Import CSV** (outline, `Upload` icon) — opens a hidden `<input type="file" accept=".csv">` and parses the file client-side.
+**Cockpit**
+1. Central Cockpit
 
-### 2. Import CSV validation
-Parse rows with a small CSV parser (handles quoted fields, commas, escaped quotes) — no new deps.
+**Planning & Insights**
+2. Strategic Planning
+3. Approval Flow
+4. Market Share Intelligence
+5. Category White-space
+6. Bestseller Intelligence
+7. Keyword Analysis
+8. Discovery / Share of Shelf
+9. Content Quality Audit
+10. Competitor Ads
+11. Availability
+12. Pricing
 
-Validation performed before any row is added:
-1. **Header check** — required columns must all be present (case-insensitive, trimmed): `Timestamp` (optional, auto-filled if blank), `Customer`, `Platform`, `Campaign`, `Change Type`, `Value`, `Why`. Extra columns are ignored; missing columns abort the whole import.
-2. **Dropdown value check** per row:
-   - `Customer` ∈ `CUSTOMERS`
-   - `Platform` ∈ `PLATFORMS`
-   - `Change Type` ∈ `CHANGE_TYPES`
-   - `Campaign` ∈ `CAMPAIGNS[customer][platform]`
-   - `Why` non-empty, trimmed, sliced to 300 chars
-   - `Value` required unless change type is `Campaign Paused` / `Campaign Resumed` (then coerced to `—`)
-3. **Result summary** — show a toast: `Imported X rows, skipped Y (see details)`. If any row fails, show a dismissible error panel above the change log listing row number + reason for each failure (max 10 shown, "+N more"). Valid rows are prepended to the log; invalid rows are not added.
-4. On header mismatch: show a single toast `Import failed: missing columns X, Y` and abort.
+**Campaigns**
+13. Campaign Manager (with Day Parting)
+14. Campaign Reports
+15. Festival Campaigns
+16. Offline Ads
 
-### 3. Change log: local Export CSV + date range
-Add a compact toolbar row above the existing filter row (or inline with it) containing:
-- **Date range** — two `<Input type="date">` fields labeled `From` / `To`, filtering `entries` by the date portion of `ts`. Empty = unbounded. Placed at the left of the filter row.
-- **Export CSV** button on the right side of the log's `PanelCard` title area (using the card's title-row via a small header slot, or as the first item on the filter row) — exports **only the currently filtered** rows using the same column format as the template so the file round-trips through import.
+**Optimisation**
+17. Budget Optimiser
+18. Recommendations
+19. Manual Data Entry
+20. Guardrails
 
-Filter pipeline order: date range → customer → platform → change type → search box. Existing filter chips and search are unchanged.
+*(Excluded per request: Governance module, Taxonomy Config, Crawling Inputs, Alerts, Reports, Account.)*
 
-### Technical notes
-- Reuse the existing `exportCsv` logic but extract a small `buildCsv(rows)` helper inside the file so the template, header export, and log export all share the same column order.
-- Template row example uses realistic values already in the mock data.
-- `Timestamp` in imports: if blank or unparseable, use `now()`; if present, keep the string as-is (no strict date parsing, matches how seed data is stored).
-- No changes to types, seed data, or other views.
+## Page Structure (per screen)
+Each page uses a consistent template so business readers scan quickly:
+- **Screen name** (H1)
+- **Purpose** — one line on the business question it answers
+- **Who uses it** — role (brand manager, media planner, category lead)
+- **Key visuals** — for each chart/panel:
+  - What it shows (plain description)
+  - Analogy if the visual is complex (e.g., radar chart = "a spider web where each leg is a keyword; the bigger your web, the more shelf you own")
+  - **How to read it** — bullet list of business signals (when 3+ points, always bullets)
+- **Typical decisions triggered** — 2–3 bullets
+- **Cross-links** — where the user goes next
+
+Page break between every screen so each occupies its own page.
+
+## Document Setup
+- US Letter, 1" margins, Arial body (Heading styles bold)
+- Cover page: title, subtitle ("Business Use Case Documentation"), date, one-line product tagline
+- Table of Contents auto-generated from Heading 1/2
+- Section dividers per bucket (Cockpit / Planning & Insights / Campaigns / Optimisation)
+
+## Build Approach
+- Use the `docx` skill with `docx-js` (Node) to generate the file
+- Write to `/mnt/documents/business-use-case-documentation.docx`
+- Validate with the skill's validator
+- QA: convert to PDF → images → visually inspect every page for overflow, spacing, page-break placement; fix and re-run until clean
+- Deliver via `<presentation-artifact>` tag
+
+## Out of Scope
+- Governance, Configuration (Taxonomy/Crawling), Reports/Alerts, Account
+- Technical/implementation details, data schemas, code references
+- Screenshots of the actual UI (text-only description with analogies)
+
+## Deliverable
+Single `.docx` at `/mnt/documents/business-use-case-documentation.docx`, ~20 content pages + cover + TOC.
