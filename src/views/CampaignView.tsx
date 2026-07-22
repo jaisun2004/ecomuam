@@ -465,31 +465,49 @@ interface EditDayPartingModalProps {
   open: boolean;
   onClose: () => void;
   configs: typeof dayPartingSlots;
+  allCampaigns: { name: string; platform: string }[];
   onDeleteConfig: (slot: string) => void;
-  onReplaceCampaigns: (slot: string) => void;
+  onEditConfig: (slot: string) => void;
 }
 
-const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, onDeleteConfig, onReplaceCampaigns }) => {
+const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); } }, [open]);
+
+  const platformsFor = (campaignNames: string[]) => Array.from(new Set(
+    campaignNames.map(n => allCampaigns.find(c => c.name === n)?.platform).filter((p): p is string => !!p)
+  ));
+
+  const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const DATE_RANGE = "01 Jun – 30 Jun 2026";
+
+  const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">{children}</p>
+  );
+  const Chip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-1 border border-subtle text-[11px] text-foreground">
+      {children}
+    </span>
+  );
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-2xl bg-surface-1 border-border-visible">
         <DialogHeader>
           <DialogTitle className="font-display text-foreground">Edit Day Parting Configs</DialogTitle>
-          <DialogDescription>Expand a config to view its campaigns. Replace the campaign list or delete the entire config.</DialogDescription>
+          <DialogDescription>Expand a config to review its platforms, campaigns, time slot, weekdays and date range. Edit or delete it below.</DialogDescription>
         </DialogHeader>
 
-        <div className="min-h-[200px] max-h-[480px] overflow-y-auto space-y-2">
+        <div className="min-h-[200px] max-h-[520px] overflow-y-auto space-y-2">
           {configs.length === 0 && (
             <div className="text-center py-8 text-xs text-muted-foreground">No day parting configs found.</div>
           )}
           {configs.map((c) => {
             const isOpen = expanded === c.slot;
             const isConfirming = confirmDelete === c.slot;
+            const platforms = platformsFor(c.campaigns);
             return (
               <div key={c.slot} className="rounded-lg border border-subtle bg-surface-2 overflow-hidden">
                 <button onClick={() => setExpanded(isOpen ? null : c.slot)}
@@ -503,26 +521,59 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                 </button>
 
                 {isOpen && (
-                  <div className="px-3 pb-3 pt-1 border-t border-subtle">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 mt-2">Campaigns in this config</p>
-                    <div className="space-y-1 mb-3">
-                      {c.campaigns.map((name, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
-                          <span className="w-1 h-1 rounded-full bg-primary" />
-                          <span className="text-[11px] text-foreground">{name}</span>
+                  <div className="px-3 pb-3 pt-3 border-t border-subtle space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <SectionLabel>Platforms</SectionLabel>
+                        <div className="flex flex-wrap gap-1.5">
+                          {platforms.length === 0
+                            ? <span className="text-[11px] text-muted-foreground">—</span>
+                            : platforms.map(p => <Chip key={p}><span className="w-1.5 h-1.5 rounded-full bg-primary" />{p}</Chip>)}
                         </div>
-                      ))}
+                      </div>
+                      <div>
+                        <SectionLabel>Time slot</SectionLabel>
+                        <div className="flex flex-wrap gap-1.5">
+                          <Chip>{c.time}</Chip>
+                        </div>
+                      </div>
+                      <div>
+                        <SectionLabel>Weekdays</SectionLabel>
+                        <div className="flex flex-wrap gap-1">
+                          {WEEK.map(d => (
+                            <span key={d} className="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-[10px] font-mono text-primary">{d}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <SectionLabel>Date range</SectionLabel>
+                        <div className="flex flex-wrap gap-1.5">
+                          <Chip>{DATE_RANGE}</Chip>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <SectionLabel>Campaigns ({c.campaigns.length})</SectionLabel>
+                      <div className="space-y-1">
+                        {c.campaigns.map((name, i) => (
+                          <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
+                            <span className="w-1 h-1 rounded-full bg-primary" />
+                            <span className="text-[11px] text-foreground">{name}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     {!isConfirming ? (
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => onReplaceCampaigns(c.slot)}
+                      <div className="flex items-center gap-2 pt-1">
+                        <button onClick={() => onEditConfig(c.slot)}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 transition-all">
-                          <FileEdit size={12} /> Replace campaigns
+                          <FileEdit size={12} /> Edit config
                         </button>
                         <button onClick={() => setConfirmDelete(c.slot)}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-sw-red-dim text-sw-red border border-sw-red/20 hover:bg-sw-red/20 transition-all">
-                          <X size={12} /> Delete whole config
+                          <X size={12} /> Delete config
                         </button>
                       </div>
                     ) : (
@@ -870,11 +921,12 @@ const CampaignView: React.FC = () => {
         open={showEditDayPart}
         onClose={() => setShowEditDayPart(false)}
         configs={existingDayPartConfigs}
+        allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))}
         onDeleteConfig={(slot) => {
           setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
           toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
         }}
-        onReplaceCampaigns={(slot) => {
+        onEditConfig={(slot) => {
           const cfg = existingDayPartConfigs.find(c => c.slot === slot);
           if (!cfg) return;
           // Derive platforms from the campaigns in this config
