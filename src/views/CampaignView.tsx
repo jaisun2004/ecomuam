@@ -921,6 +921,7 @@ const CampaignView: React.FC = () => {
         open={showEditDayPart}
         onClose={() => setShowEditDayPart(false)}
         configs={existingDayPartConfigs}
+        allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))}
         onDeleteConfig={(slot) => {
           setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
           toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
