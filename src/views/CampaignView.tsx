@@ -247,12 +247,12 @@ const reportData: ReportPlatform[] = [
 
 /* ── Day Parting Data ── */
 const dayPartingSlots = [
-  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
-  { slot: "Morning Peak", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 250g — Sponsored", "Bourbon Brand Awareness", "Britannia Marie New Users"], budgetPct: 25 },
-  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
-  { slot: "Evening Peak", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push", "Britannia Marie New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
-  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 250g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
-  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
+  { slot: "Config_test_001\n", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
+  { slot: "Config_test_002", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 250g — Sponsored", "Bourbon Brand Awareness", "Britannia Marie New Users"], budgetPct: 25 },
+  { slot: "Config_test_003", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
+  { slot: "Config_test_004", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push", "Britannia Marie New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
+  { slot: "Config_test_005", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 250g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
+  { slot: "Config_test_006", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
 const DAYPART_PLATFORMS = ["Instamart", "Instamart", "Zepto", "Blinkit", "Amazon India", "Lulu"];
