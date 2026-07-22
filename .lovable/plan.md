@@ -1,70 +1,32 @@
-## Goal
-Produce a Word document (`.docx`) delivering business-use-case documentation for the tool, excluding Governance, Configuration, and Reports sections. One page per screen, plain language, analogies for complex visuals, and a "How a business team reads this" note per visual. Bullets used when explanations run over three sentences.
+# Rework Edit Day Parting Modal
 
-## Scope — Screens to Cover (one page each)
-Grouped by sidebar bucket, based on the app's active views:
+Update the `EditDayPartingModal` in `src/views/CampaignView.tsx` so each config expands into a full detail view, with two clear actions below: **Edit config** and **Delete config**.
 
-**Cockpit**
-1. Central Cockpit
+## Changes
 
-**Planning & Insights**
-2. Strategic Planning
-3. Approval Flow
-4. Market Share Intelligence
-5. Category White-space
-6. Bestseller Intelligence
-7. Keyword Analysis
-8. Discovery / Share of Shelf
-9. Content Quality Audit
-10. Competitor Ads
-11. Availability
-12. Pricing
+### 1. Expanded config detail (replace current campaign-only list)
+Inside each expanded config row, show four labeled sub-sections in a compact grid:
+- **Platforms** — chips derived from the campaigns' platforms (looked up in `campaigns` array by name, deduped).
+- **Campaigns** — existing list of campaign name pills (kept).
+- **Time slot & Weekdays** — show `c.time` plus weekday chips (Mon–Sun). Since `dayPartingSlots` has no weekdays field, default to "Mon–Sun" (all seven) as a mock, matching the wizard's default.
+- **Date range** — show a mock "Ongoing" or a static date range (e.g. "01 Jun – 30 Jun 2026") since no field exists on the slot data.
 
-**Campaigns**
-13. Campaign Manager (with Day Parting)
-14. Campaign Reports
-15. Festival Campaigns
-16. Offline Ads
+Each sub-section uses the same styling language as the current campaign pills (small uppercase label + chip row on `bg-surface-1 border-subtle`).
 
-**Optimisation**
-17. Budget Optimiser
-18. Recommendations
-19. Manual Data Entry
-20. Guardrails
+### 2. Action buttons
+Replace the current "Replace campaigns" / "Delete whole config" pair with:
+- **Edit config** (primary style) — wires to the existing `onReplaceCampaigns(slot)` handler (which already opens the `CreateDayPartingModal` in `replace` mode pre-seeded with platforms, time, campaigns). Rename the prop internally to `onEditConfig` for clarity, and rename `replaceTarget` → `editTarget` in the parent.
+- **Delete config** (red style) — keeps the inline confirm flow already present.
 
-*(Excluded per request: Governance module, Taxonomy Config, Crawling Inputs, Alerts, Reports, Account.)*
+### 3. Copy tweaks
+- Dialog description → "Expand a config to review its platforms, campaigns, time slot, weekdays and date range. Edit or delete it below."
+- The CreateDayPartingModal's `replace` mode title text stays as-is (already reads as an edit flow).
 
-## Page Structure (per screen)
-Each page uses a consistent template so business readers scan quickly:
-- **Screen name** (H1)
-- **Purpose** — one line on the business question it answers
-- **Who uses it** — role (brand manager, media planner, category lead)
-- **Key visuals** — for each chart/panel:
-  - What it shows (plain description)
-  - Analogy if the visual is complex (e.g., radar chart = "a spider web where each leg is a keyword; the bigger your web, the more shelf you own")
-  - **How to read it** — bullet list of business signals (when 3+ points, always bullets)
-- **Typical decisions triggered** — 2–3 bullets
-- **Cross-links** — where the user goes next
+## Technical notes
+- No data-shape migration required; weekdays and date range are display-only mocks for now, consistent with the existing mock-data approach in this view.
+- Platforms per config are derived at render time from the `campaigns` list already passed in via the parent scope — pass `allCampaigns` (name → platform map) into `EditDayPartingModal` as a new prop.
+- Icon usage: keep `FileEdit` for Edit, `X` for Delete.
+- No changes needed in `CreateDayPartingModal` — its replace/edit path already pre-selects platforms, hours and campaigns.
 
-Page break between every screen so each occupies its own page.
-
-## Document Setup
-- US Letter, 1" margins, Arial body (Heading styles bold)
-- Cover page: title, subtitle ("Business Use Case Documentation"), date, one-line product tagline
-- Table of Contents auto-generated from Heading 1/2
-- Section dividers per bucket (Cockpit / Planning & Insights / Campaigns / Optimisation)
-
-## Build Approach
-- Use the `docx` skill with `docx-js` (Node) to generate the file
-- Write to `/mnt/documents/business-use-case-documentation.docx`
-- Validate with the skill's validator
-- QA: convert to PDF → images → visually inspect every page for overflow, spacing, page-break placement; fix and re-run until clean
-- Deliver via `<presentation-artifact>` tag
-
-## Out of Scope
-- Governance, Configuration (Taxonomy/Crawling), Reports/Alerts, Account
-- Technical/implementation details, data schemas, code references
-- Screenshots of the actual UI (text-only description with analogies)
-
-## Deliverable
-Single `.docx` at `/mnt/documents/business-use-case-documentation.docx`, ~20 content pages + cover + TOC.
+## Files touched
+- `src/views/CampaignView.tsx` (only)
