@@ -926,7 +926,7 @@ const CampaignView: React.FC = () => {
           setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
           toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
         }}
-        onReplaceCampaigns={(slot) => {
+        onEditConfig={(slot) => {
           const cfg = existingDayPartConfigs.find(c => c.slot === slot);
           if (!cfg) return;
           // Derive platforms from the campaigns in this config
