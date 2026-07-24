@@ -480,6 +480,12 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
     campaignNames.map(n => allCampaigns.find(c => c.name === n)?.platform).filter((p): p is string => !!p)
   ));
 
+  const displayTime = (configName: string, baseTime: string) => {
+    if (configName === "Config_test_001") return "6am to 12pm";
+    if (configName === "Config_test_004") return "4pm to 12am";
+    return baseTime;
+  };
+
   const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const DATE_RANGE = "01 Jun – 30 Jun 2026";
 
@@ -515,7 +521,7 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                   {isOpen ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronRight size={14} className="text-muted-foreground" />}
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-medium text-foreground">{c.configName}</span>
-                    <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground ml-2">{displayTime(c.configName, c.time)}</span>
                   </div>
                   <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
                 </button>
@@ -534,7 +540,7 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                       <div>
                         <SectionLabel>Time slot</SectionLabel>
                         <div className="flex flex-wrap gap-1.5">
-                          <Chip>{c.time}</Chip>
+                          <Chip>{displayTime(c.configName, c.time)}</Chip>
                         </div>
                       </div>
                       <div>
