@@ -540,7 +540,7 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                       <div>
                         <SectionLabel>Time slot</SectionLabel>
                         <div className="flex flex-wrap gap-1.5">
-                          <Chip>{c.time}</Chip>
+                          <Chip>{displayTime(c.configName, c.time)}</Chip>
                         </div>
                       </div>
                       <div>
