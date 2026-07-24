@@ -247,12 +247,12 @@ const reportData: ReportPlatform[] = [
 
 /* ── Day Parting Data ── */
 const dayPartingSlots = [
-  { slot: "Early Morning", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
-  { slot: "Morning", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 250g — Sponsored", "Bourbon Brand Awareness", "Britannia Marie New Users"], budgetPct: 25 },
-  { slot: "Afternoon", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
-  { slot: "Early Evening", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push", "Britannia Marie New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
-  { slot: "Night", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 250g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
-  { slot: "Late Night", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
+  { slot: "Early Morning", configName: "Config_test_001", time: "6:00 – 9:00 AM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 15 },
+  { slot: "Morning", configName: "Config_test_002", time: "9:00 AM – 12:00 PM", campaigns: ["Parle-G 250g — Sponsored", "Bourbon Brand Awareness", "Britannia Marie New Users"], budgetPct: 25 },
+  { slot: "Afternoon", configName: "Config_test_003", time: "12:00 – 4:00 PM", campaigns: ["Marie Gold Retargeting", "Bourbon Brand Awareness"], budgetPct: 15 },
+  { slot: "Early Evening", configName: "Config_test_004", time: "4:00 – 8:00 PM", campaigns: ["Parle-G 120g — Sponsored", "Q-Commerce Biscuits Push", "Britannia Marie New Users", "Bourbon Brand Awareness"], budgetPct: 30 },
+  { slot: "Night", configName: "Config_test_005", time: "8:00 PM – 12:00 AM", campaigns: ["Parle-G 250g — Sponsored", "Q-Commerce Biscuits Push"], budgetPct: 12 },
+  { slot: "Late Night", configName: "Config_test_006", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
 const DAYPART_PLATFORMS = ["Instamart", "Instamart", "Zepto", "Blinkit", "Amazon India", "Lulu"];
@@ -514,7 +514,7 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                   className="w-full flex items-center gap-3 p-3 text-left hover:bg-surface-3 transition-all">
                   {isOpen ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronRight size={14} className="text-muted-foreground" />}
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs font-medium text-foreground">{c.slot}</span>
+                    <span className="text-xs font-medium text-foreground">{c.configName}</span>
                     <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
                   </div>
                   <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
