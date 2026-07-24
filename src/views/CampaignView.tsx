@@ -521,7 +521,7 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                   {isOpen ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronRight size={14} className="text-muted-foreground" />}
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-medium text-foreground">{c.configName}</span>
-                    <span className="text-[10px] font-mono text-muted-foreground ml-2">{c.time}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground ml-2">{displayTime(c.configName, c.time)}</span>
                   </div>
                   <span className="text-[10px] font-mono text-muted-foreground">{c.campaigns.length} campaigns · {c.budgetPct}% budget</span>
                 </button>
