@@ -293,7 +293,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
   const [to, setTo] = useState("");
   const [hours, setHours] = useState<number[]>(defaults.hours);
   const [budgetChangeOn, setBudgetChangeOn] = useState(false);
-  const [budgetChange, setBudgetChange] = useState("");
+  const [budgetByCampaign, setBudgetByCampaign] = useState<Record<string, string>>({});
 
 
   // Re-seed when preset changes (e.g., opened for a different config)
@@ -305,11 +305,11 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       setDays(preset?.days ?? ["Mon","Tue","Wed","Thu","Fri"]);
       setHours(preset?.hours ?? [9,10,11,12,13,16,17,18,19,20]);
       setSearch(""); setFrom(""); setTo("");
-      setBudgetChangeOn(false); setBudgetChange("");
+      setBudgetChangeOn(false); setBudgetByCampaign({});
     }
   }, [open, preset]);
 
-  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetChange(""); };
+  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetByCampaign({}); };
   const close = () => { if (!isReplace) reset(); onClose(); };
 
   const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
@@ -330,7 +330,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       });
     } else {
       toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
-        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn && budgetChange ? ` · overall budget change ${budgetChange}` : ""}`,
+        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn ? ` · budget change on ${Object.values(budgetByCampaign).filter(Boolean).length} campaign(s)` : ""}`,
       });
     }
     close();
