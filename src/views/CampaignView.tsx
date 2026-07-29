@@ -292,6 +292,9 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [hours, setHours] = useState<number[]>(defaults.hours);
+  const [budgetChangeOn, setBudgetChangeOn] = useState(false);
+  const [budgetChange, setBudgetChange] = useState("");
+
 
   // Re-seed when preset changes (e.g., opened for a different config)
   React.useEffect(() => {
@@ -302,10 +305,11 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       setDays(preset?.days ?? ["Mon","Tue","Wed","Thu","Fri"]);
       setHours(preset?.hours ?? [9,10,11,12,13,16,17,18,19,20]);
       setSearch(""); setFrom(""); setTo("");
+      setBudgetChangeOn(false); setBudgetChange("");
     }
   }, [open, preset]);
 
-  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); };
+  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetChange(""); };
   const close = () => { if (!isReplace) reset(); onClose(); };
 
   const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
@@ -326,7 +330,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       });
     } else {
       toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
-        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)`,
+        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn && budgetChange ? ` · overall budget change ${budgetChange}` : ""}`,
       });
     }
     close();
@@ -392,6 +396,32 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
                     </button>
                   );
                 })}
+              </div>
+
+              <div className="mt-3 p-3 rounded-lg bg-surface-2 border border-subtle">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-foreground">Overall Budget Change</p>
+                    <p className="text-[10px] text-muted-foreground">Apply a single budget change across the selected campaigns.</p>
+                  </div>
+                  <button
+                    role="switch"
+                    aria-checked={budgetChangeOn}
+                    onClick={() => { setBudgetChangeOn(!budgetChangeOn); if (budgetChangeOn) setBudgetChange(""); }}
+                    className={`w-10 h-5 rounded-full border transition-all relative shrink-0 ${budgetChangeOn ? "bg-primary border-primary" : "bg-surface-3 border-subtle"}`}>
+                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-background transition-all ${budgetChangeOn ? "left-[22px]" : "left-0.5"}`} />
+                  </button>
+                </div>
+                {budgetChangeOn && (
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Enter overall budget change"
+                    value={budgetChange}
+                    onChange={e => setBudgetChange(e.target.value)}
+                    className="mt-2.5"
+                  />
+                )}
               </div>
             </div>
           )}
@@ -473,6 +503,7 @@ interface EditDayPartingModalProps {
 const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [budgetChanges, setBudgetChanges] = useState<Record<string, string>>({});
 
   React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); } }, [open]);
 
@@ -570,6 +601,28 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                         ))}
                       </div>
                     </div>
+
+                    <div>
+                      <SectionLabel>Overall Budget Change</SectionLabel>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          inputMode="numeric"
+                          placeholder="Enter overall budget change"
+                          value={budgetChanges[c.slot] ?? ""}
+                          onChange={e => setBudgetChanges(prev => ({ ...prev, [c.slot]: e.target.value }))}
+                          className="h-8 text-[11px] flex-1"
+                        />
+                        <button
+                          onClick={() => toast.success(`Overall budget change saved for ${c.configName}`, { description: `New value: ${budgetChanges[c.slot] || "—"}` })}
+                          disabled={!budgetChanges[c.slot]}
+                          className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                          Save
+                        </button>
+                      </div>
+                    </div>
+
+
 
                     {!isConfirming ? (
                       <div className="flex items-center gap-2 pt-1">
