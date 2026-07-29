@@ -503,6 +503,7 @@ interface EditDayPartingModalProps {
 const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [budgetChanges, setBudgetChanges] = useState<Record<string, string>>({});
 
   React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); } }, [open]);
 
