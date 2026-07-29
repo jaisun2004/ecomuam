@@ -601,6 +601,28 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                       </div>
                     </div>
 
+                    <div>
+                      <SectionLabel>Overall Budget Change</SectionLabel>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          inputMode="numeric"
+                          placeholder="Enter overall budget change"
+                          value={budgetChanges[c.slot] ?? ""}
+                          onChange={e => setBudgetChanges(prev => ({ ...prev, [c.slot]: e.target.value }))}
+                          className="h-8 text-[11px] flex-1"
+                        />
+                        <button
+                          onClick={() => toast.success(`Overall budget change saved for ${c.configName}`, { description: `New value: ${budgetChanges[c.slot] || "—"}` })}
+                          disabled={!budgetChanges[c.slot]}
+                          className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                          Save
+                        </button>
+                      </div>
+                    </div>
+
+
+
                     {!isConfirming ? (
                       <div className="flex items-center gap-2 pt-1">
                         <button onClick={() => onEditConfig(c.slot)}
