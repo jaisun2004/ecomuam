@@ -594,36 +594,39 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                     </div>
 
                     <div>
-                      <SectionLabel>Campaigns ({c.campaigns.length})</SectionLabel>
-                      <div className="space-y-1">
-                        {c.campaigns.map((name, i) => (
-                          <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
-                            <span className="w-1 h-1 rounded-full bg-primary" />
-                            <span className="text-[11px] text-foreground">{name}</span>
-                          </div>
-                        ))}
+                      <SectionLabel>Campaigns ({c.campaigns.length}) · Overall Budget Change</SectionLabel>
+                      <div className="space-y-1.5">
+                        {c.campaigns.map((name, i) => {
+                          const key = `${c.slot}||${name}`;
+                          return (
+                            <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
+                              <span className="w-1 h-1 rounded-full bg-primary shrink-0" />
+                              <span className="text-[11px] text-foreground flex-1 min-w-0 truncate">{name}</span>
+                              <Input
+                                type="number"
+                                inputMode="numeric"
+                                placeholder="Budget change"
+                                value={budgetChanges[key] ?? ""}
+                                onChange={e => setBudgetChanges(prev => ({ ...prev, [key]: e.target.value }))}
+                                className="h-7 w-32 text-[11px] shrink-0"
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
-                    </div>
-
-                    <div>
-                      <SectionLabel>Overall Budget Change</SectionLabel>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="number"
-                          inputMode="numeric"
-                          placeholder="Enter overall budget change"
-                          value={budgetChanges[c.slot] ?? ""}
-                          onChange={e => setBudgetChanges(prev => ({ ...prev, [c.slot]: e.target.value }))}
-                          className="h-8 text-[11px] flex-1"
-                        />
+                      <div className="flex justify-end mt-2">
                         <button
-                          onClick={() => toast.success(`Overall budget change saved for ${c.configName}`, { description: `New value: ${budgetChanges[c.slot] || "—"}` })}
-                          disabled={!budgetChanges[c.slot]}
+                          onClick={() => toast.success(`Budget changes saved for ${c.configName}`, {
+                            description: `${c.campaigns.filter(n => budgetChanges[`${c.slot}||${n}`]).length} campaign(s) updated.`,
+                          })}
+                          disabled={!c.campaigns.some(n => budgetChanges[`${c.slot}||${n}`])}
                           className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3 disabled:opacity-40 disabled:cursor-not-allowed">
-                          Save
+                          Save budget changes
                         </button>
                       </div>
                     </div>
+
+
 
 
 
