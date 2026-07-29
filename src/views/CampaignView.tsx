@@ -330,7 +330,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       });
     } else {
       toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
-        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)`,
+        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn && budgetChange ? ` · overall budget change ${budgetChange}` : ""}`,
       });
     }
     close();
