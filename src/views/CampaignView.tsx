@@ -292,6 +292,9 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [hours, setHours] = useState<number[]>(defaults.hours);
+  const [budgetChangeOn, setBudgetChangeOn] = useState(false);
+  const [budgetChange, setBudgetChange] = useState("");
+
 
   // Re-seed when preset changes (e.g., opened for a different config)
   React.useEffect(() => {
