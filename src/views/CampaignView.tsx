@@ -397,6 +397,32 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
                   );
                 })}
               </div>
+
+              <div className="mt-3 p-3 rounded-lg bg-surface-2 border border-subtle">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-foreground">Overall Budget Change</p>
+                    <p className="text-[10px] text-muted-foreground">Apply a single budget change across the selected campaigns.</p>
+                  </div>
+                  <button
+                    role="switch"
+                    aria-checked={budgetChangeOn}
+                    onClick={() => { setBudgetChangeOn(!budgetChangeOn); if (budgetChangeOn) setBudgetChange(""); }}
+                    className={`w-10 h-5 rounded-full border transition-all relative shrink-0 ${budgetChangeOn ? "bg-primary border-primary" : "bg-surface-3 border-subtle"}`}>
+                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-background transition-all ${budgetChangeOn ? "left-[22px]" : "left-0.5"}`} />
+                  </button>
+                </div>
+                {budgetChangeOn && (
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Enter overall budget change"
+                    value={budgetChange}
+                    onChange={e => setBudgetChange(e.target.value)}
+                    className="mt-2.5"
+                  />
+                )}
+              </div>
             </div>
           )}
 
