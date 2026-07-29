@@ -293,7 +293,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
   const [to, setTo] = useState("");
   const [hours, setHours] = useState<number[]>(defaults.hours);
   const [budgetChangeOn, setBudgetChangeOn] = useState(false);
-  const [budgetChange, setBudgetChange] = useState("");
+  const [budgetByCampaign, setBudgetByCampaign] = useState<Record<string, string>>({});
 
 
   // Re-seed when preset changes (e.g., opened for a different config)
@@ -305,11 +305,11 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       setDays(preset?.days ?? ["Mon","Tue","Wed","Thu","Fri"]);
       setHours(preset?.hours ?? [9,10,11,12,13,16,17,18,19,20]);
       setSearch(""); setFrom(""); setTo("");
-      setBudgetChangeOn(false); setBudgetChange("");
+      setBudgetChangeOn(false); setBudgetByCampaign({});
     }
   }, [open, preset]);
 
-  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetChange(""); };
+  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetByCampaign({}); };
   const close = () => { if (!isReplace) reset(); onClose(); };
 
   const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
@@ -330,7 +330,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       });
     } else {
       toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
-        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn && budgetChange ? ` · overall budget change ${budgetChange}` : ""}`,
+        description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn ? ` · budget change on ${Object.values(budgetByCampaign).filter(Boolean).length} campaign(s)` : ""}`,
       });
     }
     close();
@@ -381,47 +381,50 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
                 </button>
               </div>
               <Input placeholder="Search campaigns…" value={search} onChange={e => setSearch(e.target.value)} className="mb-3" />
+              <div className="mb-3 p-3 rounded-lg bg-surface-2 border border-subtle flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-medium text-foreground">Overall Budget Change</p>
+                  <p className="text-[10px] text-muted-foreground">Set a budget change per selected campaign.</p>
+                </div>
+                <button
+                  role="switch"
+                  aria-checked={budgetChangeOn}
+                  onClick={() => { setBudgetChangeOn(!budgetChangeOn); if (budgetChangeOn) setBudgetByCampaign({}); }}
+                  className={`w-10 h-5 rounded-full border transition-all relative shrink-0 ${budgetChangeOn ? "bg-primary border-primary" : "bg-surface-3 border-subtle"}`}>
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-background transition-all ${budgetChangeOn ? "left-[22px]" : "left-0.5"}`} />
+                </button>
+              </div>
+
               <div className="max-h-[220px] overflow-y-auto border border-subtle rounded-lg divide-y divide-subtle">
                 {filtered.length === 0 && <div className="p-4 text-xs text-muted-foreground text-center">No campaigns match.</div>}
                 {filtered.map(c => {
                   const on = selCampaigns.includes(c.name);
                   return (
-                    <button key={c.name} onClick={() => toggle(selCampaigns, c.name, setSelCampaigns)}
-                      className="w-full flex items-center gap-3 p-2.5 hover:bg-surface-2 text-left">
-                      <span className={`w-4 h-4 rounded border flex items-center justify-center ${on ? "bg-primary border-primary" : "border-subtle"}`}>
-                        {on && <span className="text-[10px] text-foreground">✓</span>}
-                      </span>
-                      <span className="text-xs text-foreground flex-1">{c.name}</span>
-                      <span className="text-[10px] font-mono text-muted-foreground">{c.platform}</span>
-                    </button>
+                    <div key={c.name} className="p-2.5 hover:bg-surface-2">
+                      <button onClick={() => toggle(selCampaigns, c.name, setSelCampaigns)}
+                        className="w-full flex items-center gap-3 text-left">
+                        <span className={`w-4 h-4 rounded border flex items-center justify-center ${on ? "bg-primary border-primary" : "border-subtle"}`}>
+                          {on && <span className="text-[10px] text-foreground">✓</span>}
+                        </span>
+                        <span className="text-xs text-foreground flex-1">{c.name}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground">{c.platform}</span>
+                      </button>
+                      {budgetChangeOn && on && (
+                        <div className="mt-2 pl-7 flex items-center gap-2">
+                          <span className="text-[10px] text-muted-foreground shrink-0">Budget change</span>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            placeholder="Enter value"
+                            value={budgetByCampaign[c.name] ?? ""}
+                            onChange={e => setBudgetByCampaign(prev => ({ ...prev, [c.name]: e.target.value }))}
+                            className="h-8 text-[11px]"
+                          />
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
-              </div>
-
-              <div className="mt-3 p-3 rounded-lg bg-surface-2 border border-subtle">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-medium text-foreground">Overall Budget Change</p>
-                    <p className="text-[10px] text-muted-foreground">Apply a single budget change across the selected campaigns.</p>
-                  </div>
-                  <button
-                    role="switch"
-                    aria-checked={budgetChangeOn}
-                    onClick={() => { setBudgetChangeOn(!budgetChangeOn); if (budgetChangeOn) setBudgetChange(""); }}
-                    className={`w-10 h-5 rounded-full border transition-all relative shrink-0 ${budgetChangeOn ? "bg-primary border-primary" : "bg-surface-3 border-subtle"}`}>
-                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-background transition-all ${budgetChangeOn ? "left-[22px]" : "left-0.5"}`} />
-                  </button>
-                </div>
-                {budgetChangeOn && (
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    placeholder="Enter overall budget change"
-                    value={budgetChange}
-                    onChange={e => setBudgetChange(e.target.value)}
-                    className="mt-2.5"
-                  />
-                )}
               </div>
             </div>
           )}
@@ -591,36 +594,39 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
                     </div>
 
                     <div>
-                      <SectionLabel>Campaigns ({c.campaigns.length})</SectionLabel>
-                      <div className="space-y-1">
-                        {c.campaigns.map((name, i) => (
-                          <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
-                            <span className="w-1 h-1 rounded-full bg-primary" />
-                            <span className="text-[11px] text-foreground">{name}</span>
-                          </div>
-                        ))}
+                      <SectionLabel>Campaigns ({c.campaigns.length}) · Overall Budget Change</SectionLabel>
+                      <div className="space-y-1.5">
+                        {c.campaigns.map((name, i) => {
+                          const key = `${c.slot}||${name}`;
+                          return (
+                            <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-surface-1 border border-subtle">
+                              <span className="w-1 h-1 rounded-full bg-primary shrink-0" />
+                              <span className="text-[11px] text-foreground flex-1 min-w-0 truncate">{name}</span>
+                              <Input
+                                type="number"
+                                inputMode="numeric"
+                                placeholder="Budget change"
+                                value={budgetChanges[key] ?? ""}
+                                onChange={e => setBudgetChanges(prev => ({ ...prev, [key]: e.target.value }))}
+                                className="h-7 w-32 text-[11px] shrink-0"
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
-                    </div>
-
-                    <div>
-                      <SectionLabel>Overall Budget Change</SectionLabel>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="number"
-                          inputMode="numeric"
-                          placeholder="Enter overall budget change"
-                          value={budgetChanges[c.slot] ?? ""}
-                          onChange={e => setBudgetChanges(prev => ({ ...prev, [c.slot]: e.target.value }))}
-                          className="h-8 text-[11px] flex-1"
-                        />
+                      <div className="flex justify-end mt-2">
                         <button
-                          onClick={() => toast.success(`Overall budget change saved for ${c.configName}`, { description: `New value: ${budgetChanges[c.slot] || "—"}` })}
-                          disabled={!budgetChanges[c.slot]}
+                          onClick={() => toast.success(`Budget changes saved for ${c.configName}`, {
+                            description: `${c.campaigns.filter(n => budgetChanges[`${c.slot}||${n}`]).length} campaign(s) updated.`,
+                          })}
+                          disabled={!c.campaigns.some(n => budgetChanges[`${c.slot}||${n}`])}
                           className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3 disabled:opacity-40 disabled:cursor-not-allowed">
-                          Save
+                          Save budget changes
                         </button>
                       </div>
                     </div>
+
+
 
 
 
