@@ -120,13 +120,91 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
   categoryAvg: 1.0,
 }));
 
-const elasticityData = [
-  { sku: "Parle-G 120g", sensitivity: 0.82 },
-  { sku: "Marie Gold 250g", sensitivity: 0.65 },
-  { sku: "Britannia Marie 250g", sensitivity: 0.91 },
-  { sku: "Bourbon 120g", sensitivity: 0.48 },
-  { sku: "Hide & Seek 120g", sensitivity: 0.35 },
+/* Discount % trend — brand level, last 30 days */
+const OWN_BRAND = "Britannia (Own)";
+const DISCOUNT_BRANDS = [
+  { name: OWN_BRAND, color: "hsl(228,90%,64%)", base: 14, own: true },
+  { name: "Parle", color: "hsl(0,76%,57%)", base: 18, own: false },
+  { name: "Sunfeast", color: "hsl(160,70%,40%)", base: 11, own: false },
+  { name: "Unibic", color: "hsl(38,92%,50%)", base: 9, own: false },
+  { name: "Anmol", color: "hsl(280,55%,58%)", base: 21, own: false },
 ];
+
+const SKU_GROUPS = ["All groups", "Glucose", "Cream", "Marie", "Cookies"] as const;
+const GROUP_SHIFT: Record<string, number> = { "All groups": 0, Glucose: 3, Cream: -2, Marie: 1, Cookies: -4 };
+
+const discountTrendFor = (group: string) => {
+  const shift = GROUP_SHIFT[group] ?? 0;
+  return Array.from({ length: 30 }, (_, i) => {
+    const row: Record<string, number | string> = { day: `Day ${i + 1}` };
+    DISCOUNT_BRANDS.forEach((b, bi) => {
+      const wave = Math.sin((i + bi * 4) / 4.5) * 2.6 + Math.cos((i + bi) / 7) * 1.4;
+      row[b.name] = +Math.max(0, b.base + shift + wave).toFixed(1);
+    });
+    return row;
+  });
+};
+
+const DiscountTrendPanel: React.FC = () => {
+  const [group, setGroup] = useState<string>("All groups");
+  const [brand, setBrand] = useState<string>("All brands");
+
+  const data = React.useMemo(() => discountTrendFor(group), [group]);
+  const visible = DISCOUNT_BRANDS.filter(b => brand === "All brands" || b.name === brand || b.own);
+
+  const avg = (name: string) => data.reduce((a, r) => a + (r[name] as number), 0) / data.length;
+  const ownAvg = avg(OWN_BRAND);
+  const catAvg = DISCOUNT_BRANDS.filter(b => !b.own).reduce((a, b) => a + avg(b.name), 0) / (DISCOUNT_BRANDS.length - 1);
+  const delta = ownAvg - catAvg;
+
+  return (
+    <PanelCard title="Discount % Trend — Last 30 Days" badge="Brand vs Competition" badgeColor="amber" delay={0.1}>
+      <div className="flex items-center gap-2 mb-3">
+        <Select value={group} onValueChange={setGroup}>
+          <SelectTrigger className="w-[150px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {SKU_GROUPS.map(g => <SelectItem key={g} value={g} className="text-[11px]">{g}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={brand} onValueChange={setBrand}>
+          <SelectTrigger className="w-[170px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="All brands" className="text-[11px]">All brands</SelectItem>
+            {DISCOUNT_BRANDS.filter(b => !b.own).map(b => (
+              <SelectItem key={b.name} value={b.name} className="text-[11px]">{b.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <ResponsiveContainer width="100%" height={220}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" vertical={false} />
+          <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
+          <YAxis tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} unit="%" />
+          <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 12 }} formatter={(v: number) => `${v}%`} />
+          {visible.map(b => (
+            <Line key={b.name} type="monotone" dataKey={b.name} stroke={b.color} strokeWidth={b.own ? 2.5 : 1.4} dot={false} name={b.name} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+      <div className="flex flex-wrap items-center gap-3 mt-2">
+        {visible.map(b => (
+          <span key={b.name} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: b.color }} />{b.name}
+          </span>
+        ))}
+      </div>
+      <p className="text-[10px] text-muted-foreground mt-2">
+        Own brand avg discount <span className="font-mono text-foreground">{ownAvg.toFixed(1)}%</span> vs category avg{" "}
+        <span className="font-mono text-foreground">{catAvg.toFixed(1)}%</span> —{" "}
+        <span className={delta > 0 ? "text-sw-red" : "text-sw-green"}>
+          {delta > 0 ? `discounting ${delta.toFixed(1)}pp deeper` : `discounting ${Math.abs(delta).toFixed(1)}pp shallower`}
+        </span>{" "}than competition.
+      </p>
+    </PanelCard>
+  );
+};
+
 
 const priceGapTable = [
   { sku: "Marie Gold 250g", yours: "₹ 35", lowest: "₹ 30", gap: "+16.7%", action: "Match Price" },
@@ -756,18 +834,8 @@ const PricingView: React.FC = () => {
             </ResponsiveContainer>
           </PanelCard>
 
-          <PanelCard title="Price Elasticity by SKU" badge="Demand Sensitivity" badgeColor="amber" delay={0.1}>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={elasticityData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={false} vertical={true} />
-                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[0, 1]} />
-                <YAxis type="category" dataKey="sku" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} width={80} />
-                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
-                <Bar dataKey="sensitivity" fill="hsl(38,92%,50%)" radius={[0, 4, 4, 0]} name="Elasticity" />
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="text-[10px] text-muted-foreground mt-2">Higher values = more sensitive to price changes</p>
-          </PanelCard>
+          <DiscountTrendPanel />
+
 
           <PanelCard title="Competitor Price Gap" badge="Action Required" badgeColor="red" delay={0.2}>
             <table className="w-full text-xs">

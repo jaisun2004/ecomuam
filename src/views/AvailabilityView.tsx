@@ -9,6 +9,59 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+
+/* Dark store locality map per city (pincode + locality + store count) */
+const cityLocalities: Record<string, { pincode: string; locality: string; stores: number }[]> = {
+  "Mumbai": [
+    { pincode: "400050", locality: "Bandra West", stores: 18 },
+    { pincode: "400069", locality: "Andheri East", stores: 22 },
+    { pincode: "400076", locality: "Powai", stores: 14 },
+    { pincode: "400013", locality: "Lower Parel", stores: 16 },
+    { pincode: "400703", locality: "Vashi", stores: 12 },
+    { pincode: "400601", locality: "Thane West", stores: 20 },
+    { pincode: "400058", locality: "Andheri West", stores: 21 },
+    { pincode: "400028", locality: "Dadar West", stores: 19 },
+  ],
+  "Delhi NCR": [
+    { pincode: "110017", locality: "Saket", stores: 15 },
+    { pincode: "122002", locality: "Gurgaon Sector 29", stores: 18 },
+    { pincode: "201301", locality: "Noida Sector 18", stores: 14 },
+    { pincode: "110024", locality: "Lajpat Nagar", stores: 12 },
+    { pincode: "110034", locality: "Pitampura", stores: 13 },
+    { pincode: "110092", locality: "Laxmi Nagar", stores: 11 },
+    { pincode: "122018", locality: "Sohna Road", stores: 15 },
+  ],
+  "Riyadh": [
+    { pincode: "560001", locality: "MG Road", stores: 12 },
+    { pincode: "560038", locality: "Indiranagar", stores: 14 },
+    { pincode: "560076", locality: "HSR Layout", stores: 16 },
+    { pincode: "560066", locality: "Whitefield", stores: 18 },
+    { pincode: "560095", locality: "Koramangala", stores: 16 },
+  ],
+};
+
+/* Deterministic in/out-of-stock split so store counts match the row coverage % */
+const buildDarkstoreRows = (city: string, sku: string, coverage: number) => {
+  const localities = cityLocalities[city] ?? [];
+  const hash = (s: string) => s.split("").reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
+  const base = hash(sku);
+  const rows: { pincode: string; locality: string; store: string; inStock: boolean }[] = [];
+  localities.forEach((loc, li) => {
+    for (let i = 0; i < loc.stores; i++) {
+      const score = (base + li * 37 + i * 61) % 100;
+      rows.push({
+        pincode: loc.pincode,
+        locality: loc.locality,
+        store: `DS-${loc.pincode}-${String(i + 1).padStart(2, "0")}`,
+        inStock: score < coverage,
+      });
+    }
+  });
+  return rows;
+};
+
 
 // Mock campaigns running for a given SKU + platform
 const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string }[]> = {
@@ -129,6 +182,10 @@ const AvailabilityView: React.FC = () => {
   const [oosReview, setOosReview] = useState<{ sku: string; platform: string } | null>(null);
   const [oosSelected, setOosSelected] = useState<Record<string, boolean>>({});
   const [pausedOos, setPausedOos] = useState<Record<string, boolean>>({});
+  const [darkstoreDrill, setDarkstoreDrill] = useState<{ sku: string; coverage: number } | null>(null);
+  const [dsQuery, setDsQuery] = useState("");
+  const [dsStatus, setDsStatus] = useState<"all" | "in" | "out">("all");
+
 
   const openOosReview = (sku: string, platform: string) => {
     const key = `${sku}|${platform}`;
@@ -303,6 +360,8 @@ const AvailabilityView: React.FC = () => {
                 <th className="text-right py-2 font-normal">Coverage</th>
                 <th className="text-center py-2 font-normal">Ads Running?</th>
                 <th className="text-center py-2 font-normal">Issue</th>
+                <th className="text-right py-2 font-normal">Dark Stores</th>
+
               </tr>
             </thead>
             <tbody>
@@ -340,7 +399,15 @@ const AvailabilityView: React.FC = () => {
                       <span className="text-[9px] text-muted-foreground">—</span>
                     )}
                   </td>
+                  <td className="py-2.5 text-right">
+                    <button
+                      onClick={() => setDarkstoreDrill({ sku: p.sku, coverage: p.coverage })}
+                      className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-subtle text-foreground hover:bg-surface-3 transition-colors whitespace-nowrap">
+                      <MapPin size={10} className="text-muted-foreground" /> Dark Store Level Availability
+                    </button>
+                  </td>
                 </tr>
+
               ))}
             </tbody>
           </table>
@@ -395,7 +462,90 @@ const AvailabilityView: React.FC = () => {
         <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
       )}
 
+      <Sheet open={!!darkstoreDrill} onOpenChange={(o) => { if (!o) { setDarkstoreDrill(null); setDsQuery(""); setDsStatus("all"); } }}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          {darkstoreDrill && (() => {
+            const city = darkstoreGaps[selectedCity].city;
+            const rows = buildDarkstoreRows(city, darkstoreDrill.sku, darkstoreDrill.coverage);
+            const oos = rows.filter(r => !r.inStock).length;
+            const q = dsQuery.trim().toLowerCase();
+            const filtered = rows.filter(r =>
+              (dsStatus === "all" || (dsStatus === "in" ? r.inStock : !r.inStock)) &&
+              (!q || r.pincode.includes(q) || r.locality.toLowerCase().includes(q) || r.store.toLowerCase().includes(q))
+            );
+            const grouped = filtered.reduce<Record<string, typeof filtered>>((acc, r) => {
+              const key = `${r.locality}|${r.pincode}`;
+              (acc[key] = acc[key] || []).push(r);
+              return acc;
+            }, {});
+            return (
+              <>
+                <SheetHeader>
+                  <SheetTitle className="text-sm flex items-center gap-1.5">
+                    <Store size={14} className="text-muted-foreground" /> {darkstoreDrill.sku}
+                  </SheetTitle>
+                  <SheetDescription className="text-[11px]">
+                    Pincode & locality level availability in <span className="text-foreground">{city}</span> —{" "}
+                    <span className="font-mono text-sw-red">{oos}</span> of{" "}
+                    <span className="font-mono text-foreground">{rows.length}</span> dark stores out of stock
+                  </SheetDescription>
+                </SheetHeader>
+
+                <div className="flex items-center gap-2 mt-4">
+                  <Input
+                    value={dsQuery}
+                    onChange={(e) => setDsQuery(e.target.value)}
+                    placeholder="Search pincode, locality or store"
+                    className="h-8 text-[11px]"
+                  />
+                  <div className="flex rounded-md border border-subtle overflow-hidden shrink-0">
+                    {([["all", "All"], ["in", "In"], ["out", "Out"]] as const).map(([v, label]) => (
+                      <button key={v} onClick={() => setDsStatus(v)}
+                        className={`px-2 py-1.5 text-[10px] ${dsStatus === v ? "bg-surface-3 text-foreground" : "text-muted-foreground hover:bg-surface-2"}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-4">
+                  {Object.keys(grouped).length === 0 && (
+                    <p className="text-[11px] text-muted-foreground">No dark stores match this filter.</p>
+                  )}
+                  {Object.entries(grouped).map(([key, list]) => {
+                    const [locality, pincode] = key.split("|");
+                    const localOos = list.filter(r => !r.inStock).length;
+                    return (
+                      <div key={key}>
+                        <div className="flex items-center justify-between border-b border-subtle pb-1 mb-1.5">
+                          <span className="text-[11px] text-foreground flex items-center gap-1.5">
+                            <MapPin size={11} className="text-muted-foreground" /> {locality}
+                            <span className="font-mono text-[10px] text-muted-foreground">{pincode}</span>
+                          </span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{localOos}/{list.length} OOS</span>
+                        </div>
+                        <div className="space-y-1">
+                          {list.map(r => (
+                            <div key={r.store} className="flex items-center justify-between py-1">
+                              <span className="font-mono text-[10px] text-muted-foreground">{r.store}</span>
+                              <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
+                                r.inStock ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
+                              }`}>{r.inStock ? "IN STOCK" : "OUT OF STOCK"}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            );
+          })()}
+        </SheetContent>
+      </Sheet>
+
       <Dialog open={!!oosReview} onOpenChange={(o) => !o && setOosReview(null)}>
+
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Review campaigns to pause</DialogTitle>

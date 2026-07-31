@@ -1,32 +1,33 @@
-# Rework Edit Day Parting Modal
+## 1. Availability — Dark Store Level Availability drill-down
 
-Update the `EditDayPartingModal` in `src/views/CampaignView.tsx` so each config expands into a full detail view, with two clear actions below: **Edit config** and **Delete config**.
+Target visual: the **Darkstore Listing Gaps** panel in `src/views/AvailabilityView.tsx` (the one already filtered by a city dropdown — Mumbai / Delhi NCR / Riyadh).
 
-## Changes
+- Add a new column at the end of each product row with a small **"Dark Store Level Availability"** button.
+- Clicking it opens a **right-side slide-over panel** (shadcn `Sheet`, side="right") — not a centre modal.
+- The panel header shows the SKU, the currently selected city, and a summary count (e.g. "38 of 142 stores out of stock").
+- The panel body lists dark stores for that SKU within the selected city, grouped by **locality**, each row showing:
+  - Pincode (mono font)
+  - Locality name
+  - Store name / ID
+  - Status pill: **In Stock** (green) or **Out of Stock** (red)
+- Add a small filter row inside the panel: search by pincode/locality + a status toggle (All / In Stock / Out of Stock).
+- Data: extend the existing mock `darkstoreGaps` with a per-city list of localities & pincodes (Mumbai: Bandra West 400050, Andheri East 400069, Powai 400076…; Delhi NCR: Saket 110017, Gurgaon 122002…). Per-SKU in/out status is derived deterministically from the SKU's coverage % so counts stay consistent with the "Listed / Unlisted" numbers already shown in the row.
 
-### 1. Expanded config detail (replace current campaign-only list)
-Inside each expanded config row, show four labeled sub-sections in a compact grid:
-- **Platforms** — chips derived from the campaigns' platforms (looked up in `campaigns` array by name, deduped).
-- **Campaigns** — existing list of campaign name pills (kept).
-- **Time slot & Weekdays** — show `c.time` plus weekday chips (Mon–Sun). Since `dayPartingSlots` has no weekdays field, default to "Mon–Sun" (all seven) as a mock, matching the wizard's default.
-- **Date range** — show a mock "Ongoing" or a static date range (e.g. "01 Jun – 30 Jun 2026") since no field exists on the slot data.
+## 2. Pricing — replace Price Elasticity by SKU
 
-Each sub-section uses the same styling language as the current campaign pills (small uppercase label + chip row on `bg-surface-1 border-subtle`).
+In `src/views/PricingView.tsx`, replace the **"Price Elasticity by SKU"** panel with **"Discount % Trend — Last 30 Days"**:
 
-### 2. Action buttons
-Replace the current "Replace campaigns" / "Delete whole config" pair with:
-- **Edit config** (primary style) — wires to the existing `onReplaceCampaigns(slot)` handler (which already opens the `CreateDayPartingModal` in `replace` mode pre-seeded with platforms, time, campaigns). Rename the prop internally to `onEditConfig` for clarity, and rename `replaceTarget` → `editTarget` in the parent.
-- **Delete config** (red style) — keeps the inline confirm flow already present.
-
-### 3. Copy tweaks
-- Dialog description → "Expand a config to review its platforms, campaigns, time slot, weekdays and date range. Edit or delete it below."
-- The CreateDayPartingModal's `replace` mode title text stays as-is (already reads as an edit flow).
+- Multi-line chart (Recharts `LineChart`), X axis = last 30 days, Y axis = average discount %.
+- One line per brand: own brand highlighted (solid, brand colour, thicker) vs competing brands (thinner lines, muted palette) — e.g. Britannia, Parle, Sunfeast, Unibic.
+- Two filters sit above the chart:
+  - **SKU Group** select (All groups, Glucose, Cream, Marie, Cookies)
+  - **Brand** multi-select/select controlling which competitor lines are shown (All brands + individual)
+- Chart data recomputes per SKU-group selection from a mock 30-day dataset.
+- Sub-caption shows own-brand average discount vs category average for the period.
+- The old `elasticityData` constant is removed.
 
 ## Technical notes
-- No data-shape migration required; weekdays and date range are display-only mocks for now, consistent with the existing mock-data approach in this view.
-- Platforms per config are derived at render time from the `campaigns` list already passed in via the parent scope — pass `allCampaigns` (name → platform map) into `EditDayPartingModal` as a new prop.
-- Icon usage: keep `FileEdit` for Edit, `X` for Delete.
-- No changes needed in `CreateDayPartingModal` — its replace/edit path already pre-selects platforms, hours and campaigns.
 
-## Files touched
-- `src/views/CampaignView.tsx` (only)
+- Files touched: `src/views/AvailabilityView.tsx`, `src/views/PricingView.tsx` only.
+- Uses existing shadcn `Sheet` and `Select` components plus existing `PanelCard` styling; colours stay on the current semantic tokens (`sw-green`, `sw-red`, `sw-amber`).
+- All data is mock/deterministic — no backend changes.
