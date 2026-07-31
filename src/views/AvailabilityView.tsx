@@ -182,6 +182,10 @@ const AvailabilityView: React.FC = () => {
   const [oosReview, setOosReview] = useState<{ sku: string; platform: string } | null>(null);
   const [oosSelected, setOosSelected] = useState<Record<string, boolean>>({});
   const [pausedOos, setPausedOos] = useState<Record<string, boolean>>({});
+  const [darkstoreDrill, setDarkstoreDrill] = useState<{ sku: string; coverage: number } | null>(null);
+  const [dsQuery, setDsQuery] = useState("");
+  const [dsStatus, setDsStatus] = useState<"all" | "in" | "out">("all");
+
 
   const openOosReview = (sku: string, platform: string) => {
     const key = `${sku}|${platform}`;
