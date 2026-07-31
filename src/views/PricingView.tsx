@@ -756,18 +756,8 @@ const PricingView: React.FC = () => {
             </ResponsiveContainer>
           </PanelCard>
 
-          <PanelCard title="Price Elasticity by SKU" badge="Demand Sensitivity" badgeColor="amber" delay={0.1}>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={elasticityData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={false} vertical={true} />
-                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} domain={[0, 1]} />
-                <YAxis type="category" dataKey="sku" tick={{ fontSize: 10, fill: "hsl(220,20%,15%)" }} axisLine={false} tickLine={false} width={80} />
-                <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
-                <Bar dataKey="sensitivity" fill="hsl(38,92%,50%)" radius={[0, 4, 4, 0]} name="Elasticity" />
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="text-[10px] text-muted-foreground mt-2">Higher values = more sensitive to price changes</p>
-          </PanelCard>
+          <DiscountTrendPanel />
+
 
           <PanelCard title="Competitor Price Gap" badge="Action Required" badgeColor="red" delay={0.2}>
             <table className="w-full text-xs">
