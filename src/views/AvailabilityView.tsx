@@ -375,6 +375,7 @@ const AvailabilityView: React.FC = () => {
             <thead>
               <tr className="text-muted-foreground">
                 <th className="text-left py-2 font-normal">Product</th>
+                <th className="text-left py-2 font-normal">Platform</th>
                 <th className="text-right py-2 font-normal">Listed</th>
                 <th className="text-right py-2 font-normal">Unlisted</th>
                 <th className="text-right py-2 font-normal">Coverage</th>
@@ -387,9 +388,15 @@ const AvailabilityView: React.FC = () => {
             <tbody>
               {darkstoreGaps[selectedCity].products.map((p, i) => (
                 <tr key={p.sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
-                    <Store size={12} className="text-muted-foreground" /> {p.sku}
+                  <td className="py-2.5 text-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Store size={12} className="text-muted-foreground" /> {p.sku}
+                    </span>
                   </td>
+                  <td className="py-2.5">
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-surface-3 text-muted-foreground">{p.platform}</span>
+                  </td>
+
                   <td className="py-2.5 text-right font-mono text-sw-green">{p.listed}</td>
                   <td className="py-2.5 text-right font-mono text-sw-red">{p.unlisted}</td>
                   <td className="py-2.5 text-right">
