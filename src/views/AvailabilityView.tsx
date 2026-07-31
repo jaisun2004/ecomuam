@@ -523,36 +523,23 @@ const AvailabilityView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 space-y-4">
-                  {Object.keys(grouped).length === 0 && (
-                    <p className="text-[11px] text-muted-foreground">No dark stores match this filter.</p>
+                <div className="mt-4">
+                  {filtered.length === 0 && (
+                    <p className="text-[11px] text-muted-foreground">No pincodes match this filter.</p>
                   )}
-                  {Object.entries(grouped).map(([key, list]) => {
-                    const [locality, pincode] = key.split("|");
-                    const localOos = list.filter(r => !r.inStock).length;
-                    return (
-                      <div key={key}>
-                        <div className="flex items-center justify-between border-b border-subtle pb-1 mb-1.5">
-                          <span className="text-[11px] text-foreground flex items-center gap-1.5">
-                            <MapPin size={11} className="text-muted-foreground" /> {locality}
-                            <span className="font-mono text-[10px] text-muted-foreground">{pincode}</span>
-                          </span>
-                          <span className="font-mono text-[10px] text-muted-foreground">{localOos}/{list.length} OOS</span>
-                        </div>
-                        <div className="space-y-1">
-                          {list.map(r => (
-                            <div key={r.store} className="flex items-center justify-between py-1">
-                              <span className="font-mono text-[10px] text-muted-foreground">{r.store}</span>
-                              <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
-                                r.inStock ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
-                              }`}>{r.inStock ? "IN STOCK" : "OUT OF STOCK"}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {filtered.map(r => (
+                    <div key={r.pincode + r.locality} className="flex items-center justify-between py-2 border-b border-subtle last:border-0">
+                      <span className="text-[11px] text-foreground flex items-center gap-1.5">
+                        <MapPin size={11} className="text-muted-foreground" /> {r.locality}
+                        <span className="font-mono text-[10px] text-muted-foreground">{r.pincode}</span>
+                      </span>
+                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
+                        r.inStock ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
+                      }`}>{r.inStock ? "IN STOCK" : "OUT OF STOCK"}</span>
+                    </div>
+                  ))}
                 </div>
+
               </>
             );
           })()}
