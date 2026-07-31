@@ -356,6 +356,8 @@ const AvailabilityView: React.FC = () => {
                 <th className="text-right py-2 font-normal">Coverage</th>
                 <th className="text-center py-2 font-normal">Ads Running?</th>
                 <th className="text-center py-2 font-normal">Issue</th>
+                <th className="text-right py-2 font-normal">Dark Stores</th>
+
               </tr>
             </thead>
             <tbody>
