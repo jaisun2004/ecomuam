@@ -150,35 +150,36 @@ const darkstoreGaps = [
   {
     city: "Mumbai", totalDarkstores: 142,
     products: [
-      { sku: "Parle-G 120g", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
-      { sku: "Marie Gold 250g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
-      { sku: "Hide & Seek Choco", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
-      { sku: "Britannia Marie 150g", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Sunfeast Orange 120g", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
-      { sku: "Sunfeast Orange 250g", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Parle-G 120g", platform: "Blinkit", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
+      { sku: "Marie Gold 250g", platform: "Instamart", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", platform: "Zepto", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
+      { sku: "Britannia Marie 150g", platform: "Blinkit", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Sunfeast Orange 120g", platform: "Instamart", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
+      { sku: "Sunfeast Orange 250g", platform: "Zepto", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Delhi NCR", totalDarkstores: 98,
     products: [
-      { sku: "Parle-G 120g", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 250g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
-      { sku: "Hide & Seek Choco", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
-      { sku: "Britannia Marie 150g", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Sunfeast Orange 120g", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
-      { sku: "Sunfeast Orange 250g", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Parle-G 120g", platform: "Instamart", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", platform: "Blinkit", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", platform: "Zepto", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
+      { sku: "Britannia Marie 150g", platform: "Instamart", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Sunfeast Orange 120g", platform: "Blinkit", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
+      { sku: "Sunfeast Orange 250g", platform: "Zepto", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Riyadh", totalDarkstores: 76,
     products: [
-      { sku: "Parle-G 120g", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 250g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
-      { sku: "Hide & Seek Choco", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
-      { sku: "Britannia Marie 150g", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
+      { sku: "Parle-G 120g", platform: "Zepto", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", platform: "Blinkit", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", platform: "Instamart", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
+      { sku: "Britannia Marie 150g", platform: "Blinkit", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
     ],
   },
 ];
+
 
 /* Competition availability data */
 const competitionAvailability = [
