@@ -510,7 +510,7 @@ const AvailabilityView: React.FC = () => {
                   <Input
                     value={dsQuery}
                     onChange={(e) => setDsQuery(e.target.value)}
-                    placeholder="Search pincode, locality or store"
+                    placeholder="Search pincode or locality"
                     className="h-8 text-[11px]"
                   />
                   <div className="flex rounded-md border border-subtle overflow-hidden shrink-0">
