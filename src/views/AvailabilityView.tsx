@@ -501,7 +501,8 @@ const AvailabilityView: React.FC = () => {
                   <SheetDescription className="text-[11px]">
                     Pincode & locality level availability in <span className="text-foreground">{city}</span> —{" "}
                     <span className="font-mono text-sw-red">{oos}</span> of{" "}
-                    <span className="font-mono text-foreground">{rows.length}</span> dark stores out of stock
+                    <span className="font-mono text-foreground">{rows.length}</span> pincodes out of stock
+
                   </SheetDescription>
                 </SheetHeader>
 
