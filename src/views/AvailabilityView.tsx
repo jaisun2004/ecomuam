@@ -9,6 +9,59 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+
+/* Dark store locality map per city (pincode + locality + store count) */
+const cityLocalities: Record<string, { pincode: string; locality: string; stores: number }[]> = {
+  "Mumbai": [
+    { pincode: "400050", locality: "Bandra West", stores: 18 },
+    { pincode: "400069", locality: "Andheri East", stores: 22 },
+    { pincode: "400076", locality: "Powai", stores: 14 },
+    { pincode: "400013", locality: "Lower Parel", stores: 16 },
+    { pincode: "400703", locality: "Vashi", stores: 12 },
+    { pincode: "400601", locality: "Thane West", stores: 20 },
+    { pincode: "400058", locality: "Andheri West", stores: 21 },
+    { pincode: "400028", locality: "Dadar West", stores: 19 },
+  ],
+  "Delhi NCR": [
+    { pincode: "110017", locality: "Saket", stores: 15 },
+    { pincode: "122002", locality: "Gurgaon Sector 29", stores: 18 },
+    { pincode: "201301", locality: "Noida Sector 18", stores: 14 },
+    { pincode: "110024", locality: "Lajpat Nagar", stores: 12 },
+    { pincode: "110034", locality: "Pitampura", stores: 13 },
+    { pincode: "110092", locality: "Laxmi Nagar", stores: 11 },
+    { pincode: "122018", locality: "Sohna Road", stores: 15 },
+  ],
+  "Riyadh": [
+    { pincode: "560001", locality: "MG Road", stores: 12 },
+    { pincode: "560038", locality: "Indiranagar", stores: 14 },
+    { pincode: "560076", locality: "HSR Layout", stores: 16 },
+    { pincode: "560066", locality: "Whitefield", stores: 18 },
+    { pincode: "560095", locality: "Koramangala", stores: 16 },
+  ],
+};
+
+/* Deterministic in/out-of-stock split so store counts match the row coverage % */
+const buildDarkstoreRows = (city: string, sku: string, coverage: number) => {
+  const localities = cityLocalities[city] ?? [];
+  const hash = (s: string) => s.split("").reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
+  const base = hash(sku);
+  const rows: { pincode: string; locality: string; store: string; inStock: boolean }[] = [];
+  localities.forEach((loc, li) => {
+    for (let i = 0; i < loc.stores; i++) {
+      const score = (base + li * 37 + i * 61) % 100;
+      rows.push({
+        pincode: loc.pincode,
+        locality: loc.locality,
+        store: `DS-${loc.pincode}-${String(i + 1).padStart(2, "0")}`,
+        inStock: score < coverage,
+      });
+    }
+  });
+  return rows;
+};
+
 
 // Mock campaigns running for a given SKU + platform
 const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string }[]> = {
