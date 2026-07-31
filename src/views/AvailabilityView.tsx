@@ -395,7 +395,15 @@ const AvailabilityView: React.FC = () => {
                       <span className="text-[9px] text-muted-foreground">—</span>
                     )}
                   </td>
+                  <td className="py-2.5 text-right">
+                    <button
+                      onClick={() => setDarkstoreDrill({ sku: p.sku, coverage: p.coverage })}
+                      className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-subtle text-foreground hover:bg-surface-3 transition-colors whitespace-nowrap">
+                      <MapPin size={10} className="text-muted-foreground" /> Dark Store Level Availability
+                    </button>
+                  </td>
                 </tr>
+
               ))}
             </tbody>
           </table>
