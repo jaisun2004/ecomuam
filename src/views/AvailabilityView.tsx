@@ -462,7 +462,90 @@ const AvailabilityView: React.FC = () => {
         <AvailabilityAnalytics g={g} compCampaignStates={compCampaignStates} setCompCampaignStates={setCompCampaignStates} />
       )}
 
+      <Sheet open={!!darkstoreDrill} onOpenChange={(o) => { if (!o) { setDarkstoreDrill(null); setDsQuery(""); setDsStatus("all"); } }}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          {darkstoreDrill && (() => {
+            const city = darkstoreGaps[selectedCity].city;
+            const rows = buildDarkstoreRows(city, darkstoreDrill.sku, darkstoreDrill.coverage);
+            const oos = rows.filter(r => !r.inStock).length;
+            const q = dsQuery.trim().toLowerCase();
+            const filtered = rows.filter(r =>
+              (dsStatus === "all" || (dsStatus === "in" ? r.inStock : !r.inStock)) &&
+              (!q || r.pincode.includes(q) || r.locality.toLowerCase().includes(q) || r.store.toLowerCase().includes(q))
+            );
+            const grouped = filtered.reduce<Record<string, typeof filtered>>((acc, r) => {
+              const key = `${r.locality}|${r.pincode}`;
+              (acc[key] = acc[key] || []).push(r);
+              return acc;
+            }, {});
+            return (
+              <>
+                <SheetHeader>
+                  <SheetTitle className="text-sm flex items-center gap-1.5">
+                    <Store size={14} className="text-muted-foreground" /> {darkstoreDrill.sku}
+                  </SheetTitle>
+                  <SheetDescription className="text-[11px]">
+                    Pincode & locality level availability in <span className="text-foreground">{city}</span> —{" "}
+                    <span className="font-mono text-sw-red">{oos}</span> of{" "}
+                    <span className="font-mono text-foreground">{rows.length}</span> dark stores out of stock
+                  </SheetDescription>
+                </SheetHeader>
+
+                <div className="flex items-center gap-2 mt-4">
+                  <Input
+                    value={dsQuery}
+                    onChange={(e) => setDsQuery(e.target.value)}
+                    placeholder="Search pincode, locality or store"
+                    className="h-8 text-[11px]"
+                  />
+                  <div className="flex rounded-md border border-subtle overflow-hidden shrink-0">
+                    {([["all", "All"], ["in", "In"], ["out", "Out"]] as const).map(([v, label]) => (
+                      <button key={v} onClick={() => setDsStatus(v)}
+                        className={`px-2 py-1.5 text-[10px] ${dsStatus === v ? "bg-surface-3 text-foreground" : "text-muted-foreground hover:bg-surface-2"}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-4">
+                  {Object.keys(grouped).length === 0 && (
+                    <p className="text-[11px] text-muted-foreground">No dark stores match this filter.</p>
+                  )}
+                  {Object.entries(grouped).map(([key, list]) => {
+                    const [locality, pincode] = key.split("|");
+                    const localOos = list.filter(r => !r.inStock).length;
+                    return (
+                      <div key={key}>
+                        <div className="flex items-center justify-between border-b border-subtle pb-1 mb-1.5">
+                          <span className="text-[11px] text-foreground flex items-center gap-1.5">
+                            <MapPin size={11} className="text-muted-foreground" /> {locality}
+                            <span className="font-mono text-[10px] text-muted-foreground">{pincode}</span>
+                          </span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{localOos}/{list.length} OOS</span>
+                        </div>
+                        <div className="space-y-1">
+                          {list.map(r => (
+                            <div key={r.store} className="flex items-center justify-between py-1">
+                              <span className="font-mono text-[10px] text-muted-foreground">{r.store}</span>
+                              <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-full ${
+                                r.inStock ? "bg-sw-green-dim text-sw-green" : "bg-sw-red-dim text-sw-red"
+                              }`}>{r.inStock ? "IN STOCK" : "OUT OF STOCK"}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            );
+          })()}
+        </SheetContent>
+      </Sheet>
+
       <Dialog open={!!oosReview} onOpenChange={(o) => !o && setOosReview(null)}>
+
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Review campaigns to pause</DialogTitle>
