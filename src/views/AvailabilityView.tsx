@@ -202,7 +202,7 @@ const AvailabilityView: React.FC = () => {
   const [oosReview, setOosReview] = useState<{ sku: string; platform: string } | null>(null);
   const [oosSelected, setOosSelected] = useState<Record<string, boolean>>({});
   const [pausedOos, setPausedOos] = useState<Record<string, boolean>>({});
-  const [darkstoreDrill, setDarkstoreDrill] = useState<{ sku: string; coverage: number } | null>(null);
+  const [darkstoreDrill, setDarkstoreDrill] = useState<{ sku: string; platform: string; coverage: number } | null>(null);
   const [dsQuery, setDsQuery] = useState("");
   const [dsStatus, setDsStatus] = useState<"all" | "in" | "out">("all");
 
@@ -428,7 +428,7 @@ const AvailabilityView: React.FC = () => {
                   </td>
                   <td className="py-2.5 text-right">
                     <button
-                      onClick={() => setDarkstoreDrill({ sku: p.sku, coverage: p.coverage })}
+                      onClick={() => setDarkstoreDrill({ sku: p.sku, platform: p.platform, coverage: p.coverage })}
                       className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-subtle text-foreground hover:bg-surface-3 transition-colors whitespace-nowrap">
                       <MapPin size={10} className="text-muted-foreground" /> Dark Store Level Availability
                     </button>
@@ -505,6 +505,7 @@ const AvailabilityView: React.FC = () => {
                 <SheetHeader>
                   <SheetTitle className="text-sm flex items-center gap-1.5">
                     <Store size={14} className="text-muted-foreground" /> {darkstoreDrill.sku}
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-surface-3 text-muted-foreground">{darkstoreDrill.platform}</span>
                   </SheetTitle>
                   <SheetDescription className="text-[11px]">
                     Pincode & locality level availability in <span className="text-foreground">{city}</span> —{" "}
