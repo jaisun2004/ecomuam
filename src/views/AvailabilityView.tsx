@@ -150,35 +150,36 @@ const darkstoreGaps = [
   {
     city: "Mumbai", totalDarkstores: 142,
     products: [
-      { sku: "Parle-G 120g", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
-      { sku: "Marie Gold 250g", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
-      { sku: "Hide & Seek Choco", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
-      { sku: "Britannia Marie 150g", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Sunfeast Orange 120g", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
-      { sku: "Sunfeast Orange 250g", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Parle-G 120g", platform: "Blinkit", listed: 98, unlisted: 44, coverage: 69, campaignsRunning: true, wastingBudget: true },
+      { sku: "Marie Gold 250g", platform: "Instamart", listed: 72, unlisted: 70, coverage: 51, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", platform: "Zepto", listed: 34, unlisted: 108, coverage: 24, campaignsRunning: true, wastingBudget: true },
+      { sku: "Britannia Marie 150g", platform: "Blinkit", listed: 88, unlisted: 54, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Sunfeast Orange 120g", platform: "Instamart", listed: 45, unlisted: 97, coverage: 32, campaignsRunning: true, wastingBudget: true },
+      { sku: "Sunfeast Orange 250g", platform: "Zepto", listed: 110, unlisted: 32, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Delhi NCR", totalDarkstores: 98,
     products: [
-      { sku: "Parle-G 120g", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 250g", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
-      { sku: "Hide & Seek Choco", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
-      { sku: "Britannia Marie 150g", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
-      { sku: "Sunfeast Orange 120g", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
-      { sku: "Sunfeast Orange 250g", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
+      { sku: "Parle-G 120g", platform: "Instamart", listed: 82, unlisted: 16, coverage: 84, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", platform: "Blinkit", listed: 55, unlisted: 43, coverage: 56, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", platform: "Zepto", listed: 18, unlisted: 80, coverage: 18, campaignsRunning: true, wastingBudget: true },
+      { sku: "Britannia Marie 150g", platform: "Instamart", listed: 61, unlisted: 37, coverage: 62, campaignsRunning: false, wastingBudget: false },
+      { sku: "Sunfeast Orange 120g", platform: "Blinkit", listed: 30, unlisted: 68, coverage: 31, campaignsRunning: true, wastingBudget: true },
+      { sku: "Sunfeast Orange 250g", platform: "Zepto", listed: 75, unlisted: 23, coverage: 77, campaignsRunning: false, wastingBudget: false },
     ],
   },
   {
     city: "Riyadh", totalDarkstores: 76,
     products: [
-      { sku: "Parle-G 120g", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
-      { sku: "Marie Gold 250g", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
-      { sku: "Hide & Seek Choco", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
-      { sku: "Britannia Marie 150g", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
+      { sku: "Parle-G 120g", platform: "Zepto", listed: 68, unlisted: 8, coverage: 89, campaignsRunning: true, wastingBudget: false },
+      { sku: "Marie Gold 250g", platform: "Blinkit", listed: 42, unlisted: 34, coverage: 55, campaignsRunning: true, wastingBudget: true },
+      { sku: "Hide & Seek Choco", platform: "Instamart", listed: 22, unlisted: 54, coverage: 29, campaignsRunning: false, wastingBudget: false },
+      { sku: "Britannia Marie 150g", platform: "Blinkit", listed: 55, unlisted: 21, coverage: 72, campaignsRunning: false, wastingBudget: false },
     ],
   },
 ];
+
 
 /* Competition availability data */
 const competitionAvailability = [
@@ -201,7 +202,7 @@ const AvailabilityView: React.FC = () => {
   const [oosReview, setOosReview] = useState<{ sku: string; platform: string } | null>(null);
   const [oosSelected, setOosSelected] = useState<Record<string, boolean>>({});
   const [pausedOos, setPausedOos] = useState<Record<string, boolean>>({});
-  const [darkstoreDrill, setDarkstoreDrill] = useState<{ sku: string; coverage: number } | null>(null);
+  const [darkstoreDrill, setDarkstoreDrill] = useState<{ sku: string; platform: string; coverage: number } | null>(null);
   const [dsQuery, setDsQuery] = useState("");
   const [dsStatus, setDsStatus] = useState<"all" | "in" | "out">("all");
 
@@ -374,6 +375,7 @@ const AvailabilityView: React.FC = () => {
             <thead>
               <tr className="text-muted-foreground">
                 <th className="text-left py-2 font-normal">Product</th>
+                <th className="text-left py-2 font-normal">Platform</th>
                 <th className="text-right py-2 font-normal">Listed</th>
                 <th className="text-right py-2 font-normal">Unlisted</th>
                 <th className="text-right py-2 font-normal">Coverage</th>
@@ -386,9 +388,15 @@ const AvailabilityView: React.FC = () => {
             <tbody>
               {darkstoreGaps[selectedCity].products.map((p, i) => (
                 <tr key={p.sku} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
-                  <td className="py-2.5 text-foreground flex items-center gap-1.5">
-                    <Store size={12} className="text-muted-foreground" /> {p.sku}
+                  <td className="py-2.5 text-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Store size={12} className="text-muted-foreground" /> {p.sku}
+                    </span>
                   </td>
+                  <td className="py-2.5">
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-surface-3 text-muted-foreground">{p.platform}</span>
+                  </td>
+
                   <td className="py-2.5 text-right font-mono text-sw-green">{p.listed}</td>
                   <td className="py-2.5 text-right font-mono text-sw-red">{p.unlisted}</td>
                   <td className="py-2.5 text-right">
@@ -420,7 +428,7 @@ const AvailabilityView: React.FC = () => {
                   </td>
                   <td className="py-2.5 text-right">
                     <button
-                      onClick={() => setDarkstoreDrill({ sku: p.sku, coverage: p.coverage })}
+                      onClick={() => setDarkstoreDrill({ sku: p.sku, platform: p.platform, coverage: p.coverage })}
                       className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-subtle text-foreground hover:bg-surface-3 transition-colors whitespace-nowrap">
                       <MapPin size={10} className="text-muted-foreground" /> Dark Store Level Availability
                     </button>
@@ -497,6 +505,7 @@ const AvailabilityView: React.FC = () => {
                 <SheetHeader>
                   <SheetTitle className="text-sm flex items-center gap-1.5">
                     <Store size={14} className="text-muted-foreground" /> {darkstoreDrill.sku}
+                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-surface-3 text-muted-foreground">{darkstoreDrill.platform}</span>
                   </SheetTitle>
                   <SheetDescription className="text-[11px]">
                     Pincode & locality level availability in <span className="text-foreground">{city}</span> —{" "}
