@@ -12,55 +12,74 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 
-/* Dark store locality map per city (pincode + locality + store count) */
-const cityLocalities: Record<string, { pincode: string; locality: string; stores: number }[]> = {
+/* One dark store per pincode — locality map per city */
+const cityLocalities: Record<string, { pincode: string; locality: string }[]> = {
   "Mumbai": [
-    { pincode: "400050", locality: "Bandra West", stores: 18 },
-    { pincode: "400069", locality: "Andheri East", stores: 22 },
-    { pincode: "400076", locality: "Powai", stores: 14 },
-    { pincode: "400013", locality: "Lower Parel", stores: 16 },
-    { pincode: "400703", locality: "Vashi", stores: 12 },
-    { pincode: "400601", locality: "Thane West", stores: 20 },
-    { pincode: "400058", locality: "Andheri West", stores: 21 },
-    { pincode: "400028", locality: "Dadar West", stores: 19 },
+    { pincode: "400050", locality: "Bandra West" },
+    { pincode: "400069", locality: "Andheri East" },
+    { pincode: "400058", locality: "Andheri West" },
+    { pincode: "400076", locality: "Powai" },
+    { pincode: "400013", locality: "Lower Parel" },
+    { pincode: "400028", locality: "Dadar West" },
+    { pincode: "400703", locality: "Vashi" },
+    { pincode: "400601", locality: "Thane West" },
+    { pincode: "400053", locality: "Versova" },
+    { pincode: "400102", locality: "Malad West" },
+    { pincode: "400064", locality: "Malad East" },
+    { pincode: "400080", locality: "Mulund West" },
+    { pincode: "400071", locality: "Chembur" },
+    { pincode: "400614", locality: "Belapur" },
+    { pincode: "400703", locality: "Sanpada" },
+    { pincode: "400091", locality: "Borivali West" },
   ],
   "Delhi NCR": [
-    { pincode: "110017", locality: "Saket", stores: 15 },
-    { pincode: "122002", locality: "Gurgaon Sector 29", stores: 18 },
-    { pincode: "201301", locality: "Noida Sector 18", stores: 14 },
-    { pincode: "110024", locality: "Lajpat Nagar", stores: 12 },
-    { pincode: "110034", locality: "Pitampura", stores: 13 },
-    { pincode: "110092", locality: "Laxmi Nagar", stores: 11 },
-    { pincode: "122018", locality: "Sohna Road", stores: 15 },
+    { pincode: "110017", locality: "Saket" },
+    { pincode: "122002", locality: "Gurgaon Sector 29" },
+    { pincode: "122018", locality: "Sohna Road" },
+    { pincode: "201301", locality: "Noida Sector 18" },
+    { pincode: "201310", locality: "Noida Sector 137" },
+    { pincode: "110024", locality: "Lajpat Nagar" },
+    { pincode: "110034", locality: "Pitampura" },
+    { pincode: "110092", locality: "Laxmi Nagar" },
+    { pincode: "110019", locality: "Kalkaji" },
+    { pincode: "110070", locality: "Vasant Kunj" },
+    { pincode: "110063", locality: "Paschim Vihar" },
+    { pincode: "201014", locality: "Indirapuram" },
+    { pincode: "122009", locality: "Sector 49 Gurgaon" },
+    { pincode: "110085", locality: "Rohini" },
   ],
   "Riyadh": [
-    { pincode: "560001", locality: "MG Road", stores: 12 },
-    { pincode: "560038", locality: "Indiranagar", stores: 14 },
-    { pincode: "560076", locality: "HSR Layout", stores: 16 },
-    { pincode: "560066", locality: "Whitefield", stores: 18 },
-    { pincode: "560095", locality: "Koramangala", stores: 16 },
+    { pincode: "560001", locality: "MG Road" },
+    { pincode: "560038", locality: "Indiranagar" },
+    { pincode: "560076", locality: "HSR Layout" },
+    { pincode: "560066", locality: "Whitefield" },
+    { pincode: "560095", locality: "Koramangala" },
+    { pincode: "560102", locality: "HSR Sector 2" },
+    { pincode: "560037", locality: "Marathahalli" },
+    { pincode: "560043", locality: "Banaswadi" },
+    { pincode: "560078", locality: "JP Nagar" },
+    { pincode: "560085", locality: "Banashankari" },
+    { pincode: "560064", locality: "Yelahanka" },
+    { pincode: "560003", locality: "Malleshwaram" },
   ],
 };
 
-/* Deterministic in/out-of-stock split so store counts match the row coverage % */
+/* Deterministic in/out-of-stock per pincode so the split tracks the row coverage % */
 const buildDarkstoreRows = (city: string, sku: string, coverage: number) => {
   const localities = cityLocalities[city] ?? [];
   const hash = (s: string) => s.split("").reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
   const base = hash(sku);
-  const rows: { pincode: string; locality: string; store: string; inStock: boolean }[] = [];
-  localities.forEach((loc, li) => {
-    for (let i = 0; i < loc.stores; i++) {
-      const score = (base + li * 37 + i * 61) % 100;
-      rows.push({
-        pincode: loc.pincode,
-        locality: loc.locality,
-        store: `DS-${loc.pincode}-${String(i + 1).padStart(2, "0")}`,
-        inStock: score < coverage,
-      });
-    }
+  return localities.map((loc, li) => {
+    const score = (base + li * 37 + Number(loc.pincode)) % 100;
+    return {
+      pincode: loc.pincode,
+      locality: loc.locality,
+      store: `DS-${loc.pincode}`,
+      inStock: score < coverage,
+    };
   });
-  return rows;
 };
+
 
 
 // Mock campaigns running for a given SKU + platform
