@@ -492,11 +492,6 @@ const AvailabilityView: React.FC = () => {
               (dsStatus === "all" || (dsStatus === "in" ? r.inStock : !r.inStock)) &&
               (!q || r.pincode.includes(q) || r.locality.toLowerCase().includes(q) || r.store.toLowerCase().includes(q))
             );
-            const grouped = filtered.reduce<Record<string, typeof filtered>>((acc, r) => {
-              const key = `${r.locality}|${r.pincode}`;
-              (acc[key] = acc[key] || []).push(r);
-              return acc;
-            }, {});
             return (
               <>
                 <SheetHeader>
