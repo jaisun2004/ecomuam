@@ -294,6 +294,8 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
   const [hours, setHours] = useState<number[]>(defaults.hours);
   const [budgetChangeOn, setBudgetChangeOn] = useState(false);
   const [budgetByCampaign, setBudgetByCampaign] = useState<Record<string, string>>({});
+  const [configName, setConfigName] = useState("");
+
 
 
   // Re-seed when preset changes (e.g., opened for a different config)
