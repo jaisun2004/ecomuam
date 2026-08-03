@@ -294,6 +294,8 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
   const [hours, setHours] = useState<number[]>(defaults.hours);
   const [budgetChangeOn, setBudgetChangeOn] = useState(false);
   const [budgetByCampaign, setBudgetByCampaign] = useState<Record<string, string>>({});
+  const [configName, setConfigName] = useState("");
+
 
 
   // Re-seed when preset changes (e.g., opened for a different config)
@@ -306,10 +308,18 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       setHours(preset?.hours ?? [9,10,11,12,13,16,17,18,19,20]);
       setSearch(""); setFrom(""); setTo("");
       setBudgetChangeOn(false); setBudgetByCampaign({});
+      setConfigName("");
     }
   }, [open, preset]);
 
-  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetByCampaign({}); };
+  const stamp = () => {
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
+  };
+  const finalConfigName = `${(configName.trim() || "Config").replace(/\s+/g, "_")}_${stamp()}`;
+
+  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetByCampaign({}); setConfigName(""); };
   const close = () => { if (!isReplace) reset(); onClose(); };
 
   const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
@@ -320,7 +330,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const canNext = step === 1 ? platforms.length > 0 : step === 2 ? selCampaigns.length > 0 : step === 3 ? days.length > 0 : hours.length > 0;
+  const canNext = step === 1 ? platforms.length > 0 && (isReplace || configName.trim().length > 0) : step === 2 ? selCampaigns.length > 0 : step === 3 ? days.length > 0 : hours.length > 0;
 
   const submit = () => {
     if (isReplace && preset && onReplace) {
@@ -329,12 +339,13 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
         description: `${selCampaigns.length} campaign(s) now active in this slot.`,
       });
     } else {
-      toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
+      toast.success(`Config "${finalConfigName}" created for ${selCampaigns.length} campaign(s)`, {
         description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn ? ` · budget change on ${Object.values(budgetByCampaign).filter(Boolean).length} campaign(s)` : ""}`,
       });
     }
     close();
   };
+
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) close(); }}>
@@ -356,6 +367,20 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
         <div className="min-h-[280px]">
           {step === 1 && (
             <div>
+              {!isReplace && (
+                <div className="mb-4">
+                  <p className="text-xs text-muted-foreground mb-1.5">Custom config name</p>
+                  <Input
+                    placeholder="e.g. Evening_Push"
+                    value={configName}
+                    onChange={e => setConfigName(e.target.value)}
+                  />
+                  <p className="text-[10px] font-mono text-muted-foreground mt-1.5">
+                    Saved as: <span className="text-primary">{finalConfigName}</span>
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">The creation date &amp; time is always appended to the name.</p>
+                </div>
+              )}
               <p className="text-xs text-muted-foreground mb-3">Select one or more platforms.</p>
               <div className="flex flex-wrap gap-2">
                 {DAYPART_PLATFORMS.map(p => {
@@ -369,6 +394,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
                 })}
               </div>
             </div>
+
           )}
 
           {step === 2 && (
@@ -501,14 +527,18 @@ interface EditDayPartingModalProps {
   allCampaigns: { name: string; platform: string }[];
   onDeleteConfig: (slot: string) => void;
   onEditConfig: (slot: string) => void;
+  onRenameConfig?: (slot: string, name: string) => void;
 }
 
-const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig }) => {
+const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig, onRenameConfig }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [budgetChanges, setBudgetChanges] = useState<Record<string, string>>({});
+  const [renaming, setRenaming] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
 
-  React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); } }, [open]);
+  React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); setRenaming(null); } }, [open]);
+
 
   const platformsFor = (campaignNames: string[]) => Array.from(new Set(
     campaignNames.map(n => allCampaigns.find(c => c.name === n)?.platform).filter((p): p is string => !!p)
@@ -562,6 +592,44 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
 
                 {isOpen && (
                   <div className="px-3 pb-3 pt-3 border-t border-subtle space-y-3">
+                    <div>
+                      <SectionLabel>Config name</SectionLabel>
+                      {renaming === c.slot ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={renameValue}
+                            onChange={e => setRenameValue(e.target.value)}
+                            className="h-8 text-[11px] flex-1"
+                            placeholder="Config name"
+                          />
+                          <button
+                            onClick={() => {
+                              const next = renameValue.trim();
+                              if (!next) return;
+                              onRenameConfig?.(c.slot, next);
+                              toast.success(`Config renamed to "${next}"`);
+                              setRenaming(null);
+                            }}
+                            disabled={!renameValue.trim()}
+                            className="px-2.5 py-1.5 rounded-md text-[10px] font-medium bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 disabled:opacity-40">
+                            Save
+                          </button>
+                          <button onClick={() => setRenaming(null)}
+                            className="px-2.5 py-1.5 rounded-md text-[10px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3">
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Chip>{c.configName}</Chip>
+                          <button onClick={() => { setRenaming(c.slot); setRenameValue(c.configName); }}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3">
+                            <FileEdit size={11} /> Edit name
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <SectionLabel>Platforms</SectionLabel>
@@ -990,6 +1058,9 @@ const CampaignView: React.FC = () => {
         onDeleteConfig={(slot) => {
           setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
           toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
+        }}
+        onRenameConfig={(slot, name) => {
+          setExistingDayPartConfigs(prev => prev.map(c => c.slot === slot ? { ...c, configName: name } : c));
         }}
         onEditConfig={(slot) => {
           const cfg = existingDayPartConfigs.find(c => c.slot === slot);
