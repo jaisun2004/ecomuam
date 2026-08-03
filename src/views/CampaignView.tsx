@@ -367,6 +367,20 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
         <div className="min-h-[280px]">
           {step === 1 && (
             <div>
+              {!isReplace && (
+                <div className="mb-4">
+                  <p className="text-xs text-muted-foreground mb-1.5">Custom config name</p>
+                  <Input
+                    placeholder="e.g. Evening_Push"
+                    value={configName}
+                    onChange={e => setConfigName(e.target.value)}
+                  />
+                  <p className="text-[10px] font-mono text-muted-foreground mt-1.5">
+                    Saved as: <span className="text-primary">{finalConfigName}</span>
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">The creation date &amp; time is always appended to the name.</p>
+                </div>
+              )}
               <p className="text-xs text-muted-foreground mb-3">Select one or more platforms.</p>
               <div className="flex flex-wrap gap-2">
                 {DAYPART_PLATFORMS.map(p => {
@@ -380,6 +394,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
                 })}
               </div>
             </div>
+
           )}
 
           {step === 2 && (
