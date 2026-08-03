@@ -308,10 +308,18 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
       setHours(preset?.hours ?? [9,10,11,12,13,16,17,18,19,20]);
       setSearch(""); setFrom(""); setTo("");
       setBudgetChangeOn(false); setBudgetByCampaign({});
+      setConfigName("");
     }
   }, [open, preset]);
 
-  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetByCampaign({}); };
+  const stamp = () => {
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
+  };
+  const finalConfigName = `${(configName.trim() || "Config").replace(/\s+/g, "_")}_${stamp()}`;
+
+  const reset = () => { setStep(1); setPlatforms([]); setSearch(""); setSelCampaigns([]); setDays(["Mon","Tue","Wed","Thu","Fri"]); setFrom(""); setTo(""); setHours([9,10,11,12,13,16,17,18,19,20]); setBudgetChangeOn(false); setBudgetByCampaign({}); setConfigName(""); };
   const close = () => { if (!isReplace) reset(); onClose(); };
 
   const toggle = <T,>(arr: T[], v: T, set: (a: T[]) => void) =>
@@ -322,7 +330,7 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const canNext = step === 1 ? platforms.length > 0 : step === 2 ? selCampaigns.length > 0 : step === 3 ? days.length > 0 : hours.length > 0;
+  const canNext = step === 1 ? platforms.length > 0 && (isReplace || configName.trim().length > 0) : step === 2 ? selCampaigns.length > 0 : step === 3 ? days.length > 0 : hours.length > 0;
 
   const submit = () => {
     if (isReplace && preset && onReplace) {
@@ -331,12 +339,13 @@ const CreateDayPartingModal: React.FC<CreateDayPartingModalProps> = ({ open, onC
         description: `${selCampaigns.length} campaign(s) now active in this slot.`,
       });
     } else {
-      toast.success(`Day parting config created for ${selCampaigns.length} campaign(s)`, {
+      toast.success(`Config "${finalConfigName}" created for ${selCampaigns.length} campaign(s)`, {
         description: `${platforms.length} platform(s) · ${days.length} day(s) · ${hours.length} active hour(s)${budgetChangeOn ? ` · budget change on ${Object.values(budgetByCampaign).filter(Boolean).length} campaign(s)` : ""}`,
       });
     }
     close();
   };
+
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) close(); }}>
