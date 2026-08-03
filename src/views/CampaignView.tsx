@@ -592,6 +592,44 @@ const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose
 
                 {isOpen && (
                   <div className="px-3 pb-3 pt-3 border-t border-subtle space-y-3">
+                    <div>
+                      <SectionLabel>Config name</SectionLabel>
+                      {renaming === c.slot ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={renameValue}
+                            onChange={e => setRenameValue(e.target.value)}
+                            className="h-8 text-[11px] flex-1"
+                            placeholder="Config name"
+                          />
+                          <button
+                            onClick={() => {
+                              const next = renameValue.trim();
+                              if (!next) return;
+                              onRenameConfig?.(c.slot, next);
+                              toast.success(`Config renamed to "${next}"`);
+                              setRenaming(null);
+                            }}
+                            disabled={!renameValue.trim()}
+                            className="px-2.5 py-1.5 rounded-md text-[10px] font-medium bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 disabled:opacity-40">
+                            Save
+                          </button>
+                          <button onClick={() => setRenaming(null)}
+                            className="px-2.5 py-1.5 rounded-md text-[10px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3">
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Chip>{c.configName}</Chip>
+                          <button onClick={() => { setRenaming(c.slot); setRenameValue(c.configName); }}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium bg-surface-1 border border-subtle text-foreground hover:bg-surface-3">
+                            <FileEdit size={11} /> Edit name
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <SectionLabel>Platforms</SectionLabel>
