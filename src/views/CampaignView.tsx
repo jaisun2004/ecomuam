@@ -527,14 +527,18 @@ interface EditDayPartingModalProps {
   allCampaigns: { name: string; platform: string }[];
   onDeleteConfig: (slot: string) => void;
   onEditConfig: (slot: string) => void;
+  onRenameConfig?: (slot: string, name: string) => void;
 }
 
-const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig }) => {
+const EditDayPartingModal: React.FC<EditDayPartingModalProps> = ({ open, onClose, configs, allCampaigns, onDeleteConfig, onEditConfig, onRenameConfig }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [budgetChanges, setBudgetChanges] = useState<Record<string, string>>({});
+  const [renaming, setRenaming] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
 
-  React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); } }, [open]);
+  React.useEffect(() => { if (!open) { setExpanded(null); setConfirmDelete(null); setRenaming(null); } }, [open]);
+
 
   const platformsFor = (campaignNames: string[]) => Array.from(new Set(
     campaignNames.map(n => allCampaigns.find(c => c.name === n)?.platform).filter((p): p is string => !!p)
