@@ -1059,6 +1059,9 @@ const CampaignView: React.FC = () => {
           setExistingDayPartConfigs(prev => prev.filter(c => c.slot !== slot));
           toast.success(`"${slot}" config deleted`, { description: "The day parting config was removed." });
         }}
+        onRenameConfig={(slot, name) => {
+          setExistingDayPartConfigs(prev => prev.map(c => c.slot === slot ? { ...c, configName: name } : c));
+        }}
         onEditConfig={(slot) => {
           const cfg = existingDayPartConfigs.find(c => c.slot === slot);
           if (!cfg) return;
