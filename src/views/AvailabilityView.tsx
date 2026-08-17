@@ -591,38 +591,67 @@ const AvailabilityView: React.FC = () => {
 
       <Dialog open={!!oosReview} onOpenChange={(o) => !o && setOosReview(null)}>
 
-        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Review campaigns to pause</DialogTitle>
             <DialogDescription>
-              {oosReview && (
-                <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> is OOS on <span className="font-medium text-foreground">{oosReview.platform}</span>. Select campaigns to turn OFF.</>
-              )}
+              {oosReview && (() => {
+                const rows = buildOosCampaignRows(oosReview.sku, oosReview.platform);
+                const oos = rows.filter(r => !r.inStock).length;
+                return (
+                  <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> on <span className="font-medium text-foreground">{oosReview.platform}</span> — {rows.length} city-level campaigns, {oos} in out-of-stock cities (shown first). Tick the cities to switch OFF.</>
+                );
+              })()}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            {(oosReview ? campaignsForOOS[`${oosReview.sku}|${oosReview.platform}`] ?? [] : []).map(c => (
-              <label key={c.id} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
-                <Checkbox
-                  checked={!!oosSelected[c.id]}
-                  onCheckedChange={(v) => setOosSelected(s => ({ ...s, [c.id]: !!v }))}
-                  className="mt-0.5"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="text-[12px] font-medium text-foreground">{c.name}</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
-                    <span>Type: <span className="text-foreground">{c.type}</span></span>
-                    <span>Daily budget: <span className="text-foreground">{c.dailyBudget}</span></span>
-                    <span>Bid: <span className="text-foreground">{c.bid}</span></span>
-                    <span className="px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">{c.status}</span>
+            {oosReview && (() => {
+              const rows = buildOosCampaignRows(oosReview.sku, oosReview.platform);
+              if (rows.length === 0) {
+                return <div className="text-[12px] text-muted-foreground p-3">No active campaigns found for this product on {oosReview.platform}.</div>;
+              }
+              const selectAll = (v: boolean, only?: "oos") => {
+                setOosSelected(s => {
+                  const next = { ...s };
+                  rows.forEach(r => { if (!only || !r.inStock) next[r.id] = v; });
+                  return next;
+                });
+              };
+              return (
+                <>
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <button onClick={() => selectAll(true)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Select all</button>
+                    <button onClick={() => selectAll(true, "oos")} className="px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">Select OOS cities</button>
+                    <button onClick={() => selectAll(false)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Clear</button>
                   </div>
-                </div>
-              </label>
-            ))}
-            {oosReview && (campaignsForOOS[`${oosReview.sku}|${oosReview.platform}`] ?? []).length === 0 && (
-              <div className="text-[12px] text-muted-foreground p-3">No active campaigns found for this product on {oosReview.platform}.</div>
-            )}
+                  {rows.map(r => (
+                    <label key={r.id} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
+                      <Checkbox
+                        checked={!!oosSelected[r.id]}
+                        onCheckedChange={(v) => setOosSelected(s => ({ ...s, [r.id]: !!v }))}
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[12px] font-medium text-foreground">{r.name}</span>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/15 text-sw-green" : "bg-sw-red/15 text-sw-red"}`}>
+                            {r.city} — {r.inStock ? "In Stock" : "Out of Stock"}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
+                          <span>Type: <span className="text-foreground">{r.type}</span></span>
+                          <span>Daily budget: <span className="text-foreground">{r.dailyBudget}</span></span>
+                          <span>Bid: <span className="text-foreground">{r.bid}</span></span>
+                          <span>Availability: <span className={`font-mono ${r.inStock ? "text-sw-green" : "text-sw-red"}`}>{r.availability}%</span></span>
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </>
+              );
+            })()}
           </div>
+
           <DialogFooter>
             <button onClick={() => setOosReview(null)} className="px-3 py-2 rounded-lg text-[12px] font-medium bg-surface-2 text-foreground hover:bg-surface-3">Cancel</button>
             <button
