@@ -254,9 +254,10 @@ const AvailabilityView: React.FC = () => {
 
 
   const openOosReview = (sku: string, platform: string) => {
-    const rows = buildOosCampaignRows(sku, platform);
+    const groups = buildOosCampaignGroups(sku, platform);
     const sel: Record<string, boolean> = {};
-    rows.forEach(r => (sel[r.id] = !r.inStock));
+    // Selection is campaign-level: pre-tick campaigns whose every city is out of stock
+    groups.forEach(g => (sel[g.campaignId] = g.rows.length > 0 && g.oosCount === g.rows.length));
     setOosSelected(sel);
     setOosReview({ sku, platform });
   };
