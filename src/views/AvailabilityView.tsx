@@ -105,6 +105,40 @@ const campaignsForOOS: Record<string, { id: string; name: string; type: string; 
   ],
 };
 
+/* City-level expansion of a product's campaigns, with current availability per city */
+const oosCities = ["Mumbai", "Delhi NCR", "Bengaluru", "Hyderabad", "Pune", "Riyadh"];
+
+type OosCampaignRow = {
+  id: string; name: string; type: string; dailyBudget: string; bid: string;
+  city: string; availability: number; inStock: boolean;
+};
+
+const buildOosCampaignRows = (sku: string, platform: string): OosCampaignRow[] => {
+  const base = campaignsForOOS[`${sku}|${platform}`] ?? [];
+  const hash = (s: string) => s.split("").reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
+  const seed = hash(`${sku}|${platform}`);
+  const rows: OosCampaignRow[] = [];
+  base.forEach((c, ci) => {
+    oosCities.forEach((city, cityIdx) => {
+      const score = (seed + ci * 53 + cityIdx * 29 + hash(city)) % 100;
+      const availability = score % 100;
+      rows.push({
+        id: `${c.id}-${cityIdx}`,
+        name: `${c.name}_${city.replace(/\s+/g, "-")}`,
+        type: c.type,
+        dailyBudget: c.dailyBudget,
+        bid: c.bid,
+        city,
+        availability,
+        inStock: availability >= 35,
+      });
+    });
+  });
+  // Out-of-stock cities first, then lowest availability
+  return rows.sort((a, b) => Number(a.inStock) - Number(b.inStock) || a.availability - b.availability);
+};
+
+
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
   score: Math.round(55 + Math.random() * 30),
