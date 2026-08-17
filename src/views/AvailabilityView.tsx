@@ -83,25 +83,25 @@ const buildDarkstoreRows = (city: string, sku: string, coverage: number) => {
 
 
 // Mock campaigns running for a given SKU + platform
-const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string }[]> = {
+const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string; cities: string[] }[]> = {
   "Hide & Seek Choco 120g|Instamart": [
-    { id: "c1", name: "HS-Choco_Search_Instamart_Always-On", type: "Search", dailyBudget: "₹ 1,800", bid: "₹ 14", status: "Active" },
-    { id: "c2", name: "HS-Choco_Category_Instamart_Premium", type: "Category", dailyBudget: "₹ 1,200", bid: "₹ 11", status: "Active" },
+    { id: "c1", name: "HS-Choco_Search_Instamart_Always-On", type: "Search", dailyBudget: "₹ 1,800", bid: "₹ 14", status: "Active", cities: ["Mumbai", "Delhi NCR", "Bengaluru", "Pune"] },
+    { id: "c2", name: "HS-Choco_Category_Instamart_Premium", type: "Category", dailyBudget: "₹ 1,200", bid: "₹ 11", status: "Active", cities: ["Mumbai"] },
   ],
   "Marie Gold 250g|Blinkit": [
-    { id: "c3", name: "MarieGold_Search_Blinkit_BAU", type: "Search", dailyBudget: "₹ 2,400", bid: "₹ 16", status: "Active" },
-    { id: "c4", name: "MarieGold_Brand-Shelf_Blinkit", type: "Brand Shelf", dailyBudget: "₹ 900", bid: "₹ 9", status: "Active" },
-    { id: "c5", name: "MarieGold_HomeCarousel_Blinkit", type: "Home Carousel", dailyBudget: "₹ 1,500", bid: "₹ 22", status: "Active" },
+    { id: "c3", name: "MarieGold_Search_Blinkit_BAU", type: "Search", dailyBudget: "₹ 2,400", bid: "₹ 16", status: "Active", cities: ["Mumbai", "Delhi NCR", "Bengaluru", "Hyderabad", "Pune"] },
+    { id: "c4", name: "MarieGold_Brand-Shelf_Blinkit", type: "Brand Shelf", dailyBudget: "₹ 900", bid: "₹ 9", status: "Active", cities: ["Hyderabad"] },
+    { id: "c5", name: "MarieGold_HomeCarousel_Blinkit", type: "Home Carousel", dailyBudget: "₹ 1,500", bid: "₹ 22", status: "Active", cities: ["Delhi NCR", "Pune"] },
   ],
   "Marie Gold 120g|Blinkit": [
-    { id: "c6", name: "MarieGold120_Search_Blinkit", type: "Search", dailyBudget: "₹ 1,600", bid: "₹ 13", status: "Active" },
+    { id: "c6", name: "MarieGold120_Search_Blinkit", type: "Search", dailyBudget: "₹ 1,600", bid: "₹ 13", status: "Active", cities: ["Bengaluru"] },
   ],
   "Sunfeast Orange 250g|Zepto": [
-    { id: "c7", name: "Sunfeast-Orange_Search_Zepto", type: "Search", dailyBudget: "₹ 2,100", bid: "₹ 15", status: "Active" },
-    { id: "c8", name: "Sunfeast-Orange_Category_Zepto", type: "Category", dailyBudget: "₹ 1,100", bid: "₹ 10", status: "Active" },
+    { id: "c7", name: "Sunfeast-Orange_Search_Zepto", type: "Search", dailyBudget: "₹ 2,100", bid: "₹ 15", status: "Active", cities: ["Mumbai", "Hyderabad", "Pune"] },
+    { id: "c8", name: "Sunfeast-Orange_Category_Zepto", type: "Category", dailyBudget: "₹ 1,100", bid: "₹ 10", status: "Active", cities: ["Delhi NCR"] },
   ],
   "Britannia Marie 150g|Instamart": [
-    { id: "c9", name: "BritanniaMarie_Search_Instamart", type: "Search", dailyBudget: "₹ 1,400", bid: "₹ 12", status: "Active" },
+    { id: "c9", name: "BritanniaMarie_Search_Instamart", type: "Search", dailyBudget: "₹ 1,400", bid: "₹ 12", status: "Active", cities: ["Mumbai", "Bengaluru"] },
   ],
 };
 
@@ -113,30 +113,42 @@ type OosCampaignRow = {
   city: string; availability: number; inStock: boolean;
 };
 
-const buildOosCampaignRows = (sku: string, platform: string): OosCampaignRow[] => {
+type OosCampaignGroup = {
+  campaignId: string; name: string; type: string; dailyBudget: string; bid: string;
+  rows: OosCampaignRow[]; multiCity: boolean; oosCount: number;
+};
+
+const buildOosCampaignGroups = (sku: string, platform: string): OosCampaignGroup[] => {
   const base = campaignsForOOS[`${sku}|${platform}`] ?? [];
   const hash = (s: string) => s.split("").reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
   const seed = hash(`${sku}|${platform}`);
-  const rows: OosCampaignRow[] = [];
-  base.forEach((c, ci) => {
-    oosCities.forEach((city, cityIdx) => {
-      const score = (seed + ci * 53 + cityIdx * 29 + hash(city)) % 100;
-      const availability = score % 100;
-      rows.push({
-        id: `${c.id}-${cityIdx}`,
-        name: `${c.name}_${city.replace(/\s+/g, "-")}`,
+  const groups: OosCampaignGroup[] = base.map((c, ci) => {
+    const rows: OosCampaignRow[] = c.cities.map((city) => {
+      const cityIdx = oosCities.indexOf(city);
+      const availability = (seed + ci * 53 + Math.max(cityIdx, 0) * 29 + hash(city)) % 100;
+      return {
+        id: `${c.id}-${city.replace(/\s+/g, "-")}`,
+        name: c.name,
         type: c.type,
         dailyBudget: c.dailyBudget,
         bid: c.bid,
         city,
         availability,
         inStock: availability >= 35,
-      });
-    });
+      };
+    }).sort((a, b) => Number(a.inStock) - Number(b.inStock) || a.availability - b.availability);
+    return {
+      campaignId: c.id, name: c.name, type: c.type, dailyBudget: c.dailyBudget, bid: c.bid,
+      rows, multiCity: rows.length > 1, oosCount: rows.filter(r => !r.inStock).length,
+    };
   });
-  // Out-of-stock cities first, then lowest availability
-  return rows.sort((a, b) => Number(a.inStock) - Number(b.inStock) || a.availability - b.availability);
+  // Campaigns with out-of-stock cities first
+  return groups.sort((a, b) => (b.oosCount > 0 ? 1 : 0) - (a.oosCount > 0 ? 1 : 0) || b.oosCount - a.oosCount);
 };
+
+const buildOosCampaignRows = (sku: string, platform: string): OosCampaignRow[] =>
+  buildOosCampaignGroups(sku, platform).flatMap(g => g.rows);
+
 
 
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
