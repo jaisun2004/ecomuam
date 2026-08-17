@@ -664,7 +664,7 @@ const AvailabilityView: React.FC = () => {
                               </span>
                               {fullOos && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-red/15 text-sw-red">All cities out of stock</span>}
                               {partial && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-amber/15 text-sw-amber">{g.oosCount} of {g.rows.length} cities out of stock</span>}
-                              {g.oosCount === 0 && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">Out of Stock{"\n"}</span>}
+                              {g.oosCount === 0 && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">In Stock</span>}
                             </div>
                             <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
                               <span>Type: <span className="text-foreground">{g.type}</span></span>
