@@ -610,11 +610,10 @@ const AvailabilityView: React.FC = () => {
             <DialogDescription>
               {oosReview && (() => {
                 const groups = buildOosCampaignGroups(oosReview.sku, oosReview.platform);
-                const rows = groups.flatMap(g => g.rows);
-                const oos = rows.filter(r => !r.inStock).length;
-                const multi = groups.filter(g => g.multiCity).length;
+                const fullOos = groups.filter(g => g.rows.length > 0 && g.oosCount === g.rows.length).length;
+                const partial = groups.filter(g => g.oosCount > 0 && g.oosCount < g.rows.length).length;
                 return (
-                  <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> on <span className="font-medium text-foreground">{oosReview.platform}</span> — {groups.length} campaigns ({multi} multi-city), {rows.length} city placements, {oos} out of stock. Tick the cities to switch OFF.</>
+                  <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> on <span className="font-medium text-foreground">{oosReview.platform}</span> — {groups.length} campaigns · {fullOos} fully out of stock · {partial} partially affected. Campaigns switch OFF as a whole; individual cities cannot be turned off separately.</>
                 );
               })()}
             </DialogDescription>
@@ -622,94 +621,80 @@ const AvailabilityView: React.FC = () => {
           <div className="space-y-2">
             {oosReview && (() => {
               const groups = buildOosCampaignGroups(oosReview.sku, oosReview.platform);
-              const rows = groups.flatMap(g => g.rows);
-              if (rows.length === 0) {
+              if (groups.length === 0) {
                 return <div className="text-[12px] text-muted-foreground p-3">No active campaigns found for this product on {oosReview.platform}.</div>;
               }
-              const selectAll = (v: boolean, only?: "oos") => {
+              const setAll = (v: boolean, only?: "fulloos") => {
                 setOosSelected(s => {
                   const next = { ...s };
-                  rows.forEach(r => { if (!only || !r.inStock) next[r.id] = v; });
+                  groups.forEach(g => {
+                    if (!only || g.oosCount === g.rows.length) next[g.campaignId] = v;
+                  });
                   return next;
                 });
               };
-              const meta = (g: OosCampaignGroup) => (
-                <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
-                  <span>Type: <span className="text-foreground">{g.type}</span></span>
-                  <span>Daily budget: <span className="text-foreground">{g.dailyBudget}</span></span>
-                  <span>Bid: <span className="text-foreground">{g.bid}</span></span>
-                </div>
-              );
-              const cityPill = (r: OosCampaignRow) => (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/15 text-sw-green" : "bg-sw-red/15 text-sw-red"}`}>
-                  {r.city} — {r.inStock ? "In Stock" : "Out of Stock"} · {r.availability}%
-                </span>
-              );
               return (
                 <>
                   <div className="flex items-center gap-2 text-[11px]">
-                    <button onClick={() => selectAll(true)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Select all</button>
-                    <button onClick={() => selectAll(true, "oos")} className="px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">Select OOS cities</button>
-                    <button onClick={() => selectAll(false)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Clear</button>
+                    <button onClick={() => setAll(true)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Select all campaigns</button>
+                    <button onClick={() => setAll(true, "fulloos")} className="px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">Select fully OOS campaigns</button>
+                    <button onClick={() => setAll(false)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Clear</button>
                   </div>
 
                   {groups.map(g => {
-                    if (!g.multiCity) {
-                      const r = g.rows[0];
-                      return (
-                        <label key={g.campaignId} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
-                          <Checkbox checked={!!oosSelected[r.id]} onCheckedChange={(v) => setOosSelected(s => ({ ...s, [r.id]: !!v }))} className="mt-0.5" />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[12px] font-medium text-foreground">{g.name}</span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-surface-2 text-muted-foreground">Single city</span>
-                              {cityPill(r)}
-                            </div>
-                            {meta(g)}
-                          </div>
-                        </label>
-                      );
-                    }
-                    const selCount = g.rows.filter(r => oosSelected[r.id]).length;
-                    const allSel = selCount === g.rows.length;
+                    const selected = !!oosSelected[g.campaignId];
+                    const fullOos = g.rows.length > 0 && g.oosCount === g.rows.length;
+                    const partial = g.oosCount > 0 && !fullOos;
                     return (
-                      <div key={g.campaignId} className="rounded-lg border border-subtle">
-                        <div className="flex items-start gap-3 p-3 border-b border-subtle bg-surface-2/40">
+                      <label
+                        key={g.campaignId}
+                        className={`block rounded-lg border cursor-pointer transition-colors ${selected ? "border-sw-red/50 bg-sw-red/5" : "border-subtle hover:bg-surface-2/50"}`}
+                      >
+                        <div className="flex items-start gap-3 p-3">
                           <Checkbox
-                            checked={allSel ? true : selCount > 0 ? "indeterminate" : false}
-                            onCheckedChange={(v) => setOosSelected(s => {
-                              const next = { ...s };
-                              g.rows.forEach(r => (next[r.id] = !!v));
-                              return next;
-                            })}
+                            checked={selected}
+                            onCheckedChange={(v) => setOosSelected(s => ({ ...s, [g.campaignId]: !!v }))}
                             className="mt-0.5"
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-[12px] font-medium text-foreground">{g.name}</span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-surface-2 text-muted-foreground">{g.rows.length} cities</span>
-                              {g.oosCount > 0 && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-red/15 text-sw-red">{g.oosCount} out of stock</span>
-                              )}
-                              <span className="text-[10px] text-muted-foreground">{selCount}/{g.rows.length} selected</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-surface-2 text-muted-foreground">
+                                {g.multiCity ? `${g.rows.length} cities` : g.rows[0]?.city}
+                              </span>
+                              {fullOos && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-red/15 text-sw-red">All cities out of stock</span>}
+                              {partial && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-amber/15 text-sw-amber">{g.oosCount} of {g.rows.length} cities out of stock</span>}
+                              {g.oosCount === 0 && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-green/15 text-sw-green">In stock everywhere</span>}
                             </div>
-                            {meta(g)}
-                          </div>
-                        </div>
-                        <div className="divide-y divide-subtle">
-                          {g.rows.map(r => (
-                            <label key={r.id} className="flex items-center gap-3 py-2 pl-9 pr-3 hover:bg-surface-2/50 cursor-pointer">
-                              <Checkbox checked={!!oosSelected[r.id]} onCheckedChange={(v) => setOosSelected(s => ({ ...s, [r.id]: !!v }))} />
-                              <div className="flex-1 flex items-center justify-between gap-2 flex-wrap">
-                                <span className="text-[11px] text-foreground">{r.city}</span>
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/15 text-sw-green" : "bg-sw-red/15 text-sw-red"}`}>
-                                  {r.inStock ? "In Stock" : "Out of Stock"} · <span className="font-mono">{r.availability}%</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
+                              <span>Type: <span className="text-foreground">{g.type}</span></span>
+                              <span>Daily budget: <span className="text-foreground">{g.dailyBudget}</span></span>
+                              <span>Bid: <span className="text-foreground">{g.bid}</span></span>
+                            </div>
+
+                            {/* Read-only city coverage — cities cannot be paused individually */}
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {g.rows.map(r => (
+                                <span
+                                  key={r.id}
+                                  className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/12 text-sw-green" : "bg-sw-red/12 text-sw-red"}`}
+                                >
+                                  {r.city} · {r.inStock ? "In Stock" : "OOS"} <span className="font-mono">{r.availability}%</span>
+                                </span>
+                              ))}
+                            </div>
+
+                            {partial && selected && (
+                              <div className="mt-2 text-[10px] text-sw-amber flex items-start gap-1.5">
+                                <Info size={12} className="mt-[1px] flex-shrink-0" />
+                                <span>
+                                  Switching this campaign OFF stops delivery in all {g.rows.length} cities, including {g.rows.length - g.oosCount} still in stock.
                                 </span>
                               </div>
-                            </label>
-                          ))}
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      </label>
                     );
                   })}
                 </>
@@ -724,7 +709,7 @@ const AvailabilityView: React.FC = () => {
               onClick={confirmOosPause}
               disabled={!Object.values(oosSelected).some(Boolean)}
               className="px-3 py-2 rounded-lg text-[12px] font-medium bg-sw-red text-white hover:bg-sw-red/90 disabled:opacity-50 disabled:cursor-not-allowed">
-              Accept & Turn OFF ({Object.values(oosSelected).filter(Boolean).length})
+              Accept & Turn OFF ({Object.values(oosSelected).filter(Boolean).length} campaigns)
             </button>
           </DialogFooter>
         </DialogContent>
