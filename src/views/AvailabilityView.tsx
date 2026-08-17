@@ -83,25 +83,25 @@ const buildDarkstoreRows = (city: string, sku: string, coverage: number) => {
 
 
 // Mock campaigns running for a given SKU + platform
-const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string }[]> = {
+const campaignsForOOS: Record<string, { id: string; name: string; type: string; dailyBudget: string; bid: string; status: string; cities: string[] }[]> = {
   "Hide & Seek Choco 120g|Instamart": [
-    { id: "c1", name: "HS-Choco_Search_Instamart_Always-On", type: "Search", dailyBudget: "₹ 1,800", bid: "₹ 14", status: "Active" },
-    { id: "c2", name: "HS-Choco_Category_Instamart_Premium", type: "Category", dailyBudget: "₹ 1,200", bid: "₹ 11", status: "Active" },
+    { id: "c1", name: "HS-Choco_Search_Instamart_Always-On", type: "Search", dailyBudget: "₹ 1,800", bid: "₹ 14", status: "Active", cities: ["Mumbai", "Delhi NCR", "Bengaluru", "Pune"] },
+    { id: "c2", name: "HS-Choco_Category_Instamart_Premium", type: "Category", dailyBudget: "₹ 1,200", bid: "₹ 11", status: "Active", cities: ["Mumbai"] },
   ],
   "Marie Gold 250g|Blinkit": [
-    { id: "c3", name: "MarieGold_Search_Blinkit_BAU", type: "Search", dailyBudget: "₹ 2,400", bid: "₹ 16", status: "Active" },
-    { id: "c4", name: "MarieGold_Brand-Shelf_Blinkit", type: "Brand Shelf", dailyBudget: "₹ 900", bid: "₹ 9", status: "Active" },
-    { id: "c5", name: "MarieGold_HomeCarousel_Blinkit", type: "Home Carousel", dailyBudget: "₹ 1,500", bid: "₹ 22", status: "Active" },
+    { id: "c3", name: "MarieGold_Search_Blinkit_BAU", type: "Search", dailyBudget: "₹ 2,400", bid: "₹ 16", status: "Active", cities: ["Mumbai", "Delhi NCR", "Bengaluru", "Hyderabad", "Pune"] },
+    { id: "c4", name: "MarieGold_Brand-Shelf_Blinkit", type: "Brand Shelf", dailyBudget: "₹ 900", bid: "₹ 9", status: "Active", cities: ["Hyderabad"] },
+    { id: "c5", name: "MarieGold_HomeCarousel_Blinkit", type: "Home Carousel", dailyBudget: "₹ 1,500", bid: "₹ 22", status: "Active", cities: ["Delhi NCR", "Pune"] },
   ],
   "Marie Gold 120g|Blinkit": [
-    { id: "c6", name: "MarieGold120_Search_Blinkit", type: "Search", dailyBudget: "₹ 1,600", bid: "₹ 13", status: "Active" },
+    { id: "c6", name: "MarieGold120_Search_Blinkit", type: "Search", dailyBudget: "₹ 1,600", bid: "₹ 13", status: "Active", cities: ["Bengaluru"] },
   ],
   "Sunfeast Orange 250g|Zepto": [
-    { id: "c7", name: "Sunfeast-Orange_Search_Zepto", type: "Search", dailyBudget: "₹ 2,100", bid: "₹ 15", status: "Active" },
-    { id: "c8", name: "Sunfeast-Orange_Category_Zepto", type: "Category", dailyBudget: "₹ 1,100", bid: "₹ 10", status: "Active" },
+    { id: "c7", name: "Sunfeast-Orange_Search_Zepto", type: "Search", dailyBudget: "₹ 2,100", bid: "₹ 15", status: "Active", cities: ["Mumbai", "Hyderabad", "Pune"] },
+    { id: "c8", name: "Sunfeast-Orange_Category_Zepto", type: "Category", dailyBudget: "₹ 1,100", bid: "₹ 10", status: "Active", cities: ["Delhi NCR"] },
   ],
   "Britannia Marie 150g|Instamart": [
-    { id: "c9", name: "BritanniaMarie_Search_Instamart", type: "Search", dailyBudget: "₹ 1,400", bid: "₹ 12", status: "Active" },
+    { id: "c9", name: "BritanniaMarie_Search_Instamart", type: "Search", dailyBudget: "₹ 1,400", bid: "₹ 12", status: "Active", cities: ["Mumbai", "Bengaluru"] },
   ],
 };
 
@@ -113,30 +113,42 @@ type OosCampaignRow = {
   city: string; availability: number; inStock: boolean;
 };
 
-const buildOosCampaignRows = (sku: string, platform: string): OosCampaignRow[] => {
+type OosCampaignGroup = {
+  campaignId: string; name: string; type: string; dailyBudget: string; bid: string;
+  rows: OosCampaignRow[]; multiCity: boolean; oosCount: number;
+};
+
+const buildOosCampaignGroups = (sku: string, platform: string): OosCampaignGroup[] => {
   const base = campaignsForOOS[`${sku}|${platform}`] ?? [];
   const hash = (s: string) => s.split("").reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
   const seed = hash(`${sku}|${platform}`);
-  const rows: OosCampaignRow[] = [];
-  base.forEach((c, ci) => {
-    oosCities.forEach((city, cityIdx) => {
-      const score = (seed + ci * 53 + cityIdx * 29 + hash(city)) % 100;
-      const availability = score % 100;
-      rows.push({
-        id: `${c.id}-${cityIdx}`,
-        name: `${c.name}_${city.replace(/\s+/g, "-")}`,
+  const groups: OosCampaignGroup[] = base.map((c, ci) => {
+    const rows: OosCampaignRow[] = c.cities.map((city) => {
+      const cityIdx = oosCities.indexOf(city);
+      const availability = (seed + ci * 53 + Math.max(cityIdx, 0) * 29 + hash(city)) % 100;
+      return {
+        id: `${c.id}-${city.replace(/\s+/g, "-")}`,
+        name: c.name,
         type: c.type,
         dailyBudget: c.dailyBudget,
         bid: c.bid,
         city,
         availability,
         inStock: availability >= 35,
-      });
-    });
+      };
+    }).sort((a, b) => Number(a.inStock) - Number(b.inStock) || a.availability - b.availability);
+    return {
+      campaignId: c.id, name: c.name, type: c.type, dailyBudget: c.dailyBudget, bid: c.bid,
+      rows, multiCity: rows.length > 1, oosCount: rows.filter(r => !r.inStock).length,
+    };
   });
-  // Out-of-stock cities first, then lowest availability
-  return rows.sort((a, b) => Number(a.inStock) - Number(b.inStock) || a.availability - b.availability);
+  // Campaigns with out-of-stock cities first
+  return groups.sort((a, b) => (b.oosCount > 0 ? 1 : 0) - (a.oosCount > 0 ? 1 : 0) || b.oosCount - a.oosCount);
 };
+
+const buildOosCampaignRows = (sku: string, platform: string): OosCampaignRow[] =>
+  buildOosCampaignGroups(sku, platform).flatMap(g => g.rows);
+
 
 
 const availScoreTrend = Array.from({ length: 30 }, (_, i) => ({
@@ -596,17 +608,20 @@ const AvailabilityView: React.FC = () => {
             <DialogTitle>Review campaigns to pause</DialogTitle>
             <DialogDescription>
               {oosReview && (() => {
-                const rows = buildOosCampaignRows(oosReview.sku, oosReview.platform);
+                const groups = buildOosCampaignGroups(oosReview.sku, oosReview.platform);
+                const rows = groups.flatMap(g => g.rows);
                 const oos = rows.filter(r => !r.inStock).length;
+                const multi = groups.filter(g => g.multiCity).length;
                 return (
-                  <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> on <span className="font-medium text-foreground">{oosReview.platform}</span> — {rows.length} city-level campaigns, {oos} in out-of-stock cities (shown first). Tick the cities to switch OFF.</>
+                  <>Product <span className="font-medium text-foreground">{oosReview.sku}</span> on <span className="font-medium text-foreground">{oosReview.platform}</span> — {groups.length} campaigns ({multi} multi-city), {rows.length} city placements, {oos} out of stock. Tick the cities to switch OFF.</>
                 );
               })()}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             {oosReview && (() => {
-              const rows = buildOosCampaignRows(oosReview.sku, oosReview.platform);
+              const groups = buildOosCampaignGroups(oosReview.sku, oosReview.platform);
+              const rows = groups.flatMap(g => g.rows);
               if (rows.length === 0) {
                 return <div className="text-[12px] text-muted-foreground p-3">No active campaigns found for this product on {oosReview.platform}.</div>;
               }
@@ -617,6 +632,18 @@ const AvailabilityView: React.FC = () => {
                   return next;
                 });
               };
+              const meta = (g: OosCampaignGroup) => (
+                <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
+                  <span>Type: <span className="text-foreground">{g.type}</span></span>
+                  <span>Daily budget: <span className="text-foreground">{g.dailyBudget}</span></span>
+                  <span>Bid: <span className="text-foreground">{g.bid}</span></span>
+                </div>
+              );
+              const cityPill = (r: OosCampaignRow) => (
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/15 text-sw-green" : "bg-sw-red/15 text-sw-red"}`}>
+                  {r.city} — {r.inStock ? "In Stock" : "Out of Stock"} · {r.availability}%
+                </span>
+              );
               return (
                 <>
                   <div className="flex items-center gap-2 text-[11px]">
@@ -624,32 +651,70 @@ const AvailabilityView: React.FC = () => {
                     <button onClick={() => selectAll(true, "oos")} className="px-2 py-1 rounded-lg bg-sw-red/15 text-sw-red hover:bg-sw-red/25">Select OOS cities</button>
                     <button onClick={() => selectAll(false)} className="px-2 py-1 rounded-lg bg-surface-2 hover:bg-surface-3 text-foreground">Clear</button>
                   </div>
-                  {rows.map(r => (
-                    <label key={r.id} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
-                      <Checkbox
-                        checked={!!oosSelected[r.id]}
-                        onCheckedChange={(v) => setOosSelected(s => ({ ...s, [r.id]: !!v }))}
-                        className="mt-0.5"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[12px] font-medium text-foreground">{r.name}</span>
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/15 text-sw-green" : "bg-sw-red/15 text-sw-red"}`}>
-                            {r.city} — {r.inStock ? "In Stock" : "Out of Stock"}
-                          </span>
+
+                  {groups.map(g => {
+                    if (!g.multiCity) {
+                      const r = g.rows[0];
+                      return (
+                        <label key={g.campaignId} className="flex items-start gap-3 p-3 rounded-lg border border-subtle hover:bg-surface-2/50 cursor-pointer">
+                          <Checkbox checked={!!oosSelected[r.id]} onCheckedChange={(v) => setOosSelected(s => ({ ...s, [r.id]: !!v }))} className="mt-0.5" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-[12px] font-medium text-foreground">{g.name}</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-surface-2 text-muted-foreground">Single city</span>
+                              {cityPill(r)}
+                            </div>
+                            {meta(g)}
+                          </div>
+                        </label>
+                      );
+                    }
+                    const selCount = g.rows.filter(r => oosSelected[r.id]).length;
+                    const allSel = selCount === g.rows.length;
+                    return (
+                      <div key={g.campaignId} className="rounded-lg border border-subtle">
+                        <div className="flex items-start gap-3 p-3 border-b border-subtle bg-surface-2/40">
+                          <Checkbox
+                            checked={allSel ? true : selCount > 0 ? "indeterminate" : false}
+                            onCheckedChange={(v) => setOosSelected(s => {
+                              const next = { ...s };
+                              g.rows.forEach(r => (next[r.id] = !!v));
+                              return next;
+                            })}
+                            className="mt-0.5"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-[12px] font-medium text-foreground">{g.name}</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-surface-2 text-muted-foreground">{g.rows.length} cities</span>
+                              {g.oosCount > 0 && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sw-red/15 text-sw-red">{g.oosCount} out of stock</span>
+                              )}
+                              <span className="text-[10px] text-muted-foreground">{selCount}/{g.rows.length} selected</span>
+                            </div>
+                            {meta(g)}
+                          </div>
                         </div>
-                        <div className="text-[10px] text-muted-foreground mt-0.5 flex gap-3 flex-wrap">
-                          <span>Type: <span className="text-foreground">{r.type}</span></span>
-                          <span>Daily budget: <span className="text-foreground">{r.dailyBudget}</span></span>
-                          <span>Bid: <span className="text-foreground">{r.bid}</span></span>
-                          <span>Availability: <span className={`font-mono ${r.inStock ? "text-sw-green" : "text-sw-red"}`}>{r.availability}%</span></span>
+                        <div className="divide-y divide-subtle">
+                          {g.rows.map(r => (
+                            <label key={r.id} className="flex items-center gap-3 py-2 pl-9 pr-3 hover:bg-surface-2/50 cursor-pointer">
+                              <Checkbox checked={!!oosSelected[r.id]} onCheckedChange={(v) => setOosSelected(s => ({ ...s, [r.id]: !!v }))} />
+                              <div className="flex-1 flex items-center justify-between gap-2 flex-wrap">
+                                <span className="text-[11px] text-foreground">{r.city}</span>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${r.inStock ? "bg-sw-green/15 text-sw-green" : "bg-sw-red/15 text-sw-red"}`}>
+                                  {r.inStock ? "In Stock" : "Out of Stock"} · <span className="font-mono">{r.availability}%</span>
+                                </span>
+                              </div>
+                            </label>
+                          ))}
                         </div>
                       </div>
-                    </label>
-                  ))}
+                    );
+                  })}
                 </>
               );
             })()}
+
           </div>
 
           <DialogFooter>
