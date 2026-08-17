@@ -242,13 +242,13 @@ const AvailabilityView: React.FC = () => {
 
 
   const openOosReview = (sku: string, platform: string) => {
-    const key = `${sku}|${platform}`;
-    const camps = campaignsForOOS[key] ?? [];
+    const rows = buildOosCampaignRows(sku, platform);
     const sel: Record<string, boolean> = {};
-    camps.forEach(c => (sel[c.id] = true));
+    rows.forEach(r => (sel[r.id] = !r.inStock));
     setOosSelected(sel);
     setOosReview({ sku, platform });
   };
+
 
   const confirmOosPause = () => {
     if (!oosReview) return;
