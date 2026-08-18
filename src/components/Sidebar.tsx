@@ -10,7 +10,6 @@ const navSections = [
     items: [
       { id: "availability", icon: Package, label: "Availability", notify: false },
       { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
-      { id: "shelf", icon: Eye, label: "Share of Shelf", notify: false },
       { id: "marketshare", icon: TrendingUp, label: "Rank & Market Share", notify: false },
       { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
