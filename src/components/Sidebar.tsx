@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck, Trophy, Sparkles, ScrollText, ClipboardList, Image as ImageIcon, ShieldCheck } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck, Trophy, Sparkles, ScrollText, ClipboardList, Image as ImageIcon, ShieldCheck, TrendingUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -10,6 +10,7 @@ const navSections = [
     items: [
       { id: "availability", icon: Package, label: "Availability", notify: false },
       { id: "pricing", icon: DollarSign, label: "Pricing", notify: false },
+      { id: "marketshare", icon: TrendingUp, label: "Rank & Market Share", notify: false },
       { id: "keywordanalysis", icon: KeyRound, label: "Keyword Analysis", notify: false },
       { id: "contentaudit", icon: FileCheck, label: "Content Quality Score", notify: false },
     ],
