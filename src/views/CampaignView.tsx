@@ -944,6 +944,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 };
 
 const CampaignView: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedCampaign, setSelectedCampaign] = useState(0);
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
   const [bidReview, setBidReview] = useState<BidReview | null>(null);
@@ -1039,7 +1040,7 @@ const CampaignView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
-      <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
+      {/* Campaign creation moved to /ecom/campaigns/create routes */}
       <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
       <CreateDayPartingModal
         open={showCreateDayPart || !!replaceTarget}
