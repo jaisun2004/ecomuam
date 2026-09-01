@@ -22,16 +22,18 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/ecom/campaigns/create" element={<EcomCreateProvider><Index /><CampaignCreateEntry /></EcomCreateProvider>} />
-            <Route path="/ecom/campaigns/create/ai" element={<EcomCreateProvider><FlowAiView /></EcomCreateProvider>} />
-            <Route path="/ecom/campaigns/create/copy" element={<EcomCreateProvider><FlowHistoryView /></EcomCreateProvider>} />
-            <Route path="/ecom/campaigns/create/manual" element={<EcomCreateProvider><FlowManualView /></EcomCreateProvider>} />
-            <Route path="/ecom/campaigns/create/review" element={<EcomCreateProvider><ReviewPushView /></EcomCreateProvider>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <EcomCreateProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/ecom/campaigns/create" element={<><Index /><CampaignCreateEntry /></>} />
+              <Route path="/ecom/campaigns/create/ai" element={<FlowAiView />} />
+              <Route path="/ecom/campaigns/create/copy" element={<FlowHistoryView />} />
+              <Route path="/ecom/campaigns/create/manual" element={<FlowManualView />} />
+              <Route path="/ecom/campaigns/create/review" element={<ReviewPushView />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </EcomCreateProvider>
         </BrowserRouter>
       </DateRangeProvider>
     </TooltipProvider>

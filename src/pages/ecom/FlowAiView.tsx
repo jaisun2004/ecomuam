@@ -254,11 +254,12 @@ export const Header: React.FC<{ onBack: () => void; right?: React.ReactNode }> =
     </div>
     <div className="flex items-center gap-3">
       {right}
-      <button onClick={() => (window.location.href = "/ecom/campaigns/create/manual")} className="text-[11px] text-primary hover:underline">
+      <button onClick={() => navigate("/ecom/campaigns/create/manual")} className="text-[11px] text-primary hover:underline">
         Switch to Manual
       </button>
     </div>
   </div>
-);
+  );
+};
 
 export default FlowAiView;
