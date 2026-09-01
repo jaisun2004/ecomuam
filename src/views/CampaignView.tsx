@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
@@ -1340,7 +1341,7 @@ const CampaignView: React.FC = () => {
 
       {/* Action bar */}
       <div className="flex items-center gap-3 justify-end">
-        <button onClick={() => setShowCreator(true)}
+        <button onClick={() => navigate("/ecom/campaigns/create")}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-primary text-foreground hover:bg-primary/80 transition-all">
           <Plus size={14} /> Create Campaign
         </button>
