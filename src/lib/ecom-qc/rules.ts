@@ -66,7 +66,7 @@ const f = (
 });
 
 const rowF = (r: BatchRow, field: keyof BatchRow | string, message: string, opts?: { suggestion?: string; fixable_inline?: boolean }) =>
-  f(String(field), String((r as Record<string, unknown>)[field as string] ?? ""), message, { ...opts, row: r.row });
+  f(String(field), String((r as unknown as Record<string, unknown>)[field as string] ?? ""), message, { ...opts, row: r.row });
 
 export const RULES: RuleDef[] = [
   // ---------- A. File and structure ----------
