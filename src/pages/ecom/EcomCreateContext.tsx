@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
-import { applyAllFixable, applySuggestion, runQc } from "@/lib/ecom-qc/engine";
+import { applyAllFixable, applySuggestion, partitionRows, runQc } from "@/lib/ecom-qc/engine";
 
 export type FlowSource = "ai" | "copy" | "manual" | null;
 
@@ -17,6 +17,9 @@ interface EcomCreateState {
   runDeep: () => void;
   applyFix: (finding: QcFinding) => void;
   applyAllFixes: () => number;
+  addRows: (rows: Omit<BatchRow, "id" | "row">[]) => void;
+  /** Drops every row that still has a blocking finding. Returns counts. */
+  keepOnlyCleanRows: () => { kept: number; dropped: number };
   pushed: boolean;
   setPushed: (p: boolean) => void;
   reset: () => void;
@@ -80,6 +83,27 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return fixable;
   }, [result, ctxOf, setRows]);
 
+  const addRows = useCallback(
+    (incoming: Omit<BatchRow, "id" | "row">[]) => {
+      const base = rowsRef.current;
+      const next = [
+        ...base,
+        ...incoming.map((r, i) => ({ ...r, id: `reco-${Date.now()}-${i}`, row: base.length + i + 1 } as BatchRow)),
+      ];
+      setRows(next);
+      setResult(runQc(ctxOf(next), { depth: "all" }));
+    },
+    [ctxOf, setRows],
+  );
+
+  const keepOnlyCleanRows = useCallback(() => {
+    const { clean, blocked } = partitionRows(rowsRef.current, result);
+    const renumbered = clean.map((r, i) => ({ ...r, row: i + 1 }));
+    setRows(renumbered);
+    setResult(runQc(ctxOf(renumbered), { depth: "all" }));
+    return { kept: renumbered.length, dropped: blocked.length };
+  }, [ctxOf, result, setRows]);
+
   const reset = useCallback(() => {
     setRows([]);
     setFileName(null);
@@ -92,9 +116,9 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const value = useMemo(
     () => ({
       rows, setRows, fileName, setFileName, source, setSource, result, deepPending,
-      runLive, runDeep, applyFix, applyAllFixes, pushed, setPushed, reset,
+      runLive, runDeep, applyFix, applyAllFixes, addRows, keepOnlyCleanRows, pushed, setPushed, reset,
     }),
-    [rows, setRows, fileName, source, result, deepPending, runLive, runDeep, applyFix, applyAllFixes, pushed, reset],
+    [rows, setRows, fileName, source, result, deepPending, runLive, runDeep, applyFix, applyAllFixes, addRows, keepOnlyCleanRows, pushed, reset],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

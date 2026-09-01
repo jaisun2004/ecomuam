@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Download, Loader2, Upload, Wrench, Info } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronRight, Info, Loader2, Upload, Wrench } from "lucide-react";
 import type { QcFinding, QcResult } from "@/lib/ecom-qc/types";
-import { QC_GROUPS } from "@/lib/ecom-qc/types";
-import { groupFindings } from "@/lib/ecom-qc/engine";
+import { groupBySeverity } from "@/lib/ecom-qc/engine";
 import { RULE_INDEX } from "@/lib/ecom-qc/rules";
+import { RULE_EXPLANATIONS } from "@/lib/ecom-qc/explanations";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
@@ -12,7 +12,6 @@ interface Props {
   result: QcResult | null;
   deepPending?: boolean;
   onFix: (finding: QcFinding) => void;
-  onDownloadAnnotated: () => void;
   onContinue?: () => void;
   continueLabel?: string;
 }
@@ -23,22 +22,24 @@ const bandStyles: Record<string, string> = {
   red: "bg-sw-red-dim text-sw-red border border-sw-red/30",
 };
 
-const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAnnotated, onContinue, continueLabel = "Continue to Review" }) => {
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
+const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onContinue, continueLabel = "Continue to Review" }) => {
+  const [closed, setClosed] = useState<Set<string>>(new Set());
   const [ruleShown, setRuleShown] = useState<QcFinding | null>(null);
 
   if (!result) return null;
 
-  const groups = groupFindings(result);
-  const groupSet = new Set(groups.map((g) => g.group));
-  const isOpen = (g: string, hasBlockers: boolean) => (openGroups.size === 0 ? hasBlockers : openGroups.has(g));
+  const groups = groupBySeverity(result);
+  const isOpen = (g: string) => !closed.has(g);
   const toggle = (g: string) => {
-    setOpenGroups((prev) => {
-      const base = prev.size === 0 ? new Set(groups.filter((x) => x.findings.some((f) => f.severity === "blocker")).map((x) => x.group)) : new Set(prev);
-      if (base.has(g)) base.delete(g); else base.add(g);
-      return base;
+    setClosed((prev) => {
+      const next = new Set(prev);
+      if (next.has(g)) next.delete(g); else next.add(g);
+      return next;
     });
   };
+
+  const explain = ruleShown ? RULE_EXPLANATIONS[ruleShown.rule_key] : undefined;
+  const ruleTitle = ruleShown ? RULE_INDEX[ruleShown.rule_key]?.title : undefined;
 
   return (
     <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
@@ -69,17 +70,18 @@ const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAn
             <CheckCircle2 size={16} /> All checks passed — nothing blocking this batch.
           </div>
         )}
-        {groups.map(({ group, findings }) => {
-          const blockers = findings.filter((f) => f.severity === "blocker").length;
-          const open = isOpen(group, blockers > 0);
+        {groups.map(({ group, severity, findings }) => {
+          const open = isOpen(group);
           return (
             <div key={group}>
               <button onClick={() => toggle(group)} className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-surface-2 text-left">
                 {open ? <ChevronDown size={14} className="text-muted-foreground" /> : <ChevronRight size={14} className="text-muted-foreground" />}
+                <span className={`w-2 h-2 rounded-full ${severity === "blocker" ? "bg-sw-red" : "bg-sw-amber"}`} />
                 <span className="text-xs font-medium text-foreground">{group}</span>
-                <span className="ml-auto flex items-center gap-2">
-                  {blockers > 0 && <span className="px-1.5 py-0.5 rounded bg-sw-red-dim text-sw-red text-[10px] font-mono">{blockers}</span>}
-                  {findings.length - blockers > 0 && <span className="px-1.5 py-0.5 rounded bg-sw-amber-dim text-sw-amber text-[10px] font-mono">{findings.length - blockers}</span>}
+                <span className="ml-auto">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${severity === "blocker" ? "bg-sw-red-dim text-sw-red" : "bg-sw-amber-dim text-sw-amber"}`}>
+                    {findings.length}
+                  </span>
                 </span>
               </button>
               {open && (
@@ -89,10 +91,10 @@ const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAn
                       <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${f.severity === "blocker" ? "bg-sw-red" : "bg-sw-amber"}`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono text-[10px] text-muted-foreground">{f.rule_key}</span>
                           <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">
                             row {f.row} · {f.field}
                           </span>
+                          <span className="text-[10px] text-muted-foreground">{f.group}</span>
                           {f.when === "deep" && <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/15 text-primary font-mono">deep</span>}
                         </div>
                         <p className="text-foreground mt-1">{f.message}</p>
@@ -120,7 +122,7 @@ const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAn
             </div>
           );
         })}
-        {deepPending && QC_GROUPS.filter((g) => !groupSet.has(g)).length > 0 && (
+        {deepPending && (
           <div className="px-4 py-3 flex items-center gap-2 text-[11px] text-muted-foreground">
             <Loader2 size={12} className="animate-spin" /> Deep checks still running…
           </div>
@@ -129,24 +131,19 @@ const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAn
 
       {/* Footer */}
       <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-subtle bg-surface-2 flex-wrap">
-        <div className="flex items-center gap-2">
-          <button onClick={onDownloadAnnotated} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-3 text-foreground hover:bg-surface-3/70">
-            <Download size={12} /> Download annotated file
-          </button>
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
-            <Upload size={12} /> Fix and re-upload
-            <input
-              type="file"
-              accept=".xlsx,.xlsm,.csv"
-              className="hidden"
-              onChange={(e) => {
-                const ev = new CustomEvent("ecom-reupload", { detail: e.target.files?.[0] });
-                window.dispatchEvent(ev);
-                e.target.value = "";
-              }}
-            />
-          </label>
-        </div>
+        <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
+          <Upload size={12} /> Fix and re-upload
+          <input
+            type="file"
+            accept=".xlsx,.xlsm,.csv"
+            className="hidden"
+            onChange={(e) => {
+              const ev = new CustomEvent("ecom-reupload", { detail: e.target.files?.[0] });
+              window.dispatchEvent(ev);
+              e.target.value = "";
+            }}
+          />
+        </label>
         {onContinue && (
           <button
             onClick={onContinue}
@@ -163,17 +160,35 @@ const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAn
       <Dialog open={!!ruleShown} onOpenChange={() => setRuleShown(null)}>
         <DialogContent className="bg-surface-1 border-border-visible">
           <DialogHeader>
-            <DialogTitle className="font-mono text-sm">{ruleShown?.rule_key}</DialogTitle>
-            <DialogDescription className="text-xs">
-              {ruleShown && RULE_INDEX[ruleShown.rule_key]?.rationale
-                ? RULE_INDEX[ruleShown.rule_key].rationale
-                : ruleShown?.message}
+            <DialogTitle className="text-sm">
+              {ruleTitle ?? ruleShown?.message}
+            </DialogTitle>
+            <DialogDescription className="text-[11px]">
+              QC check <span className="font-mono">{ruleShown?.rule_key}</span> ·{" "}
+              {ruleShown?.severity === "blocker" ? "Blocker — must be fixed before push" : "Warning — review before push"}
             </DialogDescription>
           </DialogHeader>
           {ruleShown && (
-            <div className="text-xs text-muted-foreground space-y-1">
-              <p>Group: {ruleShown.group}</p>
-              <p>Severity: {ruleShown.severity} · Timing: {ruleShown.when}</p>
+            <div className="space-y-3 text-xs">
+              <Section label="What we checked" body={explain?.checked ?? ruleTitle ?? ruleShown.message} />
+              <div>
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">What we found</p>
+                <p className="text-foreground">{ruleShown.message}</p>
+                <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  row {ruleShown.row} · column {ruleShown.field}
+                  {ruleShown.value ? ` · “${ruleShown.value}”` : ""}
+                </p>
+              </div>
+              <Section label="Why it matters" body={explain?.why ?? "This check protects the batch from failing on push."} />
+              <div>
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">How to fix it</p>
+                <p className="text-foreground">{explain?.fix ?? "Correct the value in the sheet and re-upload."}</p>
+                {ruleShown.suggestion && (
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Suggested value: <span className="font-mono text-sw-green">{ruleShown.suggestion}</span>
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </DialogContent>
@@ -181,5 +196,12 @@ const EcomQcPanel: React.FC<Props> = ({ result, deepPending, onFix, onDownloadAn
     </div>
   );
 };
+
+const Section: React.FC<{ label: string; body: string }> = ({ label, body }) => (
+  <div>
+    <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">{label}</p>
+    <p className="text-foreground">{body}</p>
+  </div>
+);
 
 export default EcomQcPanel;
