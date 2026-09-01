@@ -85,7 +85,7 @@ export function parseWorkbook(file: File): Promise<ParsedWorkbook> {
           const row = emptyRow(i + 1);
           CANONICAL_HEADERS.forEach((field) => {
             const idx = headers.indexOf(field);
-            if (idx >= 0) (row as Record<string, unknown>)[field] = String(r[idx] ?? "").trim();
+            if (idx >= 0) (row as unknown as Record<string, unknown>)[field] = String(r[idx] ?? "").trim();
           });
           return row;
         });
