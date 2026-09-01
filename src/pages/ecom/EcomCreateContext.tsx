@@ -1,0 +1,107 @@
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
+import { applyAllFixable, applySuggestion, runQc } from "@/lib/ecom-qc/engine";
+
+export type FlowSource = "ai" | "copy" | "manual" | null;
+
+interface EcomCreateState {
+  rows: BatchRow[];
+  setRows: (rows: BatchRow[]) => void;
+  fileName: string | null;
+  setFileName: (n: string | null) => void;
+  source: FlowSource;
+  setSource: (s: FlowSource) => void;
+  result: QcResult | null;
+  deepPending: boolean;
+  runLive: () => void;
+  runDeep: () => void;
+  applyFix: (finding: QcFinding) => void;
+  applyAllFixes: () => number;
+  pushed: boolean;
+  setPushed: (p: boolean) => void;
+  reset: () => void;
+}
+
+const Ctx = createContext<EcomCreateState | null>(null);
+
+export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [rows, setRowsState] = useState<BatchRow[]>([]);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [source, setSource] = useState<FlowSource>(null);
+  const [result, setResult] = useState<QcResult | null>(null);
+  const [deepPending, setDeepPending] = useState(false);
+  const [pushed, setPushed] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const ctxOf = useCallback(
+    (r: BatchRow[]) => ({ rows: r, fileName: fileName ?? undefined }),
+    [fileName],
+  );
+
+  const runLive = useCallback(() => {
+    setResult((prev) => {
+      void prev;
+      return runQc(ctxOf(rowsRef.current), { depth: "live" });
+    });
+  }, [ctxOf]);
+
+  const runDeep = useCallback(() => {
+    if (timer.current) clearTimeout(timer.current);
+    setDeepPending(true);
+    timer.current = setTimeout(() => {
+      setResult(runQc(ctxOf(rowsRef.current), { depth: "all" }));
+      setDeepPending(false);
+    }, 1400);
+  }, [ctxOf]);
+
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows;
+
+  const setRows = useCallback((r: BatchRow[]) => {
+    rowsRef.current = r;
+    setRowsState(r);
+  }, []);
+
+  const applyFix = useCallback(
+    (finding: QcFinding) => {
+      const next = rowsRef.current.map((r) => (r.row === finding.row ? applySuggestion(r, finding) : r));
+      setRows(next);
+      setResult(runQc(ctxOf(next), { depth: "all" }));
+    },
+    [ctxOf, setRows],
+  );
+
+  const applyAllFixes = useCallback(() => {
+    if (!result) return 0;
+    const fixable = result.findings.filter((f) => f.fixable_inline && f.suggestion).length;
+    const next = applyAllFixable(rowsRef.current, result);
+    setRows(next);
+    setResult(runQc(ctxOf(next), { depth: "all" }));
+    return fixable;
+  }, [result, ctxOf, setRows]);
+
+  const reset = useCallback(() => {
+    setRows([]);
+    setFileName(null);
+    setSource(null);
+    setResult(null);
+    setDeepPending(false);
+    setPushed(false);
+  }, [setRows]);
+
+  const value = useMemo(
+    () => ({
+      rows, setRows, fileName, setFileName, source, setSource, result, deepPending,
+      runLive, runDeep, applyFix, applyAllFixes, pushed, setPushed, reset,
+    }),
+    [rows, setRows, fileName, source, result, deepPending, runLive, runDeep, applyFix, applyAllFixes, pushed, reset],
+  );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+};
+
+export function useEcomCreate(): EcomCreateState {
+  const v = useContext(Ctx);
+  if (!v) throw new Error("useEcomCreate must be used inside EcomCreateProvider");
+  return v;
+}
