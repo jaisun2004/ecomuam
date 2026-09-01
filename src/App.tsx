@@ -6,6 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { DateRangeProvider } from "./contexts/DateRangeContext";
+import { EcomCreateProvider } from "./pages/ecom/EcomCreateContext";
+import CampaignCreateEntry from "./pages/ecom/CampaignCreateEntry";
+import FlowAiView from "./pages/ecom/FlowAiView";
+import FlowHistoryView from "./pages/ecom/FlowHistoryView";
+import FlowManualView from "./pages/ecom/FlowManualView";
+import ReviewPushView from "./pages/ecom/ReviewPushView";
 
 const queryClient = new QueryClient();
 
@@ -16,11 +22,18 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <EcomCreateProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/ecom/campaigns/create" element={<><Index /><CampaignCreateEntry /></>} />
+              <Route path="/ecom/campaigns/create/ai" element={<FlowAiView />} />
+              <Route path="/ecom/campaigns/create/copy" element={<FlowHistoryView />} />
+              <Route path="/ecom/campaigns/create/manual" element={<FlowManualView />} />
+              <Route path="/ecom/campaigns/create/review" element={<ReviewPushView />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </EcomCreateProvider>
         </BrowserRouter>
       </DateRangeProvider>
     </TooltipProvider>

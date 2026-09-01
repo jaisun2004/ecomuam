@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
@@ -943,6 +944,7 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
 };
 
 const CampaignView: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedCampaign, setSelectedCampaign] = useState(0);
   const [bidStates, setBidStates] = useState<Record<number, string>>({});
   const [bidReview, setBidReview] = useState<BidReview | null>(null);
@@ -1038,7 +1040,7 @@ const CampaignView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
-      <CampaignCreatorModal open={showCreator} onClose={() => setShowCreator(false)} />
+      {/* Campaign creation moved to /ecom/campaigns/create routes */}
       <CreateDayPartingModal open={showCreateDayPart} onClose={() => setShowCreateDayPart(false)} allCampaigns={campaigns.map(c => ({ name: c.name, platform: c.platform }))} />
       <CreateDayPartingModal
         open={showCreateDayPart || !!replaceTarget}
@@ -1340,7 +1342,7 @@ const CampaignView: React.FC = () => {
 
       {/* Action bar */}
       <div className="flex items-center gap-3 justify-end">
-        <button onClick={() => setShowCreator(true)}
+        <button onClick={() => navigate("/ecom/campaigns/create")}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-primary text-foreground hover:bg-primary/80 transition-all">
           <Plus size={14} /> Create Campaign
         </button>
