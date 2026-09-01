@@ -233,7 +233,9 @@ const FlowAiView: React.FC = () => {
   );
 };
 
-export const Header: React.FC<{ onBack: () => void; right?: React.ReactNode }> = ({ onBack, right }) => (
+export const Header: React.FC<{ onBack: () => void; right?: React.ReactNode }> = ({ onBack, right }) => {
+  const navigate = useNavigate();
+  return (
   <div className="flex items-center justify-between px-4 py-3 border-b border-subtle bg-surface-1">
     <div className="flex items-center gap-3">
       <button onClick={onBack} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground" aria-label="Back">
