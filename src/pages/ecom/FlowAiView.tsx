@@ -1,11 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, FileSpreadsheet, Loader2, RotateCcw, Send, Sparkles, Upload } from "lucide-react";
+import { ArrowLeft, Check, Download, FileSpreadsheet, Lightbulb, Loader2, RotateCcw, Search, Send, Sparkles, Upload, X } from "lucide-react";
 import EcomQcPanel from "@/components/ecom/EcomQcPanel";
 import { useEcomCreate } from "./EcomCreateContext";
-import { downloadAnnotated, downloadCorrected, downloadTemplate, parseWorkbook } from "./xlsx-utils";
+import { downloadCorrected, downloadTemplate, parseWorkbook } from "./xlsx-utils";
 import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
 import type { BatchRow } from "@/lib/ecom-qc/types";
+import { fixableCount, partitionRows } from "@/lib/ecom-qc/engine";
+import { recoKindLabel, recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
+import { platformDisplay } from "@/lib/ecom-reference/platforms";
+import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
 import { toast } from "sonner";
 
 interface Msg {
@@ -15,7 +19,7 @@ interface Msg {
 }
 
 const FIRST_MESSAGE =
-  "Hi! I'm your AI campaign assistant. Upload a batch import sheet and I'll check every row against the QC rule catalog — or describe your plan and I'll build the rows with you.";
+  "Hi! I'm your AI campaign assistant. Upload a batch import sheet and I'll check every row against the QC rule catalog, or hit Recommendation and I'll build campaigns for the SKUs you pick using Ecom Analytics signals.";
 
 const FlowAiView: React.FC = () => {
   const navigate = useNavigate();
@@ -26,10 +30,15 @@ const FlowAiView: React.FC = () => {
   const [parsing, setParsing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [qcShown, setQcShown] = useState(false);
+  const [skuPicker, setSkuPicker] = useState(false);
+  const [skuQuery, setSkuQuery] = useState("");
+  const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
+  const [recos, setRecos] = useState<SkuRecommendation[] | null>(null);
+  const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, qcShown, ec.deepPending]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, qcShown, ec.deepPending, recos, skuPicker]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -47,11 +56,35 @@ const FlowAiView: React.FC = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [navigate]);
 
+  /* ── QC verdict messaging (edge cases) ── */
+  const verdictKey = useRef<string>("");
+  useEffect(() => {
+    const r = ec.result;
+    if (!r || !qcShown || ec.deepPending) return;
+    const key = `${ec.rows.length}|${r.blockers}|${r.warnings}|${r.score}`;
+    if (verdictKey.current === key) return;
+    verdictKey.current = key;
+
+    const { clean, blocked } = partitionRows(ec.rows, r);
+    const fixable = fixableCount(r);
+    let text: string;
+    if (r.blockers === 0 && r.warnings === 0) {
+      text = `All ${ec.rows.length} rows passed every QC check — score ${r.score}/100. Nothing to fix. Continue to Review & Push whenever you're ready.`;
+    } else if (r.blockers === 0) {
+      text = `No blockers — all ${ec.rows.length} rows can be pushed. ${r.warnings} warnings are worth a quick look (they won't stop the push). Say "fix" and I'll clean the ones with a safe suggestion, or continue to Review & Push.`;
+    } else if (clean.length > 0) {
+      text = `${clean.length} of ${ec.rows.length} rows are clean and ready to push. ${blocked.length} rows are blocked by ${r.blockers} findings${fixable ? `, and ${fixable} of them I can fix automatically — just say "fix the blockers"` : ""}. You can also say "push the clean rows" and I'll drop the ${blocked.length} blocked rows so you can re-upload them corrected later.`;
+    } else {
+      text = `Every row is blocked — ${r.blockers} blocking findings across ${ec.rows.length} rows.${fixable ? ` ${fixable} have a safe automatic fix; say "fix the blockers" and I'll apply them and re-run QC.` : " These need a manual decision — open a finding and use Show rule to see exactly what to change, then re-upload."}`;
+    }
+    setMessages((m) => [...m, { role: "assistant", text }]);
+  }, [ec.result, ec.deepPending, ec.rows, qcShown]);
+
   const runChecks = (rows: BatchRow[], fileName?: string) => {
     ec.setRows(rows);
     if (fileName) ec.setFileName(fileName);
     setQcShown(true);
-    // live checks immediately, deep checks stream in
+    verdictKey.current = "";
     setTimeout(() => { ec.runLive(); ec.runDeep(); }, 50);
   };
 
@@ -90,19 +123,74 @@ const FlowAiView: React.FC = () => {
     runChecks(rows, "last_months_plan.xlsx");
   };
 
+  /* ── Recommendation flow ── */
+  const openRecommendations = () => {
+    setSkuPicker(true);
+    setRecos(null);
+    setPickedSkus([]);
+    setMessages((m) => [
+      ...m,
+      { role: "user", text: "Recommendation" },
+      { role: "assistant", text: "Which SKUs should I look at? Search by product name, SKU code or platform and pick as many as you like — I'll pull the latest Ecom Analytics signals (pacing, stock, rank, ACoS) for each one." },
+    ]);
+  };
+
+  const skuResults = useMemo(() => searchSkus(skuQuery, 40), [skuQuery]);
+
+  const generateRecos = () => {
+    if (!pickedSkus.length) return;
+    const list = pickedSkus.flatMap((s) => recommendationsForSku(s));
+    setRecos(list);
+    setChosenRecos(new Set(list.map((r) => r.id)));
+    setSkuPicker(false);
+    setMessages((m) => [
+      ...m,
+      { role: "user", text: `Recommendations for ${pickedSkus.map((s) => s.name).join(", ")}.` },
+      { role: "assistant", text: `Here are ${list.length} recommendations across ${pickedSkus.length} SKU${pickedSkus.length > 1 ? "s" : ""}, grouped by budget, city, keywords and bid changes. Pick the ones you want and I'll turn them into batch rows and run QC on them.` },
+    ]);
+  };
+
+  const acceptRecos = () => {
+    const picked = (recos ?? []).filter((r) => chosenRecos.has(r.id));
+    if (!picked.length) return;
+    ec.addRows(picked.map((r) => r.draft));
+    setRecos(null);
+    setQcShown(true);
+    verdictKey.current = "";
+    setMessages((m) => [
+      ...m,
+      { role: "user", text: `Create ${picked.length} recommended campaign${picked.length > 1 ? "s" : ""}.` },
+      { role: "assistant", text: `Added ${picked.length} rows built from those recommendations and re-ran QC on the whole batch.` },
+    ]);
+  };
+
   const send = () => {
     const text = input.trim();
     if (!text) return;
     setInput("");
     const next: Msg[] = [...messages, { role: "user", text }];
-    // chat repair intent
-    if (/fix|repair|correct|clean/i.test(text) && ec.result) {
+    if (/recommend/i.test(text)) {
+      setInput("");
+      setMessages(next);
+      openRecommendations();
+      return;
+    }
+    if (/push .*clean|only .*clean|drop .*blocked/i.test(text) && ec.result) {
+      const { kept, dropped } = ec.keepOnlyCleanRows();
+      next.push({
+        role: "assistant",
+        text: dropped > 0
+          ? `Kept the ${kept} clean rows and dropped ${dropped} blocked rows. You can push these now and re-upload the corrected rows as a second batch.`
+          : "Nothing to drop — every row is already clean.",
+      });
+    } else if (/fix|repair|correct|clean/i.test(text) && ec.result) {
+      const before = ec.result.blockers;
       const n = ec.applyAllFixes();
       next.push({
         role: "assistant",
         text: n > 0
-          ? `Applied ${n} deterministic fixes to the sheet (values swapped to the suggested valid ones) and re-ran QC. Download the corrected workbook to audit the changes, or keep chatting.`
-          : "There's nothing I can fix automatically right now — the open findings need a manual choice. Use “Fix inline” on a finding or edit the sheet.",
+          ? `Applied ${n} deterministic fixes (values swapped to the suggested valid ones) and re-ran QC on all ${ec.rows.length} rows. ${before ? "Anything still blocking needs a manual choice — open it and use Show rule." : ""} Download the corrected workbook if you want to audit the changes cell by cell.`
+          : "There's nothing I can fix automatically right now — the open findings need a manual choice. Use “Fix inline” on a finding, or open Show rule to see exactly what to change.",
       });
     } else if (/download|export|corrected/i.test(text) && ec.rows.length) {
       downloadCorrected(ec.rows);
@@ -114,14 +202,15 @@ const FlowAiView: React.FC = () => {
       next.push({
         role: "assistant",
         text: ec.rows.length
-          ? "I can fix findings deterministically — try “fix the blockers” — or open a finding and use Fix inline. When only warnings remain, continue to Review & Push."
-          : "Upload your batch import sheet (or grab the template) and I'll validate every row. You can also describe your plan in plain language.",
+          ? "I can fix findings deterministically — try “fix the blockers” — or push only the clean rows with “push the clean rows”. When only warnings remain, continue to Review & Push."
+          : "Upload your batch import sheet (or grab the template) and I'll validate every row. You can also hit Recommendation and I'll build campaigns for the SKUs you choose.",
       });
     }
     setMessages(next);
   };
 
   const chips = [
+    { label: "Recommendation", icon: Lightbulb, onClick: openRecommendations },
     { label: "Upload File", icon: Upload, onClick: () => fileRef.current?.click() },
     { label: "Download template", icon: Download, onClick: downloadTemplate },
     { label: "Use last month's plan", icon: FileSpreadsheet, onClick: useSamplePlan },
@@ -138,7 +227,7 @@ const FlowAiView: React.FC = () => {
           </div>
           <h1 className="font-display font-bold text-2xl text-foreground">AI Campaign Creator</h1>
           <p className="text-sm text-muted-foreground mt-3 max-w-md leading-relaxed">
-            Upload a batch import sheet or describe your plan. I'll validate every row against the QC rules and help you fix what fails — before anything goes live.
+            Upload a batch import sheet or ask for recommendations by SKU. I'll validate every row against the QC rules and help you fix what fails — before anything goes live.
           </p>
           <button
             onClick={() => setStarted(true)}
@@ -158,7 +247,7 @@ const FlowAiView: React.FC = () => {
         onBack={() => navigate("/ecom/campaigns/create")}
         right={
           <button
-            onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setQcShown(false); }}
+            onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setQcShown(false); setRecos(null); setSkuPicker(false); verdictKey.current = ""; }}
             className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
           >
             <RotateCcw size={12} /> Start Over
@@ -191,12 +280,120 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
+          {/* SKU picker */}
+          {skuPicker && (
+            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-subtle bg-surface-2">
+                <Search size={13} className="text-muted-foreground" />
+                <input
+                  autoFocus
+                  value={skuQuery}
+                  onChange={(e) => setSkuQuery(e.target.value)}
+                  placeholder="Search SKU by name, code or platform…"
+                  className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground outline-none"
+                />
+                <button onClick={() => setSkuPicker(false)} className="text-muted-foreground hover:text-foreground" aria-label="Close">
+                  <X size={13} />
+                </button>
+              </div>
+              <div className="max-h-[240px] overflow-y-auto divide-y divide-subtle">
+                {skuResults.map((p) => {
+                  const on = pickedSkus.some((s) => s.code === p.code && s.platform === p.platform);
+                  return (
+                    <button
+                      key={`${p.platform}-${p.code}`}
+                      onClick={() =>
+                        setPickedSkus((prev) =>
+                          on ? prev.filter((s) => !(s.code === p.code && s.platform === p.platform)) : [...prev, p],
+                        )
+                      }
+                      className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-surface-2"
+                    >
+                      <span className={`w-4 h-4 rounded border flex items-center justify-center ${on ? "bg-primary border-primary" : "border-border-visible"}`}>
+                        {on && <Check size={11} className="text-primary-foreground" />}
+                      </span>
+                      <span className="flex-1 min-w-0 text-xs text-foreground truncate">{p.name}</span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{p.code}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">{platformDisplay(p.platform)}</span>
+                    </button>
+                  );
+                })}
+                {skuResults.length === 0 && <p className="px-4 py-4 text-xs text-muted-foreground">No SKUs match that search.</p>}
+              </div>
+              <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle bg-surface-2">
+                <span className="text-[11px] text-muted-foreground">{pickedSkus.length} selected</span>
+                <button
+                  onClick={generateRecos}
+                  disabled={!pickedSkus.length}
+                  className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+                >
+                  Get recommendations
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Recommendations */}
+          {recos && recos.length > 0 && (
+            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 text-xs font-medium text-foreground">
+                Ecom Analytics recommendations
+              </div>
+              <div className="max-h-[360px] overflow-y-auto divide-y divide-subtle">
+                {recos.map((r) => {
+                  const on = chosenRecos.has(r.id);
+                  return (
+                    <div key={r.id} className="px-4 py-3 flex items-start gap-3">
+                      <button
+                        onClick={() =>
+                          setChosenRecos((prev) => {
+                            const n = new Set(prev);
+                            if (n.has(r.id)) n.delete(r.id); else n.add(r.id);
+                            return n;
+                          })
+                        }
+                        className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${on ? "bg-primary border-primary" : "border-border-visible"}`}
+                        aria-label="Toggle recommendation"
+                      >
+                        {on && <Check size={11} className="text-primary-foreground" />}
+                      </button>
+                      <div className="flex-1 min-w-0 text-xs">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-medium">{recoKindLabel(r.kind)}</span>
+                          <span className="text-foreground font-medium truncate">{r.sku.name}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">{platformDisplay(r.sku.platform)}</span>
+                          <span className="ml-auto flex items-center gap-0.5" title={`Confidence ${r.confidence}/5`}>
+                            {[1, 2, 3, 4, 5].map((d) => (
+                              <span key={d} className={`w-1.5 h-1.5 rounded-full ${d <= r.confidence ? "bg-sw-green" : "bg-surface-3"}`} />
+                            ))}
+                          </span>
+                        </div>
+                        <p className="text-muted-foreground mt-1">Signal: {r.signal}</p>
+                        <p className="text-foreground mt-0.5">{r.action}</p>
+                        <p className="text-muted-foreground mt-0.5 text-[11px]">Expected: {r.impact}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle bg-surface-2">
+                <span className="text-[11px] text-muted-foreground">{chosenRecos.size} selected</span>
+                <button
+                  onClick={acceptRecos}
+                  disabled={!chosenRecos.size}
+                  className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+                >
+                  Create these campaigns
+                </button>
+              </div>
+            </div>
+          )}
+
           {qcShown && (
             <EcomQcPanel
               result={ec.result}
               deepPending={ec.deepPending}
               onFix={ec.applyFix}
-              onDownloadAnnotated={() => downloadAnnotated(ec.rows, ec.result)}
               onContinue={() => { ec.setSource("ai"); navigate("/ecom/campaigns/create/review"); }}
             />
           )}
@@ -219,7 +416,7 @@ const FlowAiView: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="Ask me to fix findings, or describe your campaign…"
+              placeholder="Ask me to fix findings, push only the clean rows, or recommend campaigns…"
               className="flex-1 bg-surface-2 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50"
             />
             <button onClick={send} className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90" aria-label="Send">

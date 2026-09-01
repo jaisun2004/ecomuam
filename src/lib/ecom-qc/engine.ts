@@ -141,3 +141,28 @@ export function applyAllFixable(rows: BatchRow[], result: QcResult): BatchRow[] 
 export function isPushBlocked(result: QcResult | null): boolean {
   return !result || result.blockers > 0;
 }
+
+/** Two buckets only: blockers first, then warnings. Empty buckets are dropped. */
+export function groupBySeverity(result: QcResult | null): { group: string; severity: Severity; findings: QcFinding[] }[] {
+  const all = result?.findings ?? [];
+  const blockers = all.filter((f) => f.severity === "blocker");
+  const warnings = all.filter((f) => f.severity === "warning");
+  const out: { group: string; severity: Severity; findings: QcFinding[] }[] = [];
+  if (blockers.length) out.push({ group: "Blockers — must fix before push", severity: "blocker", findings: blockers });
+  if (warnings.length) out.push({ group: "Warnings — review before push", severity: "warning", findings: warnings });
+  return out;
+}
+
+/** Rows with no blocking finding — safe to push on their own. */
+export function partitionRows(rows: BatchRow[], result: QcResult | null): { clean: BatchRow[]; blocked: BatchRow[] } {
+  const blockedRowNumbers = new Set((result?.findings ?? []).filter((f) => f.severity === "blocker").map((f) => f.row));
+  return {
+    clean: rows.filter((r) => !blockedRowNumbers.has(r.row)),
+    blocked: rows.filter((r) => blockedRowNumbers.has(r.row)),
+  };
+}
+
+/** How many open findings could be auto-fixed right now. */
+export function fixableCount(result: QcResult | null): number {
+  return (result?.findings ?? []).filter((f) => f.fixable_inline && f.suggestion).length;
+}

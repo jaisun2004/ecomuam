@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, Rocket } from "lucide-react";
 import EcomQcPanel from "@/components/ecom/EcomQcPanel";
 import { useEcomCreate } from "./EcomCreateContext";
-import { downloadAnnotated } from "./xlsx-utils";
 import { BATCH_FIELDS, FIELD_LABELS, type BatchRow } from "@/lib/ecom-qc/types";
 import { findingsForRow, isPushBlocked } from "@/lib/ecom-qc/engine";
 import { toast } from "sonner";
@@ -97,7 +96,6 @@ const ReviewPushView: React.FC = () => {
           result={ec.result}
           deepPending={ec.deepPending}
           onFix={ec.applyFix}
-          onDownloadAnnotated={() => downloadAnnotated(ec.rows, ec.result)}
         />
 
         {ec.result && ec.result.warnings > 0 && ec.result.blockers === 0 && (
