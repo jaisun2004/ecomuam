@@ -14,7 +14,6 @@ import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "
 import { recoKindLabel, recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
-import { toast } from "sonner";
 
 interface Msg {
   role: "user" | "assistant";
