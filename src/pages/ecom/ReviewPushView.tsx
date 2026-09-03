@@ -26,8 +26,6 @@ const ReviewPushView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (ec.rows.length === 0) return null;
-
   const { clean, blocked } = partitionRows(ec.rows, ec.result);
   const selected = clean.filter((r) => r.selected !== false);
   const fromCopy = params.get("from") === "copy";
@@ -40,7 +38,10 @@ const ReviewPushView: React.FC = () => {
       map.set(r.platform, list);
     }
     return [...map.entries()].map(([platform, rows]) => ({ platform, rows, cap: capabilityFor(platform) }));
-  }, [selected]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ec.rows, ec.result]);
+
+  if (ec.rows.length === 0) return null;
 
   const irreversible = byPlatform.filter((g) => g.cap.irreversible_fields.length > 0);
 

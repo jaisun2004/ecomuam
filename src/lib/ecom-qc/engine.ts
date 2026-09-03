@@ -128,7 +128,7 @@ export function applySuggestion(row: BatchRow, finding: QcFinding): BatchRow {
 }
 
 export function applyAllFixable(rows: BatchRow[], result: QcResult): BatchRow[] {
-  let next = [...rows];
+  const next = [...rows];
   for (const finding of result.findings) {
     if (!finding.fixable_inline || !finding.suggestion) continue;
     const idx = next.findIndex((r) => r.row === finding.row);
