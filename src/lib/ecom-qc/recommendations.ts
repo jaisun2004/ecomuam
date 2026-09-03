@@ -100,6 +100,8 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       .join("; ");
 
   const out: SkuRecommendation[] = [];
+  const symbol = currencySymbol(currency);
+  const asOf = asOfLabel();
 
   const mk = (
     kind: RecoKind,
@@ -107,9 +109,27 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     action: string,
     impact: string,
     confidence: 1 | 2 | 3 | 4 | 5,
+    evidence: RecoEvidence,
+    basis: string,
+    glass: { threshold: string; observed: string },
     draft: Partial<Omit<BatchRow, "id" | "row">>,
   ) => {
     const target = draft.campaign_name ?? kind;
+    const full: Omit<BatchRow, "id" | "row"> = {
+      sub_category: "biscuits",
+      brand_name: brand,
+      platform,
+      campaign_name: buildCampaignName({ brand, platform, target: sku.code, action: target }),
+      end_date: "",
+      budget_type: "daily",
+      budget_value: "2000",
+      cities: (inStockCities.length ? inStockCities : pool).slice(0, 4).join(", "),
+      product_id: sku.code,
+      targeting_details: targetingAt(minBid + 4),
+      currency,
+      selected: true,
+      ...draft,
+    };
     out.push({
       id: `${sku.code}-${kind}`,
       kind,
@@ -118,34 +138,41 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       action,
       impact,
       confidence,
-      draft: {
-        sub_category: "biscuits",
-        brand_name: brand,
-        platform,
-        campaign_name: buildCampaignName({ brand, platform, target: sku.code, action: target }),
-        end_date: "",
-        budget_type: "daily",
-        budget_value: "2000",
-        cities: (inStockCities.length ? inStockCities : pool).slice(0, 4).join(", "),
-        product_id: sku.code,
-        targeting_details: targetingAt(minBid + 4),
-        currency,
-        selected: true,
-        ...draft,
-      },
+      evidence,
+      basis,
+      glass: { ...glass, freshness: `Ecom Analytics, data as of ${asOf}` },
+      changes: [
+        { label: "Campaign name", value: full.campaign_name },
+        { label: "Budget", value: `${full.budget_type === "daily" ? "Daily" : "Total"} ${symbol}${Number(full.budget_value).toLocaleString("en-IN")}` },
+        { label: "Cities", value: full.cities || "marketplace" },
+        { label: "Product", value: full.product_id },
+        { label: "Keywords and bids", value: full.targeting_details },
+      ],
+      draft: full,
     });
   };
 
   // 1. Budget — pacing signal
   const pacing = 60 + (h % 55); // % of monthly target delivered
+  const monthTarget = 60000 + (h % 12) * 5000;
   if (pacing < 100) {
+    const daily = 2000 + (h % 8) * 500;
     mk(
       "budget",
-      `MTD pacing at ${pacing}% of target on ${platform} — spend is behind plan.`,
-      `Run a daily-budget campaign at ${(2000 + (h % 8) * 500).toLocaleString("en-IN")} to close the gap.`,
-      `Recovers roughly ${100 - pacing}% of the monthly delivery shortfall.`,
+      `Month-to-date spend is at ${pacing}% of the planned budget on ${platform}.`,
+      `Run a daily-budget campaign at ${symbol}${daily.toLocaleString("en-IN")} to close the gap.`,
+      `Could recover most of the remaining ${100 - pacing}% of planned delivery if it runs for the rest of the month. Not guaranteed — actual delivery depends on auction supply.`,
       pacing < 80 ? 4 : 3,
-      { budget_type: "daily", budget_value: String(2000 + (h % 8) * 500) },
+      {
+        type: "pacing",
+        deliveredPct: pacing,
+        spend: Math.round((monthTarget * pacing) / 100),
+        target: monthTarget,
+        symbol,
+      },
+      "Signal: month-to-date spend pacing",
+      { threshold: "Pacing should be at or above 100% of plan", observed: `${pacing}% delivered` },
+      { budget_type: "daily", budget_value: String(daily) },
     );
   }
 
@@ -157,37 +184,53 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
         ? `In stock in ${inStockCities.length} cities, out of stock in ${oosCities.length}.`
         : `In stock across all ${inStockCities.length} serviceable cities.`,
       `Target only the in-stock cities: ${inStockCities.slice(0, 4).join(", ")}.`,
-      "Stops budget going to cities that cannot fulfil the order.",
+      "Keeps spend off cities that cannot fulfil the order today.",
       5,
+      { type: "cities", inStock: inStockCities, oos: oosCities },
+      "Signal: city-level stock availability",
+      { threshold: "Only cities with stock should be targeted", observed: `${inStockCities.length} in stock, ${oosCities.length} out of stock` },
       { cities: inStockCities.slice(0, 4).join(", ") },
     );
   }
 
   // 3. Keywords — rank and search trend signal
   const rank = 4 + (h % 12);
+  const trendPct = 5 + (h % 40);
+  const trend = Array.from({ length: 8 }, (_, i) => 40 + ((h >> i) % 25) + Math.round((trendPct * i) / 8));
   mk(
     "keywords",
-    `Organic rank ${rank} on "${kws[0]}"; search volume up ${5 + (h % 40)}% week on week.`,
+    `Organic rank ${rank} on "${kws[0]}"; searches up ${trendPct}% week on week.`,
     `Add ${kws.length} keywords built from the SKU title to defend the term.`,
-    `Protects share of search on the terms driving most of the SKU's discovery.`,
+    "Helps hold share of search on the terms driving most of this SKU's discovery.",
     rank > 8 ? 4 : 3,
+    { type: "rank", rank, scale: 20, trend, trendPct, keywords: kws },
+    "Signal: organic rank and search trend",
+    { threshold: "Defend terms where organic rank is outside the top 5", observed: `Rank ${rank}, trend +${trendPct}%` },
     { targeting_details: targetingAt(minBid + 4) },
   );
 
-  // 4. Bids — price advantage / ACoS signal
+  // 4. Bids — efficiency signal
   const acos = 12 + (h % 20);
-  const bid = Number((minBid + (acos > 22 ? 2 : 6)).toFixed(1));
+  const benchmark = 22;
+  const fromBid = Number((minBid + 4).toFixed(1));
+  const bid = Number((minBid + (acos > benchmark ? 2 : 6)).toFixed(1));
   mk(
     "bids",
-    `ACoS at ${acos}% — ${acos > 22 ? "above" : "below"} the category benchmark.`,
-    `${acos > 22 ? "Trim" : "Raise"} keyword bids to ${bid} to ${acos > 22 ? "protect efficiency" : "capture more impressions"}.`,
-    acos > 22 ? "Brings ACoS back toward the benchmark." : "Adds impression share while efficiency allows.",
-    acos > 22 ? 4 : 3,
+    `ACoS at ${acos}% against a ${benchmark}% category benchmark.`,
+    `${acos > benchmark ? "Trim" : "Raise"} keyword bids from ${fromBid} to ${bid}.`,
+    acos > benchmark
+      ? "Aims to bring ACoS back toward the benchmark; impressions may fall."
+      : "Aims to buy more impressions while efficiency allows; ACoS may rise.",
+    acos > benchmark ? 4 : 3,
+    { type: "bid", from: fromBid, to: bid, acos, benchmark, unit: def?.matchTypes.length ? "per click" : "per 1,000 impressions", symbol },
+    "Signal: ACoS versus category benchmark",
+    { threshold: `Category benchmark ACoS ${benchmark}%`, observed: `${acos}% ACoS` },
     { targeting_details: targetingAt(bid) },
   );
 
   return out;
 }
+
 
 export function recommendationsForSkus(skus: RefProduct[]): SkuRecommendation[] {
   return skus.flatMap(recommendationsForSku);
