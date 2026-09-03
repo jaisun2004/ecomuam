@@ -12,7 +12,7 @@ import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { buildRun, rerun, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "@/lib/ecom-qc/fix-proposals";
-import { recoKindLabel, recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
+import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
 
