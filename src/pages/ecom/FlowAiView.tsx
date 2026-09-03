@@ -308,12 +308,22 @@ const FlowAiView: React.FC = () => {
               </button>
             )}
             <button
+              onClick={() => {
+                if (ec.rows.length && !window.confirm("Switch to manual entry? The rows in this chat stay here and you can come back to them.")) return;
+                navigate("/ecom/campaigns/create/manual");
+              }}
+              className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              <PenLine size={12} /> Switch to manual entry
+            </button>
+            <button
               onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setRecos(null); setSkuPicker(false); setFixing(null); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
             </button>
           </div>
+
         }
       />
 
