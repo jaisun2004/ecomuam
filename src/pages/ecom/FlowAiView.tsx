@@ -410,34 +410,27 @@ const FlowAiView: React.FC = () => {
           {/* Recommendations */}
           {recos && recos.length > 0 && (
             <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 text-xs font-medium text-foreground">
-                Recommendations from Ecom Analytics
+              <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
+                <p className="text-xs font-medium text-foreground">Recommendations from Ecom Analytics</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  Each card shows what we measured, the exact campaign inputs it would create, and how confident we are. Nothing is created until you add it.
+                </p>
               </div>
-              <div className="max-h-[360px] overflow-y-auto divide-y divide-subtle">
-                {recos.map((r) => {
-                  const on = chosenRecos.has(r.id);
-                  return (
-                    <div key={r.id} className="px-4 py-3 flex items-start gap-3">
-                      <button
-                        onClick={() => setChosenRecos((prev) => { const n = new Set(prev); if (n.has(r.id)) n.delete(r.id); else n.add(r.id); return n; })}
-                        className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${on ? "bg-primary border-primary" : "border-border-visible"}`}
-                        aria-label="Toggle recommendation"
-                      >
-                        {on && <Check size={11} className="text-primary-foreground" />}
-                      </button>
-                      <div className="flex-1 min-w-0 text-xs">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-medium">{recoKindLabel(r.kind)}</span>
-                          <span className="text-foreground font-medium truncate">{r.sku.name}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">{platformDisplay(r.sku.platform)}</span>
-                        </div>
-                        <p className="text-muted-foreground mt-1">What we saw: {r.signal}</p>
-                        <p className="text-foreground mt-0.5">{r.action}</p>
-                        <p className="text-muted-foreground mt-0.5 text-[11px]">{r.impact}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="max-h-[440px] overflow-y-auto divide-y divide-subtle">
+                {recos.map((r) => (
+                  <EcomRecoCard
+                    key={r.id}
+                    reco={r}
+                    selected={chosenRecos.has(r.id)}
+                    onToggle={() =>
+                      setChosenRecos((prev) => {
+                        const n = new Set(prev);
+                        if (n.has(r.id)) n.delete(r.id); else n.add(r.id);
+                        return n;
+                      })
+                    }
+                  />
+                ))}
               </div>
               <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle bg-surface-2">
                 <span className="text-[11px] text-muted-foreground">{chosenRecos.size} selected</span>
@@ -448,6 +441,7 @@ const FlowAiView: React.FC = () => {
               </div>
             </div>
           )}
+
 
           <div ref={bottomRef} />
         </div>
