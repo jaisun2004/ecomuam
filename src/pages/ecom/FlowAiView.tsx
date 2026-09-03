@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, Check, Download, FileSpreadsheet, Lightbulb, Loader2, RotateCcw, Search, Send, Sparkles, Upload, X,
+  ArrowLeft, Check, Download, FileSpreadsheet, Lightbulb, Loader2, PenLine, RotateCcw, Search, Send, Sparkles, Upload, X,
 } from "lucide-react";
 import EcomFileCard from "@/components/ecom/EcomFileCard";
+import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import { useEcomCreate } from "./EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
