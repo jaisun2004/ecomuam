@@ -1,8 +1,16 @@
 import type { BatchRow } from "./types";
 import { PRODUCT_LIST, CITY_LIST, type RefProduct } from "@/lib/ecom-reference/workbook-data";
-import { buildCampaignName, citiesFor, currencyFor, getPlatform, isInStock, limitsFor } from "@/lib/ecom-reference/platforms";
+import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock, limitsFor } from "@/lib/ecom-reference/platforms";
+import { asOfLabel } from "@/lib/ecom-reference/config";
 
 export type RecoKind = "budget" | "city" | "keywords" | "bids";
+
+/** Structured evidence so a card can be read as a picture, not a claim. */
+export type RecoEvidence =
+  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string }
+  | { type: "cities"; inStock: string[]; oos: string[] }
+  | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
+  | { type: "bid"; from: number; to: number; acos: number; benchmark: number; unit: string; symbol: string };
 
 export interface SkuRecommendation {
   id: string;
@@ -12,9 +20,18 @@ export interface SkuRecommendation {
   action: string;
   impact: string;
   confidence: 1 | 2 | 3 | 4 | 5;
+  /** the visual evidence behind the recommendation */
+  evidence: RecoEvidence;
+  /** exact campaign inputs this row would carry */
+  changes: { label: string; value: string }[];
+  /** which signal it came from and when it was measured */
+  basis: string;
+  /** threshold / observed pair for the glass-box popover */
+  glass: { threshold: string; observed: string; freshness: string };
   /** the batch row this recommendation would create */
   draft: Omit<BatchRow, "id" | "row">;
 }
+
 
 const KIND_LABEL: Record<RecoKind, string> = {
   budget: "Budget",
