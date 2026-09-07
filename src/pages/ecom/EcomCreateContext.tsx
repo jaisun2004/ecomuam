@@ -252,6 +252,11 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const dropHeld = useCallback((id: string) => setHeld((prev) => prev.filter((h) => h.id !== id)), []);
 
+  const markRecosUsed = useCallback(
+    (ids: string[]) => setUsedRecos((prev) => Array.from(new Set([...prev, ...ids]))),
+    [],
+  );
+
   const reset = useCallback(() => {
     setRows([]);
     setFileName(null);
@@ -264,6 +269,7 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setManualDraft(EMPTY_MANUAL_DRAFT);
     setCopySelection([]);
     setChat(EMPTY_CHAT);
+    setUsedRecos([]);
   }, [setRows]);
 
   const value = useMemo(
@@ -272,15 +278,17 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       runLive, runDeep, recheck, applyFix, applyAllFixes, addRows, keepOnlyCleanRows,
       runs, addRun, clearRuns, held, holdRows, reopenHeld, dropHeld,
       manualDraft, setManualDraft, copySelection, setCopySelection, chat, setChat,
+      usedRecos, markRecosUsed,
       countsRows: source === "ai" && !!fileName,
       pushed, setPushed, outcomes, setOutcomes, reset,
     }),
     [
       rows, setRows, fileName, source, result, deepPending, runLive, runDeep, recheck, applyFix,
       applyAllFixes, addRows, keepOnlyCleanRows, runs, addRun, clearRuns, held, holdRows, reopenHeld,
-      dropHeld, manualDraft, copySelection, chat, pushed, outcomes, reset,
+      dropHeld, manualDraft, copySelection, chat, usedRecos, markRecosUsed, pushed, outcomes, reset,
     ],
   );
+
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };
