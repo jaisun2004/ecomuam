@@ -53,7 +53,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${platformDisplay(g.platform)} has no campaign API. ${g.rows.length} rows were prepared as a file for the platform console. Nothing is live yet.`,
+            detail: `${g.rows.length} campaigns created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — upload the file in the platform console to set them live.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -76,7 +76,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
       onDone(
         [
           created ? `${created} campaigns are live.` : "",
-          exported ? `${exported} rows are waiting as files for the platform consoles — they are not live until you upload them.` : "",
+          exported ? `${exported} campaigns are created as files — upload each file in the platform console to set them live.` : "",
           failedRows ? `${failedRows} rows were rejected and nothing was created for them.` : "",
         ]
           .filter(Boolean)
@@ -94,7 +94,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
         <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2">
           {anyFailed ? <AlertTriangle size={14} className="text-sw-amber" /> : <CheckCircle2 size={14} className="text-sw-green" />}
           <p className="text-xs font-medium text-foreground">
-            {anyFailed ? "Partly done" : anyPushed ? "Done" : "Prepared as files, not live"}
+            {anyFailed ? "Partly done" : "Campaigns created"}
           </p>
         </div>
         <ul className="p-3 space-y-2">
@@ -145,7 +145,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
                 <span className="text-foreground font-medium">{platformDisplay(g.platform)}</span> · {g.rows.length} rows ·{" "}
                 {g.cap.can_push_api
                   ? "sent straight to the platform through its API."
-                  : "no campaign API here, so we prepare a file for you to upload in the platform console. It will not be live until you do."}
+                  : "campaigns are created as a file — this platform takes new campaigns by file upload in its console."}
               </li>
             ))}
             {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">No rows are selected.</li>}
@@ -183,7 +183,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
             <span>
-              I have read the {selected.length} rows and I want them sent. Rows going to platforms without an API are prepared as files, not created.
+              I have read the {selected.length} rows and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
             </span>
           </label>
           {irreversible.length > 0 && (
