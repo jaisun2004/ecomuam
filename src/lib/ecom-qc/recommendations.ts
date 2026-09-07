@@ -149,7 +149,7 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     },
     city: {
       klass: "observed",
-      step: "products",
+      step: "cities",
       provenance: `Collected ${asOf}`,
       grounding: "Counted from today's store availability crawl, city by city. Nothing estimated.",
     },
