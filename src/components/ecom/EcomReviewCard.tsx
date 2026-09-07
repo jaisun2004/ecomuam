@@ -55,7 +55,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${g.rows.length} campaigns created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — upload the file in the platform console to set them live.`,
+            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — upload the file in the platform console to set them live.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -66,7 +66,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           status: failed ? "failed" : "pushed",
           detail: failed
             ? `${platformDisplay(g.platform)} rejected the batch (rate limit on ${g.rows.length} campaigns). Nothing was created. Retry in smaller batches.`
-            : `${g.rows.length} campaigns created on ${platformDisplay(g.platform)}.`,
+            : `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created on ${platformDisplay(g.platform)}.`,
         };
       });
       ec.setOutcomes(outcomes);
@@ -77,9 +77,9 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
       const failedRows = outcomes.filter((o) => o.status === "failed").reduce((n, o) => n + o.rows, 0);
       onDone(
         [
-          created ? `${created} campaigns are live.` : "",
+          created ? `${created} campaign${created === 1 ? "" : "s"} live.` : "",
           exported ? `${exported} campaigns are created as files — upload each file in the platform console to set them live.` : "",
-          failedRows ? `${failedRows} rows were rejected and nothing was created for them.` : "",
+          failedRows ? `${failedRows} ${noun(failedRows)} were rejected and nothing was created for them.` : "",
         ]
           .filter(Boolean)
           .join(" "),

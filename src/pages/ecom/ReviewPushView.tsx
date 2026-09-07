@@ -97,7 +97,7 @@ const ReviewPushView: React.FC = () => {
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${g.rows.length} campaigns created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — download the file and upload it in the platform console to set them live.`,
+            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — download the file and upload it in the platform console to set them live.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -108,7 +108,7 @@ const ReviewPushView: React.FC = () => {
           status: failed ? "failed" : "pushed",
           detail: failed
             ? `${platformDisplay(g.platform)} rejected the batch (rate limit on ${g.rows.length} campaigns). Nothing was created. Retry in smaller batches.`
-            : `${g.rows.length} campaigns created on ${platformDisplay(g.platform)}.`,
+            : `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created on ${platformDisplay(g.platform)}.`,
         };
       });
       ec.setOutcomes(outcomes);
