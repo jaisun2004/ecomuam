@@ -229,7 +229,7 @@ const FlowManualView: React.FC = () => {
                 )}
               </Section>
 
-              <Section title="Products — readiness is shown before you pick">
+              <Section title="Products">
                 <div className="space-y-1.5 max-h-[340px] overflow-y-auto pr-1">
                   {summaries.map((s) => {
                     const on = skus.includes(s.product.code);
