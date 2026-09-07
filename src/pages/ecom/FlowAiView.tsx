@@ -169,11 +169,12 @@ const FlowAiView: React.FC = () => {
   const openFixes = () => {
     const proposals = proposalsFor(ec.result, ec.rows);
     if (!proposals.length) {
-      say("There is nothing here I can propose a value for. What is left needs your decision — open Why on a row to see exactly what to change.");
+      say("Nothing here has a safe value I can fill in. Open Why on a line to see what to change.");
       return;
     }
     setFixing(proposals);
-    say(`Here is what I would change — ${proposals.length} suggestions, each with the list it came from. Accept, edit or skip any of them.`);
+    say(`${n(proposals.length, "change")} suggested. Accept, edit or skip any of them.`);
+
   };
 
   const applyFixes = (accepted: { proposal: FixProposal; value: string }[]) => {
