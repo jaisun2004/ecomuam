@@ -346,12 +346,18 @@ const ReviewPushView: React.FC = () => {
       <div className="border-t border-subtle bg-surface-1 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <div className="flex-1 min-w-0 space-y-1">
-            <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
-              <span>
-                I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
-              </span>
-            </label>
+            {allHeld ? (
+              <p className="text-[11px] text-muted-foreground">
+                Everything here is held. Fix the blockers above, or park them for later.
+              </p>
+            ) : (
+              <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
+                <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
+                <span>
+                  I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                </span>
+              </label>
+            )}
             {irreversible.length > 0 && (
               <label className="flex items-start gap-2 text-[11px] text-sw-amber cursor-pointer">
                 <input type="checkbox" checked={confirmIrreversible} onChange={(e) => setConfirmIrreversible(e.target.checked)} className="accent-primary mt-0.5" />

@@ -3,6 +3,21 @@ import { Check, HelpCircle, X } from "lucide-react";
 import type { FixProposal } from "@/lib/ecom-qc/fix-proposals";
 import type { QcFinding } from "@/lib/ecom-qc/types";
 import { RULE_EXPLANATIONS } from "@/lib/ecom-qc/explanations";
+import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
+
+const FIELD_LABEL: Record<string, string> = {
+  sub_category: "Category",
+  brand_name: "Brand",
+  platform: "Platform",
+  campaign_name: "Campaign name",
+  end_date: "End date",
+  budget_type: "Budget type",
+  budget_value: "Budget",
+  cities: "Cities",
+  product_id: "Product",
+  targeting_details: "Keywords and bids",
+  currency: "Currency",
+};
 
 interface Props {
   proposals: FixProposal[];
@@ -16,6 +31,9 @@ interface Props {
  * names where it came from.
  */
 const EcomFixProposal: React.FC<Props> = ({ proposals, manual, onApply, onCancel }) => {
+  const { countsRows } = useEcomCreate();
+  const tag = (row: number, field: string) =>
+    `${countsRows ? `row ${row} · ` : ""}${FIELD_LABEL[field] ?? field}`;
   const [skipped, setSkipped] = useState<Set<string>>(new Set());
   const [values, setValues] = useState<Record<string, string>>({});
 
@@ -29,7 +47,7 @@ const EcomFixProposal: React.FC<Props> = ({ proposals, manual, onApply, onCancel
       <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
         <p className="text-xs font-medium text-foreground">Proposed changes — nothing is applied until you say so</p>
         <p className="text-[10px] text-muted-foreground mt-0.5">
-          {proposals.length} suggestions drawn from the reference lists in your workbook. Edit any value before accepting.
+          {proposals.length} suggestion{proposals.length === 1 ? "" : "s"} from your reference lists. Edit any value before accepting.
         </p>
       </div>
 
@@ -41,7 +59,7 @@ const EcomFixProposal: React.FC<Props> = ({ proposals, manual, onApply, onCancel
             <div key={p.id} className={`px-4 py-3 text-xs ${off ? "opacity-45" : ""}`}>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">
-                  row {p.row} · {p.field}
+                  {tag(p.row, p.field)}
                 </span>
                 <span className="text-muted-foreground">{p.explanation}</span>
               </div>
@@ -96,7 +114,7 @@ const EcomFixProposal: React.FC<Props> = ({ proposals, manual, onApply, onCancel
               {manual.slice(0, 12).map((m, i) => (
                 <li key={`${m.rule_key}-${m.row}-${i}`} className="text-[11px]">
                   <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground mr-1.5">
-                    row {m.row} · {m.field}
+                    {tag(m.row, m.field)}
                   </span>
                   <span className="text-foreground">{RULE_EXPLANATIONS[m.rule_key]?.fix ?? m.message}</span>
                 </li>
