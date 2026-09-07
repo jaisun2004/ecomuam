@@ -173,7 +173,7 @@ const FlowHistoryView: React.FC = () => {
                   </div>
 
                   {notReady.length > 0 && (
-                    <p className="text-[11px] text-sw-amber">{notReady.length} product-city pairs cannot run today.</p>
+                    <p className="text-[11px] text-sw-amber">{notReady.length} {notReady.length === 1 ? "city" : "cities"} cannot run today for the chosen products.</p>
                   )}
                 </div>
               );
@@ -284,8 +284,8 @@ const ConfirmDialog: React.FC<{
               <li>{e.endDate ? `Ends ${e.endDate}.` : "No end date set."}</li>
               <li>Budget {e.budgetType} {e.budgetValue}.</li>
               {goneCities.length > 0 && <li className="text-sw-amber">{goneCities.length} city name{goneCities.length > 1 ? "s are" : " is"} no longer in the list: {goneCities.join(", ")}.</li>}
-              {notReady.length > 0 && <li className="text-sw-red">{notReady.length} product-city pairs cannot run today.</li>}
-              {warned.length > 0 && <li className="text-sw-amber">{warned.length} product-city pairs need a look.</li>}
+              {notReady.length > 0 && <li className="text-sw-red">{notReady.length} {notReady.length === 1 ? "city" : "cities"} cannot run today for the chosen products.</li>}
+              {warned.length > 0 && <li className="text-sw-amber">{warned.length} {warned.length === 1 ? "city needs" : "cities need"} a look.</li>}
               {goneCities.length === 0 && notReady.length === 0 && warned.length === 0 && <li>All {prods.length} {prods.length === 1 ? "product still looks" : "products still look"} fine.</li>}
             </ul>
           </div>

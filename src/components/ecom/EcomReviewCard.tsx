@@ -55,7 +55,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${g.rows.length} campaigns created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — upload the file in the platform console to set them live.`,
+            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — upload the file in the platform console to set them live.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -66,7 +66,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           status: failed ? "failed" : "pushed",
           detail: failed
             ? `${platformDisplay(g.platform)} rejected the batch (rate limit on ${g.rows.length} campaigns). Nothing was created. Retry in smaller batches.`
-            : `${g.rows.length} campaigns created on ${platformDisplay(g.platform)}.`,
+            : `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created on ${platformDisplay(g.platform)}.`,
         };
       });
       ec.setOutcomes(outcomes);
@@ -77,9 +77,9 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
       const failedRows = outcomes.filter((o) => o.status === "failed").reduce((n, o) => n + o.rows, 0);
       onDone(
         [
-          created ? `${created} campaigns are live.` : "",
+          created ? `${created} campaign${created === 1 ? "" : "s"} live.` : "",
           exported ? `${exported} campaigns are created as files — upload each file in the platform console to set them live.` : "",
-          failedRows ? `${failedRows} rows were rejected and nothing was created for them.` : "",
+          failedRows ? `${failedRows} ${noun(failedRows)} were rejected and nothing was created for them.` : "",
         ]
           .filter(Boolean)
           .join(" "),
@@ -190,7 +190,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
               <span>
-                I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
               </span>
             </label>
           )}
@@ -216,17 +216,19 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           disabled={!canPush || pushing}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Rocket size={13} /> {pushing ? "Sending…" : `Create ${selected.length} campaigns`}
+          <Rocket size={13} /> {pushing ? "Sending…" : `Create ${selected.length} campaign${selected.length === 1 ? "" : "s"}`}
         </button>
         <button onClick={onBackToCheck} className="px-4 py-2 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-3/70">
           Back to the check
         </button>
-        <button
-          onClick={() => downloadCorrected(ec.rows)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-3/70"
-        >
-          <Download size={12} /> Download this sheet
-        </button>
+        {ec.countsRows && (
+          <button
+            onClick={() => downloadCorrected(ec.rows)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-3/70"
+          >
+            <Download size={12} /> Download this sheet
+          </button>
+        )}
         <span className="ml-auto text-[10px] text-muted-foreground">Logged against your name.</span>
       </div>
     </div>

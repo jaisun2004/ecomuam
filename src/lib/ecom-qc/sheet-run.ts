@@ -193,32 +193,36 @@ export function groupByRule(result: QcResult | null): RuleGroup[] {
     );
 }
 
-export function verdict(run: SheetRun): { headline: string; detail: string; tone: "green" | "amber" | "red" } {
+export function verdict(
+  run: SheetRun,
+  unit: "row" | "campaign" = "row",
+): { headline: string; detail: string; tone: "green" | "amber" | "red" } {
   const clean = run.cleanRows.length;
   const held = run.heldRows.length;
+  const u = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
   switch (run.state) {
     case "clean":
       return {
-        headline: `All ${clean} rows are ready to push.`,
+        headline: `${u(clean)} ready to push.`,
         detail: "Nothing needs fixing. Move to Review and push when you are ready.",
         tone: "green",
       };
     case "warnings_only":
       return {
-        headline: `${clean} rows are ready to push, with ${run.result?.warnings ?? 0} things worth a look.`,
+        headline: `${u(clean)} ready to push, with ${run.result?.warnings ?? 0} thing${(run.result?.warnings ?? 0) === 1 ? "" : "s"} worth a look.`,
         detail: "None of these stop the push. Read them, then continue or fix them first.",
         tone: "amber",
       };
     case "partial":
       return {
-        headline: `${clean} rows are ready. ${held} rows are held.`,
-        detail: "The held rows stay visible and are never dropped. You can push the ready rows and come back to the rest.",
+        headline: `${u(clean)} ready, ${u(held)} held.`,
+        detail: `The held ${unit}s stay visible and are never dropped. You can push the ready ones and come back to the rest.`,
         tone: "amber",
       };
     case "all_held":
       return {
-        headline: `All ${run.rowsSeen} rows are held.`,
-        detail: "Every row has something that must be settled before it can be pushed.",
+        headline: `All ${u(run.rowsSeen)} held.`,
+        detail: `Every ${unit} has something that must be settled before it can be pushed.`,
         tone: "red",
       };
     case "empty":
@@ -238,7 +242,10 @@ export function verdict(run: SheetRun): { headline: string; detail: string; tone
   }
 }
 
-export function receiptLine(run: SheetRun): string {
+export function receiptLine(run: SheetRun, unit: "row" | "campaign" = "row"): string {
   const t = new Date(run.receivedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  if (unit === "campaign") {
+    return `${run.rowsSeen} campaign${run.rowsSeen === 1 ? "" : "s"} · built ${t}`;
+  }
   return `${run.fileName} · ${run.sizeKb.toFixed(0)} KB · received ${t} · ${run.rowsSeen} rows read`;
 }

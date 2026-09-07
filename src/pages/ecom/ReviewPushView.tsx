@@ -36,7 +36,7 @@ const ReviewPushView: React.FC = () => {
   const countsRows = ec.countsRows;
   const noun = (n: number) => (countsRows ? `row${n === 1 ? "" : "s"}` : `campaign${n === 1 ? "" : "s"}`);
   const backTo =
-    ec.source === "copy" ? "/ecom/campaigns/create/history"
+    ec.source === "copy" ? "/ecom/campaigns/create/copy"
       : ec.source === "manual" ? "/ecom/campaigns/create/manual"
         : ec.source === "ai" ? "/ecom/campaigns/create/ai"
           : "/ecom/campaigns/create";
@@ -97,7 +97,7 @@ const ReviewPushView: React.FC = () => {
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${g.rows.length} campaigns created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — download the file and upload it in the platform console to set them live.`,
+            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — download the file and upload it in the platform console to set them live.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -108,7 +108,7 @@ const ReviewPushView: React.FC = () => {
           status: failed ? "failed" : "pushed",
           detail: failed
             ? `${platformDisplay(g.platform)} rejected the batch (rate limit on ${g.rows.length} campaigns). Nothing was created. Retry in smaller batches.`
-            : `${g.rows.length} campaigns created on ${platformDisplay(g.platform)}.`,
+            : `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created on ${platformDisplay(g.platform)}.`,
         };
       });
       ec.setOutcomes(outcomes);
@@ -354,7 +354,7 @@ const ReviewPushView: React.FC = () => {
               <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
                 <span>
-                  I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                  I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
                 </span>
               </label>
             )}
@@ -372,7 +372,7 @@ const ReviewPushView: React.FC = () => {
             disabled={!canPush || pushing}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
           >
-            <Rocket size={13} /> {pushing ? "Sending…" : allHeld ? "Nothing can be sent yet" : `Send ${selected.length} ${noun(selected.length)}`}
+            <Rocket size={13} /> {pushing ? "Sending…" : allHeld ? "Nothing can be sent yet" : `Create ${selected.length} ${noun(selected.length)}`}
           </button>
         </div>
       </div>

@@ -15,6 +15,7 @@ interface Props {
   onReupload?: () => void;
   onDownloadTemplate?: () => void;
   onHold?: () => void;
+  unit?: "row" | "campaign";
 }
 
 const toneCls: Record<string, string> = {
@@ -24,12 +25,13 @@ const toneCls: Record<string, string> = {
 };
 
 const EcomFileCard: React.FC<Props> = ({
-  run, isLatest, onFixWithAi, onContinueClean, onReupload, onDownloadTemplate, onHold,
+  run, isLatest, onFixWithAi, onContinueClean, onReupload, onDownloadTemplate, onHold, unit = "row",
 }) => {
+  const u = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
   const [tidyOpen, setTidyOpen] = useState(false);
   const [shown, setShown] = useState<QcFinding | null>(null);
-  const v = verdict(run);
+  const v = verdict(run, unit);
   const groups = groupByRule(run.result);
   const failed = run.state === "file_error" || run.state === "empty" || run.state === "wrong_shape";
 
@@ -47,14 +49,14 @@ const EcomFileCard: React.FC<Props> = ({
       {/* Receipt */}
       <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2 flex-wrap">
         <FileSpreadsheet size={13} className="text-muted-foreground" />
-        <span className="text-[11px] font-mono text-muted-foreground">{receiptLine(run)}</span>
+        <span className="text-[11px] font-mono text-muted-foreground">{receiptLine(run, unit)}</span>
         <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-surface-3 text-muted-foreground">{run.label}</span>
       </div>
 
       {/* Verdict */}
       <div className="px-4 py-3">
         <span className={`inline-block px-2 py-0.5 rounded-full border text-[10px] font-medium ${toneCls[v.tone]}`}>
-          {run.state === "clean" ? "Ready" : run.state === "warnings_only" ? "Worth a look" : failed ? "Could not use this file" : "Some rows held"}
+          {run.state === "clean" ? "Ready" : run.state === "warnings_only" ? "Worth a look" : failed ? "Could not use this file" : unit === "campaign" ? "Some campaigns held" : "Some rows held"}
         </span>
         <p className="text-sm text-foreground mt-2">{v.headline}</p>
         <p className="text-[11px] text-muted-foreground mt-1">{v.detail}</p>
@@ -78,7 +80,7 @@ const EcomFileCard: React.FC<Props> = ({
                   <span className={`w-2 h-2 rounded-full ${g.severity === "blocker" ? "bg-sw-red" : "bg-sw-amber"}`} />
                   <span className="text-[11px] text-foreground">{g.plain}</span>
                   <span className="ml-auto font-mono text-[10px] text-muted-foreground">
-                    {g.rows.length} row{g.rows.length > 1 ? "s" : ""}: {g.rows.slice(0, 6).join(", ")}{g.rows.length > 6 ? "…" : ""}
+                    {u(g.rows.length)}{unit === "row" ? `: ${g.rows.slice(0, 6).join(", ")}` : ""}{g.rows.length > 6 ? "…" : ""}
                   </span>
                 </button>
                 {open && (
@@ -86,7 +88,7 @@ const EcomFileCard: React.FC<Props> = ({
                     {g.findings.map((f, i) => (
                       <div key={`${f.row}-${f.field}-${i}`} className="px-8 py-2 flex items-start gap-2 text-[11px]">
                         <div className="flex-1 min-w-0">
-                          <span className="font-mono text-[10px] text-muted-foreground">row {f.row} · {f.field}</span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{unit === "row" ? `row ${f.row} · ` : ""}{f.field}</span>
                           <p className="text-foreground">{f.message}</p>
                           {f.value && <p className="font-mono text-[10px] text-sw-red break-all">“{f.value}”</p>}
                         </div>
@@ -107,7 +109,7 @@ const EcomFileCard: React.FC<Props> = ({
       {run.tidies.length > 0 && (
         <div className="px-4 py-2 border-t border-subtle">
           <button onClick={() => setTidyOpen(!tidyOpen)} className="text-[10px] text-muted-foreground hover:text-foreground">
-            We tidied {run.tidies.length} small things (spacing, casing, currency) — {tidyOpen ? "hide" : "show"} the list
+            We tidied {run.tidies.length} small thing{run.tidies.length === 1 ? "" : "s"} (spacing, casing, currency) — {tidyOpen ? "hide" : "show"} the list
           </button>
           {tidyOpen && (
             <ul className="mt-1.5 space-y-0.5 max-h-[140px] overflow-y-auto">
@@ -122,9 +124,21 @@ const EcomFileCard: React.FC<Props> = ({
       )}
 
       {/* Sheet */}
-      {run.rows.length > 0 && (
+      {run.rows.length > 0 && unit === "row" && (
         <div className="px-4 py-3 border-t border-subtle">
           <EcomSheetTable rows={run.rows} result={run.result} />
+        </div>
+      )}
+
+      {run.rows.length > 0 && unit === "campaign" && (
+        <div className="px-4 py-3 border-t border-subtle space-y-1.5">
+          {run.rows.map((r) => (
+            <div key={r.id} className="flex items-center gap-2 text-[11px]">
+              <span className="font-mono text-foreground truncate">{r.campaign_name}</span>
+              <span className="text-muted-foreground">· {r.platform}</span>
+              <span className="ml-auto text-muted-foreground">{r.budget_type} {r.budget_value}</span>
+            </div>
+          ))}
         </div>
       )}
 
@@ -138,15 +152,15 @@ const EcomFileCard: React.FC<Props> = ({
           )}
           {!failed && run.cleanRows.length > 0 && onContinueClean && (
             <button onClick={onContinueClean} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
-              {run.heldRows.length ? `Continue with the ${run.cleanRows.length} ready rows` : `Continue with all ${run.cleanRows.length} rows`}
+              {run.heldRows.length ? `Continue with the ${u(run.cleanRows.length)} ready` : `Continue with all ${u(run.cleanRows.length)}`}
             </button>
           )}
           {run.heldRows.length > 0 && onHold && (
             <button onClick={onHold} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">
-              <AlertTriangle size={12} /> Keep the {run.heldRows.length} held rows for later
+              <AlertTriangle size={12} /> Keep the {u(run.heldRows.length)} held for later
             </button>
           )}
-          {onReupload && (
+          {onReupload && unit === "row" && (
             <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
               <Upload size={12} /> Upload a corrected file
               <input
@@ -175,7 +189,7 @@ const EcomFileCard: React.FC<Props> = ({
           <DialogHeader>
             <DialogTitle className="text-sm">{shown ? RULE_INDEX[shown.rule_key]?.title ?? shown.message : ""}</DialogTitle>
             <DialogDescription className="text-[11px]">
-              {shown?.severity === "blocker" ? "This holds the row until it is settled." : "This does not stop the push."}
+              {shown?.severity === "blocker" ? `This holds the ${unit} until it is settled.` : "This does not stop the push."}
             </DialogDescription>
           </DialogHeader>
           {shown && (
@@ -185,7 +199,7 @@ const EcomFileCard: React.FC<Props> = ({
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">What we found</p>
                 <p className="text-foreground">{shown.message}</p>
                 <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-                  row {shown.row} · column {shown.field}{shown.value ? ` · “${shown.value}”` : ""}
+                  {unit === "row" ? `row ${shown.row} · column ` : ""}{shown.field}{shown.value ? ` · “${shown.value}”` : ""}
                 </p>
               </div>
               <Block label="Why it matters" body={explain?.why ?? "This check protects the batch from failing on push."} />
