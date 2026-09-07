@@ -7,10 +7,10 @@ export type RecoKind = "budget" | "city" | "keywords" | "bids";
 
 /** Structured evidence so a card can be read as a picture, not a claim. */
 export type RecoEvidence =
-  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string }
+  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string; scope: string }
   | { type: "cities"; inStock: string[]; oos: string[] }
   | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
-  | { type: "bid"; from: number; to: number; acos: number; benchmark: number; unit: string; symbol: string };
+  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string };
 
 export interface SkuRecommendation {
   id: string;
@@ -26,11 +26,16 @@ export interface SkuRecommendation {
   changes: { label: string; value: string }[];
   /** which signal it came from and when it was measured */
   basis: string;
+  /** where the numbers came from and how old they are */
+  source: string;
+  collectedDaysAgo: number;
+  stale: boolean;
   /** threshold / observed pair for the glass-box popover */
   glass: { threshold: string; observed: string; freshness: string };
   /** the batch row this recommendation would create */
   draft: Omit<BatchRow, "id" | "row">;
 }
+
 
 
 const KIND_LABEL: Record<RecoKind, string> = {
