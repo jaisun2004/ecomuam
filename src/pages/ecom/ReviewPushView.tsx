@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowLeft, CheckCircle2, Download, Rocket } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, ChevronRight, Download, Rocket } from "lucide-react";
 import EcomSheetTable from "@/components/ecom/EcomSheetTable";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
