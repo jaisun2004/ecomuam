@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, PenLine, Sparkles } from "lucide-react";
 import EcomStepper from "@/components/ecom/EcomStepper";
 import EcomReadinessPill from "@/components/ecom/EcomReadinessPill";
+import EcomRecoCard from "@/components/ecom/EcomRecoCard";
+import { recommendationsForSku, type RecoStep } from "@/lib/ecom-qc/recommendations";
 import {
   PLATFORM_CAMPAIGN_TYPES, buildCampaignName, citiesFor, currencyFor, currencySymbol,
   limitsFor, platformDisplay, productsFor, walletBalance,
