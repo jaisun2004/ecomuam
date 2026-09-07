@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowLeft, CheckCircle2, Download, Rocket } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, ChevronRight, Download, Rocket } from "lucide-react";
 import EcomSheetTable from "@/components/ecom/EcomSheetTable";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
@@ -158,184 +158,196 @@ const ReviewPushView: React.FC = () => {
   }
 
   const canPush = selected.length > 0 && consent && (irreversible.length === 0 || confirmIrreversible);
+  const allHeld = selected.length === 0 && blocked.length > 0;
+
+  const budgetChips = (() => {
+    const map = new Map<string, number>();
+    for (const r of selected) {
+      const cur = r.currency || "";
+      map.set(cur, (map.get(cur) ?? 0) + (Number(r.budget_value) || 0));
+    }
+    return [...map.entries()].map(([cur, total]) => `${cur} ${total.toLocaleString()}`);
+  })();
+
+  const caveats = byPlatform.filter((g) => !g.cap.can_push_api || g.cap.irreversible_fields.length > 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-subtle bg-surface-1">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground" aria-label="Back">
-            <ArrowLeft size={16} />
-          </button>
-          <div>
-            <h1 className="font-display font-bold text-sm text-foreground">Review and push</h1>
-            <p className="text-[10px] text-muted-foreground">
-              {selected.length} rows selected · {blocked.length} held · nothing is created until you press push
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={push}
-          disabled={!canPush || pushing}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          <Rocket size={13} /> {pushing ? "Sending…" : `Send ${selected.length} rows`}
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-subtle bg-surface-1">
+        <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground" aria-label="Back">
+          <ArrowLeft size={16} />
         </button>
+        <div>
+          <h1 className="font-display font-bold text-sm text-foreground">Review and push</h1>
+          <p className="text-[10px] text-muted-foreground">Nothing is created until you press send.</p>
+        </div>
       </div>
 
-      <div className="p-4 max-w-[1400px] mx-auto space-y-4">
-        {fromCopy && (
-          <div className="rounded-xl border border-sw-amber/30 bg-sw-amber-dim px-4 py-3 text-xs text-sw-amber">
-            These came from past campaigns. End dates were cleared, budgets carried over, and cities and products re-checked against today's data.
-          </div>
-        )}
-
-        {/* What happens per platform */}
-        <div className="rounded-xl border border-subtle bg-surface-1 p-4">
-          <h2 className="font-display font-bold text-xs text-foreground mb-2">What happens on each platform</h2>
-          <ul className="space-y-1.5">
-            {byPlatform.map((g) => (
-              <li key={g.platform} className="text-[11px] text-muted-foreground">
-                <span className="text-foreground font-medium">{platformDisplay(g.platform)}</span> · {g.rows.length} rows ·{" "}
-                {g.cap.can_push_api
-                  ? "sent straight to the platform through its API."
-                  : "no campaign API here, so we prepare a file for you to upload in the platform console. It will not be live until you do."}
-              </li>
-            ))}
-            {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">No rows are selected.</li>}
-          </ul>
-        </div>
-
-        {/* The same recommendation cards, restated before anything is created */}
-        {planRecos.length > 0 && (
-          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-subtle flex items-center justify-between">
-              <h2 className="font-display font-bold text-xs text-foreground">
-                {planRecos.length} recommendation{planRecos.length > 1 ? "s" : ""} on this plan
-              </h2>
-              <p className="text-[10px] text-muted-foreground">Data as of {asOfLabel()}</p>
-            </div>
-            <div className="divide-y divide-subtle">
-              {planRecos.map((r) => (
-                <EcomRecoCard key={r.id} reco={r} selected readOnly onToggle={() => {}} />
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="max-w-3xl mx-auto space-y-2.5">
+          {/* Summary strip */}
+          <div className="rounded-xl border border-subtle bg-surface-1 px-4 py-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Chip tone="ok">{selected.length} going out</Chip>
+              {blocked.length > 0 && <Chip tone="bad">{blocked.length} held</Chip>}
+              {byPlatform.map((g) => (
+                <Chip key={g.platform}>{platformDisplay(g.platform)} · {g.rows.length}</Chip>
               ))}
+              {budgetChips.map((b) => <Chip key={b} mono>{b}</Chip>)}
+              <span className="ml-auto text-[10px] text-muted-foreground">Data as of {asOfLabel()}</span>
             </div>
-            <p className="px-4 py-2 text-[10px] text-muted-foreground border-t border-subtle">
-              These were kept earlier in the flow. They are applied to the plan when you push.
-            </p>
-          </div>
-        )}
-
-
-
-        {/* Held rows stay visible */}
-        {blocked.length > 0 && (
-          <div className="rounded-xl border border-sw-red/30 bg-surface-1 overflow-hidden">
-            <div className="px-4 py-2.5 bg-sw-red-dim flex items-center gap-2 flex-wrap">
-              <AlertTriangle size={13} className="text-sw-red" />
-              <span className="text-[11px] text-sw-red">
-                {blocked.length} rows are held and will not be sent. They stay here — nothing is dropped.
-              </span>
-              <button onClick={openFixes} className="ml-auto px-2.5 py-1 rounded-md text-[10px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
-                See proposed fixes
-              </button>
-              <button
-                onClick={() => {
-                  ec.holdRows(blocked, ec.result, ec.fileName ?? "batch", "Parked from review");
-                  ec.keepOnlyCleanRows();
-                }}
-                className="px-2.5 py-1 rounded-md text-[10px] bg-surface-3 text-foreground hover:bg-surface-3/70"
-              >
-                Park them for later
-              </button>
-            </div>
-            <div className="p-3">
-              <EcomSheetTable rows={ec.rows} result={ec.result} title="Held rows" onlyRows={blocked.map((r) => r.row)} defaultOpen />
-            </div>
-          </div>
-        )}
-
-        {fixing && (
-          <EcomFixProposal proposals={fixing} manual={manualDecisions(ec.result)} onApply={applyFixes} onCancel={() => setFixing(null)} />
-        )}
-
-        {/* Editable grid */}
-        <div className="rounded-xl border border-subtle bg-surface-1 overflow-x-auto">
-          <table className="w-full text-[11px]">
-            <thead>
-              <tr className="border-b border-subtle bg-surface-2">
-                <th className="px-2 py-2"></th>
-                <th className="px-2 py-2 text-left text-muted-foreground font-mono">#</th>
-                {BATCH_FIELDS.map((f) => (
-                  <th key={f} className="px-2 py-2 text-left text-muted-foreground font-mono whitespace-nowrap">{FIELD_LABELS[f]}</th>
+            {caveats.length > 0 && (
+              <ul className="mt-2 space-y-1">
+                {caveats.map((g) => (
+                  <li key={g.platform} className="text-[10px] text-sw-amber">
+                    <span className="font-medium">{platformDisplay(g.platform)}</span>{" "}
+                    {!g.cap.can_push_api && "has no campaign API — the rows are prepared as a file to upload yourself. "}
+                    {g.cap.irreversible_fields.length > 0 && "budget cannot be lowered once live."}
+                  </li>
                 ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-subtle">
-              {ec.rows.map((r) => {
-                const rowFindings = findingsForRow(ec.result, r.row);
-                const rowBlocked = rowFindings.some((f) => f.severity === "blocker");
-                return (
-                  <tr key={r.id} className={r.selected === false ? "opacity-40" : rowBlocked ? "bg-sw-red-dim/30" : ""}>
-                    <td className="px-2 py-1.5">
-                      <input type="checkbox" checked={r.selected !== false} disabled={rowBlocked} onChange={() => toggleRow(r.id)} className="accent-primary" />
-                    </td>
-                    <td className="px-2 py-1.5 font-mono text-muted-foreground">
-                      <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${rowBlocked ? "bg-sw-red" : rowFindings.length ? "bg-sw-amber" : "bg-sw-green"}`} />
-                      {r.row}
-                    </td>
-                    {BATCH_FIELDS.map((f) => {
-                      const bad = rowFindings.some((x) => x.field === f);
-                      return (
-                        <td key={f} className="px-1 py-1 min-w-[110px]">
-                          <input
-                            value={String(r[f] ?? "")}
-                            onChange={(e) => updateCell(r.id, f, e.target.value)}
-                            className={`w-full bg-transparent border rounded px-1.5 py-1 text-[11px] font-mono outline-none ${
-                              bad ? "border-sw-red/50 text-sw-red" : "border-transparent hover:border-subtle focus:border-primary/50 text-foreground"
-                            }`}
-                          />
-                        </td>
-                      );
-                    })}
+              </ul>
+            )}
+            {fromCopy && (
+              <p className="mt-2 text-[10px] text-muted-foreground">
+                From past campaigns — end dates cleared, budgets carried over, cities and products re-checked against today's data.
+              </p>
+            )}
+          </div>
+
+          {/* Held rows */}
+          {blocked.length > 0 && (
+            <Fold
+              defaultOpen={allHeld}
+              tone="bad"
+              title={`${blocked.length} held row${blocked.length > 1 ? "s" : ""} — not sent, nothing dropped`}
+              actions={
+                <>
+                  <button onClick={(e) => { e.stopPropagation(); openFixes(); }}
+                    className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
+                    See proposed fixes
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      ec.holdRows(blocked, ec.result, ec.fileName ?? "batch", "Parked from review");
+                      ec.keepOnlyCleanRows();
+                    }}
+                    className="px-2.5 py-1 rounded-md text-[10px] bg-surface-3 text-foreground hover:bg-surface-3/70"
+                  >
+                    Park for later
+                  </button>
+                </>
+              }
+            >
+              <EcomSheetTable rows={ec.rows} result={ec.result} title="Held rows" onlyRows={blocked.map((r) => r.row)} defaultOpen />
+            </Fold>
+          )}
+
+          {fixing && (
+            <EcomFixProposal proposals={fixing} manual={manualDecisions(ec.result)} onApply={applyFixes} onCancel={() => setFixing(null)} />
+          )}
+
+          {/* Recommendations */}
+          {planRecos.length > 0 && (
+            <Fold title={`${planRecos.length} recommendation${planRecos.length > 1 ? "s" : ""} kept on this plan`}>
+              <div className="divide-y divide-subtle -mx-4 -mb-3">
+                {planRecos.map((r) => (
+                  <EcomRecoCard key={r.id} reco={r} selected readOnly onToggle={() => {}} />
+                ))}
+              </div>
+            </Fold>
+          )}
+
+          {/* Full sheet */}
+          <Fold title={`Show the full sheet (${ec.rows.length} row${ec.rows.length > 1 ? "s" : ""})`}>
+            <div className="-mx-4 overflow-x-auto">
+              <table className="w-full text-[11px]">
+                <thead>
+                  <tr className="border-y border-subtle bg-surface-2">
+                    <th className="px-2 py-2"></th>
+                    <th className="px-2 py-2 text-left text-muted-foreground font-mono">#</th>
+                    {BATCH_FIELDS.map((f) => (
+                      <th key={f} className="px-2 py-2 text-left text-muted-foreground font-mono whitespace-nowrap">{FIELD_LABELS[f]}</th>
+                    ))}
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="divide-y divide-subtle">
+                  {ec.rows.map((r) => {
+                    const rowFindings = findingsForRow(ec.result, r.row);
+                    const rowBlocked = rowFindings.some((f) => f.severity === "blocker");
+                    return (
+                      <tr key={r.id} className={r.selected === false ? "opacity-40" : rowBlocked ? "bg-sw-red-dim/30" : ""}>
+                        <td className="px-2 py-1.5">
+                          <input type="checkbox" checked={r.selected !== false} disabled={rowBlocked} onChange={() => toggleRow(r.id)} className="accent-primary" />
+                        </td>
+                        <td className="px-2 py-1.5 font-mono text-muted-foreground">
+                          <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${rowBlocked ? "bg-sw-red" : rowFindings.length ? "bg-sw-amber" : "bg-sw-green"}`} />
+                          {r.row}
+                        </td>
+                        {BATCH_FIELDS.map((f) => {
+                          const bad = rowFindings.some((x) => x.field === f);
+                          return (
+                            <td key={f} className="px-1 py-1 min-w-[110px]">
+                              <input
+                                value={String(r[f] ?? "")}
+                                onChange={(e) => updateCell(r.id, f, e.target.value)}
+                                className={`w-full bg-transparent border rounded px-1.5 py-1 text-[11px] font-mono outline-none ${
+                                  bad ? "border-sw-red/50 text-sw-red" : "border-transparent hover:border-subtle focus:border-primary/50 text-foreground"
+                                }`}
+                              />
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap pt-3">
+              <button onClick={() => ec.recheck()} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-3 text-foreground hover:bg-surface-3/70">
+                Check again after edits
+              </button>
+              <button onClick={() => downloadCorrected(ec.rows)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">
+                <Download size={12} /> Download this sheet
+              </button>
+            </div>
+          </Fold>
         </div>
+      </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <button onClick={() => ec.recheck()} className="px-4 py-2 rounded-lg text-xs font-medium bg-surface-3 text-foreground hover:bg-surface-3/70">
-            Check again after edits
-          </button>
-          <button onClick={() => downloadCorrected(ec.rows)} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-3/70">
-            <Download size={12} /> Download this sheet
-          </button>
-        </div>
-
-        {/* Consent */}
-        <div className="rounded-xl border border-subtle bg-surface-1 p-4 space-y-2">
-          <label className="flex items-start gap-2 text-xs text-foreground cursor-pointer">
-            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
-            <span>
-              I have read the {selected.length} rows above and I want them sent. I understand rows going to platforms without an API are prepared as files, not created.
-            </span>
-          </label>
-          {irreversible.length > 0 && (
-            <label className="flex items-start gap-2 text-xs text-sw-amber cursor-pointer">
-              <input type="checkbox" checked={confirmIrreversible} onChange={(e) => setConfirmIrreversible(e.target.checked)} className="accent-primary mt-0.5" />
+      {/* Sticky send bar */}
+      <div className="border-t border-subtle bg-surface-1 px-4 py-3">
+        <div className="max-w-3xl mx-auto flex items-center gap-3">
+          <div className="flex-1 min-w-0 space-y-1">
+            <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
+              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
               <span>
-                On {irreversible.map((g) => platformDisplay(g.platform)).join(", ")} the budget cannot be lowered once live. I have checked the amounts.
+                I have read the {selected.length} rows and I want them sent. Rows for platforms without an API are prepared as files, not created.
               </span>
             </label>
-          )}
-          {ec.overrides.length > 0 && (
-            <p className="text-[10px] text-muted-foreground">
-              {ec.overrides.length} warning{ec.overrides.length > 1 ? "s were" : " was"} accepted with a reason, and each one is recorded with this batch.
-            </p>
-          )}
+            {irreversible.length > 0 && (
+              <label className="flex items-start gap-2 text-[11px] text-sw-amber cursor-pointer">
+                <input type="checkbox" checked={confirmIrreversible} onChange={(e) => setConfirmIrreversible(e.target.checked)} className="accent-primary mt-0.5" />
+                <span>
+                  On {irreversible.map((g) => platformDisplay(g.platform)).join(", ")} the budget cannot be lowered once live. I have checked the amounts.
+                </span>
+              </label>
+            )}
+            {ec.overrides.length > 0 && (
+              <p className="text-[10px] text-muted-foreground">
+                {ec.overrides.length} warning{ec.overrides.length > 1 ? "s were" : " was"} accepted with a reason, and each one is recorded with this batch.
+              </p>
+            )}
+          </div>
+          <button
+            onClick={push}
+            disabled={!canPush || pushing}
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+          >
+            <Rocket size={13} /> {pushing ? "Sending…" : `Send ${selected.length} rows`}
+          </button>
         </div>
-        <div className="pb-10" />
       </div>
 
       <Dialog open={fixing?.length === 0} onOpenChange={() => setFixing(null)}>
@@ -343,7 +355,7 @@ const ReviewPushView: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="text-sm">Nothing here can be filled in for you</DialogTitle>
             <DialogDescription className="text-[11px]">
-              Every open point needs a decision. Edit the cells in the grid, or park the rows and come back with the right values.
+              Every open point needs a decision. Edit the cells in the sheet, or park the rows and come back with the right values.
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -351,5 +363,43 @@ const ReviewPushView: React.FC = () => {
     </div>
   );
 };
+
+const Chip: React.FC<{ children: React.ReactNode; tone?: "ok" | "bad"; mono?: boolean }> = ({ children, tone, mono }) => (
+  <span
+    className={`px-2 py-0.5 rounded-md text-[10px] border ${mono ? "font-mono" : ""} ${
+      tone === "ok"
+        ? "border-sw-green/30 bg-sw-green-dim text-sw-green"
+        : tone === "bad"
+        ? "border-sw-red/30 bg-sw-red-dim text-sw-red"
+        : "border-subtle bg-surface-2 text-muted-foreground"
+    }`}
+  >
+    {children}
+  </span>
+);
+
+const Fold: React.FC<{
+  title: string;
+  children: React.ReactNode;
+  actions?: React.ReactNode;
+  defaultOpen?: boolean;
+  tone?: "bad";
+}> = ({ title, children, actions, defaultOpen, tone }) => {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div className={`rounded-xl border bg-surface-1 overflow-hidden ${tone === "bad" ? "border-sw-red/30" : "border-subtle"}`}>
+      <div
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full flex items-center gap-2 px-4 py-2.5 cursor-pointer select-none ${tone === "bad" ? "bg-sw-red-dim" : "hover:bg-surface-2"}`}
+      >
+        <ChevronRight size={13} className={`text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`} />
+        <span className={`text-[11px] font-medium flex-1 min-w-0 truncate ${tone === "bad" ? "text-sw-red" : "text-foreground"}`}>{title}</span>
+        {actions}
+      </div>
+      {open && <div className="px-4 py-3 border-t border-subtle">{children}</div>}
+    </div>
+  );
+};
+
 
 export default ReviewPushView;
