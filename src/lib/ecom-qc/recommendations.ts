@@ -233,32 +233,44 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     });
   };
 
-  // 1. Budget — only where the brand already spends on this platform.
-  if (hasLiveCampaigns) {
-    const pacing = 60 + (h % 35); // % of this month's plan delivered by the live campaigns
-    const monthTarget = 60000 + (h % 12) * 5000;
-    const daily = 2000 + (h % 8) * 500;
+  // 1. Price against the competing product on the shelf today.
+  {
+    const ours = 40 + (h % 60);
+    const theirs = ours + ((h % 7) - 3) * 2;
+    const competitor = ["Britannia", "Parle", "Unibic", "Anmol"][h % 4];
+    const cheaper = ours < theirs;
     mk(
-      "budget",
-      `Your live campaigns on ${platform} have delivered ${pacing}% of this month's plan.`,
-      `Open this new campaign on a daily budget of ${symbol}${daily.toLocaleString("en-IN")} to use the rest of the plan.`,
-      `Aimed at putting the unspent ${100 - pacing}% of the plan to work. Delivery depends on auction supply.`,
-      pacing < 80 ? 4 : 3,
+      "price",
+      cheaper
+        ? `You are ${symbol}${theirs - ours} cheaper than ${competitor} on the shelf today.`
+        : `${competitor} is ${symbol}${ours - theirs} cheaper than you on the shelf today.`,
+      cheaper
+        ? "Run the campaign while the price gap is in your favour."
+        : "Close the price gap before spending, or expect the click to land on a dearer pack.",
+      cheaper
+        ? "Aimed at putting spend behind a pack that is already the cheaper choice."
+        : "Aimed at avoiding paid clicks onto the dearer of two packs.",
+      cheaper ? 4 : 3,
       {
-        type: "pacing",
-        deliveredPct: pacing,
-        spend: Math.round((monthTarget * pacing) / 100),
-        target: monthTarget,
+        type: "price",
+        ours,
+        theirs,
+        competitor,
         symbol,
-        scope: `From your live campaigns on ${platform} — not from this SKU, which has not run yet.`,
+        note: "Shelf prices as displayed today. No spend, delivery or return is involved.",
       },
-      "Signal: month-to-date spend on your live campaigns",
-      "Platform billing feed",
+      "Signal: shelf price against the competing product",
+      "Shelf price crawl",
       h % 2,
-      { threshold: "Plan should be fully delivered by month end", observed: `${pacing}% delivered so far` },
-      { budget_type: "daily", budget_value: String(daily) },
+      {
+        threshold: "Spend behind a pack that is not price competitive is flagged",
+        observed: `You ${symbol}${ours} against ${competitor} ${symbol}${theirs}`,
+      },
+      {},
     );
   }
+
+
 
   // 2. City — stock availability, known before launch.
   if (inStockCities.length) {
