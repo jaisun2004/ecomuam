@@ -16,7 +16,7 @@ const STEPS = ["Platform", "Products", "Where", "Budget and timing", "Targeting"
 
 const PURPOSE = [
   "Pick where the campaign runs and what kind of campaign it is.",
-  "Name the brand and choose the products. Readiness is shown before you pick.",
+  "Name the brand and choose the products.",
   "Choose the cities this campaign should run in.",
   "Set how much it spends and for how long.",
   "Add the keywords and what you are willing to bid.",

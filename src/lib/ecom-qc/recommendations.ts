@@ -7,10 +7,10 @@ export type RecoKind = "budget" | "city" | "keywords" | "bids";
 
 /** Structured evidence so a card can be read as a picture, not a claim. */
 export type RecoEvidence =
-  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string }
+  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string; scope: string }
   | { type: "cities"; inStock: string[]; oos: string[] }
   | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
-  | { type: "bid"; from: number; to: number; acos: number; benchmark: number; unit: string; symbol: string };
+  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string };
 
 export interface SkuRecommendation {
   id: string;
@@ -26,11 +26,16 @@ export interface SkuRecommendation {
   changes: { label: string; value: string }[];
   /** which signal it came from and when it was measured */
   basis: string;
+  /** where the numbers came from and how old they are */
+  source: string;
+  collectedDaysAgo: number;
+  stale: boolean;
   /** threshold / observed pair for the glass-box popover */
   glass: { threshold: string; observed: string; freshness: string };
   /** the batch row this recommendation would create */
   draft: Omit<BatchRow, "id" | "row">;
 }
+
 
 
 const KIND_LABEL: Record<RecoKind, string> = {
@@ -76,8 +81,12 @@ export function findSku(token: string): RefProduct | undefined {
 }
 
 /**
- * Deterministic recommendation generator standing in for the Ecom Analytics
- * feed: stock, price vs competition, keyword rank and pacing signals.
+ * Deterministic pre-launch signal generator standing in for the Ecom Analytics
+ * feed. At creation time a SKU campaign has no performance of its own, so the
+ * only signals used here are ones that exist before anything runs: stock by
+ * city, organic rank and search demand, and the platform's own rules. Spend
+ * pacing is only ever shown when the brand already has live campaigns on that
+ * platform, and it is labelled as such.
  */
 export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   const h = hash(`${sku.code}|${sku.platform}`);
@@ -102,19 +111,25 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   const out: SkuRecommendation[] = [];
   const symbol = currencySymbol(currency);
   const asOf = asOfLabel();
+  /** Does the brand already run campaigns on this platform? Only then is pacing real. */
+  const hasLiveCampaigns = h % 3 === 0;
 
   const mk = (
     kind: RecoKind,
     signal: string,
     action: string,
     impact: string,
-    confidence: 1 | 2 | 3 | 4 | 5,
+    baseConfidence: 1 | 2 | 3 | 4 | 5,
     evidence: RecoEvidence,
     basis: string,
+    source: string,
+    collectedDaysAgo: number,
     glass: { threshold: string; observed: string },
     draft: Partial<Omit<BatchRow, "id" | "row">>,
   ) => {
     const target = draft.campaign_name ?? kind;
+    const stale = collectedDaysAgo > 2;
+    const confidence = (stale ? Math.max(baseConfidence - 1, 1) : baseConfidence) as 1 | 2 | 3 | 4 | 5;
     const full: Omit<BatchRow, "id" | "row"> = {
       sub_category: "biscuits",
       brand_name: brand,
@@ -140,7 +155,13 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       confidence,
       evidence,
       basis,
-      glass: { ...glass, freshness: `Ecom Analytics, data as of ${asOf}` },
+      source,
+      collectedDaysAgo,
+      stale,
+      glass: {
+        ...glass,
+        freshness: `${source}, collected ${collectedDaysAgo === 0 ? "today" : `${collectedDaysAgo} day${collectedDaysAgo > 1 ? "s" : ""} ago`} (as of ${asOf})`,
+      },
       changes: [
         { label: "Campaign name", value: full.campaign_name },
         { label: "Budget", value: `${full.budget_type === "daily" ? "Daily" : "Total"} ${symbol}${Number(full.budget_value).toLocaleString("en-IN")}` },
@@ -152,16 +173,16 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     });
   };
 
-  // 1. Budget — pacing signal
-  const pacing = 60 + (h % 55); // % of monthly target delivered
-  const monthTarget = 60000 + (h % 12) * 5000;
-  if (pacing < 100) {
+  // 1. Budget — only where the brand already spends on this platform.
+  if (hasLiveCampaigns) {
+    const pacing = 60 + (h % 35); // % of this month's plan delivered by the live campaigns
+    const monthTarget = 60000 + (h % 12) * 5000;
     const daily = 2000 + (h % 8) * 500;
     mk(
       "budget",
-      `Month-to-date spend is at ${pacing}% of the planned budget on ${platform}.`,
-      `Run a daily-budget campaign at ${symbol}${daily.toLocaleString("en-IN")} to close the gap.`,
-      `Could recover most of the remaining ${100 - pacing}% of planned delivery if it runs for the rest of the month. Not guaranteed — actual delivery depends on auction supply.`,
+      `Your live campaigns on ${platform} have delivered ${pacing}% of this month's plan.`,
+      `Open this new campaign on a daily budget of ${symbol}${daily.toLocaleString("en-IN")} to use the rest of the plan.`,
+      `Aimed at putting the unspent ${100 - pacing}% of the plan to work. Delivery depends on auction supply.`,
       pacing < 80 ? 4 : 3,
       {
         type: "pacing",
@@ -169,14 +190,17 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
         spend: Math.round((monthTarget * pacing) / 100),
         target: monthTarget,
         symbol,
+        scope: `From your live campaigns on ${platform} — not from this SKU, which has not run yet.`,
       },
-      "Signal: month-to-date spend pacing",
-      { threshold: "Pacing should be at or above 100% of plan", observed: `${pacing}% delivered` },
+      "Signal: month-to-date spend on your live campaigns",
+      "Platform billing feed",
+      h % 2,
+      { threshold: "Plan should be fully delivered by month end", observed: `${pacing}% delivered so far` },
       { budget_type: "daily", budget_value: String(daily) },
     );
   }
 
-  // 2. City — stock and demand signal
+  // 2. City — stock availability, known before launch.
   if (inStockCities.length) {
     mk(
       "city",
@@ -188,44 +212,52 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       5,
       { type: "cities", inStock: inStockCities, oos: oosCities },
       "Signal: city-level stock availability",
+      "Store availability crawl",
+      0,
       { threshold: "Only cities with stock should be targeted", observed: `${inStockCities.length} in stock, ${oosCities.length} out of stock` },
       { cities: inStockCities.slice(0, 4).join(", ") },
     );
   }
 
-  // 3. Keywords — rank and search trend signal
+  // 3. Keywords — organic rank and search demand, both measurable before launch.
   const rank = 4 + (h % 12);
   const trendPct = 5 + (h % 40);
   const trend = Array.from({ length: 8 }, (_, i) => 40 + ((h >> i) % 25) + Math.round((trendPct * i) / 8));
   mk(
     "keywords",
-    `Organic rank ${rank} on "${kws[0]}"; searches up ${trendPct}% week on week.`,
+    `Organic rank ${rank} on "${kws[0]}"; searches up ${trendPct}% over eight weeks.`,
     `Add ${kws.length} keywords built from the SKU title to defend the term.`,
-    "Helps hold share of search on the terms driving most of this SKU's discovery.",
+    "Aimed at holding share of search on the terms driving this SKU's discovery.",
     rank > 8 ? 4 : 3,
     { type: "rank", rank, scale: 20, trend, trendPct, keywords: kws },
-    "Signal: organic rank and search trend",
-    { threshold: "Defend terms where organic rank is outside the top 5", observed: `Rank ${rank}, trend +${trendPct}%` },
+    "Signal: organic rank and search demand",
+    "Keyword rank crawl",
+    (h >> 3) % 4,
+    { threshold: "Defend terms where organic rank is outside the top 5", observed: `Rank ${rank}, searches +${trendPct}%` },
     { targeting_details: targetingAt(minBid + 4) },
   );
 
-  // 4. Bids — efficiency signal
-  const acos = 12 + (h % 20);
-  const benchmark = 22;
-  const fromBid = Number((minBid + 4).toFixed(1));
-  const bid = Number((minBid + (acos > benchmark ? 2 : 6)).toFixed(1));
+  // 4. Opening bid — anchored to the published floor, never to invented efficiency.
+  const opening = Number((minBid * 1.2).toFixed(1));
   mk(
     "bids",
-    `ACoS at ${acos}% against a ${benchmark}% category benchmark.`,
-    `${acos > benchmark ? "Trim" : "Raise"} keyword bids from ${fromBid} to ${bid}.`,
-    acos > benchmark
-      ? "Aims to bring ACoS back toward the benchmark; impressions may fall."
-      : "Aims to buy more impressions while efficiency allows; ACoS may rise.",
-    acos > benchmark ? 4 : 3,
-    { type: "bid", from: fromBid, to: bid, acos, benchmark, unit: def?.matchTypes.length ? "per click" : "per 1,000 impressions", symbol },
-    "Signal: ACoS versus category benchmark",
-    { threshold: `Category benchmark ACoS ${benchmark}%`, observed: `${acos}% ACoS` },
-    { targeting_details: targetingAt(bid) },
+    `The bid floor on ${platform} is ${symbol}${minBid}.`,
+    `Open at ${symbol}${opening} so the campaign clears the floor from day one.`,
+    "Aimed at entering the auction reliably. There is nothing to optimise against until it has run.",
+    4,
+    {
+      type: "floor",
+      floor: minBid,
+      suggested: opening,
+      unit: def?.matchTypes.length ? "per click" : "per 1,000 impressions",
+      symbol,
+      note: "This product has no spend history, so no efficiency figure is shown. The opening bid comes from the platform's published floor.",
+    },
+    "Signal: published platform bid floor",
+    "Platform reference list",
+    0,
+    { threshold: `Bids below ${symbol}${minBid} never enter the auction`, observed: `Opening bid ${symbol}${opening}` },
+    { targeting_details: targetingAt(opening) },
   );
 
   return out;

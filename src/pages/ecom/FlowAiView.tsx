@@ -6,6 +6,8 @@ import {
 import EcomFileCard from "@/components/ecom/EcomFileCard";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
+import EcomReviewCard from "@/components/ecom/EcomReviewCard";
+import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate } from "./EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
@@ -40,6 +42,8 @@ const FlowAiView: React.FC = () => {
   const [skuQuery, setSkuQuery] = useState("");
   const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
   const [recos, setRecos] = useState<SkuRecommendation[] | null>(null);
+  const [reviewing, setReviewing] = useState(false);
+  const [showHeld, setShowHeld] = useState(false);
   const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -48,7 +52,7 @@ const FlowAiView: React.FC = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, ec.runs, recos, skuPicker, fixing]);
+  }, [messages, ec.runs, recos, skuPicker, fixing, reviewing, showHeld]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -194,7 +198,9 @@ const FlowAiView: React.FC = () => {
 
   const continueClean = () => {
     if (latest && latest.heldRows.length) holdRemaining();
-    navigate("/ecom/campaigns/create/review");
+    setShowHeld(false);
+    setReviewing(true);
+    say("Here is everything before it is created. Read it through — nothing is created until you press the button on this card.");
   };
 
   /* ── Recommendations ── */
@@ -304,7 +310,7 @@ const FlowAiView: React.FC = () => {
         right={
           <div className="flex items-center gap-3">
             {ec.held.length > 0 && (
-              <button onClick={() => navigate("/ecom/campaigns/create/held")} className="text-[11px] text-sw-amber hover:underline">
+              <button onClick={() => { setShowHeld((v) => !v); }} className="text-[11px] text-sw-amber hover:underline">
                 {ec.held.length} held batch{ec.held.length > 1 ? "es" : ""}
               </button>
             )}
@@ -318,7 +324,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setRecos(null); setSkuPicker(false); setFixing(null); }}
+              onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setRecos(null); setSkuPicker(false); setFixing(null); setReviewing(false); setShowHeld(false); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
@@ -424,7 +430,7 @@ const FlowAiView: React.FC = () => {
               <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
                 <p className="text-xs font-medium text-foreground">Recommendations from Ecom Analytics</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  Each card shows what we measured, the exact campaign inputs it would create, and how confident we are. Nothing is created until you add it.
+                  Built from what we know today about each SKU — stock, rank, search demand and the platform's own rules. Nothing is created until you add it.
                 </p>
               </div>
               <div className="max-h-[440px] overflow-y-auto divide-y divide-subtle">
@@ -453,8 +459,39 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
+          {/* Held batches stay in the conversation */}
+          {showHeld && (
+            <div className="rounded-xl border border-sw-amber/30 bg-surface-1 overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2">
+                <p className="text-xs font-medium text-foreground">Held batches</p>
+                <span className="text-[10px] text-muted-foreground">Reopening re-checks them against today's data.</span>
+                <button onClick={() => setShowHeld(false)} className="ml-auto text-muted-foreground hover:text-foreground" aria-label="Close">
+                  <X size={13} />
+                </button>
+              </div>
+              <div className="p-3">
+                <EcomHeldList
+                  onReopen={() => {
+                    setShowHeld(false);
+                    setReviewing(true);
+                    say("Reopened those rows and checked them again. Here is the plan as it stands.");
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Review is a card in the conversation, not another screen */}
+          {reviewing && (
+            <EcomReviewCard
+              onBackToCheck={() => { setReviewing(false); say("Back to the check. Ask me to fix anything and we can come back to review."); }}
+              onFixWithAi={() => { setReviewing(false); openFixes(); }}
+              onDone={(summary) => say(summary)}
+            />
+          )}
 
           <div ref={bottomRef} />
+
         </div>
       </div>
 
