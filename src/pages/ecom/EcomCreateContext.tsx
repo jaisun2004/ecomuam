@@ -32,6 +32,53 @@ export interface PushOutcome {
   detail: string;
 }
 
+export interface ManualDraft {
+  step: number;
+  platform: string | null;
+  typeId: string | null;
+  brand: string;
+  subCategory: string;
+  budgetType: string;
+  budgetValue: string;
+  endDate: string;
+  cities: string[];
+  skus: string[];
+  keywords: string;
+  campaignName: string;
+  nameEdited: boolean;
+  dismissed: string[];
+}
+
+export const EMPTY_MANUAL_DRAFT: ManualDraft = {
+  step: 0,
+  platform: null,
+  typeId: null,
+  brand: "",
+  subCategory: "Biscuits",
+  budgetType: "daily",
+  budgetValue: "",
+  endDate: "",
+  cities: [],
+  skus: [],
+  keywords: "",
+  campaignName: "",
+  nameEdited: false,
+  dismissed: [],
+};
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  text: string;
+}
+
+export interface ChatState {
+  started: boolean;
+  messages: ChatMessage[];
+  reviewing: boolean;
+}
+
+export const EMPTY_CHAT: ChatState = { started: false, messages: [], reviewing: false };
+
 interface EcomCreateState {
   rows: BatchRow[];
   setRows: (rows: BatchRow[]) => void;
@@ -60,8 +107,16 @@ interface EcomCreateState {
   reopenHeld: (id: string) => void;
   dropHeld: (id: string) => void;
 
-  overrides: OverrideEntry[];
-  addOverride: (row: number, signal: string, reason: string) => void;
+  /** Draft state kept outside the screens so back navigation restores it. */
+  manualDraft: ManualDraft;
+  setManualDraft: (d: ManualDraft | ((prev: ManualDraft) => ManualDraft)) => void;
+  copySelection: string[];
+  setCopySelection: (names: string[]) => void;
+  chat: ChatState;
+  setChat: (c: ChatState | ((prev: ChatState) => ChatState)) => void;
+
+  /** Only an uploaded sheet counts rows; every other flow counts campaigns. */
+  countsRows: boolean;
 
   pushed: boolean;
   setPushed: (p: boolean) => void;
@@ -81,7 +136,9 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [pushed, setPushed] = useState(false);
   const [runs, setRuns] = useState<SheetRun[]>([]);
   const [held, setHeld] = useState<HeldBatch[]>([]);
-  const [overrides, setOverrides] = useState<OverrideEntry[]>([]);
+  const [manualDraft, setManualDraft] = useState<ManualDraft>(EMPTY_MANUAL_DRAFT);
+  const [copySelection, setCopySelection] = useState<string[]>([]);
+  const [chat, setChat] = useState<ChatState>(EMPTY_CHAT);
   const [outcomes, setOutcomes] = useState<PushOutcome[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -188,10 +245,6 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const dropHeld = useCallback((id: string) => setHeld((prev) => prev.filter((h) => h.id !== id)), []);
 
-  const addOverride = useCallback((row: number, signal: string, reason: string) => {
-    setOverrides((prev) => [...prev, { id: `ovr-${Date.now()}-${row}`, row, signal, reason, at: new Date().toISOString() }]);
-  }, []);
-
   const reset = useCallback(() => {
     setRows([]);
     setFileName(null);
@@ -200,8 +253,10 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setDeepPending(false);
     setPushed(false);
     setRuns([]);
-    setOverrides([]);
     setOutcomes([]);
+    setManualDraft(EMPTY_MANUAL_DRAFT);
+    setCopySelection([]);
+    setChat(EMPTY_CHAT);
   }, [setRows]);
 
   const value = useMemo(
@@ -209,12 +264,14 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       rows, setRows, fileName, setFileName, source, setSource, result, deepPending,
       runLive, runDeep, recheck, applyFix, applyAllFixes, addRows, keepOnlyCleanRows,
       runs, addRun, clearRuns, held, holdRows, reopenHeld, dropHeld,
-      overrides, addOverride, pushed, setPushed, outcomes, setOutcomes, reset,
+      manualDraft, setManualDraft, copySelection, setCopySelection, chat, setChat,
+      countsRows: source === "ai" && !!fileName,
+      pushed, setPushed, outcomes, setOutcomes, reset,
     }),
     [
       rows, setRows, fileName, source, result, deepPending, runLive, runDeep, recheck, applyFix,
       applyAllFixes, addRows, keepOnlyCleanRows, runs, addRun, clearRuns, held, holdRows, reopenHeld,
-      dropHeld, overrides, addOverride, pushed, outcomes, reset,
+      dropHeld, manualDraft, copySelection, chat, pushed, outcomes, reset,
     ],
   );
 
