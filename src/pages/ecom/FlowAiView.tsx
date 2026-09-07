@@ -6,6 +6,8 @@ import {
 import EcomFileCard from "@/components/ecom/EcomFileCard";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
+import EcomReviewCard from "@/components/ecom/EcomReviewCard";
+import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate } from "./EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
@@ -40,6 +42,8 @@ const FlowAiView: React.FC = () => {
   const [skuQuery, setSkuQuery] = useState("");
   const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
   const [recos, setRecos] = useState<SkuRecommendation[] | null>(null);
+  const [reviewing, setReviewing] = useState(false);
+  const [showHeld, setShowHeld] = useState(false);
   const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -48,7 +52,7 @@ const FlowAiView: React.FC = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, ec.runs, recos, skuPicker, fixing]);
+  }, [messages, ec.runs, recos, skuPicker, fixing, reviewing, showHeld]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -194,7 +198,9 @@ const FlowAiView: React.FC = () => {
 
   const continueClean = () => {
     if (latest && latest.heldRows.length) holdRemaining();
-    navigate("/ecom/campaigns/create/review");
+    setShowHeld(false);
+    setReviewing(true);
+    say("Here is everything before it is created. Read it through — nothing is created until you press the button on this card.");
   };
 
   /* ── Recommendations ── */
@@ -304,7 +310,7 @@ const FlowAiView: React.FC = () => {
         right={
           <div className="flex items-center gap-3">
             {ec.held.length > 0 && (
-              <button onClick={() => navigate("/ecom/campaigns/create/held")} className="text-[11px] text-sw-amber hover:underline">
+              <button onClick={() => { setShowHeld((v) => !v); }} className="text-[11px] text-sw-amber hover:underline">
                 {ec.held.length} held batch{ec.held.length > 1 ? "es" : ""}
               </button>
             )}
