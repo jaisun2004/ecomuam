@@ -3,22 +3,35 @@ import { PRODUCT_LIST, CITY_LIST, type RefProduct } from "@/lib/ecom-reference/w
 import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock, limitsFor } from "@/lib/ecom-reference/platforms";
 import { asOfLabel } from "@/lib/ecom-reference/config";
 
-export type RecoKind = "budget" | "city" | "keywords" | "bids";
+export type RecoKind = "price" | "city" | "keywords" | "bids";
+
+/** Which step of the campaign spine this recommendation can be acted on. */
+export type RecoStep = "products" | "cities" | "targeting" | "budget";
 
 /** Structured evidence so a card can be read as a picture, not a claim. */
 export type RecoEvidence =
-  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string; scope: string }
   | { type: "cities"; inStock: string[]; oos: string[] }
   | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
-  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string };
+  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string }
+  | { type: "price"; ours: number; theirs: number; competitor: string; symbol: string; note: string };
 
 export interface SkuRecommendation {
   id: string;
+  /** short reference code the user can quote back */
+  code: string;
+  /** measured from data, or a threshold your team set */
+  klass: "observed" | "rule";
+  /** where it came from: a collection time, or a platform limit */
+  provenance: string;
+  /** the step this card belongs to */
+  step: RecoStep;
   kind: RecoKind;
   sku: RefProduct;
   signal: string;
   action: string;
   impact: string;
+  /** where the number came from, and that nothing is estimated */
+  grounding: string;
   confidence: 1 | 2 | 3 | 4 | 5;
   /** the visual evidence behind the recommendation */
   evidence: RecoEvidence;
@@ -36,10 +49,24 @@ export interface SkuRecommendation {
   draft: Omit<BatchRow, "id" | "row">;
 }
 
+/** A dismissal is recorded, not silently dropped, and hides the card for 28 days. */
+export interface RecoDismissal {
+  code: string;
+  at: string;
+  until: string;
+}
+
+export function dismissFor28Days(code: string): RecoDismissal {
+  const now = new Date();
+  const until = new Date(now.getTime() + 28 * 24 * 3600 * 1000);
+  return { code, at: now.toISOString(), until: until.toISOString() };
+}
+
+
 
 
 const KIND_LABEL: Record<RecoKind, string> = {
-  budget: "Budget",
+  price: "Price",
   city: "City",
   keywords: "Keywords",
   bids: "Bid changes",
@@ -111,8 +138,35 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   const out: SkuRecommendation[] = [];
   const symbol = currencySymbol(currency);
   const asOf = asOfLabel();
-  /** Does the brand already run campaigns on this platform? Only then is pacing real. */
-  const hasLiveCampaigns = h % 3 === 0;
+
+  /** How each kind of card is classed, where it belongs, and what grounds it. */
+  const KIND_META: Record<RecoKind, { klass: "observed" | "rule"; step: RecoStep; provenance: string; grounding: string }> = {
+    price: {
+      klass: "observed",
+      step: "products",
+      provenance: `Collected ${asOf}`,
+      grounding: "Both prices are the ones showing on the shelf right now. Nothing estimated.",
+    },
+    city: {
+      klass: "observed",
+      step: "cities",
+      provenance: `Collected ${asOf}`,
+      grounding: "Counted from today's store availability crawl, city by city. Nothing estimated.",
+    },
+    keywords: {
+      klass: "rule",
+      step: "targeting",
+      provenance: "Threshold set by your team",
+      grounding: "Your team's threshold for defending a term, applied to today's organic rank. It says nothing about what the campaign will return.",
+    },
+    bids: {
+      klass: "observed",
+      step: "targeting",
+      provenance: "Platform limit",
+      grounding: "The floor is published by the platform. This product has no spend history, so no efficiency figure is used.",
+    },
+  };
+
 
   const mk = (
     kind: RecoKind,
@@ -145,8 +199,14 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       selected: true,
       ...draft,
     };
+    const meta = KIND_META[kind];
     out.push({
       id: `${sku.code}-${kind}`,
+      code: `REC-${(hash(`${sku.code}${kind}`) % 9000) + 1000}`,
+      klass: meta.klass,
+      provenance: meta.provenance,
+      step: meta.step,
+      grounding: meta.grounding,
       kind,
       sku,
       signal,
@@ -173,32 +233,44 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     });
   };
 
-  // 1. Budget — only where the brand already spends on this platform.
-  if (hasLiveCampaigns) {
-    const pacing = 60 + (h % 35); // % of this month's plan delivered by the live campaigns
-    const monthTarget = 60000 + (h % 12) * 5000;
-    const daily = 2000 + (h % 8) * 500;
+  // 1. Price against the competing product on the shelf today.
+  {
+    const ours = 40 + (h % 60);
+    const theirs = ours + ((h % 7) - 3) * 2;
+    const competitor = ["Britannia", "Parle", "Unibic", "Anmol"][h % 4];
+    const cheaper = ours < theirs;
     mk(
-      "budget",
-      `Your live campaigns on ${platform} have delivered ${pacing}% of this month's plan.`,
-      `Open this new campaign on a daily budget of ${symbol}${daily.toLocaleString("en-IN")} to use the rest of the plan.`,
-      `Aimed at putting the unspent ${100 - pacing}% of the plan to work. Delivery depends on auction supply.`,
-      pacing < 80 ? 4 : 3,
+      "price",
+      cheaper
+        ? `You are ${symbol}${theirs - ours} cheaper than ${competitor} on the shelf today.`
+        : `${competitor} is ${symbol}${ours - theirs} cheaper than you on the shelf today.`,
+      cheaper
+        ? "Run the campaign while the price gap is in your favour."
+        : "Close the price gap before spending, or expect the click to land on a dearer pack.",
+      cheaper
+        ? "Aimed at putting spend behind a pack that is already the cheaper choice."
+        : "Aimed at avoiding paid clicks onto the dearer of two packs.",
+      cheaper ? 4 : 3,
       {
-        type: "pacing",
-        deliveredPct: pacing,
-        spend: Math.round((monthTarget * pacing) / 100),
-        target: monthTarget,
+        type: "price",
+        ours,
+        theirs,
+        competitor,
         symbol,
-        scope: `From your live campaigns on ${platform} — not from this SKU, which has not run yet.`,
+        note: "Shelf prices as displayed today. No spend, delivery or return is involved.",
       },
-      "Signal: month-to-date spend on your live campaigns",
-      "Platform billing feed",
+      "Signal: shelf price against the competing product",
+      "Shelf price crawl",
       h % 2,
-      { threshold: "Plan should be fully delivered by month end", observed: `${pacing}% delivered so far` },
-      { budget_type: "daily", budget_value: String(daily) },
+      {
+        threshold: "Spend behind a pack that is not price competitive is flagged",
+        observed: `You ${symbol}${ours} against ${competitor} ${symbol}${theirs}`,
+      },
+      {},
     );
   }
+
+
 
   // 2. City — stock availability, known before launch.
   if (inStockCities.length) {

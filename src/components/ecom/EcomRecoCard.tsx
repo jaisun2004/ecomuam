@@ -7,6 +7,9 @@ interface Props {
   reco: SkuRecommendation;
   selected: boolean;
   onToggle: () => void;
+  /** shown when the card is read-only, e.g. restated on review */
+  readOnly?: boolean;
+  onDismiss?: () => void;
 }
 
 const Dots: React.FC<{ n: number }> = ({ n }) => (
@@ -33,25 +36,6 @@ const Sparkline: React.FC<{ values: number[] }> = ({ values }) => {
 
 const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
   const e = reco.evidence;
-
-  if (e.type === "pacing") {
-    return (
-      <div>
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
-          <span>Spent so far {e.symbol}{e.spend.toLocaleString("en-IN")}</span>
-          <span>Plan for the month {e.symbol}{e.target.toLocaleString("en-IN")}</span>
-        </div>
-        <div className="h-3 rounded-full bg-surface-3 overflow-hidden flex">
-          <div className="h-full bg-primary" style={{ width: `${Math.min(e.deliveredPct, 100)}%` }} />
-          <div className="h-full bg-sw-amber/30" style={{ width: `${Math.max(100 - e.deliveredPct, 0)}%` }} />
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-1">
-          <span className="text-foreground font-medium">{e.deliveredPct}% delivered</span> · {100 - e.deliveredPct}% of the plan is still unspent
-        </p>
-        <p className="text-[10px] text-muted-foreground mt-1 italic">{e.scope}</p>
-      </div>
-    );
-  }
 
   if (e.type === "cities") {
     return (
@@ -106,6 +90,29 @@ const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
     );
   }
 
+  if (e.type === "price") {
+    const scale = Math.max(e.ours, e.theirs) * 1.3;
+    return (
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground w-24">Your pack</span>
+          <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
+            <div className="h-full bg-primary" style={{ width: `${(e.ours / scale) * 100}%` }} />
+          </div>
+          <span className="font-mono text-[10px] text-foreground w-14 text-right">{e.symbol}{e.ours}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground w-24 truncate" title={e.competitor}>{e.competitor}</span>
+          <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
+            <div className="h-full bg-border-visible" style={{ width: `${(e.theirs / scale) * 100}%` }} />
+          </div>
+          <span className="font-mono text-[10px] text-muted-foreground w-14 text-right">{e.symbol}{e.theirs}</span>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-1.5 italic">{e.note}</p>
+      </div>
+    );
+  }
+
   const scaleMax = Math.max(e.floor, e.suggested) * 1.6;
   return (
     <div>
@@ -130,32 +137,50 @@ const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
 };
 
 
-const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle }) => {
+const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle, readOnly, onDismiss }) => {
   const [why, setWhy] = useState(false);
 
   return (
     <div className={`px-4 py-3 ${selected ? "bg-primary/5" : ""}`}>
       <div className="flex items-start gap-3">
-        <button
-          onClick={onToggle}
-          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${selected ? "bg-primary border-primary" : "border-border-visible"}`}
-          aria-label="Toggle recommendation"
-        >
-          {selected && <Check size={11} className="text-primary-foreground" />}
-        </button>
+        {readOnly ? (
+          <span className="mt-0.5 w-4 h-4 rounded border border-border-visible flex items-center justify-center flex-shrink-0 bg-primary border-primary">
+            <Check size={11} className="text-primary-foreground" />
+          </span>
+        ) : (
+          <button
+            onClick={onToggle}
+            className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${selected ? "bg-primary border-primary" : "border-border-visible"}`}
+            aria-label="Keep this recommendation"
+          >
+            {selected && <Check size={11} className="text-primary-foreground" />}
+          </button>
+        )}
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-medium">{recoKindLabel(reco.kind)}</span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${reco.klass === "observed" ? "bg-sw-green-dim text-sw-green" : "bg-primary/15 text-primary"}`}>
+              {reco.klass === "observed" ? "Observed" : "Rule"}
+            </span>
+            <span className="px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground text-[10px]">{reco.provenance}</span>
+            <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px]">{recoKindLabel(reco.kind)}</span>
             <span className="text-xs text-foreground font-medium truncate">{reco.sku.name}</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">{platformDisplay(reco.sku.platform)}</span>
             <span className="ml-auto flex items-center gap-2">
               <Dots n={reco.confidence} />
+              <span className="font-mono text-[10px] text-muted-foreground">{reco.code}</span>
               <button onClick={() => setWhy((v) => !v)} className="text-muted-foreground hover:text-foreground" aria-label="Why this">
                 <Info size={13} />
               </button>
             </span>
           </div>
+
+          <p className="text-xs text-foreground mt-2">
+            <span className="font-semibold">Recommended because</span> {reco.signal}
+          </p>
+          <p className="text-xs text-foreground mt-1">
+            <span className="font-semibold">Do this.</span> {reco.action}
+          </p>
 
           <div className="mt-2.5 rounded-lg border border-subtle bg-surface-2 p-3">
             <div className="flex items-baseline justify-between gap-2 mb-2">
@@ -170,9 +195,8 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle }) => {
               </p>
             </div>
             <Evidence reco={reco} />
+            <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-subtle">{reco.grounding}</p>
           </div>
-
-          <p className="text-xs text-foreground mt-2.5 font-medium">{reco.action}</p>
 
           <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
             {reco.changes.map((c) => (
@@ -192,6 +216,28 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle }) => {
             </p>
           )}
 
+          {!readOnly && (
+            <div className="mt-2 flex items-center gap-2">
+              <button
+                onClick={onToggle}
+                className="px-2 py-1 rounded-md border border-subtle text-[10px] text-foreground hover:bg-surface-3"
+              >
+                {selected ? "Keeping it" : "Apply to this campaign"}
+              </button>
+              <button
+                onClick={onDismiss ?? onToggle}
+                className="px-2 py-1 rounded-md border border-subtle text-[10px] text-muted-foreground hover:bg-surface-3"
+              >
+                Dismiss
+              </button>
+              <span className="text-[10px] text-muted-foreground">
+                Dismissing hides it for 28 days and records who dismissed it.
+              </span>
+            </div>
+          )}
+          {readOnly && (
+            <p className="text-[10px] text-muted-foreground mt-2">Kept. Applied to the plan when you push.</p>
+          )}
 
           {why && (
             <div className="mt-2 rounded-lg border border-subtle bg-surface-2 p-3 space-y-1">

@@ -3,11 +3,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { AlertTriangle, ArrowLeft, CheckCircle2, Download, Rocket } from "lucide-react";
 import EcomSheetTable from "@/components/ecom/EcomSheetTable";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
+import EcomRecoCard from "@/components/ecom/EcomRecoCard";
+import { recommendationsForSku } from "@/lib/ecom-qc/recommendations";
+import { PRODUCT_LIST } from "@/lib/ecom-reference/workbook-data";
 import { useEcomCreate, type PushOutcome } from "./EcomCreateContext";
 import { BATCH_FIELDS, FIELD_LABELS, type BatchRow } from "@/lib/ecom-qc/types";
 import { findingsForRow, partitionRows } from "@/lib/ecom-qc/engine";
 import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "@/lib/ecom-qc/fix-proposals";
-import { capabilityFor } from "@/lib/ecom-reference/config";
+import { asOfLabel, capabilityFor } from "@/lib/ecom-reference/config";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { downloadCorrected } from "./xlsx-utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -38,6 +41,17 @@ const ReviewPushView: React.FC = () => {
       map.set(r.platform, list);
     }
     return [...map.entries()].map(([platform, rows]) => ({ platform, rows, cap: capabilityFor(platform) }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ec.rows, ec.result]);
+
+  /** The same recommendation cards the earlier steps showed, restated for the products in this plan. */
+  const planRecos = useMemo(() => {
+    const codes = [...new Set(selected.map((r) => r.product_id).filter(Boolean))];
+    return codes
+      .map((c) => PRODUCT_LIST.find((p) => p.code === c))
+      .filter((p): p is NonNullable<typeof p> => Boolean(p))
+      .flatMap((p) => recommendationsForSku(p))
+      .slice(0, 6);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ec.rows, ec.result]);
 
@@ -190,6 +204,28 @@ const ReviewPushView: React.FC = () => {
             {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">No rows are selected.</li>}
           </ul>
         </div>
+
+        {/* The same recommendation cards, restated before anything is created */}
+        {planRecos.length > 0 && (
+          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-subtle flex items-center justify-between">
+              <h2 className="font-display font-bold text-xs text-foreground">
+                {planRecos.length} recommendation{planRecos.length > 1 ? "s" : ""} on this plan
+              </h2>
+              <p className="text-[10px] text-muted-foreground">Data as of {asOfLabel()}</p>
+            </div>
+            <div className="divide-y divide-subtle">
+              {planRecos.map((r) => (
+                <EcomRecoCard key={r.id} reco={r} selected readOnly onToggle={() => {}} />
+              ))}
+            </div>
+            <p className="px-4 py-2 text-[10px] text-muted-foreground border-t border-subtle">
+              These were kept earlier in the flow. They are applied to the plan when you push.
+            </p>
+          </div>
+        )}
+
+
 
         {/* Held rows stay visible */}
         {blocked.length > 0 && (
