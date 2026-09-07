@@ -1,79 +1,35 @@
 import type { BatchRow } from "./types";
 import { PRODUCT_LIST, CITY_LIST, type RefProduct } from "@/lib/ecom-reference/workbook-data";
-import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock, limitsFor } from "@/lib/ecom-reference/platforms";
-import { asOfLabel } from "@/lib/ecom-reference/config";
+import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock } from "@/lib/ecom-reference/platforms";
 
-export type RecoKind = "price" | "city" | "keywords" | "bids";
+export type RecoKind = "price" | "city" | "keywords";
 
-/** Which step of the campaign spine this recommendation can be acted on. */
+/** Which step of the campaign spine this suggestion can be acted on. */
 export type RecoStep = "products" | "cities" | "targeting" | "budget";
 
 /** Structured evidence so a card can be read as a picture, not a claim. */
 export type RecoEvidence =
   | { type: "cities"; inStock: string[]; oos: string[] }
   | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
-  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string }
-  | { type: "price"; ours: number; theirs: number; competitor: string; symbol: string; note: string };
+  | { type: "price"; ours: number; theirs: number; competitor: string; symbol: string };
 
 export interface SkuRecommendation {
   id: string;
-  /** short reference code the user can quote back */
-  code: string;
-  /** measured from data, or a threshold your team set */
-  klass: "observed" | "rule";
-  /** where it came from: a collection time, or a platform limit */
-  provenance: string;
-  /** the step this card belongs to */
   step: RecoStep;
   kind: RecoKind;
   sku: RefProduct;
+  /** the observed fact, in one line */
   signal: string;
+  /** what to do about it, in one line */
   action: string;
-  impact: string;
-  /** where the number came from, and that nothing is estimated */
-  grounding: string;
-  confidence: 1 | 2 | 3 | 4 | 5;
-  /** the visual evidence behind the recommendation */
   evidence: RecoEvidence;
-  /** exact campaign inputs this row would carry */
+  /** exact campaign inputs this suggestion would set */
   changes: { label: string; value: string }[];
-  /** which signal it came from and when it was measured */
-  basis: string;
-  /** where the numbers came from and how old they are */
+  /** where the numbers came from */
   source: string;
   collectedDaysAgo: number;
-  stale: boolean;
-  /** threshold / observed pair for the glass-box popover */
-  glass: { threshold: string; observed: string; freshness: string };
-  /** the batch row this recommendation would create */
+  /** the batch row this suggestion would create */
   draft: Omit<BatchRow, "id" | "row">;
-}
-
-/** A dismissal is recorded, not silently dropped, and hides the card for 28 days. */
-export interface RecoDismissal {
-  code: string;
-  at: string;
-  until: string;
-}
-
-export function dismissFor28Days(code: string): RecoDismissal {
-  const now = new Date();
-  const until = new Date(now.getTime() + 28 * 24 * 3600 * 1000);
-  return { code, at: now.toISOString(), until: until.toISOString() };
-}
-
-
-
-
-const KIND_LABEL: Record<RecoKind, string> = {
-  price: "Price",
-  city: "City",
-  keywords: "Keywords",
-  bids: "Bid changes",
-};
-
-export function recoKindLabel(k: RecoKind): string {
-  return KIND_LABEL[k];
 }
 
 function hash(s: string): number {
@@ -107,13 +63,16 @@ export function findSku(token: string): RefProduct | undefined {
     PRODUCT_LIST.find((p) => p.name.toLowerCase().includes(s) && s.length > 3);
 }
 
+export function collectedLabel(daysAgo: number): string {
+  if (daysAgo === 0) return "collected today";
+  return `collected ${daysAgo} day${daysAgo > 1 ? "s" : ""} ago`;
+}
+
 /**
  * Deterministic pre-launch signal generator standing in for the Ecom Analytics
- * feed. At creation time a SKU campaign has no performance of its own, so the
- * only signals used here are ones that exist before anything runs: stock by
- * city, organic rank and search demand, and the platform's own rules. Spend
- * pacing is only ever shown when the brand already has live campaigns on that
- * platform, and it is labelled as such.
+ * feed. A campaign that has not run has no performance, so the only signals
+ * used here exist before launch: stock by city, shelf price against the
+ * competing pack, and organic rank with search demand.
  */
 export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   const h = hash(`${sku.code}|${sku.platform}`);
@@ -122,106 +81,55 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   const fallbackCities = CITY_LIST.filter((c) => c.platform === platform).map((c) => c.platformCity);
   const pool = cities.length ? cities : fallbackCities;
   const currency = currencyFor(platform) ?? "INR";
-  const limits = limitsFor(platform);
   const brand = sku.name.split(/[ _]/)[0] || "brand";
   const kws = keywordSeed(sku);
   const inStockCities = pool.filter((c) => isInStock(sku.code, c));
   const oosCities = pool.filter((c) => !isInStock(sku.code, c));
-  const minBid = Math.max(limits.bid_floor ?? 1, 1);
   const def = getPlatform(platform);
   const matchType = def?.matchTypes[0] ?? null;
-  const targetingAt = (bidValue: number) =>
-    kws
-      .map((k) => (matchType ? `${k}:${matchType}:${bidValue.toFixed(1)}` : `${k}:${bidValue.toFixed(1)}`))
-      .join("; ");
+  const bid = 5 + (h % 6);
+  const targeting = kws
+    .map((k) => (matchType ? `${k}:${matchType}:${bid.toFixed(1)}` : `${k}:${bid.toFixed(1)}`))
+    .join("; ");
 
   const out: SkuRecommendation[] = [];
   const symbol = currencySymbol(currency);
-  const asOf = asOfLabel();
-
-  /** How each kind of card is classed, where it belongs, and what grounds it. */
-  const KIND_META: Record<RecoKind, { klass: "observed" | "rule"; step: RecoStep; provenance: string; grounding: string }> = {
-    price: {
-      klass: "observed",
-      step: "products",
-      provenance: `Collected ${asOf}`,
-      grounding: "Both prices are the ones showing on the shelf right now. Nothing estimated.",
-    },
-    city: {
-      klass: "observed",
-      step: "cities",
-      provenance: `Collected ${asOf}`,
-      grounding: "Counted from today's store availability crawl, city by city. Nothing estimated.",
-    },
-    keywords: {
-      klass: "rule",
-      step: "targeting",
-      provenance: "Threshold set by your team",
-      grounding: "Your team's threshold for defending a term, applied to today's organic rank. It says nothing about what the campaign will return.",
-    },
-    bids: {
-      klass: "observed",
-      step: "targeting",
-      provenance: "Platform limit",
-      grounding: "The floor is published by the platform. This product has no spend history, so no efficiency figure is used.",
-    },
-  };
-
 
   const mk = (
     kind: RecoKind,
+    step: RecoStep,
     signal: string,
     action: string,
-    impact: string,
-    baseConfidence: 1 | 2 | 3 | 4 | 5,
     evidence: RecoEvidence,
-    basis: string,
     source: string,
     collectedDaysAgo: number,
-    glass: { threshold: string; observed: string },
     draft: Partial<Omit<BatchRow, "id" | "row">>,
   ) => {
-    const target = draft.campaign_name ?? kind;
-    const stale = collectedDaysAgo > 2;
-    const confidence = (stale ? Math.max(baseConfidence - 1, 1) : baseConfidence) as 1 | 2 | 3 | 4 | 5;
     const full: Omit<BatchRow, "id" | "row"> = {
       sub_category: "biscuits",
       brand_name: brand,
       platform,
-      campaign_name: buildCampaignName({ brand, platform, target: sku.code, action: target }),
+      campaign_name: buildCampaignName({ brand, platform, target: sku.code, action: draft.campaign_name ?? kind }),
       end_date: "",
       budget_type: "daily",
       budget_value: "2000",
       cities: (inStockCities.length ? inStockCities : pool).slice(0, 4).join(", "),
       product_id: sku.code,
-      targeting_details: targetingAt(minBid + 4),
+      targeting_details: targeting,
       currency,
       selected: true,
       ...draft,
     };
-    const meta = KIND_META[kind];
     out.push({
       id: `${sku.code}-${kind}`,
-      code: `REC-${(hash(`${sku.code}${kind}`) % 9000) + 1000}`,
-      klass: meta.klass,
-      provenance: meta.provenance,
-      step: meta.step,
-      grounding: meta.grounding,
+      step,
       kind,
       sku,
       signal,
       action,
-      impact,
-      confidence,
       evidence,
-      basis,
       source,
       collectedDaysAgo,
-      stale,
-      glass: {
-        ...glass,
-        freshness: `${source}, collected ${collectedDaysAgo === 0 ? "today" : `${collectedDaysAgo} day${collectedDaysAgo > 1 ? "s" : ""} ago`} (as of ${asOf})`,
-      },
       changes: [
         { label: "Campaign name", value: full.campaign_name },
         { label: "Budget", value: `${full.budget_type === "daily" ? "Daily" : "Total"} ${symbol}${Number(full.budget_value).toLocaleString("en-IN")}` },
@@ -233,7 +141,7 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     });
   };
 
-  // 1. Price against the competing product on the shelf today.
+  // 1. Price against the competing pack on the shelf today.
   {
     const ours = 40 + (h % 60);
     const theirs = ours + ((h % 7) - 3) * 2;
@@ -241,100 +149,53 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     const cheaper = ours < theirs;
     mk(
       "price",
+      "products",
       cheaper
         ? `You are ${symbol}${theirs - ours} cheaper than ${competitor} on the shelf today.`
         : `${competitor} is ${symbol}${ours - theirs} cheaper than you on the shelf today.`,
       cheaper
         ? "Run the campaign while the price gap is in your favour."
-        : "Close the price gap before spending, or expect the click to land on a dearer pack.",
-      cheaper
-        ? "Aimed at putting spend behind a pack that is already the cheaper choice."
-        : "Aimed at avoiding paid clicks onto the dearer of two packs.",
-      cheaper ? 4 : 3,
-      {
-        type: "price",
-        ours,
-        theirs,
-        competitor,
-        symbol,
-        note: "Shelf prices as displayed today. No spend, delivery or return is involved.",
-      },
-      "Signal: shelf price against the competing product",
+        : "Close the price gap before spending, or the click lands on a dearer pack.",
+      { type: "price", ours, theirs, competitor, symbol },
       "Shelf price crawl",
       h % 2,
-      {
-        threshold: "Spend behind a pack that is not price competitive is flagged",
-        observed: `You ${symbol}${ours} against ${competitor} ${symbol}${theirs}`,
-      },
       {},
     );
   }
 
-
-
-  // 2. City — stock availability, known before launch.
+  // 2. Stock by city, known before launch.
   if (inStockCities.length) {
     mk(
       "city",
+      "cities",
       oosCities.length
         ? `In stock in ${inStockCities.length} cities, out of stock in ${oosCities.length}.`
         : `In stock across all ${inStockCities.length} serviceable cities.`,
       `Target only the in-stock cities: ${inStockCities.slice(0, 4).join(", ")}.`,
-      "Keeps spend off cities that cannot fulfil the order today.",
-      5,
       { type: "cities", inStock: inStockCities, oos: oosCities },
-      "Signal: city-level stock availability",
       "Store availability crawl",
       0,
-      { threshold: "Only cities with stock should be targeted", observed: `${inStockCities.length} in stock, ${oosCities.length} out of stock` },
       { cities: inStockCities.slice(0, 4).join(", ") },
     );
   }
 
-  // 3. Keywords — organic rank and search demand, both measurable before launch.
+  // 3. Organic rank and search demand, both measurable before launch.
   const rank = 4 + (h % 12);
   const trendPct = 5 + (h % 40);
   const trend = Array.from({ length: 8 }, (_, i) => 40 + ((h >> i) % 25) + Math.round((trendPct * i) / 8));
   mk(
     "keywords",
+    "targeting",
     `Organic rank ${rank} on "${kws[0]}"; searches up ${trendPct}% over eight weeks.`,
-    `Add ${kws.length} keywords built from the SKU title to defend the term.`,
-    "Aimed at holding share of search on the terms driving this SKU's discovery.",
-    rank > 8 ? 4 : 3,
+    `Add ${kws.length} keywords built from the product title.`,
     { type: "rank", rank, scale: 20, trend, trendPct, keywords: kws },
-    "Signal: organic rank and search demand",
     "Keyword rank crawl",
     (h >> 3) % 4,
-    { threshold: "Defend terms where organic rank is outside the top 5", observed: `Rank ${rank}, searches +${trendPct}%` },
-    { targeting_details: targetingAt(minBid + 4) },
-  );
-
-  // 4. Opening bid — anchored to the published floor, never to invented efficiency.
-  const opening = Number((minBid * 1.2).toFixed(1));
-  mk(
-    "bids",
-    `The bid floor on ${platform} is ${symbol}${minBid}.`,
-    `Open at ${symbol}${opening} so the campaign clears the floor from day one.`,
-    "Aimed at entering the auction reliably. There is nothing to optimise against until it has run.",
-    4,
-    {
-      type: "floor",
-      floor: minBid,
-      suggested: opening,
-      unit: def?.matchTypes.length ? "per click" : "per 1,000 impressions",
-      symbol,
-      note: "This product has no spend history, so no efficiency figure is shown. The opening bid comes from the platform's published floor.",
-    },
-    "Signal: published platform bid floor",
-    "Platform reference list",
-    0,
-    { threshold: `Bids below ${symbol}${minBid} never enter the auction`, observed: `Opening bid ${symbol}${opening}` },
-    { targeting_details: targetingAt(opening) },
+    { targeting_details: targeting },
   );
 
   return out;
 }
-
 
 export function recommendationsForSkus(skus: RefProduct[]): SkuRecommendation[] {
   return skus.flatMap(recommendationsForSku);

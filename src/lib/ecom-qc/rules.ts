@@ -38,6 +38,11 @@ export function parseTargeting(v: string): Segment[] {
     .filter(Boolean)
     .map((raw) => {
       const parts = raw.split(":").map((s) => s.trim());
+      // Two parts can be "keyword:bid" (platforms without match types) or
+      // "keyword:matchtype". A numeric second part is always the bid.
+      if (parts.length === 2 && /^\d+(\.\d+)?(\s*-\s*\d+(\.\d+)?)?$/.test(parts[1] ?? "")) {
+        return { raw, keyword: parts[0] ?? "", matchType: "", bid: parts[1] ?? "", parts: parts.length };
+      }
       return { raw, keyword: parts[0] ?? "", matchType: parts[1] ?? "", bid: parts[2] ?? "", parts: parts.length };
     });
 }

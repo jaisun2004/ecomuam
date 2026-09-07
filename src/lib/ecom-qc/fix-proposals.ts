@@ -22,18 +22,18 @@ export interface FixProposal {
 function optionsFor(field: string, row: BatchRow | undefined): { control: ProposalControl; options: string[]; source: string } {
   switch (field) {
     case "platform":
-      return { control: "select", options: PLATFORMS.map((p) => p.slug), source: "Platform list in the workbook" };
+      return { control: "select", options: PLATFORMS.map((p) => p.slug), source: "Platform reference list" };
     case "cities":
       return {
         control: "select",
         options: row ? citiesFor(row.platform).map((c) => c.platformCity) : [],
-        source: "City list for this platform in the workbook",
+        source: "City list for this platform",
       };
     case "product_id":
       return {
         control: "select",
         options: row ? productsFor(row.platform).slice(0, 400).map((p) => p.code) : [],
-        source: "Product list for this platform in the workbook",
+        source: "Product list for this platform",
       };
     case "currency":
       return {
@@ -46,9 +46,9 @@ function optionsFor(field: string, row: BatchRow | undefined): { control: Propos
     case "budget_value":
       return { control: "number", options: [], source: "Budget floor in config" };
     case "end_date":
-      return { control: "date", options: [], source: "Date format required by the sheet" };
+      return { control: "date", options: [], source: "Date format YYYY-MM-DD" };
     default:
-      return { control: "text", options: [], source: "Rule catalogue in the uploaded workbook" };
+      return { control: "text", options: [], source: "Platform rule catalogue" };
   }
 }
 

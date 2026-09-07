@@ -31,7 +31,15 @@ const ReviewPushView: React.FC = () => {
 
   const { clean, blocked } = partitionRows(ec.rows, ec.result);
   const selected = clean.filter((r) => r.selected !== false);
-  const fromCopy = params.get("from") === "copy";
+  const fromCopy = params.get("from") === "copy" || ec.source === "copy";
+  /** Only an uploaded sheet counts rows; manual and copied campaigns count campaigns. */
+  const countsRows = ec.countsRows;
+  const noun = (n: number) => (countsRows ? `row${n === 1 ? "" : "s"}` : `campaign${n === 1 ? "" : "s"}`);
+  const backTo =
+    ec.source === "copy" ? "/ecom/campaigns/create/history"
+      : ec.source === "manual" ? "/ecom/campaigns/create/manual"
+        : ec.source === "ai" ? "/ecom/campaigns/create/ai"
+          : "/ecom/campaigns/create";
 
   const byPlatform = useMemo(() => {
     const map = new Map<string, BatchRow[]>();
@@ -78,6 +86,7 @@ const ReviewPushView: React.FC = () => {
   };
 
   const push = () => {
+    if (pushing) return;
     setPushing(true);
     // Mocked delivery. A platform without a campaign API is exported, never reported as pushed.
     setTimeout(() => {
@@ -139,7 +148,7 @@ const ReviewPushView: React.FC = () => {
           </ul>
           {ec.held.length > 0 && (
             <p className="mt-3 text-[11px] text-sw-amber">
-              {ec.held.reduce((n, h) => n + h.rows.length, 0)} rows are still parked in {ec.held.length} held batch{ec.held.length > 1 ? "es" : ""}.
+              {ec.held.reduce((n, h) => n + h.rows.length, 0)} {noun(ec.held.reduce((n, h) => n + h.rows.length, 0))} are still parked in {ec.held.length} held batch{ec.held.length > 1 ? "es" : ""}.
             </p>
           )}
           <div className="flex gap-2 mt-6">
@@ -174,7 +183,7 @@ const ReviewPushView: React.FC = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex items-center gap-3 px-4 py-3 border-b border-subtle bg-surface-1">
-        <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground" aria-label="Back">
+        <button onClick={() => navigate(backTo)} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground" aria-label="Back">
           <ArrowLeft size={16} />
         </button>
         <div>
@@ -188,7 +197,7 @@ const ReviewPushView: React.FC = () => {
           {/* Summary strip */}
           <div className="rounded-xl border border-subtle bg-surface-1 px-4 py-3">
             <div className="flex flex-wrap items-center gap-1.5">
-              <Chip tone="ok">{selected.length} going out</Chip>
+              {selected.length > 0 && <Chip tone="ok">{selected.length} {noun(selected.length)} going out</Chip>}
               {blocked.length > 0 && <Chip tone="bad">{blocked.length} held</Chip>}
               {byPlatform.map((g) => (
                 <Chip key={g.platform}>{platformDisplay(g.platform)} · {g.rows.length}</Chip>
@@ -201,7 +210,7 @@ const ReviewPushView: React.FC = () => {
                 {caveats.map((g) => (
                   <li key={g.platform} className="text-[10px] text-sw-amber">
                     <span className="font-medium">{platformDisplay(g.platform)}</span>{" "}
-                    {!g.cap.can_push_api && "takes new campaigns by file upload — your campaigns are created as a file to upload in the platform console. "}
+                    {!g.cap.can_push_api && "takes new campaigns by file upload — upload the generated file in the platform console to set them live. "}
                     {g.cap.irreversible_fields.length > 0 && "budget cannot be lowered once live."}
                   </li>
                 ))}
@@ -219,7 +228,7 @@ const ReviewPushView: React.FC = () => {
             <Fold
               defaultOpen={allHeld}
               tone="bad"
-              title={`${blocked.length} held row${blocked.length > 1 ? "s" : ""} — not sent, nothing dropped`}
+              title={`${blocked.length} held ${noun(blocked.length)} — not sent, nothing dropped`}
               actions={
                 <>
                   <button onClick={(e) => { e.stopPropagation(); openFixes(); }}
@@ -239,7 +248,11 @@ const ReviewPushView: React.FC = () => {
                 </>
               }
             >
-              <EcomSheetTable rows={ec.rows} result={ec.result} title="Held rows" onlyRows={blocked.map((r) => r.row)} defaultOpen />
+              {countsRows ? (
+                <EcomSheetTable rows={ec.rows} result={ec.result} title="Held rows" onlyRows={blocked.map((r) => r.row)} defaultOpen />
+              ) : (
+                <CampaignList rows={blocked} />
+              )}
             </Fold>
           )}
 
@@ -249,7 +262,7 @@ const ReviewPushView: React.FC = () => {
 
           {/* Recommendations */}
           {planRecos.length > 0 && (
-            <Fold title={`${planRecos.length} recommendation${planRecos.length > 1 ? "s" : ""} kept on this plan`}>
+            <Fold title={`${planRecos.length} suggestion${planRecos.length > 1 ? "s" : ""} kept on this plan`}>
               <div className="divide-y divide-subtle -mx-4 -mb-3">
                 {planRecos.map((r) => (
                   <EcomRecoCard key={r.id} reco={r} selected readOnly onToggle={() => {}} />
@@ -258,8 +271,12 @@ const ReviewPushView: React.FC = () => {
             </Fold>
           )}
 
-          {/* Full sheet */}
-          <Fold title={`Show the full sheet (${ec.rows.length} row${ec.rows.length > 1 ? "s" : ""})`}>
+          {/* Everything going out */}
+          <Fold title={countsRows
+            ? `Show the full sheet (${ec.rows.length} row${ec.rows.length > 1 ? "s" : ""})`
+            : `Show all ${ec.rows.length} campaign${ec.rows.length > 1 ? "s" : ""}`}>
+          {countsRows ? (
+          <>
             <div className="-mx-4 overflow-x-auto">
               <table className="w-full text-[11px]">
                 <thead>
@@ -312,6 +329,15 @@ const ReviewPushView: React.FC = () => {
                 <Download size={12} /> Download this sheet
               </button>
             </div>
+          </>
+          ) : (
+            <>
+              <CampaignList rows={ec.rows} editable onChange={updateCell} onToggle={toggleRow} blockedRows={blocked.map((r) => r.row)} />
+              <button onClick={() => ec.recheck()} className="mt-3 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-surface-3 text-foreground hover:bg-surface-3/70">
+                Check again after edits
+              </button>
+            </>
+          )}
           </Fold>
         </div>
       </div>
@@ -320,12 +346,18 @@ const ReviewPushView: React.FC = () => {
       <div className="border-t border-subtle bg-surface-1 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <div className="flex-1 min-w-0 space-y-1">
-            <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
-              <span>
-                I have read the {selected.length} rows and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
-              </span>
-            </label>
+            {allHeld ? (
+              <p className="text-[11px] text-muted-foreground">
+                Everything here is held. Fix the blockers above, or park them for later.
+              </p>
+            ) : (
+              <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
+                <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
+                <span>
+                  I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                </span>
+              </label>
+            )}
             {irreversible.length > 0 && (
               <label className="flex items-start gap-2 text-[11px] text-sw-amber cursor-pointer">
                 <input type="checkbox" checked={confirmIrreversible} onChange={(e) => setConfirmIrreversible(e.target.checked)} className="accent-primary mt-0.5" />
@@ -334,18 +366,13 @@ const ReviewPushView: React.FC = () => {
                 </span>
               </label>
             )}
-            {ec.overrides.length > 0 && (
-              <p className="text-[10px] text-muted-foreground">
-                {ec.overrides.length} warning{ec.overrides.length > 1 ? "s were" : " was"} accepted with a reason, and each one is recorded with this batch.
-              </p>
-            )}
           </div>
           <button
             onClick={push}
             disabled={!canPush || pushing}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
           >
-            <Rocket size={13} /> {pushing ? "Sending…" : `Send ${selected.length} rows`}
+            <Rocket size={13} /> {pushing ? "Sending…" : allHeld ? "Nothing can be sent yet" : `Send ${selected.length} ${noun(selected.length)}`}
           </button>
         </div>
       </div>
@@ -363,6 +390,52 @@ const ReviewPushView: React.FC = () => {
     </div>
   );
 };
+
+const CampaignList: React.FC<{
+  rows: BatchRow[];
+  editable?: boolean;
+  blockedRows?: number[];
+  onChange?: (id: string, field: keyof BatchRow, value: string) => void;
+  onToggle?: (id: string) => void;
+}> = ({ rows, editable, blockedRows = [], onChange, onToggle }) => (
+  <div className="space-y-2">
+    {rows.map((r) => {
+      const isBlocked = blockedRows.includes(r.row);
+      return (
+        <div key={r.id} className={`rounded-lg border px-3 py-2.5 ${isBlocked ? "border-sw-red/30 bg-sw-red-dim/30" : "border-subtle bg-surface-2"}`}>
+          <div className="flex items-center gap-2 flex-wrap">
+            {editable && onToggle && (
+              <input type="checkbox" checked={r.selected !== false} disabled={isBlocked} onChange={() => onToggle(r.id)} className="accent-primary" />
+            )}
+            <span className="text-xs font-medium text-foreground truncate">{r.campaign_name || "Unnamed campaign"}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">{platformDisplay(r.platform)}</span>
+            <span className="ml-auto font-mono text-[10px] text-muted-foreground">
+              {r.budget_type === "daily" ? "Daily" : "Total"} {r.currency} {Number(r.budget_value || 0).toLocaleString()}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
+            <CampaignField label="Cities" value={r.cities} onChange={editable && onChange ? (v) => onChange(r.id, "cities", v) : undefined} />
+            <CampaignField label="Products" value={r.product_id} onChange={editable && onChange ? (v) => onChange(r.id, "product_id", v) : undefined} />
+            <CampaignField label="Keywords" value={r.targeting_details} onChange={editable && onChange ? (v) => onChange(r.id, "targeting_details", v) : undefined} />
+            <CampaignField label="End date" value={r.end_date} onChange={editable && onChange ? (v) => onChange(r.id, "end_date", v) : undefined} />
+          </div>
+        </div>
+      );
+    })}
+  </div>
+);
+
+const CampaignField: React.FC<{ label: string; value: string; onChange?: (v: string) => void }> = ({ label, value, onChange }) => (
+  <div className="flex gap-2 min-w-0 items-center">
+    <span className="text-[10px] text-muted-foreground w-20 flex-shrink-0">{label}</span>
+    {onChange ? (
+      <input value={value ?? ""} onChange={(e) => onChange(e.target.value)}
+        className="flex-1 min-w-0 bg-transparent border border-transparent hover:border-subtle focus:border-primary/50 rounded px-1.5 py-1 text-[11px] font-mono text-foreground outline-none" />
+    ) : (
+      <span className="flex-1 min-w-0 text-[11px] font-mono text-foreground truncate" title={value}>{value || "—"}</span>
+    )}
+  </div>
+);
 
 const Chip: React.FC<{ children: React.ReactNode; tone?: "ok" | "bad"; mono?: boolean }> = ({ children, tone, mono }) => (
   <span

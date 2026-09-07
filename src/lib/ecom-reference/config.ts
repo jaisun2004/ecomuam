@@ -174,14 +174,3 @@ export function asOfLabel(asOf: Date = CATALOGUE_AS_OF): string {
   return asOf.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
-export const OVERRIDE_REASONS = [
-  "Stock is arriving",
-  "Brand defence",
-  "Client asked for it",
-  "Testing",
-  "Data looks wrong",
-] as const;
-export type OverrideReason = (typeof OVERRIDE_REASONS)[number];
-
-export const OBJECTIVES = ["Awareness", "Consideration", "Conversion", "Defence"] as const;
-export const KPIS = ["ROAS", "ACoS", "Impressions", "Clicks", "Units sold", "Share of shelf"] as const;

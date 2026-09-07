@@ -11,6 +11,7 @@ interface Props {
 
 const EcomHeldList: React.FC<Props> = ({ onReopen }) => {
   const ec = useEcomCreate();
+  const noun = (n: number) => (ec.countsRows ? `row${n === 1 ? "" : "s"}` : `campaign${n === 1 ? "" : "s"}`);
 
   if (ec.held.length === 0) {
     return <p className="text-sm text-muted-foreground py-12 text-center">Nothing is parked right now.</p>;
@@ -24,7 +25,7 @@ const EcomHeldList: React.FC<Props> = ({ onReopen }) => {
           <div key={h.id} className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
             <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-mono text-muted-foreground">
-                {h.fileName} · {h.rows.length} rows · parked{" "}
+                {h.fileName} · {h.rows.length} {noun(h.rows.length)} · parked{" "}
                 {new Date(h.createdAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
               </span>
               {h.reopenedAt && <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">reopened before</span>}
@@ -49,7 +50,7 @@ const EcomHeldList: React.FC<Props> = ({ onReopen }) => {
                     <li key={g.rule_key} className="text-[11px]">
                       <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${g.severity === "blocker" ? "bg-sw-red" : "bg-sw-amber"}`} />
                       <span className="text-foreground">{g.plain}</span>
-                      <span className="text-muted-foreground font-mono ml-1">· rows {g.rows.join(", ")}</span>
+                      <span className="text-muted-foreground font-mono ml-1">· {ec.countsRows ? "rows" : "no."} {g.rows.join(", ")}</span>
                     </li>
                   ))}
                 </ul>
@@ -57,7 +58,7 @@ const EcomHeldList: React.FC<Props> = ({ onReopen }) => {
               {h.overrides.length > 0 && (
                 <p className="text-[10px] text-muted-foreground">{h.overrides.length} accepted warnings are kept with this batch.</p>
               )}
-              <EcomSheetTable rows={h.rows} result={h.result} title="Parked rows" />
+              <EcomSheetTable rows={h.rows} result={h.result} title={`Parked ${noun(h.rows.length)}`} />
             </div>
           </div>
         );
