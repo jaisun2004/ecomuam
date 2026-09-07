@@ -324,7 +324,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setRecos(null); setSkuPicker(false); setFixing(null); }}
+              onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setRecos(null); setSkuPicker(false); setFixing(null); setReviewing(false); setShowHeld(false); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
