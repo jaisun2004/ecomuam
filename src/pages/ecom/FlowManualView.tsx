@@ -314,6 +314,7 @@ const FlowManualView: React.FC = () => {
           )}
 
           {step === 4 && (
+            <>
             <Section title="Targeting">
               <Field label={cap?.match_types_used ? "Keywords — keyword:match_type:bid, separated by ;" : "Keywords — keyword:bid, separated by ;"}>
                 <textarea value={keywords} onChange={(e) => setKeywords(e.target.value)} rows={4}
