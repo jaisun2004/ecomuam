@@ -38,7 +38,7 @@ const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
     return (
       <div>
         <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
-          <span>Spend so far {e.symbol}{e.spend.toLocaleString("en-IN")}</span>
+          <span>Spent so far {e.symbol}{e.spend.toLocaleString("en-IN")}</span>
           <span>Plan for the month {e.symbol}{e.target.toLocaleString("en-IN")}</span>
         </div>
         <div className="h-3 rounded-full bg-surface-3 overflow-hidden flex">
@@ -46,24 +46,32 @@ const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
           <div className="h-full bg-sw-amber/30" style={{ width: `${Math.max(100 - e.deliveredPct, 0)}%` }} />
         </div>
         <p className="text-[10px] text-muted-foreground mt-1">
-          <span className="text-foreground font-medium">{e.deliveredPct}% delivered</span> · {100 - e.deliveredPct}% of the plan still unspent (shaded)
+          <span className="text-foreground font-medium">{e.deliveredPct}% delivered</span> · {100 - e.deliveredPct}% of the plan is still unspent
         </p>
+        <p className="text-[10px] text-muted-foreground mt-1 italic">{e.scope}</p>
       </div>
     );
   }
 
   if (e.type === "cities") {
     return (
-      <div className="flex flex-wrap gap-1">
-        {e.inStock.map((c) => (
-          <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-sw-green-dim text-sw-green">{c}</span>
-        ))}
-        {e.oos.map((c) => (
-          <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-muted-foreground line-through">{c}</span>
-        ))}
-        <span className="text-[10px] text-muted-foreground self-center ml-1">
-          green = in stock · struck through = out of stock
-        </span>
+      <div className="space-y-1.5">
+        {e.inStock.length > 0 && (
+          <div className="flex flex-wrap gap-1 items-center">
+            <span className="text-[10px] text-muted-foreground w-20">In stock</span>
+            {e.inStock.map((c) => (
+              <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-sw-green-dim text-sw-green">{c}</span>
+            ))}
+          </div>
+        )}
+        {e.oos.length > 0 && (
+          <div className="flex flex-wrap gap-1 items-center">
+            <span className="text-[10px] text-muted-foreground w-20">Out of stock</span>
+            {e.oos.map((c) => (
+              <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-muted-foreground">{c}</span>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -98,42 +106,29 @@ const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
     );
   }
 
-  const worse = e.acos > e.benchmark;
-  const scaleMax = Math.max(e.from, e.to) * 1.4;
+  const scaleMax = Math.max(e.floor, e.suggested) * 1.6;
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground w-8">Now</span>
-          <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
-            <div className="h-full bg-border-visible" style={{ width: `${(e.from / scaleMax) * 100}%` }} />
-          </div>
-          <span className="font-mono text-[10px] text-muted-foreground w-10 text-right">{e.symbol}{e.from}</span>
+    <div>
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] text-muted-foreground w-24">Platform floor</span>
+        <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
+          <div className="h-full bg-border-visible" style={{ width: `${(e.floor / scaleMax) * 100}%` }} />
         </div>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="text-[10px] text-muted-foreground w-8">New</span>
-          <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
-            <div className="h-full bg-primary" style={{ width: `${(e.to / scaleMax) * 100}%` }} />
-          </div>
-          <span className="font-mono text-[10px] text-foreground w-10 text-right">{e.symbol}{e.to}</span>
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-1">Bid {e.unit}</p>
+        <span className="font-mono text-[10px] text-muted-foreground w-12 text-right">{e.symbol}{e.floor}</span>
       </div>
-      <div>
-        <div className="relative h-3 rounded-full bg-surface-3">
-          <span className="absolute inset-y-0 w-px bg-foreground/40" style={{ left: `${(e.benchmark / 40) * 100}%` }} />
-          <span
-            className={`absolute -top-0.5 w-4 h-4 rounded-full border-2 border-surface-1 ${worse ? "bg-sw-red" : "bg-sw-green"}`}
-            style={{ left: `calc(${Math.min((e.acos / 40) * 100, 100)}% - 8px)` }}
-          />
+      <div className="flex items-center gap-2 mt-1">
+        <span className="text-[10px] text-muted-foreground w-24">Opening bid</span>
+        <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
+          <div className="h-full bg-primary" style={{ width: `${(e.suggested / scaleMax) * 100}%` }} />
         </div>
-        <p className="text-[10px] text-muted-foreground mt-1">
-          ACoS <span className={worse ? "text-sw-red" : "text-sw-green"}>{e.acos}%</span> · benchmark {e.benchmark}%
-        </p>
+        <span className="font-mono text-[10px] text-foreground w-12 text-right">{e.symbol}{e.suggested}</span>
       </div>
+      <p className="text-[10px] text-muted-foreground mt-1">Bid {e.unit}</p>
+      <p className="text-[10px] text-muted-foreground mt-1.5 italic">{e.note}</p>
     </div>
   );
 };
+
 
 const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle }) => {
   const [why, setWhy] = useState(false);
