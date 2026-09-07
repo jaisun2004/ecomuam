@@ -424,7 +424,7 @@ const FlowAiView: React.FC = () => {
               <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
                 <p className="text-xs font-medium text-foreground">Recommendations from Ecom Analytics</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  Each card shows what we measured, the exact campaign inputs it would create, and how confident we are. Nothing is created until you add it.
+                  Built from what we know today about each SKU — stock, rank, search demand and the platform's own rules. Nothing is created until you add it.
                 </p>
               </div>
               <div className="max-h-[440px] overflow-y-auto divide-y divide-subtle">
