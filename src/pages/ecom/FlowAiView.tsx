@@ -8,7 +8,7 @@ import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
-import { useEcomCreate } from "./EcomCreateContext";
+import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
 import type { BatchRow } from "@/lib/ecom-qc/types";

@@ -8,7 +8,7 @@ import { checkReadiness, summariseReadiness } from "@/lib/ecom-readiness";
 import EcomReadinessPill from "@/components/ecom/EcomReadinessPill";
 import EcomCityPicker from "@/components/ecom/EcomCityPicker";
 import type { BatchRow } from "@/lib/ecom-qc/types";
-import { useEcomCreate } from "./EcomCreateContext";
+import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const MAX_COPIES = 20;

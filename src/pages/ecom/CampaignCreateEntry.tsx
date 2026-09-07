@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { History, PenLine, Sparkles, X } from "lucide-react";
-import { useEcomCreate } from "./EcomCreateContext";
+import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 
 const CampaignCreateEntry: React.FC = () => {
   const navigate = useNavigate();

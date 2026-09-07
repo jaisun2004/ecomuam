@@ -6,7 +6,7 @@ import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import { recommendationsForSku } from "@/lib/ecom-qc/recommendations";
 import { PRODUCT_LIST } from "@/lib/ecom-reference/workbook-data";
-import { useEcomCreate, type PushOutcome } from "./EcomCreateContext";
+import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { BATCH_FIELDS, FIELD_LABELS, type BatchRow } from "@/lib/ecom-qc/types";
 import { findingsForRow, partitionRows } from "@/lib/ecom-qc/engine";
 import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "@/lib/ecom-qc/fix-proposals";

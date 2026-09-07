@@ -13,7 +13,7 @@ import {
 import { UNCONFIRMED_LINE, asOfLabel, bidUnitLabel, capabilityFor } from "@/lib/ecom-reference/config";
 import { summariseReadiness } from "@/lib/ecom-readiness";
 import type { BatchRow } from "@/lib/ecom-qc/types";
-import { EMPTY_MANUAL_DRAFT, useEcomCreate } from "./EcomCreateContext";
+import { EMPTY_MANUAL_DRAFT, useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 
 const STEPS = ["Platform", "Products", "Where", "Budget and timing", "Targeting", "Check"];
 
