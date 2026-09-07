@@ -66,7 +66,7 @@ export function dismissFor28Days(code: string): RecoDismissal {
 
 
 const KIND_LABEL: Record<RecoKind, string> = {
-  budget: "Budget",
+  price: "Price",
   city: "City",
   keywords: "Keywords",
   bids: "Bid changes",
