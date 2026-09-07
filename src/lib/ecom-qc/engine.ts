@@ -123,6 +123,16 @@ export function applySuggestion(row: BatchRow, finding: QcFinding): BatchRow {
       .filter(Boolean)
       .join(", ");
   } else if (finding.field === "targeting_details") {
+    const whole = finding.value.trim().toLowerCase();
+    if (current.split(";").some((seg) => seg.trim().toLowerCase() === whole)) {
+      // The finding names a whole "keyword:match:bid" segment — swap that segment.
+      next = current
+        .split(";")
+        .map((seg) => (seg.trim().toLowerCase() === whole ? finding.suggestion! : seg.trim()))
+        .filter(Boolean)
+        .join("; ");
+      return { ...row, targeting_details: next };
+    }
     next = current
       .split(";")
       .map((seg) => {

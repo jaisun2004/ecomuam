@@ -257,11 +257,17 @@ export const RULES: RuleDef[] = [
         const mt = s.matchType.toLowerCase();
         if (!mt) continue;
         if (p.matchTypes.length === 0) {
-          out.push(rowF(r, "targeting_details", `${p.display} does not accept match types; "${s.raw}" carries ${s.matchType}.`));
+          out.push(
+            f("targeting_details", s.raw, `${p.display} does not accept match types; "${s.raw}" carries ${s.matchType}.`, {
+              row: r.row,
+              suggestion: [s.keyword, s.bid].filter(Boolean).join(":"),
+            }),
+          );
         } else if (!p.matchTypes.includes(mt as never)) {
           out.push(
-            rowF(r, "targeting_details", `${p.display} does not support match type "${s.matchType}".`, {
-              suggestion: p.matchTypes[0],
+            f("targeting_details", s.raw, `${p.display} does not support match type "${s.matchType}".`, {
+              row: r.row,
+              suggestion: [s.keyword, p.matchTypes[0], s.bid].filter(Boolean).join(":"),
             }),
           );
         }
