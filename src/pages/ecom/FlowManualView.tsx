@@ -5,25 +5,26 @@ import EcomStepper from "@/components/ecom/EcomStepper";
 import EcomReadinessPill from "@/components/ecom/EcomReadinessPill";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomCityPicker from "@/components/ecom/EcomCityPicker";
+import EcomStockNotice from "@/components/ecom/EcomStockNotice";
 import { recommendationsForSku, type RecoStep } from "@/lib/ecom-qc/recommendations";
 import {
   PLATFORM_CAMPAIGN_TYPES, buildCampaignName, citiesFor, currencyFor, currencySymbol,
-  isInStock, limitsFor, platformDisplay, productsFor, walletBalance,
+  isInStock, limitsFor, platformDisplay, productName, productsFor, stockExclusionLine, walletBalance,
 } from "@/lib/ecom-reference/platforms";
 import { UNCONFIRMED_LINE, asOfLabel, bidUnitLabel, capabilityFor } from "@/lib/ecom-reference/config";
 import { summariseReadiness } from "@/lib/ecom-readiness";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { EMPTY_MANUAL_DRAFT, useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 
-const STEPS = ["Platform", "Products", "Where", "Budget and timing", "Targeting", "Check"];
+/** Four steps after the platform choice. The last one creates the campaign. */
+const STEPS = ["Products", "Where", "Targeting", "Budget and timing"];
 
 const PURPOSE = [
   "Pick where the campaign runs and what kind of campaign it is.",
   "Name the brand and choose the products.",
   "Choose the cities this campaign should run in.",
-  "Set how much it spends and for how long.",
   "Add the keywords and what you are willing to bid.",
-  "Everything you chose, in one place, before it goes to review.",
+  "Set how much it spends and for how long.",
 ];
 
 const FlowManualView: React.FC = () => {
@@ -60,6 +61,12 @@ const FlowManualView: React.FC = () => {
   const oosCities = useMemo(
     () => (d.skus.length ? cityNames.filter((c) => !d.skus.some((code) => isInStock(code, c))) : []),
     [d.skus, cityNames],
+  );
+
+  /** One plain sentence per city left out, in the wording used everywhere else. */
+  const oosLines = useMemo(
+    () => oosCities.map((c) => stockExclusionLine(productName(d.skus[0] ?? "", platform ?? undefined), c, d.skus[0] ?? "")),
+    [oosCities, d.skus, platform],
   );
 
   const recos = useMemo(
@@ -102,13 +109,11 @@ const FlowManualView: React.FC = () => {
   const hasDraft = !!(d.brand || d.skus.length || d.budgetValue || d.cities.length);
 
   const leaveFlow = () => {
-    if (hasDraft && !window.confirm("Leave this campaign? What you have filled in will be discarded.")) return;
     ec.setManualDraft(EMPTY_MANUAL_DRAFT);
     navigate("/ecom/campaigns/create");
   };
 
   const toAi = () => {
-    if (hasDraft && !window.confirm("Switch to AI guided? What you have filled in here will not be carried over.")) return;
     navigate("/ecom/campaigns/create/ai");
   };
 
@@ -136,8 +141,8 @@ const FlowManualView: React.FC = () => {
         <ManualHeader onBack={leaveFlow} onAi={toAi} />
         <div className="p-6 max-w-5xl mx-auto space-y-6">
           <div>
-            <EcomStepper steps={STEPS} current={0} onGo={setStep} />
-            <p className="text-xs text-muted-foreground mt-3">{PURPOSE[0]}</p>
+            <h2 className="font-display font-bold text-base text-foreground">Platform</h2>
+            <p className="text-xs text-muted-foreground mt-1">{PURPOSE[0]}</p>
           </div>
           {PLATFORM_CAMPAIGN_TYPES.map((p) => (
             <div key={p.platform}>
@@ -192,12 +197,11 @@ const FlowManualView: React.FC = () => {
       if (blockedSkus.length) return "Remove the products that cannot run.";
     }
     if (step === 2 && cap?.city_targeting && !d.cities.length) return "Pick at least one city.";
-    if (step === 3) {
+    if (step === 3 && !d.keywords.trim()) return "Add at least one keyword and bid.";
+    if (step === 4) {
       if (!d.budgetValue) return "Enter a budget.";
       if (d.budgetType === "total" && !d.endDate) return "A total budget needs an end date.";
     }
-    if (step === 4 && !d.keywords.trim()) return "Add at least one keyword and bid.";
-    if (step === 5 && blockedSkus.length) return "Remove the products that cannot run.";
     return null;
   })();
 
@@ -209,8 +213,8 @@ const FlowManualView: React.FC = () => {
 
       <div className="px-4 py-4 border-b border-subtle bg-surface-1">
         <div className="max-w-2xl mx-auto">
-          <EcomStepper steps={STEPS} current={step} onGo={setStep} />
-          <h2 className="font-display font-bold text-base text-foreground mt-3">{STEPS[step]}</h2>
+          <EcomStepper steps={STEPS} current={step - 1} onGo={(i) => setStep(i + 1)} />
+          <h2 className="font-display font-bold text-base text-foreground mt-3">{STEPS[step - 1]}</h2>
           <p className="text-xs text-muted-foreground mt-0.5">{PURPOSE[step]}</p>
         </div>
       </div>
@@ -304,6 +308,9 @@ const FlowManualView: React.FC = () => {
                 {cap?.city_targeting ? (
                   <>
                     <EcomCityPicker platform={platform} value={d.cities} onChange={(c) => set("cities", c)} outOfStock={oosCities} />
+                    <div className="mt-2">
+                      <EcomStockNotice lines={oosLines} />
+                    </div>
                     <p className="mt-2 text-[10px] text-muted-foreground">
                       Targeting is city-wide. Individual dark stores cannot be included or excluded, so a city with partial stock still runs everywhere in that city.
                     </p>
@@ -322,7 +329,7 @@ const FlowManualView: React.FC = () => {
             </>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <Section title="Budget and timing">
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Budget type">
@@ -351,7 +358,7 @@ const FlowManualView: React.FC = () => {
             </Section>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <>
               <Section title="Targeting">
                 <Field label={cap?.match_types_used ? "Keywords — keyword:match_type:bid, separated by ;" : "Keywords — keyword:bid, separated by ;"}>
@@ -415,7 +422,7 @@ const FlowManualView: React.FC = () => {
           <button onClick={back} className="px-4 py-2 rounded-lg text-xs font-medium border border-subtle bg-surface-2 text-foreground hover:bg-surface-3">
             Back
           </button>
-          {step < STEPS.length - 1 ? (
+          {step < STEPS.length ? (
             <button onClick={() => setStep(step + 1)} disabled={!!blockReason} title={blockReason ?? undefined}
               className="px-5 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed">
               Continue
@@ -423,7 +430,7 @@ const FlowManualView: React.FC = () => {
           ) : (
             <button onClick={create} disabled={!!blockReason} title={blockReason ?? undefined}
               className="px-5 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed">
-              Check and review
+              Create campaign
             </button>
           )}
         </div>
