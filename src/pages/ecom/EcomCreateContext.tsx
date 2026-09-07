@@ -130,7 +130,9 @@ interface EcomCreateState {
   reset: () => void;
 }
 
-const Ctx = createContext<EcomCreateState | null>(null);
+// Keep a single context instance even if this module gets re-evaluated (hot reload).
+const g = globalThis as unknown as { __ecomCreateCtx?: React.Context<EcomCreateState | null> };
+const Ctx = g.__ecomCreateCtx ?? (g.__ecomCreateCtx = createContext<EcomCreateState | null>(null));
 
 export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [rows, setRowsState] = useState<BatchRow[]>([]);
