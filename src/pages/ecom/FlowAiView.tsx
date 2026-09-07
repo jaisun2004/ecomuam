@@ -25,9 +25,11 @@ interface Msg {
 }
 
 const FIRST_MESSAGE =
-  "Upload your batch import sheet and I'll read every row against the checks in your workbook, or press Recommendation and I'll build campaigns for the SKUs you pick.";
+  "Upload your campaign sheet and I'll check every row, or press Recommendation and I'll build campaigns for the products you pick.";
 
 const MAX_MB = 10;
+
+const n = (count: number, word: string) => `${count} ${word}${count === 1 ? "" : "s"}`;
 
 const FlowAiView: React.FC = () => {
   const navigate = useNavigate();
@@ -69,9 +71,9 @@ const FlowAiView: React.FC = () => {
 
   const say = (text: string) => setMessages((m) => [...m, { role: "assistant", text }]);
 
-  const registerRun = (run: SheetRun, previous: SheetRun | null) => {
+  const registerRun = (run: SheetRun, previous: SheetRun | null, unit: "row" | "campaign" = "row") => {
     ec.addRun(run);
-    ec.setFileName(run.fileName);
+    ec.setFileName(unit === "row" ? run.fileName : null);
     ec.setSource("ai");
     ec.recheck(run.rows);
 
@@ -88,21 +90,22 @@ const FlowAiView: React.FC = () => {
 
     const prevBlocked = previous?.heldRows.length ?? null;
     const compare =
-      prevBlocked !== null ? ` Compared with the last version, held rows went from ${prevBlocked} to ${run.heldRows.length}.` : "";
+      prevBlocked !== null ? ` Compared with the last version, held ${unit}s went from ${prevBlocked} to ${run.heldRows.length}.` : "";
+    const fixHint = unit === "row" ? "" : "";
 
     if (run.state === "clean") {
-      say(`All ${run.rowsSeen} rows are clean — nothing to fix.${compare} Continue when you are ready and I'll take you to review.`);
+      say(`All ${n(run.rowsSeen, unit)} passed the checks — nothing to fix.${compare} Continue when you are ready and I'll take you to review.`);
     } else if (run.state === "warnings_only") {
       say(
-        `No rows are held. ${run.result?.warnings ?? 0} things are worth a look, but none of them stop the push.${compare} Say "fix" if you want me to propose changes anyway.`,
+        `Nothing is held. ${n(run.result?.warnings ?? 0, "thing")} worth a look, but none of them stop the push.${compare} Say "fix" if you want me to propose changes anyway.`,
       );
     } else if (run.state === "partial") {
       say(
-        `${run.cleanRows.length} rows are ready. ${run.heldRows.length} rows are held on rows ${run.heldRows.slice(0, 8).join(", ")}${run.heldRows.length > 8 ? "…" : ""}.${compare} You can continue with the ready ones, ask me to propose fixes, or park the held rows and come back.`,
+        `${n(run.cleanRows.length, unit)} ready, ${n(run.heldRows.length, unit)} held.${compare} You can continue with the ready ones, ask me to propose fixes, or park the held ones and come back.${fixHint}`,
       );
     } else {
       say(
-        `Every row is held.${compare} Say "fix" and I'll show you what I would change and where each value comes from — I won't apply anything on my own.`,
+        `Every ${unit} is held.${compare} Say "fix" and I'll show you what I would change and where each value comes from — I won't apply anything on my own.`,
       );
     }
   };
@@ -210,7 +213,7 @@ const FlowAiView: React.FC = () => {
     setMessages((m) => [
       ...m,
       { role: "user", text: "Recommendation" },
-      { role: "assistant", text: "Which SKUs should I look at? Search by product name, code or platform and pick as many as you like." },
+      { role: "assistant", text: "Which products should I look at? Search by name, code or platform and pick as many as you like." },
     ]);
   };
 
@@ -232,15 +235,37 @@ const FlowAiView: React.FC = () => {
   const acceptRecos = () => {
     const picked = (recos ?? []).filter((r) => chosenRecos.has(r.id));
     if (!picked.length) return;
+
+    // One campaign per product and platform: suggestions on the same product are merged.
+    const merged: BatchRow[] = [];
+    const byKey = new Map<string, BatchRow>();
+    picked.forEach((r) => {
+      const d = r.draft as BatchRow;
+      const key = `${d.platform}|${d.product_id}`;
+      const existing = byKey.get(key);
+      if (!existing) {
+        const copy = { ...d } as BatchRow;
+        byKey.set(key, copy);
+        merged.push(copy);
+        return;
+      }
+      const cities = new Set([...(existing.cities ?? "").split(";"), ...(d.cities ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
+      existing.cities = Array.from(cities).join(";");
+      const kw = new Set([...(existing.targeting_details ?? "").split(";"), ...(d.targeting_details ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
+      existing.targeting_details = Array.from(kw).join("; ");
+      existing.budget_value = Math.max(Number(existing.budget_value) || 0, Number(d.budget_value) || 0);
+    });
+
     const next = [
       ...ec.rows,
-      ...picked.map((r, i) => ({ ...r.draft, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1 } as BatchRow)),
+      ...merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1 } as BatchRow)),
     ];
     setRecos(null);
-    setMessages((m) => [...m, { role: "user", text: `Create ${picked.length} recommended campaign${picked.length > 1 ? "s" : ""}.` }]);
+    setMessages((m) => [...m, { role: "user", text: `Create ${n(merged.length, "recommended campaign")}.` }]);
     registerRun(
-      buildRun({ fileName: ec.fileName ?? "recommendations", sizeKb: latest?.sizeKb ?? 0, rows: next, label: "With recommendations", parentId: latest?.id }),
+      buildRun({ fileName: "Recommended campaigns", sizeKb: 0, rows: next, label: "Recommended campaigns", parentId: latest?.id }),
       latest,
+      ec.fileName ? "row" : "campaign",
     );
   };
 
@@ -271,7 +296,7 @@ const FlowAiView: React.FC = () => {
     say(
       ec.rows.length
         ? 'I can propose fixes ("fix"), park held rows ("park them"), download the sheet as it stands, or take the ready rows to review.'
-        : "Upload your batch sheet, take the template, or press Recommendation and I'll build rows from your SKUs.",
+        : "Upload your campaign sheet, take the template, or press Recommendation and I'll build campaigns from your products.",
     );
   };
 
@@ -292,7 +317,7 @@ const FlowAiView: React.FC = () => {
           </div>
           <h1 className="font-display font-bold text-2xl text-foreground">AI Campaign Creator</h1>
           <p className="text-sm text-muted-foreground mt-3 max-w-md leading-relaxed">
-            Upload a batch sheet or ask for recommendations by SKU. Every row is checked before anything is pushed, and nothing is created on your behalf.
+            Upload a campaign sheet or ask for recommendations by product. Everything is checked before anything is pushed, and nothing is created on your behalf.
           </p>
           <button onClick={() => setStarted(true)} className="mt-6 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90">
             Start Conversation
@@ -365,6 +390,7 @@ const FlowAiView: React.FC = () => {
               onHold={holdRemaining}
               onReupload={() => fileRef.current?.click()}
               onDownloadTemplate={downloadTemplate}
+              unit={ec.countsRows ? "row" : "campaign"}
             />
           ))}
 
@@ -386,7 +412,7 @@ const FlowAiView: React.FC = () => {
                   autoFocus
                   value={skuQuery}
                   onChange={(e) => setSkuQuery(e.target.value)}
-                  placeholder="Search SKU by name, code or platform…"
+                  placeholder="Search products by name, code or platform…"
                   className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground outline-none"
                 />
                 <button onClick={() => setSkuPicker(false)} className="text-muted-foreground hover:text-foreground" aria-label="Close">
@@ -411,7 +437,7 @@ const FlowAiView: React.FC = () => {
                     </button>
                   );
                 })}
-                {skuResults.length === 0 && <p className="px-4 py-4 text-xs text-muted-foreground">No SKUs match that search.</p>}
+                {skuResults.length === 0 && <p className="px-4 py-4 text-xs text-muted-foreground">No products match that search.</p>}
               </div>
               <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle bg-surface-2">
                 <span className="text-[11px] text-muted-foreground">{pickedSkus.length} selected</span>
@@ -507,7 +533,7 @@ const FlowAiView: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="Ask me to fix something, park held rows, or explain row 4…"
+              placeholder="Ask me to fix something, park what is held, or explain a check…"
               className="flex-1 bg-surface-2 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50"
             />
             <button onClick={send} className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90" aria-label="Send">

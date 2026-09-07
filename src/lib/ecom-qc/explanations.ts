@@ -96,7 +96,7 @@ export const RULE_EXPLANATIONS: Record<string, RuleExplanation> = {
   },
 
   "taxonomy.name_unique_in_upload": {
-    checked: "No two rows in this upload share the same campaign name.",
+    checked: "No two campaigns share the same name.",
     why: "Duplicate names collide on push and spend cannot be attributed to the right campaign.",
     fix: "Rename one of the duplicates, for example by adding the city or date.",
   },
@@ -137,7 +137,7 @@ export const RULE_EXPLANATIONS: Record<string, RuleExplanation> = {
     fix: "Add an end date in YYYY-MM-DD format.",
   },
   "budget.daily_without_end_date_runs_until_paused": {
-    checked: "Daily-budget rows with no end date will run until someone pauses them.",
+    checked: "A daily budget with no end date keeps running until someone pauses it.",
     why: "Usually intended, occasionally an oversight that keeps spending after the campaign period.",
     fix: "Add an end date if the campaign should stop on its own.",
   },
@@ -261,7 +261,7 @@ export const RULE_EXPLANATIONS: Record<string, RuleExplanation> = {
     fix: "Split the keywords across more than one campaign.",
   },
   "targeting.no_duplicate_row_combination": {
-    checked: "No two rows target the same platform, SKU set and keywords.",
+    checked: "No two campaigns target the same platform, product and keywords.",
     why: "Identical rows bid against each other, which raises your own cost per click.",
     fix: "Merge the duplicate rows, or differentiate them by city or keyword set.",
   },

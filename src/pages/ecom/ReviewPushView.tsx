@@ -36,7 +36,7 @@ const ReviewPushView: React.FC = () => {
   const countsRows = ec.countsRows;
   const noun = (n: number) => (countsRows ? `row${n === 1 ? "" : "s"}` : `campaign${n === 1 ? "" : "s"}`);
   const backTo =
-    ec.source === "copy" ? "/ecom/campaigns/create/history"
+    ec.source === "copy" ? "/ecom/campaigns/create/copy"
       : ec.source === "manual" ? "/ecom/campaigns/create/manual"
         : ec.source === "ai" ? "/ecom/campaigns/create/ai"
           : "/ecom/campaigns/create";
@@ -354,7 +354,7 @@ const ReviewPushView: React.FC = () => {
               <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
                 <span>
-                  I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                  I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
                 </span>
               </label>
             )}
