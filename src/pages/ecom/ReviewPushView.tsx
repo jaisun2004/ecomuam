@@ -44,6 +44,17 @@ const ReviewPushView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ec.rows, ec.result]);
 
+  /** The same recommendation cards the earlier steps showed, restated for the products in this plan. */
+  const planRecos = useMemo(() => {
+    const codes = [...new Set(selected.map((r) => r.product_id).filter(Boolean))];
+    return codes
+      .map((c) => PRODUCT_LIST.find((p) => p.code === c))
+      .filter((p): p is NonNullable<typeof p> => Boolean(p))
+      .flatMap((p) => recommendationsForSku(p))
+      .slice(0, 6);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ec.rows, ec.result]);
+
   if (ec.rows.length === 0) return null;
 
   const irreversible = byPlatform.filter((g) => g.cap.irreversible_fields.length > 0);
