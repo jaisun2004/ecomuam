@@ -84,7 +84,7 @@ const FlowManualView: React.FC = () => {
               reco={r}
               selected={false}
               onToggle={() => {
-                if (r.evidence.type === "cities") set("cities", r.evidence.inStock.slice(0, 4));
+                if (r.kind === "city") set("cities", (r.draft.cities || "").split(/[,;]/).map((c) => c.trim()).filter(Boolean).slice(0, 4));
                 if (r.kind === "keywords") set("keywords", r.draft.targeting_details);
                 ec.setManualDraft((p) => ({ ...p, dismissed: [...p.dismissed, r.id] }));
               }}
@@ -121,7 +121,7 @@ const FlowManualView: React.FC = () => {
       budget_value: d.budgetValue,
       cities: cap?.city_targeting ? d.cities.join(", ") : "marketplace",
       product_id: d.skus.join(", "),
-      targeting_details: d.keywords, currency: currency ?? "", selected: true,
+      targeting_details: d.keywords, currency: currency ?? "", selected: true, origin: "manual",
     };
     ec.setSource("manual");
     ec.setFileName(null);
