@@ -144,6 +144,8 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [manualDraft, setManualDraft] = useState<ManualDraft>(EMPTY_MANUAL_DRAFT);
   const [copySelection, setCopySelection] = useState<string[]>([]);
   const [chat, setChat] = useState<ChatState>(EMPTY_CHAT);
+  const [usedRecos, setUsedRecos] = useState<string[]>([]);
+
   const [outcomes, setOutcomes] = useState<PushOutcome[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
