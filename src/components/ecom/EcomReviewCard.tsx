@@ -76,7 +76,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
       onDone(
         [
           created ? `${created} campaigns are live.` : "",
-          exported ? `${exported} rows are waiting as files for the platform consoles — they are not live until you upload them.` : "",
+          exported ? `${exported} campaigns are created as files — upload each file in the platform console to set them live.` : "",
           failedRows ? `${failedRows} rows were rejected and nothing was created for them.` : "",
         ]
           .filter(Boolean)
@@ -94,7 +94,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
         <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2">
           {anyFailed ? <AlertTriangle size={14} className="text-sw-amber" /> : <CheckCircle2 size={14} className="text-sw-green" />}
           <p className="text-xs font-medium text-foreground">
-            {anyFailed ? "Partly done" : anyPushed ? "Done" : "Prepared as files, not live"}
+            {anyFailed ? "Partly done" : "Campaigns created"}
           </p>
         </div>
         <ul className="p-3 space-y-2">
