@@ -12,42 +12,33 @@ interface Props {
   onDismiss?: () => void;
 }
 
-/** One layout for every signal: a fact, an optional pair of bars, optional chips. */
+/** One fixed layout for every signal: three text lines, no charts. */
 const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
-  const { fact, bars, chips } = reco.evidence;
-  const scale = bars?.length ? Math.max(...bars.map((b) => b.value), 1) : 1;
+  const { label, left, right, takeaway, tags } = reco.evidence;
+  const shown = (tags ?? []).slice(0, 3);
+  const more = (tags?.length ?? 0) - shown.length;
 
   return (
-    <div className="space-y-2">
-      <p className="text-[11px] text-foreground">{fact}</p>
+    <div className="space-y-1.5">
+      <div className="flex items-baseline gap-2 flex-wrap">
+        <span className="text-[10px] uppercase tracking-wide text-muted-foreground w-14 flex-shrink-0">{label}</span>
+        <span className="font-mono text-[11px] text-foreground">{left}</span>
+        {right && <span className="font-mono text-[11px] text-foreground">· {right}</span>}
+        <span className="ml-auto text-[10px] text-muted-foreground">{takeaway}</span>
+      </div>
 
-      {bars && bars.length > 0 && (
-        <div className="space-y-1">
-          {bars.map((b, i) => (
-            <div key={b.label} className="flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground w-24 truncate" title={b.label}>{b.label}</span>
-              <div className="flex-1 h-2 rounded-full bg-surface-3 overflow-hidden">
-                <div
-                  className={`h-full ${i === 0 ? "bg-primary" : "bg-border-visible"}`}
-                  style={{ width: `${(b.value / scale) * 100}%` }}
-                />
-              </div>
-              <span className="font-mono text-[10px] text-foreground w-12 text-right">{b.display}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {chips && chips.length > 0 && (
+      {shown.length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {chips.map((c) => (
-            <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-muted-foreground">{c}</span>
+          {shown.map((t) => (
+            <span key={t} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-muted-foreground">{t}</span>
           ))}
+          {more > 0 && <span className="text-[10px] text-muted-foreground">and {more} more</span>}
         </div>
       )}
     </div>
   );
 };
+
 
 const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle, readOnly, onDismiss }) => (
   <div className={`px-4 py-3 ${selected && !readOnly ? "bg-primary/5" : ""}`}>
