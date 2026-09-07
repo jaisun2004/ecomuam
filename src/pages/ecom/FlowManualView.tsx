@@ -64,6 +64,41 @@ const FlowManualView: React.FC = () => {
     set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
   const chosenSummaries = summaries.filter((s) => skus.includes(s.product.code));
+
+  /** Recommendations for the products chosen, shown on the step they belong to. */
+  const [dismissed, setDismissed] = useState<string[]>([]);
+  const recos = useMemo(
+    () => chosenSummaries.flatMap((s) => recommendationsForSku(s.product)).filter((r) => !dismissed.includes(r.code)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [skus.join(","), dismissed.join(",")],
+  );
+  const recosForStep = (s: RecoStep) => recos.filter((r) => r.step === s);
+  const RecoPanel: React.FC<{ forStep: RecoStep }> = ({ forStep }) => {
+    const list = recosForStep(forStep);
+    if (!list.length) return null;
+    return (
+      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-subtle flex items-center justify-between">
+          <p className="text-xs font-medium text-foreground">
+            {list.length} recommendation{list.length > 1 ? "s" : ""} on this step
+          </p>
+          <p className="text-[10px] text-muted-foreground">Data as of {asOfLabel()}</p>
+        </div>
+        <div className="divide-y divide-subtle">
+          {list.map((r) => (
+            <EcomRecoCard
+              key={r.id}
+              reco={r}
+              selected
+              onToggle={() => setDismissed((p) => [...p, r.code])}
+              onDismiss={() => setDismissed((p) => [...p, r.code])}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const warnedSkus = chosenSummaries.filter((s) => s.state === "warning" || s.state === "unknown");
   const blockedSkus = chosenSummaries.filter((s) => s.state === "not_ready");
   const needsOverride = warnedSkus.filter((s) => !overrides[s.product.code]);
