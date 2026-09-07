@@ -459,8 +459,39 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
+          {/* Held batches stay in the conversation */}
+          {showHeld && (
+            <div className="rounded-xl border border-sw-amber/30 bg-surface-1 overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2">
+                <p className="text-xs font-medium text-foreground">Held batches</p>
+                <span className="text-[10px] text-muted-foreground">Reopening re-checks them against today's data.</span>
+                <button onClick={() => setShowHeld(false)} className="ml-auto text-muted-foreground hover:text-foreground" aria-label="Close">
+                  <X size={13} />
+                </button>
+              </div>
+              <div className="p-3">
+                <EcomHeldList
+                  onReopen={() => {
+                    setShowHeld(false);
+                    setReviewing(true);
+                    say("Reopened those rows and checked them again. Here is the plan as it stands.");
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Review is a card in the conversation, not another screen */}
+          {reviewing && (
+            <EcomReviewCard
+              onBackToCheck={() => { setReviewing(false); say("Back to the check. Ask me to fix anything and we can come back to review."); }}
+              onFixWithAi={() => { setReviewing(false); openFixes(); }}
+              onDone={(summary) => say(summary)}
+            />
+          )}
 
           <div ref={bottomRef} />
+
         </div>
       </div>
 
