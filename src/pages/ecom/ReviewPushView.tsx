@@ -372,7 +372,7 @@ const ReviewPushView: React.FC = () => {
             disabled={!canPush || pushing}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
           >
-            <Rocket size={13} /> {pushing ? "Sending…" : allHeld ? "Nothing can be sent yet" : `Send ${selected.length} ${noun(selected.length)}`}
+            <Rocket size={13} /> {pushing ? "Sending…" : allHeld ? "Nothing can be sent yet" : `Create ${selected.length} ${noun(selected.length)}`}
           </button>
         </div>
       </div>
