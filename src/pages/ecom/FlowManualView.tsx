@@ -1,18 +1,19 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, PenLine, Sparkles } from "lucide-react";
+import { ArrowLeft, PenLine, Search, Sparkles, X } from "lucide-react";
 import EcomStepper from "@/components/ecom/EcomStepper";
 import EcomReadinessPill from "@/components/ecom/EcomReadinessPill";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
+import EcomCityPicker from "@/components/ecom/EcomCityPicker";
 import { recommendationsForSku, type RecoStep } from "@/lib/ecom-qc/recommendations";
 import {
   PLATFORM_CAMPAIGN_TYPES, buildCampaignName, citiesFor, currencyFor, currencySymbol,
-  limitsFor, platformDisplay, productsFor, walletBalance,
+  isInStock, limitsFor, platformDisplay, productsFor, walletBalance,
 } from "@/lib/ecom-reference/platforms";
-import { OBJECTIVES, KPIS, OVERRIDE_REASONS, UNCONFIRMED_LINE, asOfLabel, bidUnitLabel, capabilityFor } from "@/lib/ecom-reference/config";
+import { UNCONFIRMED_LINE, asOfLabel, bidUnitLabel, capabilityFor } from "@/lib/ecom-reference/config";
 import { summariseReadiness } from "@/lib/ecom-readiness";
 import type { BatchRow } from "@/lib/ecom-qc/types";
-import { useEcomCreate } from "./EcomCreateContext";
+import { EMPTY_MANUAL_DRAFT, useEcomCreate } from "./EcomCreateContext";
 
 const STEPS = ["Platform", "Products", "Where", "Budget and timing", "Targeting", "Check"];
 
@@ -28,21 +29,13 @@ const PURPOSE = [
 const FlowManualView: React.FC = () => {
   const navigate = useNavigate();
   const ec = useEcomCreate();
-  const [step, setStep] = useState(0);
-  const [platform, setPlatform] = useState<string | null>(null);
-  const [typeId, setTypeId] = useState<string | null>(null);
+  const d = ec.manualDraft;
+  const set = <K extends keyof typeof d>(k: K, v: (typeof d)[K]) => ec.setManualDraft((p) => ({ ...p, [k]: v }));
+  const [productQuery, setProductQuery] = useState("");
 
-  const [brand, setBrand] = useState("");
-  const [subCategory, setSubCategory] = useState("Biscuits");
-  const [objective, setObjective] = useState<string>(OBJECTIVES[2]);
-  const [kpi, setKpi] = useState<string>(KPIS[0]);
-  const [budgetType, setBudgetType] = useState("daily");
-  const [budgetValue, setBudgetValue] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [cities, setCities] = useState<string[]>([]);
-  const [skus, setSkus] = useState<string[]>([]);
-  const [keywords, setKeywords] = useState("");
-  const [overrides, setOverrides] = useState<Record<string, string>>({});
+  const step = d.step;
+  const setStep = (n: number) => ec.setManualDraft((p) => ({ ...p, step: n }));
+  const platform = d.platform;
 
   const cap = platform ? capabilityFor(platform) : null;
   const limits = platform ? limitsFor(platform) : null;
@@ -51,37 +44,37 @@ const FlowManualView: React.FC = () => {
   const cityNames = useMemo(() => (platform ? citiesFor(platform).map((c) => c.platformCity) : []), [platform]);
 
   const summaries = useMemo(
-    () => (platform ? productsFor(platform).slice(0, 30).map((p) => summariseReadiness(p, cityNames, brand || "Britannia")) : []),
-    [platform, cityNames, brand],
+    () => (platform ? productsFor(platform).slice(0, 30).map((p) => summariseReadiness(p, cityNames, d.brand || "Britannia")) : []),
+    [platform, cityNames, d.brand],
   );
 
-  const namePreview = useMemo(
-    () => (platform && brand ? buildCampaignName({ brand, platform, target: cities[0] ?? "pan_india", action: typeId ?? "campaign" }) : ""),
-    [platform, brand, cities, typeId],
+  const autoName = useMemo(
+    () => (platform && d.brand ? buildCampaignName({ brand: d.brand, platform, target: d.cities[0] ?? "pan_india", action: d.typeId ?? "campaign" }) : ""),
+    [platform, d.brand, d.cities, d.typeId],
+  );
+  const campaignName = d.nameEdited && d.campaignName ? d.campaignName : autoName;
+
+  const chosenSummaries = summaries.filter((s) => d.skus.includes(s.product.code));
+
+  /** Cities where no chosen product is in stock — tagged in the picker, never blocked. */
+  const oosCities = useMemo(
+    () => (d.skus.length ? cityNames.filter((c) => !d.skus.some((code) => isInStock(code, c))) : []),
+    [d.skus, cityNames],
   );
 
-  const toggleIn = (list: string[], v: string, set: (x: string[]) => void) =>
-    set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
-
-  const chosenSummaries = summaries.filter((s) => skus.includes(s.product.code));
-
-  /** Recommendations for the products chosen, shown on the step they belong to. */
-  const [dismissed, setDismissed] = useState<string[]>([]);
   const recos = useMemo(
-    () => chosenSummaries.flatMap((s) => recommendationsForSku(s.product)).filter((r) => !dismissed.includes(r.code)),
+    () => chosenSummaries.flatMap((s) => recommendationsForSku(s.product)).filter((r) => !d.dismissed.includes(r.id)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [skus.join(","), dismissed.join(",")],
+    [d.skus.join(","), d.dismissed.join(",")],
   );
-  const recosForStep = (s: RecoStep) => recos.filter((r) => r.step === s);
+
   const RecoPanel: React.FC<{ forStep: RecoStep }> = ({ forStep }) => {
-    const list = recosForStep(forStep);
+    const list = recos.filter((r) => r.step === forStep);
     if (!list.length) return null;
     return (
       <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
         <div className="px-4 py-2.5 border-b border-subtle flex items-center justify-between">
-          <p className="text-xs font-medium text-foreground">
-            {list.length} recommendation{list.length > 1 ? "s" : ""} on this step
-          </p>
+          <p className="text-xs font-medium text-foreground">{list.length} suggestion{list.length > 1 ? "s" : ""}</p>
           <p className="text-[10px] text-muted-foreground">Data as of {asOfLabel()}</p>
         </div>
         <div className="divide-y divide-subtle">
@@ -89,9 +82,13 @@ const FlowManualView: React.FC = () => {
             <EcomRecoCard
               key={r.id}
               reco={r}
-              selected
-              onToggle={() => setDismissed((p) => [...p, r.code])}
-              onDismiss={() => setDismissed((p) => [...p, r.code])}
+              selected={false}
+              onToggle={() => {
+                if (r.evidence.type === "cities") set("cities", r.evidence.inStock.slice(0, 4));
+                if (r.kind === "keywords") set("keywords", r.draft.targeting_details);
+                ec.setManualDraft((p) => ({ ...p, dismissed: [...p.dismissed, r.id] }));
+              }}
+              onDismiss={() => ec.setManualDraft((p) => ({ ...p, dismissed: [...p.dismissed, r.id] }))}
             />
           ))}
         </div>
@@ -99,28 +96,32 @@ const FlowManualView: React.FC = () => {
     );
   };
 
-  const warnedSkus = chosenSummaries.filter((s) => s.state === "warning" || s.state === "unknown");
   const blockedSkus = chosenSummaries.filter((s) => s.state === "not_ready");
-  const needsOverride = warnedSkus.filter((s) => !overrides[s.product.code]);
+  const warnedSkus = chosenSummaries.filter((s) => s.state === "warning" || s.state === "unknown");
+
+  const hasDraft = !!(d.brand || d.skus.length || d.budgetValue || d.cities.length);
+
+  const leaveFlow = () => {
+    if (hasDraft && !window.confirm("Leave this campaign? What you have filled in will be discarded.")) return;
+    ec.setManualDraft(EMPTY_MANUAL_DRAFT);
+    navigate("/ecom/campaigns/create");
+  };
 
   const toAi = () => {
-    if ((brand || skus.length || budgetValue) && !window.confirm("Switch to AI guided? What you have filled in here will not be carried over.")) return;
+    if (hasDraft && !window.confirm("Switch to AI guided? What you have filled in here will not be carried over.")) return;
     navigate("/ecom/campaigns/create/ai");
   };
 
   const create = () => {
     if (!platform) return;
-    for (const s of warnedSkus) {
-      if (overrides[s.product.code]) ec.addOverride(1, `${s.product.code} readiness`, overrides[s.product.code]);
-    }
     const row: BatchRow = {
       id: `manual-${Date.now()}`, row: 1,
-      sub_category: subCategory, brand_name: brand, platform,
-      campaign_name: namePreview, end_date: endDate, budget_type: budgetType,
-      budget_value: budgetValue,
-      cities: cap?.city_targeting ? cities.join(", ") : "marketplace",
-      product_id: skus.join(", "),
-      targeting_details: keywords, currency: currency ?? "", selected: true,
+      sub_category: d.subCategory, brand_name: d.brand, platform,
+      campaign_name: campaignName, end_date: d.endDate, budget_type: d.budgetType,
+      budget_value: d.budgetValue,
+      cities: cap?.city_targeting ? d.cities.join(", ") : "marketplace",
+      product_id: d.skus.join(", "),
+      targeting_details: d.keywords, currency: currency ?? "", selected: true,
     };
     ec.setSource("manual");
     ec.setFileName(null);
@@ -129,13 +130,13 @@ const FlowManualView: React.FC = () => {
   };
 
   /* ── Step 0: platform and campaign type ── */
-  if (!platform) {
+  if (step === 0 || !platform) {
     return (
       <div className="min-h-screen bg-background">
-        <ManualHeader onBack={() => navigate("/ecom/campaigns/create")} onAi={toAi} />
+        <ManualHeader onBack={leaveFlow} onAi={toAi} />
         <div className="p-6 max-w-5xl mx-auto space-y-6">
           <div>
-            <EcomStepper steps={STEPS} current={0} />
+            <EcomStepper steps={STEPS} current={0} onGo={setStep} />
             <p className="text-xs text-muted-foreground mt-3">{PURPOSE[0]}</p>
           </div>
           {PLATFORM_CAMPAIGN_TYPES.map((p) => (
@@ -144,17 +145,32 @@ const FlowManualView: React.FC = () => {
                 <h2 className="font-display font-bold text-sm text-foreground">{platformDisplay(p.platform)}</h2>
                 <span className="text-[10px] text-muted-foreground">{p.geo === "IN" ? "India · INR" : "UAE · AED"}</span>
                 {!capabilityFor(p.platform).can_push_api && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">File upload — campaigns go live on upload</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Campaigns go live once the file is uploaded in the console</span>
                 )}
               </div>
               <div className="grid grid-cols-3 gap-3">
-                {p.types.map((t) => (
-                  <button key={t.id} onClick={() => { setPlatform(p.platform); setTypeId(t.id); setStep(1); setCities([]); setSkus([]); }}
-                    className="text-left p-4 rounded-xl border border-subtle bg-surface-2 hover:border-primary/40 hover:bg-surface-3 transition-all">
-                    <p className="font-medium text-sm text-foreground">{t.title}</p>
-                    <p className="text-[11px] text-muted-foreground mt-1">{t.description}</p>
-                  </button>
-                ))}
+                {p.types.map((t) => {
+                  const on = platform === p.platform && d.typeId === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() =>
+                        ec.setManualDraft((prev) => ({
+                          ...prev,
+                          platform: p.platform,
+                          typeId: t.id,
+                          step: 1,
+                          cities: prev.platform === p.platform ? prev.cities : [],
+                          skus: prev.platform === p.platform ? prev.skus : [],
+                        }))
+                      }
+                      className={`text-left p-4 rounded-xl border transition-all ${on ? "border-primary bg-primary/10" : "border-subtle bg-surface-2 hover:border-primary/40 hover:bg-surface-3"}`}
+                    >
+                      <p className="font-medium text-sm text-foreground">{t.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">{t.description}</p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -163,33 +179,36 @@ const FlowManualView: React.FC = () => {
     );
   }
 
-  const wallet = walletBalance(brand || "brand", platform);
-  const after = wallet - (Number(budgetValue) || 0);
-  const typeTitle = PLATFORM_CAMPAIGN_TYPES.find((p) => p.platform === platform)?.types.find((t) => t.id === typeId)?.title ?? "";
+  const wallet = walletBalance(d.brand || "brand", platform);
+  const after = wallet - (Number(d.budgetValue) || 0);
+  const typeTitle = PLATFORM_CAMPAIGN_TYPES.find((p) => p.platform === platform)?.types.find((t) => t.id === d.typeId)?.title ?? "";
+
+  const productResults = summaries.filter(
+    (s) => !productQuery || s.product.name.toLowerCase().includes(productQuery.toLowerCase()) || s.product.code.includes(productQuery),
+  );
 
   /* what blocks Continue on the current step */
   const blockReason = (() => {
     if (step === 1) {
-      if (!brand.trim()) return "Enter the brand name.";
-      if (!skus.length) return "Pick at least one product.";
+      if (!d.brand.trim()) return "Enter the brand name.";
+      if (!d.skus.length) return "Pick at least one product.";
       if (blockedSkus.length) return "Remove the products that cannot run.";
     }
-    if (step === 2 && cap?.city_targeting && !cities.length) return "Pick at least one city.";
+    if (step === 2 && cap?.city_targeting && !d.cities.length) return "Pick at least one city.";
     if (step === 3) {
-      if (!budgetValue) return "Enter a budget.";
-      if (budgetType === "total" && !endDate) return "A total budget needs an end date.";
+      if (!d.budgetValue) return "Enter a budget.";
+      if (d.budgetType === "total" && !d.endDate) return "A total budget needs an end date.";
     }
-    if (step === 4 && !keywords.trim()) return "Add at least one keyword and bid.";
-    if (step === 5) {
-      if (blockedSkus.length) return "Remove the products that cannot run.";
-      if (needsOverride.length) return "Give a reason for each product with a warning.";
-    }
+    if (step === 4 && !d.keywords.trim()) return "Add at least one keyword and bid.";
+    if (step === 5 && blockedSkus.length) return "Remove the products that cannot run.";
     return null;
   })();
 
+  const back = () => setStep(step - 1);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <ManualHeader onBack={() => (step > 1 ? setStep(step - 1) : setPlatform(null))} onAi={toAi} />
+      <ManualHeader onBack={back} onAi={toAi} />
 
       <div className="px-4 py-4 border-b border-subtle bg-surface-1">
         <div className="max-w-2xl mx-auto">
@@ -206,37 +225,58 @@ const FlowManualView: React.FC = () => {
               <Section title="Basics">
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Brand name">
-                    <input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="e.g. Britannia" className={inputCls} />
+                    <input value={d.brand} onChange={(e) => set("brand", e.target.value)} placeholder="e.g. Britannia" className={inputCls} />
                   </Field>
                   <Field label="Sub-category">
-                    <input value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className={inputCls} />
-                  </Field>
-                  <Field label="Objective">
-                    <select value={objective} onChange={(e) => setObjective(e.target.value)} className={inputCls}>
-                      {OBJECTIVES.map((o) => <option key={o}>{o}</option>)}
-                    </select>
-                  </Field>
-                  <Field label="Primary measure">
-                    <select value={kpi} onChange={(e) => setKpi(e.target.value)} className={inputCls}>
-                      {KPIS.map((k) => <option key={k}>{k}</option>)}
-                    </select>
+                    <input value={d.subCategory} onChange={(e) => set("subCategory", e.target.value)} className={inputCls} />
                   </Field>
                 </div>
-                {namePreview && (
-                  <p className="mt-2 text-[11px] font-mono text-muted-foreground">
-                    Campaign name: <span className="text-primary">{namePreview}</span> ({namePreview.length} characters)
-                  </p>
-                )}
+                <div className="mt-3">
+                  <Field label="Campaign name">
+                    <input
+                      value={campaignName}
+                      onChange={(e) => ec.setManualDraft((p) => ({ ...p, campaignName: e.target.value, nameEdited: true }))}
+                      placeholder="Filled in for you once you name the brand"
+                      className={`${inputCls} font-mono text-[12px]`}
+                    />
+                  </Field>
+                  {d.nameEdited && (
+                    <button onClick={() => ec.setManualDraft((p) => ({ ...p, nameEdited: false, campaignName: "" }))}
+                      className="mt-1 text-[10px] text-primary hover:underline">
+                      Use the standard name again
+                    </button>
+                  )}
+                </div>
               </Section>
 
               <Section title="Products">
-                <div className="space-y-1.5 max-h-[340px] overflow-y-auto pr-1">
-                  {summaries.map((s) => {
-                    const on = skus.includes(s.product.code);
+                <div className="relative mb-2">
+                  <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input value={productQuery} onChange={(e) => setProductQuery(e.target.value)} placeholder="Search products by name or code…"
+                    className={`${inputCls} pl-8`} />
+                </div>
+                {d.skus.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {d.skus.map((code) => (
+                      <span key={code} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] bg-primary/10 text-primary border border-primary/30">
+                        {summaries.find((s) => s.product.code === code)?.product.name ?? code}
+                        <button onClick={() => set("skus", d.skus.filter((x) => x !== code))} aria-label={`Remove ${code}`}>
+                          <X size={10} />
+                        </button>
+                      </span>
+                    ))}
+                    <button onClick={() => set("skus", [])} className="text-[10px] text-muted-foreground hover:text-foreground underline">Clear all</button>
+                  </div>
+                )}
+                <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
+                  {productResults.map((s) => {
+                    const on = d.skus.includes(s.product.code);
                     const unusable = s.state === "not_ready";
                     return (
                       <div key={s.product.code} className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border ${on ? "border-primary bg-primary/10" : "border-subtle bg-surface-2"}`}>
-                        <input type="checkbox" checked={on} disabled={unusable} onChange={() => toggleIn(skus, s.product.code, setSkus)} className="accent-primary" />
+                        <input type="checkbox" checked={on} disabled={unusable}
+                          onChange={() => set("skus", on ? d.skus.filter((x) => x !== s.product.code) : [...d.skus, s.product.code])}
+                          className="accent-primary" />
                         <span className={`flex-1 min-w-0 text-xs truncate ${unusable ? "text-muted-foreground line-through" : "text-foreground"}`}>{s.product.name}</span>
                         <span className="font-mono text-[10px] text-muted-foreground">{s.product.code}</span>
                         <EcomReadinessPill summary={s} />
@@ -245,6 +285,9 @@ const FlowManualView: React.FC = () => {
                   })}
                   {summaries.length === 0 && (
                     <p className="text-[11px] text-sw-amber">No product list for this platform, so readiness could not be checked. Nothing here is shown as ready.</p>
+                  )}
+                  {summaries.length > 0 && productResults.length === 0 && (
+                    <p className="text-[11px] text-muted-foreground">No product matches that search.</p>
                   )}
                 </div>
                 {limits?.sku_cap == null && (
@@ -258,56 +301,49 @@ const FlowManualView: React.FC = () => {
             </>
           )}
 
-
           {step === 2 && (
             <>
-            <Section title="Where it runs">
-              {cap?.city_targeting ? (
-                <>
-                  <div className="flex flex-wrap gap-2">
-                    {citiesFor(platform).map((c) => (
-                      <button key={c.platformCity} onClick={() => toggleIn(cities, c.platformCity, setCities)}
-                        className={`px-2.5 py-1.5 rounded-lg text-[11px] border ${cities.includes(c.platformCity) ? "border-primary bg-primary/15 text-primary" : "border-subtle bg-surface-2 text-foreground hover:border-primary/30"}`}>
-                        {c.platformCity}
-                        <span className="block text-[9px] text-muted-foreground">{c.geoCity}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <p className="mt-2 text-[10px] text-muted-foreground">
-                    Targeting is city-wide. Individual dark stores cannot be included or excluded, so a city with partial stock still runs everywhere in that city.
+              <Section title="Where it runs">
+                {cap?.city_targeting ? (
+                  <>
+                    <EcomCityPicker platform={platform} value={d.cities} onChange={(c) => set("cities", c)} outOfStock={oosCities} />
+                    <p className="mt-2 text-[10px] text-muted-foreground">
+                      Targeting is city-wide. Individual dark stores cannot be included or excluded, so a city with partial stock still runs everywhere in that city.
+                    </p>
+                  </>
+                ) : cap?.store_code_targeting ? (
+                  <p className="text-[11px] text-muted-foreground">
+                    {platformDisplay(platform)} targets store codes, not cities. The store list comes from the platform console.
                   </p>
-                </>
-              ) : (
-                <p className="text-[11px] text-muted-foreground">
-                  {platformDisplay(platform)} targets the whole marketplace. There is no city control here, so nothing to choose.
-                </p>
-              )}
-            </Section>
-            <RecoPanel forStep="cities" />
+                ) : (
+                  <p className="text-[11px] text-muted-foreground">
+                    {platformDisplay(platform)} targets the whole marketplace. There is no city control here, so nothing to choose.
+                  </p>
+                )}
+              </Section>
+              <RecoPanel forStep="cities" />
             </>
           )}
-
-
 
           {step === 3 && (
             <Section title="Budget and timing">
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Budget type">
-                  <select value={budgetType} onChange={(e) => setBudgetType(e.target.value)} className={inputCls}>
+                  <select value={d.budgetType} onChange={(e) => set("budgetType", e.target.value)} className={inputCls}>
                     {(cap?.budget_types ?? ["daily", "total"]).map((b) => (
                       <option key={b} value={b}>{b === "daily" ? "Daily" : "Total"}</option>
                     ))}
                   </select>
                 </Field>
                 <Field label={`Budget (${currency})`}>
-                  <input value={budgetValue} onChange={(e) => setBudgetValue(e.target.value.replace(/[^0-9]/g, ""))} className={inputCls} />
+                  <input value={d.budgetValue} onChange={(e) => set("budgetValue", e.target.value.replace(/[^0-9]/g, ""))} className={inputCls} />
                 </Field>
-                <Field label={budgetType === "total" ? "End date (required for a total budget)" : "End date (optional)"}>
-                  <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputCls} />
+                <Field label={d.budgetType === "total" ? "End date (required for a total budget)" : "End date (optional)"}>
+                  <input type="date" value={d.endDate} onChange={(e) => set("endDate", e.target.value)} className={inputCls} />
                 </Field>
               </div>
               <p className="mt-2 text-[11px] font-mono text-muted-foreground">
-                Wallet {symbol}{wallet.toLocaleString()} → after this campaign {" "}
+                Wallet {symbol}{wallet.toLocaleString()} → after this campaign{" "}
                 <span className={after < 0 ? "text-sw-red" : "text-sw-green"}>{symbol}{after.toLocaleString()}</span>
               </p>
               {cap?.irreversible_fields.includes("budget_value") && (
@@ -320,74 +356,54 @@ const FlowManualView: React.FC = () => {
 
           {step === 4 && (
             <>
-            <Section title="Targeting">
-              <Field label={cap?.match_types_used ? "Keywords — keyword:match_type:bid, separated by ;" : "Keywords — keyword:bid, separated by ;"}>
-                <textarea value={keywords} onChange={(e) => setKeywords(e.target.value)} rows={4}
-                  placeholder={cap?.match_types_used ? "digestive biscuits:exact:12; marie biscuit:phrase:9" : "digestive biscuits:12; marie biscuit:9"}
-                  className={`${inputCls} font-mono`} />
-              </Field>
-              <p className="mt-1.5 text-[10px] text-muted-foreground">
-                {bidUnitLabel(platform, symbol)}.{" "}
-                {cap?.pays_full_bid
-                  ? "On this platform the winner pays their full bid, so raising a bid raises what you actually pay."
-                  : "You pay one increment above the next bid, not your full bid."}{" "}
-                {cap?.match_types_used ? "Match types: exact, phrase, broad." : `${platformDisplay(platform)} does not use match types.`}
-              </p>
-            </Section>
-            <RecoPanel forStep="targeting" />
+              <Section title="Targeting">
+                <Field label={cap?.match_types_used ? "Keywords — keyword:match_type:bid, separated by ;" : "Keywords — keyword:bid, separated by ;"}>
+                  <textarea value={d.keywords} onChange={(e) => set("keywords", e.target.value)} rows={4}
+                    placeholder={cap?.match_types_used ? "digestive biscuits:exact:12; marie biscuit:phrase:9" : "digestive biscuits:12; marie biscuit:9"}
+                    className={`${inputCls} font-mono`} />
+                </Field>
+                <p className="mt-1.5 text-[10px] text-muted-foreground">
+                  {bidUnitLabel(platform, symbol)}.{" "}
+                  {cap?.pays_full_bid
+                    ? "On this platform the winner pays their full bid, so raising a bid raises what you actually pay."
+                    : "You pay one increment above the next bid, not your full bid."}{" "}
+                  {cap?.match_types_used ? "Match types: exact, phrase, broad." : `${platformDisplay(platform)} does not use match types.`}
+                </p>
+              </Section>
+              <RecoPanel forStep="targeting" />
             </>
           )}
 
           {step === 5 && (
-            <>
-              <Section title="What you chose">
-                <div className="divide-y divide-subtle">
-                  <SummaryRow label="Platform" value={`${platformDisplay(platform)} · ${typeTitle}`} onEdit={() => setPlatform(null)} />
-                  <SummaryRow label="Brand" value={`${brand || "—"} · ${subCategory}`} onEdit={() => setStep(1)} />
-                  <SummaryRow label="Campaign name" value={namePreview || "—"} mono onEdit={() => setStep(1)} />
-                  <SummaryRow label="Products" value={skus.length ? skus.join(", ") : "—"} mono onEdit={() => setStep(1)} />
-                  <SummaryRow
-                    label="Where"
-                    value={cap?.city_targeting ? (cities.length ? cities.join(", ") : "—") : "Whole marketplace"}
-                    onEdit={() => setStep(2)}
-                  />
-                  <SummaryRow
-                    label="Budget"
-                    value={`${budgetType === "daily" ? "Daily" : "Total"} ${symbol}${Number(budgetValue || 0).toLocaleString()}${endDate ? ` · ends ${endDate}` : ""}`}
-                    onEdit={() => setStep(3)}
-                  />
-                  <SummaryRow label="Keywords" value={keywords || "—"} mono onEdit={() => setStep(4)} />
+            <Section title="What you chose">
+              <div className="divide-y divide-subtle">
+                <SummaryRow label="Platform" value={`${platformDisplay(platform)} · ${typeTitle}`} onEdit={() => setStep(0)} />
+                <SummaryRow label="Brand" value={`${d.brand || "—"} · ${d.subCategory}`} onEdit={() => setStep(1)} />
+                <SummaryRow label="Campaign name" value={campaignName || "—"} mono onEdit={() => setStep(1)} />
+                <SummaryRow label="Products" value={d.skus.length ? d.skus.join(", ") : "—"} mono onEdit={() => setStep(1)} />
+                <SummaryRow
+                  label="Where"
+                  value={cap?.city_targeting ? (d.cities.length ? d.cities.join(", ") : "—") : "Whole marketplace"}
+                  onEdit={() => setStep(2)}
+                />
+                <SummaryRow
+                  label="Budget"
+                  value={`${d.budgetType === "daily" ? "Daily" : "Total"} ${symbol}${Number(d.budgetValue || 0).toLocaleString()}${d.endDate ? ` · ends ${d.endDate}` : ""}`}
+                  onEdit={() => setStep(3)}
+                />
+                <SummaryRow label="Keywords" value={d.keywords || "—"} mono onEdit={() => setStep(4)} />
+              </div>
+              {warnedSkus.length > 0 && (
+                <div className="mt-3 space-y-1.5">
+                  {warnedSkus.map((s) => (
+                    <div key={s.product.code} className="flex items-center gap-2">
+                      <span className="text-[11px] text-foreground flex-1 min-w-0 truncate">{s.product.name}</span>
+                      <EcomReadinessPill summary={s} compact />
+                    </div>
+                  ))}
                 </div>
-              </Section>
-
-              <Section title="Before you continue">
-                {blockedSkus.length > 0 && (
-                  <p className="text-[11px] text-sw-red mb-2">
-                    {blockedSkus.length} selected product{blockedSkus.length > 1 ? "s" : ""} cannot run at all. Remove them to continue.
-                  </p>
-                )}
-                {warnedSkus.length === 0 ? (
-                  <p className="text-[11px] text-muted-foreground">Nothing needs a reason from you.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {warnedSkus.map((s) => (
-                      <div key={s.product.code} className="flex items-center gap-2">
-                        <span className="text-[11px] text-foreground flex-1 min-w-0 truncate">{s.product.name}</span>
-                        <EcomReadinessPill summary={s} compact />
-                        <select
-                          value={overrides[s.product.code] ?? ""}
-                          onChange={(e) => setOverrides((o) => ({ ...o, [s.product.code]: e.target.value }))}
-                          className="bg-surface-2 border border-subtle rounded-lg px-2 py-1 text-[11px] text-foreground"
-                        >
-                          <option value="">Pick a reason to run it anyway…</option>
-                          {OVERRIDE_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
-                        </select>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Section>
-            </>
+              )}
+            </Section>
           )}
         </div>
       </div>
@@ -399,8 +415,7 @@ const FlowManualView: React.FC = () => {
             {platformDisplay(platform)} · {typeTitle} · {currency} · data as of {asOfLabel()}
             {blockReason && <span className="text-sw-amber"> · {blockReason}</span>}
           </p>
-          <button onClick={() => (step > 1 ? setStep(step - 1) : setPlatform(null))}
-            className="px-4 py-2 rounded-lg text-xs font-medium border border-subtle bg-surface-2 text-foreground hover:bg-surface-3">
+          <button onClick={back} className="px-4 py-2 rounded-lg text-xs font-medium border border-subtle bg-surface-2 text-foreground hover:bg-surface-3">
             Back
           </button>
           {step < STEPS.length - 1 ? (
