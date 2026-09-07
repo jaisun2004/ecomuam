@@ -161,7 +161,13 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       cheaper
         ? "Run the campaign while the price gap is in your favour."
         : "Close the price gap before spending, or the click lands on a dearer pack.",
-      { type: "price", ours, theirs, competitor, symbol },
+      {
+        fact: `Your pack ${symbol}${ours} · ${competitor} ${symbol}${theirs}`,
+        bars: [
+          { label: "Your pack", value: ours, display: `${symbol}${ours}` },
+          { label: competitor, value: theirs, display: `${symbol}${theirs}` },
+        ],
+      },
       "Shelf price crawl",
       h % 2,
       {},
@@ -177,7 +183,14 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
         ? `In stock in ${inStockCities.length} cities, out of stock in ${oosCities.length}.`
         : `In stock across all ${inStockCities.length} serviceable cities.`,
       `Target only the in-stock cities: ${inStockCities.slice(0, 4).join(", ")}.`,
-      { type: "cities", inStock: inStockCities, oos: oosCities },
+      {
+        fact: `In stock in ${inStockCities.length} of ${inStockCities.length + oosCities.length} cities`,
+        bars: [
+          { label: "In stock", value: inStockCities.length, display: String(inStockCities.length) },
+          { label: "Out of stock", value: oosCities.length, display: String(oosCities.length) },
+        ],
+        chips: inStockCities.slice(0, 6),
+      },
       "Store availability crawl",
       0,
       { cities: inStockCities.slice(0, 4).join(", ") },
@@ -187,17 +200,17 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   // 3. Organic rank and search demand, both measurable before launch.
   const rank = 4 + (h % 12);
   const trendPct = 5 + (h % 40);
-  const trend = Array.from({ length: 8 }, (_, i) => 40 + ((h >> i) % 25) + Math.round((trendPct * i) / 8));
   mk(
     "keywords",
     "targeting",
     `Organic rank ${rank} on "${kws[0]}"; searches up ${trendPct}% over eight weeks.`,
     `Add ${kws.length} keywords built from the product title.`,
-    { type: "rank", rank, scale: 20, trend, trendPct, keywords: kws },
+    { fact: `Rank ${rank} on "${kws[0]}" · searches up ${trendPct}% in 8 weeks`, chips: kws },
     "Keyword rank crawl",
     (h >> 3) % 4,
     { targeting_details: targeting },
   );
+
 
   return out;
 }
