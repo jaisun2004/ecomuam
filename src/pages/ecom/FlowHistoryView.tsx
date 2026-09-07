@@ -143,7 +143,7 @@ const FlowHistoryView: React.FC = () => {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-display font-bold text-sm text-foreground">{h.name}</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] bg-surface-3 text-muted-foreground">{platformDisplay(h.platform)}</span>
-                    <span className="text-[10px] text-muted-foreground">{prods.length} products</span>
+                    <span className="text-[10px] text-muted-foreground">{prods.length} {prods.length === 1 ? "product" : "products"}</span>
                     <span className="ml-auto"><EcomReadinessPill summary={summary} /></span>
                   </div>
 
@@ -244,7 +244,7 @@ const FlowHistoryView: React.FC = () => {
               </div>
               <div className="flex gap-3 text-[10px] font-mono text-muted-foreground mt-2">
                 <span>{h.budgetType} · {h.budgetValue}</span>
-                <span>{prods.length} products</span>
+                <span>{prods.length} {prods.length === 1 ? "product" : "products"}</span>
               </div>
               <div className="flex items-center gap-1.5 mt-2 text-[10px] text-muted-foreground">
                 <MapPin size={10} />
@@ -286,7 +286,7 @@ const ConfirmDialog: React.FC<{
               {goneCities.length > 0 && <li className="text-sw-amber">{goneCities.length} city name{goneCities.length > 1 ? "s are" : " is"} no longer in the list: {goneCities.join(", ")}.</li>}
               {notReady.length > 0 && <li className="text-sw-red">{notReady.length} product-city pairs cannot run today.</li>}
               {warned.length > 0 && <li className="text-sw-amber">{warned.length} product-city pairs need a look.</li>}
-              {goneCities.length === 0 && notReady.length === 0 && warned.length === 0 && <li>All {prods.length} products still look fine.</li>}
+              {goneCities.length === 0 && notReady.length === 0 && warned.length === 0 && <li>All {prods.length} {prods.length === 1 ? "product still looks" : "products still look"} fine.</li>}
             </ul>
           </div>
         ))}
