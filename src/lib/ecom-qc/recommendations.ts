@@ -7,11 +7,16 @@ export type RecoKind = "price" | "city" | "keywords";
 /** Which step of the campaign spine this suggestion can be acted on. */
 export type RecoStep = "products" | "cities" | "targeting" | "budget";
 
-/** Structured evidence so a card can be read as a picture, not a claim. */
-export type RecoEvidence =
-  | { type: "cities"; inStock: string[]; oos: string[] }
-  | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
-  | { type: "price"; ours: number; theirs: number; competitor: string; symbol: string };
+/**
+ * One evidence shape for every signal: a plain fact, an optional pair of bars
+ * when there is something to compare, and optional chips for named items.
+ */
+export interface RecoEvidence {
+  fact: string;
+  bars?: { label: string; value: number; display: string }[];
+  chips?: string[];
+}
+
 
 export interface SkuRecommendation {
   id: string;
