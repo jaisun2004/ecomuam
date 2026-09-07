@@ -106,8 +106,6 @@ const FlowManualView: React.FC = () => {
   const blockedSkus = chosenSummaries.filter((s) => s.state === "not_ready");
   const warnedSkus = chosenSummaries.filter((s) => s.state === "warning" || s.state === "unknown");
 
-  const hasDraft = !!(d.brand || d.skus.length || d.budgetValue || d.cities.length);
-
   const leaveFlow = () => {
     ec.setManualDraft(EMPTY_MANUAL_DRAFT);
     navigate("/ecom/campaigns/create");
@@ -447,14 +445,6 @@ const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ label, 
     <span className="block text-[10px] uppercase tracking-wide text-muted-foreground mb-1">{label}</span>
     {children}
   </label>
-);
-
-const SummaryRow: React.FC<{ label: string; value: string; mono?: boolean; onEdit: () => void }> = ({ label, value, mono, onEdit }) => (
-  <div className="flex items-start gap-3 py-2">
-    <span className="text-[10px] uppercase tracking-wide text-muted-foreground w-28 flex-shrink-0 pt-0.5">{label}</span>
-    <span className={`flex-1 min-w-0 text-xs text-foreground break-words ${mono ? "font-mono text-[11px]" : ""}`}>{value}</span>
-    <button onClick={onEdit} className="text-[10px] text-primary hover:underline flex-shrink-0">Edit</button>
-  </div>
 );
 
 export default FlowManualView;
