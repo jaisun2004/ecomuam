@@ -429,7 +429,7 @@ export const RULES: RuleDef[] = [
     rationale: "Usually intended, occasionally not — worth a look before push.",
     row: (r) =>
       r.budget_type.trim().toLowerCase() === "daily" && !r.end_date.trim()
-        ? [rowF(r, "end_date", "This campaign will run until it is paused manually.", { fixable_inline: false })]
+        ? [rowF(r, "end_date", "No end date. This runs until someone pauses it. Continue, or set an end date?", { fixable_inline: false })]
         : null,
   },
   {
