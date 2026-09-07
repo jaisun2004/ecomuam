@@ -197,7 +197,7 @@ const ReviewPushView: React.FC = () => {
           {/* Summary strip */}
           <div className="rounded-xl border border-subtle bg-surface-1 px-4 py-3">
             <div className="flex flex-wrap items-center gap-1.5">
-              <Chip tone="ok">{selected.length} {noun(selected.length)} going out</Chip>
+              {selected.length > 0 && <Chip tone="ok">{selected.length} {noun(selected.length)} going out</Chip>}
               {blocked.length > 0 && <Chip tone="bad">{blocked.length} held</Chip>}
               {byPlatform.map((g) => (
                 <Chip key={g.platform}>{platformDisplay(g.platform)} · {g.rows.length}</Chip>
