@@ -158,7 +158,17 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle }) => {
           </div>
 
           <div className="mt-2.5 rounded-lg border border-subtle bg-surface-2 p-3">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">What we measured</p>
+            <div className="flex items-baseline justify-between gap-2 mb-2">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">What we know today</p>
+              <p className="text-[10px] text-muted-foreground">
+                {reco.source} ·{" "}
+                <span className={reco.stale ? "text-sw-amber" : ""}>
+                  {reco.collectedDaysAgo === 0
+                    ? "collected today"
+                    : `collected ${reco.collectedDaysAgo} day${reco.collectedDaysAgo > 1 ? "s" : ""} ago`}
+                </span>
+              </p>
+            </div>
             <Evidence reco={reco} />
           </div>
 
@@ -174,8 +184,14 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle }) => {
           </div>
 
           <p className="text-[10px] text-muted-foreground mt-2">
-            What it could do: {reco.impact} <span className="opacity-70">· {reco.basis}</span>
+            What this aims at: {reco.impact} <span className="opacity-70">· {reco.basis}</span>
           </p>
+          {reco.stale && (
+            <p className="text-[10px] text-sw-amber mt-1">
+              This signal is older than a day, so the confidence shown is one level lower.
+            </p>
+          )}
+
 
           {why && (
             <div className="mt-2 rounded-lg border border-subtle bg-surface-2 p-3 space-y-1">
