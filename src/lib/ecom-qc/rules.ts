@@ -257,11 +257,17 @@ export const RULES: RuleDef[] = [
         const mt = s.matchType.toLowerCase();
         if (!mt) continue;
         if (p.matchTypes.length === 0) {
-          out.push(rowF(r, "targeting_details", `${p.display} does not accept match types; "${s.raw}" carries ${s.matchType}.`));
+          out.push(
+            f("targeting_details", s.raw, `${p.display} does not accept match types; "${s.raw}" carries ${s.matchType}.`, {
+              row: r.row,
+              suggestion: [s.keyword, s.bid].filter(Boolean).join(":"),
+            }),
+          );
         } else if (!p.matchTypes.includes(mt as never)) {
           out.push(
-            rowF(r, "targeting_details", `${p.display} does not support match type "${s.matchType}".`, {
-              suggestion: p.matchTypes[0],
+            f("targeting_details", s.raw, `${p.display} does not support match type "${s.matchType}".`, {
+              row: r.row,
+              suggestion: [s.keyword, p.matchTypes[0], s.bid].filter(Boolean).join(":"),
             }),
           );
         }
@@ -429,7 +435,7 @@ export const RULES: RuleDef[] = [
     rationale: "Usually intended, occasionally not — worth a look before push.",
     row: (r) =>
       r.budget_type.trim().toLowerCase() === "daily" && !r.end_date.trim()
-        ? [rowF(r, "end_date", "This campaign will run until it is paused manually.", { fixable_inline: false })]
+        ? [rowF(r, "end_date", "No end date. This runs until someone pauses it. Continue, or set an end date?", { fixable_inline: false })]
         : null,
   },
   {

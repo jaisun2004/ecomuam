@@ -42,10 +42,21 @@ export function runQc(ctx: QcContext, opts: RunOptions = {}): QcResult {
     }
   }
 
-  findings.sort((a, b) => a.row - b.row || (a.severity === b.severity ? 0 : a.severity === "blocker" ? -1 : 1));
+  // Rows the app built itself (recommendations, manual entry, copies) are never held.
+  // Anything still open on them is shown as a warning to confirm, not as a blocker.
+  const builtRows = new Set(
+    ctx.rows.filter((r) => r.origin && r.origin !== "upload").map((r) => r.row),
+  );
+  const graded = findings.map((f) =>
+    f.severity === "blocker" && builtRows.has(f.row) ? { ...f, severity: "warning" as Severity } : f,
+  );
+  graded.sort((a, b) => a.row - b.row || (a.severity === b.severity ? 0 : a.severity === "blocker" ? -1 : 1));
+  findings.length = 0;
+  findings.push(...graded);
 
   const blockers = findings.filter((x) => x.severity === "blocker").length;
   const warnings = findings.length - blockers;
+
   const score = scoreOf(blockers, warnings, ctx.rows.length);
 
   return {
@@ -112,6 +123,16 @@ export function applySuggestion(row: BatchRow, finding: QcFinding): BatchRow {
       .filter(Boolean)
       .join(", ");
   } else if (finding.field === "targeting_details") {
+    const whole = finding.value.trim().toLowerCase();
+    if (current.split(";").some((seg) => seg.trim().toLowerCase() === whole)) {
+      // The finding names a whole "keyword:match:bid" segment — swap that segment.
+      next = current
+        .split(";")
+        .map((seg) => (seg.trim().toLowerCase() === whole ? finding.suggestion! : seg.trim()))
+        .filter(Boolean)
+        .join("; ");
+      return { ...row, targeting_details: next };
+    }
     next = current
       .split(";")
       .map((seg) => {

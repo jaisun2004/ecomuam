@@ -12,93 +12,39 @@ interface Props {
   onDismiss?: () => void;
 }
 
-const Sparkline: React.FC<{ values: number[] }> = ({ values }) => {
-  const max = Math.max(...values, 1);
-  const min = Math.min(...values);
-  const span = Math.max(max - min, 1);
-  const pts = values
-    .map((v, i) => `${(i / (values.length - 1)) * 100},${28 - ((v - min) / span) * 24}`)
-    .join(" ");
-  return (
-    <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-24 h-7">
-      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-primary" vectorEffect="non-scaling-stroke" />
-    </svg>
-  );
-};
-
+/** One layout for every signal: a fact, an optional pair of bars, optional chips. */
 const Evidence: React.FC<{ reco: SkuRecommendation }> = ({ reco }) => {
-  const e = reco.evidence;
+  const { fact, bars, chips } = reco.evidence;
+  const scale = bars?.length ? Math.max(...bars.map((b) => b.value), 1) : 1;
 
-  if (e.type === "cities") {
-    return (
-      <div className="space-y-1.5">
-        {e.inStock.length > 0 && (
-          <div className="flex flex-wrap gap-1 items-center">
-            <span className="text-[10px] text-muted-foreground w-20">In stock</span>
-            {e.inStock.map((c) => (
-              <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-sw-green-dim text-sw-green">{c}</span>
-            ))}
-          </div>
-        )}
-        {e.oos.length > 0 && (
-          <div className="flex flex-wrap gap-1 items-center">
-            <span className="text-[10px] text-muted-foreground w-20">Out of stock</span>
-            {e.oos.map((c) => (
-              <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-muted-foreground">{c}</span>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (e.type === "rank") {
-    const pct = Math.min(e.rank / e.scale, 1) * 100;
-    return (
-      <div className="flex items-end gap-4">
-        <div className="flex-1 min-w-0">
-          <div className="relative h-3 rounded-full bg-gradient-to-r from-sw-green-dim to-surface-3">
-            <span
-              className="absolute -top-0.5 w-4 h-4 rounded-full border-2 border-surface-1 bg-primary"
-              style={{ left: `calc(${pct}% - 8px)` }}
-            />
-          </div>
-          <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-            <span>Rank 1</span>
-            <span className="text-foreground font-medium">Now rank {e.rank}</span>
-            <span>{e.scale}+</span>
-          </div>
-          <div className="flex flex-wrap gap-1 mt-2">
-            {e.keywords.map((k) => (
-              <span key={k} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-foreground font-mono">{k}</span>
-            ))}
-          </div>
-        </div>
-        <div className="text-right">
-          <Sparkline values={e.trend} />
-          <p className="text-[10px] text-muted-foreground">searches +{e.trendPct}% / 8 wks</p>
-        </div>
-      </div>
-    );
-  }
-
-  const scale = Math.max(e.ours, e.theirs) * 1.3;
   return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] text-muted-foreground w-24">Your pack</span>
-        <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
-          <div className="h-full bg-primary" style={{ width: `${(e.ours / scale) * 100}%` }} />
+    <div className="space-y-2">
+      <p className="text-[11px] text-foreground">{fact}</p>
+
+      {bars && bars.length > 0 && (
+        <div className="space-y-1">
+          {bars.map((b, i) => (
+            <div key={b.label} className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-24 truncate" title={b.label}>{b.label}</span>
+              <div className="flex-1 h-2 rounded-full bg-surface-3 overflow-hidden">
+                <div
+                  className={`h-full ${i === 0 ? "bg-primary" : "bg-border-visible"}`}
+                  style={{ width: `${(b.value / scale) * 100}%` }}
+                />
+              </div>
+              <span className="font-mono text-[10px] text-foreground w-12 text-right">{b.display}</span>
+            </div>
+          ))}
         </div>
-        <span className="font-mono text-[10px] text-foreground w-14 text-right">{e.symbol}{e.ours}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] text-muted-foreground w-24 truncate" title={e.competitor}>{e.competitor}</span>
-        <div className="flex-1 h-2.5 rounded-full bg-surface-3 overflow-hidden">
-          <div className="h-full bg-border-visible" style={{ width: `${(e.theirs / scale) * 100}%` }} />
+      )}
+
+      {chips && chips.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {chips.map((c) => (
+            <span key={c} className="px-1.5 py-0.5 rounded text-[10px] bg-surface-3 text-muted-foreground">{c}</span>
+          ))}
         </div>
-        <span className="font-mono text-[10px] text-muted-foreground w-14 text-right">{e.symbol}{e.theirs}</span>
-      </div>
+      )}
     </div>
   );
 };
@@ -130,13 +76,10 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle, readOnly, onD
         <p className="text-xs text-foreground mt-1"><span className="font-semibold">Do this.</span> {reco.action}</p>
 
         <div className="mt-2.5 rounded-lg border border-subtle bg-surface-2 p-3">
-          <div className="flex items-baseline justify-between gap-2 mb-2">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">What we know today</p>
-            <p className={`text-[10px] ${reco.collectedDaysAgo > 2 ? "text-sw-amber" : "text-muted-foreground"}`}>
-              {reco.source} · {collectedLabel(reco.collectedDaysAgo)}
-            </p>
-          </div>
           <Evidence reco={reco} />
+          <p className={`mt-2 text-[10px] ${reco.collectedDaysAgo > 2 ? "text-sw-amber" : "text-muted-foreground"}`}>
+            {reco.source} · {collectedLabel(reco.collectedDaysAgo)}
+          </p>
         </div>
 
         <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
@@ -151,7 +94,7 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle, readOnly, onD
         {!readOnly && (
           <div className="mt-2 flex items-center gap-2">
             <button onClick={onToggle} className="px-2 py-1 rounded-md border border-subtle text-[10px] text-foreground hover:bg-surface-3">
-              {selected ? "Applied" : "Apply"}
+              {selected ? "Selected" : "Select"}
             </button>
             <button onClick={onDismiss ?? onToggle} className="px-2 py-1 rounded-md border border-subtle text-[10px] text-muted-foreground hover:bg-surface-3">
               Dismiss

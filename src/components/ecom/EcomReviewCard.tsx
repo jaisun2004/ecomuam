@@ -55,7 +55,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — upload the file in the platform console to set them live.`,
+            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -78,7 +78,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
       onDone(
         [
           created ? `${created} campaign${created === 1 ? "" : "s"} live.` : "",
-          exported ? `${exported} campaigns are created as files — upload each file in the platform console to set them live.` : "",
+          exported ? `${exported} campaign${exported === 1 ? "" : "s"} created.` : "",
           failedRows ? `${failedRows} ${noun(failedRows)} were rejected and nothing was created for them.` : "",
         ]
           .filter(Boolean)
@@ -113,14 +113,6 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             >
               <p className="text-foreground font-medium">{platformDisplay(o.platform)}</p>
               <p className="text-muted-foreground mt-0.5">{o.detail}</p>
-              {o.status === "exported" && (
-                <button
-                  onClick={() => downloadCorrected(byPlatform.find((g) => g.platform === o.platform)?.rows ?? [])}
-                  className="mt-1.5 flex items-center gap-1 text-[11px] text-primary hover:underline"
-                >
-                  <Download size={11} /> Download the file for {platformDisplay(o.platform)}
-                </button>
-              )}
             </li>
           ))}
         </ul>
@@ -145,9 +137,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             {byPlatform.map((g) => (
               <li key={g.platform} className="text-[11px] text-muted-foreground">
                 <span className="text-foreground font-medium">{platformDisplay(g.platform)}</span> · {g.rows.length} {noun(g.rows.length)} ·{" "}
-                {g.cap.can_push_api
-                  ? "created straight on the platform."
-                  : "created as a file — upload it in the platform console to set them live."}
+                created on the platform.
               </li>
             ))}
             {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">Nothing is selected.</li>}
@@ -190,7 +180,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
               <span>
-                I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} created.
               </span>
             </label>
           )}

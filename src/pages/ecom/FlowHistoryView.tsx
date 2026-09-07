@@ -99,6 +99,7 @@ const FlowHistoryView: React.FC = () => {
       targeting_details: h.targeting,
       currency: currencyFor(h.platform) ?? "",
       selected: true,
+      origin: "copy" as const,
     }));
     ec.setFileName(null);
     ec.setSource("copy");

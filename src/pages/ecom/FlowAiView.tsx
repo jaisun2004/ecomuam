@@ -169,11 +169,12 @@ const FlowAiView: React.FC = () => {
   const openFixes = () => {
     const proposals = proposalsFor(ec.result, ec.rows);
     if (!proposals.length) {
-      say("There is nothing here I can propose a value for. What is left needs your decision — open Why on a row to see exactly what to change.");
+      say("Nothing here has a safe value I can fill in. Open Why on a line to see what to change.");
       return;
     }
     setFixing(proposals);
-    say(`Here is what I would change — ${proposals.length} suggestions, each with the list it came from. Accept, edit or skip any of them.`);
+    say(`${n(proposals.length, "change")} suggested. Accept, edit or skip any of them.`);
+
   };
 
   const applyFixes = (accepted: { proposal: FixProposal; value: string }[]) => {
@@ -191,18 +192,26 @@ const FlowAiView: React.FC = () => {
   };
 
   const holdRemaining = () => {
-    if (!latest) return;
+    if (!latest || !latest.heldRows.length) {
+      say("There is nothing held right now.");
+      return;
+    }
+    const unit = ec.countsRows ? "row" : "campaign";
     const heldRows = ec.rows.filter((r) => latest.heldRows.includes(r.row));
     ec.holdRows(heldRows, ec.result, latest.fileName, `Parked from ${latest.label}`);
     const { kept, dropped } = ec.keepOnlyCleanRows();
-    say(`Parked ${dropped} held rows with their findings and any overrides. ${kept} rows stay in this batch. You can reopen the parked rows from Held batches at any time — they are not deleted.`);
+    setShowHeld(true);
+    say(`Parked ${n(dropped, unit)}. ${n(kept, unit)} stay here. Reopen them any time from Held batches.`);
   };
 
   const continueClean = () => {
-    if (latest && latest.heldRows.length) holdRemaining();
+    if (!latest) return;
+    const unit = ec.countsRows ? "row" : "campaign";
+    const ready = latest.cleanRows.length;
+    if (!window.confirm(`Create ${n(ready, unit === "row" ? "campaign" : unit)}?`)) return;
+    if (latest.heldRows.length) holdRemaining();
     setShowHeld(false);
     setReviewing(true);
-    say("Here is everything before it is created. Read it through — nothing is created until you press the button on this card.");
   };
 
   /* ── Recommendations ── */
@@ -221,16 +230,24 @@ const FlowAiView: React.FC = () => {
 
   const generateRecos = () => {
     if (!pickedSkus.length) return;
-    const list = pickedSkus.flatMap((s) => recommendationsForSku(s));
+    const all = pickedSkus.flatMap((s) => recommendationsForSku(s));
+    const list = all.filter((r) => !ec.usedRecos.includes(r.id));
+    const alreadyDone = all.length - list.length;
+    setSkuPicker(false);
+    setMessages((m) => [...m, { role: "user", text: `Recommendations for ${pickedSkus.map((s) => s.name).join(", ")}.` }]);
+
+    if (!list.length) {
+      setRecos(null);
+      say("Already added — every suggestion for those products has been used or dismissed.");
+      return;
+    }
     setRecos(list);
     setChosenRecos(new Set(list.map((r) => r.id)));
-    setSkuPicker(false);
-    setMessages((m) => [
-      ...m,
-      { role: "user", text: `Recommendations for ${pickedSkus.map((s) => s.name).join(", ")}.` },
-      { role: "assistant", text: `${list.length} suggestion${list.length > 1 ? "s" : ""} across ${pickedSkus.length} product${pickedSkus.length > 1 ? "s" : ""}, covering price, cities and keywords. Pick the ones you want and I'll turn them into campaigns and check them.` },
-    ]);
+    say(
+      `${n(list.length, "suggestion")} on price, cities and keywords.${alreadyDone ? ` ${alreadyDone} already used earlier, so they are not repeated.` : ""} Pick the ones you want.`,
+    );
   };
+
 
   const acceptRecos = () => {
     const picked = (recos ?? []).filter((r) => chosenRecos.has(r.id));
@@ -258,10 +275,12 @@ const FlowAiView: React.FC = () => {
 
     const next = [
       ...ec.rows,
-      ...merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1 } as BatchRow)),
+      ...merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1, origin: "reco" } as BatchRow)),
     ];
     setRecos(null);
+    ec.markRecosUsed((recos ?? []).map((r) => r.id));
     setMessages((m) => [...m, { role: "user", text: `Create ${n(merged.length, "recommended campaign")}.` }]);
+
     registerRun(
       buildRun({ fileName: "Recommended campaigns", sizeKb: 0, rows: next, label: "Recommended campaigns", parentId: latest?.id }),
       latest,

@@ -84,7 +84,7 @@ const FlowManualView: React.FC = () => {
               reco={r}
               selected={false}
               onToggle={() => {
-                if (r.evidence.type === "cities") set("cities", r.evidence.inStock.slice(0, 4));
+                if (r.kind === "city") set("cities", (r.draft.cities || "").split(/[,;]/).map((c) => c.trim()).filter(Boolean).slice(0, 4));
                 if (r.kind === "keywords") set("keywords", r.draft.targeting_details);
                 ec.setManualDraft((p) => ({ ...p, dismissed: [...p.dismissed, r.id] }));
               }}
@@ -121,7 +121,7 @@ const FlowManualView: React.FC = () => {
       budget_value: d.budgetValue,
       cities: cap?.city_targeting ? d.cities.join(", ") : "marketplace",
       product_id: d.skus.join(", "),
-      targeting_details: d.keywords, currency: currency ?? "", selected: true,
+      targeting_details: d.keywords, currency: currency ?? "", selected: true, origin: "manual",
     };
     ec.setSource("manual");
     ec.setFileName(null);
@@ -144,9 +144,6 @@ const FlowManualView: React.FC = () => {
               <div className="flex items-center gap-2 mb-2.5">
                 <h2 className="font-display font-bold text-sm text-foreground">{platformDisplay(p.platform)}</h2>
                 <span className="text-[10px] text-muted-foreground">{p.geo === "IN" ? "India · INR" : "UAE · AED"}</span>
-                {!capabilityFor(p.platform).can_push_api && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Campaigns go live once the file is uploaded in the console</span>
-                )}
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {p.types.map((t) => {
