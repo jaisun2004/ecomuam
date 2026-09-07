@@ -144,9 +144,6 @@ const FlowManualView: React.FC = () => {
               <div className="flex items-center gap-2 mb-2.5">
                 <h2 className="font-display font-bold text-sm text-foreground">{platformDisplay(p.platform)}</h2>
                 <span className="text-[10px] text-muted-foreground">{p.geo === "IN" ? "India · INR" : "UAE · AED"}</span>
-                {!capabilityFor(p.platform).can_push_api && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-3 text-muted-foreground">Campaigns go live once the file is uploaded in the console</span>
-                )}
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {p.types.map((t) => {
