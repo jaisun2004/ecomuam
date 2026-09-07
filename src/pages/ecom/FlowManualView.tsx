@@ -260,6 +260,7 @@ const FlowManualView: React.FC = () => {
 
 
           {step === 2 && (
+            <>
             <Section title="Where it runs">
               {cap?.city_targeting ? (
                 <>
