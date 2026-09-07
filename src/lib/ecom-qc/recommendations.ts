@@ -3,22 +3,35 @@ import { PRODUCT_LIST, CITY_LIST, type RefProduct } from "@/lib/ecom-reference/w
 import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock, limitsFor } from "@/lib/ecom-reference/platforms";
 import { asOfLabel } from "@/lib/ecom-reference/config";
 
-export type RecoKind = "budget" | "city" | "keywords" | "bids";
+export type RecoKind = "price" | "city" | "keywords" | "bids";
+
+/** Which step of the campaign spine this recommendation can be acted on. */
+export type RecoStep = "products" | "targeting" | "budget";
 
 /** Structured evidence so a card can be read as a picture, not a claim. */
 export type RecoEvidence =
-  | { type: "pacing"; deliveredPct: number; spend: number; target: number; symbol: string; scope: string }
   | { type: "cities"; inStock: string[]; oos: string[] }
   | { type: "rank"; rank: number; scale: number; trend: number[]; trendPct: number; keywords: string[] }
-  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string };
+  | { type: "floor"; floor: number; suggested: number; unit: string; symbol: string; note: string }
+  | { type: "price"; ours: number; theirs: number; competitor: string; symbol: string; note: string };
 
 export interface SkuRecommendation {
   id: string;
+  /** short reference code the user can quote back */
+  code: string;
+  /** measured from data, or a threshold your team set */
+  klass: "observed" | "rule";
+  /** where it came from: a collection time, or a platform limit */
+  provenance: string;
+  /** the step this card belongs to */
+  step: RecoStep;
   kind: RecoKind;
   sku: RefProduct;
   signal: string;
   action: string;
   impact: string;
+  /** where the number came from, and that nothing is estimated */
+  grounding: string;
   confidence: 1 | 2 | 3 | 4 | 5;
   /** the visual evidence behind the recommendation */
   evidence: RecoEvidence;
@@ -35,6 +48,20 @@ export interface SkuRecommendation {
   /** the batch row this recommendation would create */
   draft: Omit<BatchRow, "id" | "row">;
 }
+
+/** A dismissal is recorded, not silently dropped, and hides the card for 28 days. */
+export interface RecoDismissal {
+  code: string;
+  at: string;
+  until: string;
+}
+
+export function dismissFor28Days(code: string): RecoDismissal {
+  const now = new Date();
+  const until = new Date(now.getTime() + 28 * 24 * 3600 * 1000);
+  return { code, at: now.toISOString(), until: until.toISOString() };
+}
+
 
 
 
