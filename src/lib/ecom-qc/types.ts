@@ -40,6 +40,9 @@ export interface BatchRow {
   targeting_details: string;
   currency: string;
   selected?: boolean;
+  /** Rows the app built itself are never blocked; anything open becomes a warning. */
+  origin?: "upload" | "reco" | "manual" | "copy";
+
 }
 
 export const BATCH_FIELDS: (keyof BatchRow)[] = [
