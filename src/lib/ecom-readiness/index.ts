@@ -242,7 +242,7 @@ export function summariseReadiness(product: RefProduct, cities: string[], brand?
           ? workable > 0
             ? "Ready on this marketplace"
             : "Not ready"
-          : `Ready in ${workable} of ${total} cities`;
+          : `Ready in ${workable} of ${total} ${total === 1 ? "city" : "cities"}`;
 
   return {
     product,
