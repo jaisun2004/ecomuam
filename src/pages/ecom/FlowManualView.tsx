@@ -253,8 +253,11 @@ const FlowManualView: React.FC = () => {
                   </p>
                 )}
               </Section>
+
+              <RecoPanel forStep="products" />
             </>
           )}
+
 
           {step === 2 && (
             <Section title="Where it runs">
