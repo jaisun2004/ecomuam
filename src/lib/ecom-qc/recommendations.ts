@@ -8,13 +8,15 @@ export type RecoKind = "price" | "city" | "keywords";
 export type RecoStep = "products" | "cities" | "targeting" | "budget";
 
 /**
- * One evidence shape for every signal: a plain fact, an optional pair of bars
- * when there is something to compare, and optional chips for named items.
+ * One evidence shape for every signal, rendered as plain text lines:
+ * a label, the values, the takeaway, and optional named items.
  */
 export interface RecoEvidence {
-  fact: string;
-  bars?: { label: string; value: number; display: string }[];
-  chips?: string[];
+  label: string;
+  left: string;
+  right?: string;
+  takeaway: string;
+  tags?: string[];
 }
 
 
@@ -162,11 +164,10 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
         ? "Run the campaign while the price gap is in your favour."
         : "Close the price gap before spending, or the click lands on a dearer pack.",
       {
-        fact: `Your pack ${symbol}${ours} · ${competitor} ${symbol}${theirs}`,
-        bars: [
-          { label: "Your pack", value: ours, display: `${symbol}${ours}` },
-          { label: competitor, value: theirs, display: `${symbol}${theirs}` },
-        ],
+        label: "Price",
+        left: `Your pack ${symbol}${ours}`,
+        right: `${competitor} ${symbol}${theirs}`,
+        takeaway: cheaper ? `you are ${symbol}${theirs - ours} cheaper` : `you are ${symbol}${ours - theirs} dearer`,
       },
       "Shelf price crawl",
       h % 2,
@@ -184,12 +185,10 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
         : `In stock across all ${inStockCities.length} serviceable cities.`,
       `Target only the in-stock cities: ${inStockCities.slice(0, 4).join(", ")}.`,
       {
-        fact: `In stock in ${inStockCities.length} of ${inStockCities.length + oosCities.length} cities`,
-        bars: [
-          { label: "In stock", value: inStockCities.length, display: String(inStockCities.length) },
-          { label: "Out of stock", value: oosCities.length, display: String(oosCities.length) },
-        ],
-        chips: inStockCities.slice(0, 6),
+        label: "Stock",
+        left: `In stock ${inStockCities.length} of ${inStockCities.length + oosCities.length} cities`,
+        takeaway: oosCities.length ? `${oosCities.slice(0, 2).join(", ")} out` : "all cities covered",
+        tags: inStockCities,
       },
       "Store availability crawl",
       0,
@@ -205,7 +204,7 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
     "targeting",
     `Organic rank ${rank} on "${kws[0]}"; searches up ${trendPct}% over eight weeks.`,
     `Add ${kws.length} keywords built from the product title.`,
-    { fact: `Rank ${rank} on "${kws[0]}" · searches up ${trendPct}% in 8 weeks`, chips: kws },
+    { label: "Search", left: `Rank ${rank} on "${kws[0]}"`, takeaway: `searches up ${trendPct}% in 8 weeks`, tags: kws },
     "Keyword rank crawl",
     (h >> 3) % 4,
     { targeting_details: targeting },
