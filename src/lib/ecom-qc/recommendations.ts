@@ -6,7 +6,7 @@ import { asOfLabel } from "@/lib/ecom-reference/config";
 export type RecoKind = "price" | "city" | "keywords" | "bids";
 
 /** Which step of the campaign spine this recommendation can be acted on. */
-export type RecoStep = "products" | "targeting" | "budget";
+export type RecoStep = "products" | "cities" | "targeting" | "budget";
 
 /** Structured evidence so a card can be read as a picture, not a claim. */
 export type RecoEvidence =
