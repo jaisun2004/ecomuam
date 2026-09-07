@@ -43,6 +43,36 @@ The full sentence appears only on the screen where the user can act on it. On re
 
 Anything Check shows that Review and push lacks moves into Review and push first, then the Check step and its route are removed. Budget goes straight to Review and push. The stepper shows four steps.
 
+## 7. One fixed way to show any signal
+
+Drop the bars and per-insight graphics. Every recommendation, whatever the signal, shows the same three lines of text:
+
+```text
+Price   Your pack Rs 85  ·  Parle Rs 91          you are Rs 6 cheaper
+Stock   In stock 4 of 6 cities                   Noida, Pune out
+Search  Rank 7 on "digestive biscuit"            searches up 22% in 8 weeks
+```
+
+- Line 1: a label, the two values being compared, and the plain takeaway on the right.
+- Line 2 (only when it helps): up to three named items as small tags, then "and 3 more".
+- Line 3: source and collected date.
+
+Same layout for price, stock, rank — nothing to redesign per insight type. `RecoEvidence` becomes `{ label, left, right?, takeaway, tags?[] }` and `EcomRecoCard` renders exactly that.
+
+### Prompt for this change
+
+```text
+In src/lib/ecom-qc/recommendations.ts replace RecoEvidence with:
+{ label: string; left: string; right?: string; takeaway: string; tags?: string[] }
+Update the three generators (price, city, keywords) to fill it. Remove bars/chips.
+
+In src/components/ecom/EcomRecoCard.tsx delete the bar renderer. Render:
+row 1: label (muted, w-16) · left · right (mono) · takeaway (right-aligned, muted)
+row 2: tags as small chips, max 3, then "and N more"
+row 3: source · collected date (amber if older than 2 days)
+No charts, no per-kind branching.
+```
+
 ## Technical notes
 
 - `FlowAiView`: remove `window.confirm` in `continueClean`; created state renders the shared outcome screen.
@@ -50,3 +80,4 @@ Anything Check shows that Review and push lacks moves into Review and push first
 - Stock lines need an "out of stock since" date: extend the mocked availability helper in `ecom-reference/platforms.ts` to return a deterministic date alongside the boolean, and use it in `EcomCityPicker`, `FlowManualView`, `FlowHistoryView` and the review summary.
 - `FlowManualView`: `STEPS` drops "Check"; its step-5 content merges into Review and push.
 - No new dependencies, no styling refactors beyond the copy-screen container alignment.
+
