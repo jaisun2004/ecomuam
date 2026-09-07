@@ -120,16 +120,16 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
     >
       <div className={`flex items-center mb-4 flex-shrink-0 ${expanded ? "px-4 justify-between" : "justify-center"}`}>
         <div
-          className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center cursor-pointer flex-shrink-0"
+          className={`rounded-xl bg-white flex items-center justify-center cursor-pointer flex-shrink-0 overflow-hidden ${expanded ? "h-11 px-2 flex-1 mr-2" : "w-10 h-10 p-1"}`}
           onClick={() => onChange("cockpit")}
         >
-          <span className="font-display font-bold text-white text-sm">SW</span>
+          <img
+            src={affleLogo.url}
+            alt="Affle — Insights powered by mFilterIt"
+            className={expanded ? "h-9 w-full object-contain" : "w-full h-full object-contain object-center"}
+          />
         </div>
-        {expanded && (
-          <span className="font-display font-bold text-white text-sm ml-2 flex-1 truncate">
-            shelf<span className="text-white/70">wise</span>
-          </span>
-        )}
+
         <button
           onClick={onToggleExpand}
           className={`p-1.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-all flex-shrink-0 ${
