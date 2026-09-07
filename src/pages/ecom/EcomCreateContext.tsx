@@ -115,6 +115,11 @@ interface EcomCreateState {
   chat: ChatState;
   setChat: (c: ChatState | ((prev: ChatState) => ChatState)) => void;
 
+  /** Suggestions already applied or dismissed. They are never offered again. */
+  usedRecos: string[];
+  markRecosUsed: (ids: string[]) => void;
+
+
   /** Only an uploaded sheet counts rows; every other flow counts campaigns. */
   countsRows: boolean;
 
