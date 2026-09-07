@@ -253,7 +253,7 @@ const FlowAiView: React.FC = () => {
       existing.cities = Array.from(cities).join(";");
       const kw = new Set([...(existing.targeting_details ?? "").split(";"), ...(d.targeting_details ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
       existing.targeting_details = Array.from(kw).join("; ");
-      existing.budget_value = Math.max(Number(existing.budget_value) || 0, Number(d.budget_value) || 0);
+      existing.budget_value = String(Math.max(Number(existing.budget_value) || 0, Number(d.budget_value) || 0));
     });
 
     const next = [
