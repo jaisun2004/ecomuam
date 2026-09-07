@@ -199,8 +199,14 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
       selected: true,
       ...draft,
     };
+    const meta = KIND_META[kind];
     out.push({
       id: `${sku.code}-${kind}`,
+      code: `REC-${(hash(`${sku.code}${kind}`) % 9000) + 1000}`,
+      klass: meta.klass,
+      provenance: meta.provenance,
+      step: meta.step,
+      grounding: meta.grounding,
       kind,
       sku,
       signal,
