@@ -350,6 +350,16 @@ const FlowManualView: React.FC = () => {
                 Wallet {symbol}{wallet.toLocaleString()} → after this campaign{" "}
                 <span className={after < 0 ? "text-sw-red" : "text-sw-green"}>{symbol}{after.toLocaleString()}</span>
               </p>
+              {warnedSkus.length > 0 && (
+                <div className="mt-3 space-y-1.5">
+                  {warnedSkus.map((sk) => (
+                    <div key={sk.product.code} className="flex items-center gap-2">
+                      <span className="text-[11px] text-foreground flex-1 min-w-0 truncate">{sk.product.name}</span>
+                      <EcomReadinessPill summary={sk} compact />
+                    </div>
+                  ))}
+                </div>
+              )}
               {cap?.irreversible_fields.includes("budget_value") && (
                 <p className="mt-1 text-[10px] text-sw-amber">
                   On {platformDisplay(platform)} the budget cannot be lowered once the campaign is live. You would have to pause and rebuild it.
@@ -378,37 +388,6 @@ const FlowManualView: React.FC = () => {
             </>
           )}
 
-          {step === 5 && (
-            <Section title="What you chose">
-              <div className="divide-y divide-subtle">
-                <SummaryRow label="Platform" value={`${platformDisplay(platform)} · ${typeTitle}`} onEdit={() => setStep(0)} />
-                <SummaryRow label="Brand" value={`${d.brand || "—"} · ${d.subCategory}`} onEdit={() => setStep(1)} />
-                <SummaryRow label="Campaign name" value={campaignName || "—"} mono onEdit={() => setStep(1)} />
-                <SummaryRow label="Products" value={d.skus.length ? d.skus.join(", ") : "—"} mono onEdit={() => setStep(1)} />
-                <SummaryRow
-                  label="Where"
-                  value={cap?.city_targeting ? (d.cities.length ? d.cities.join(", ") : "—") : "Whole marketplace"}
-                  onEdit={() => setStep(2)}
-                />
-                <SummaryRow
-                  label="Budget"
-                  value={`${d.budgetType === "daily" ? "Daily" : "Total"} ${symbol}${Number(d.budgetValue || 0).toLocaleString()}${d.endDate ? ` · ends ${d.endDate}` : ""}`}
-                  onEdit={() => setStep(3)}
-                />
-                <SummaryRow label="Keywords" value={d.keywords || "—"} mono onEdit={() => setStep(4)} />
-              </div>
-              {warnedSkus.length > 0 && (
-                <div className="mt-3 space-y-1.5">
-                  {warnedSkus.map((s) => (
-                    <div key={s.product.code} className="flex items-center gap-2">
-                      <span className="text-[11px] text-foreground flex-1 min-w-0 truncate">{s.product.name}</span>
-                      <EcomReadinessPill summary={s} compact />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Section>
-          )}
         </div>
       </div>
 
