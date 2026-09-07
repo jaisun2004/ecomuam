@@ -229,6 +229,27 @@ export function isInStock(code: string, city: string): boolean {
   return h % 100 > 22;
 }
 
+/** Deterministic mocked "out of stock since" date for a product in a city. */
+export function outOfStockSince(code: string, city: string): string {
+  let h = 0;
+  const s = `since|${code}|${city}`;
+  for (let i = 0; i < s.length; i++) h = (h * 33 + s.charCodeAt(i)) >>> 0;
+  const d = new Date();
+  d.setDate(d.getDate() - (2 + (h % 26)));
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+/** The one sentence used everywhere a city is left out for stock reasons. */
+export function stockExclusionLine(productName: string, city: string, code = productName): string {
+  return `${city} is not included. ${productName} has been out of stock there since ${outOfStockSince(code, city)}.`;
+}
+
+export function productName(code: string, platform?: string): string {
+  const p = PRODUCT_LIST.find((x) => x.code === code && (!platform || x.platform === platform)) ??
+    PRODUCT_LIST.find((x) => x.code === code);
+  return p?.name ?? code;
+}
+
 /** Deterministic mocked prepaid wallet balance per brand+platform. */
 export function walletBalance(brand: string, platform: string): number {
   let h = 0;

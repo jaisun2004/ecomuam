@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, Download, Rocket } from "lucide-react";
+import { Download, Rocket } from "lucide-react";
 import EcomSheetTable from "@/components/ecom/EcomSheetTable";
+import { useNavigate } from "react-router-dom";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { partitionRows } from "@/lib/ecom-qc/engine";
@@ -21,6 +22,7 @@ interface Props {
  */
 const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone }) => {
   const ec = useEcomCreate();
+  const navigate = useNavigate();
   const [consent, setConsent] = useState(false);
   const [confirmIrreversible, setConfirmIrreversible] = useState(false);
   const [pushing, setPushing] = useState(false);
@@ -50,13 +52,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
     setTimeout(() => {
       const outcomes: PushOutcome[] = byPlatform.map((g) => {
         if (!g.cap.can_push_api) {
-          return {
-            platform: g.platform,
-            mode: "export",
-            rows: g.rows.length,
-            status: "exported",
-            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}.`,
-          };
+          return { platform: g.platform, mode: "export", rows: g.rows.length, status: "exported", detail: "" };
         }
         const failed = g.rows.length > 6;
         return {
@@ -64,61 +60,18 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           mode: "api",
           rows: g.rows.length,
           status: failed ? "failed" : "pushed",
-          detail: failed
-            ? `${platformDisplay(g.platform)} rejected the batch (rate limit on ${g.rows.length} campaigns). Nothing was created. Retry in smaller batches.`
-            : `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created on ${platformDisplay(g.platform)}.`,
+          detail: failed ? `${platformDisplay(g.platform)} rejected the batch. Nothing was created there. Retry in smaller batches.` : "",
         };
       });
       ec.setOutcomes(outcomes);
       ec.setPushed(true);
       setPushing(false);
-      const created = outcomes.filter((o) => o.status === "pushed").reduce((n, o) => n + o.rows, 0);
-      const exported = outcomes.filter((o) => o.status === "exported").reduce((n, o) => n + o.rows, 0);
-      const failedRows = outcomes.filter((o) => o.status === "failed").reduce((n, o) => n + o.rows, 0);
-      onDone(
-        [
-          created ? `${created} campaign${created === 1 ? "" : "s"} live.` : "",
-          exported ? `${exported} campaign${exported === 1 ? "" : "s"} created.` : "",
-          failedRows ? `${failedRows} ${noun(failedRows)} were rejected and nothing was created for them.` : "",
-        ]
-          .filter(Boolean)
-          .join(" "),
-      );
+      const created = outcomes.filter((o) => o.status !== "failed").reduce((n, o) => n + o.rows, 0);
+      onDone(`${created} campaign${created === 1 ? "" : "s"} created.`);
+      // every flow lands on the same outcome screen
+      navigate("/ecom/campaigns/create/review?from=ai");
     }, 900);
   };
-
-  /* ── After the push: only what actually happened ── */
-  if (ec.pushed) {
-    const anyFailed = ec.outcomes.some((o) => o.status === "failed");
-    const anyPushed = ec.outcomes.some((o) => o.status === "pushed");
-    return (
-      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2">
-          {anyFailed ? <AlertTriangle size={14} className="text-sw-amber" /> : <CheckCircle2 size={14} className="text-sw-green" />}
-          <p className="text-xs font-medium text-foreground">
-            {anyFailed ? "Partly done" : "Campaigns created"}
-          </p>
-        </div>
-        <ul className="p-3 space-y-2">
-          {ec.outcomes.map((o) => (
-            <li
-              key={o.platform}
-              className={`rounded-lg border px-3 py-2 text-[11px] ${
-                o.status === "failed"
-                  ? "border-sw-red/30 bg-sw-red-dim"
-                  : o.status === "exported"
-                    ? "border-subtle bg-surface-2"
-                    : "border-sw-green/30 bg-sw-green-dim"
-              }`}
-            >
-              <p className="text-foreground font-medium">{platformDisplay(o.platform)}</p>
-              <p className="text-muted-foreground mt-0.5">{o.detail}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">

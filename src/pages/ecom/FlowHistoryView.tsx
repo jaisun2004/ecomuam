@@ -2,14 +2,14 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, History, MapPin, Search } from "lucide-react";
 import { HISTORICAL_CONFIG } from "@/lib/ecom-reference/workbook-data";
-import { buildCampaignName, citiesFor, currencyFor, currencySymbol, platformDisplay } from "@/lib/ecom-reference/platforms";
+import { buildCampaignName, citiesFor, currencyFor, currencySymbol, isInStock, platformDisplay, productName, stockExclusionLine } from "@/lib/ecom-reference/platforms";
 import { capabilityFor, asOfLabel } from "@/lib/ecom-reference/config";
 import { checkReadiness, summariseReadiness } from "@/lib/ecom-readiness";
 import EcomReadinessPill from "@/components/ecom/EcomReadinessPill";
 import EcomCityPicker from "@/components/ecom/EcomCityPicker";
+import EcomStockNotice from "@/components/ecom/EcomStockNotice";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const MAX_COPIES = 20;
 
@@ -25,7 +25,6 @@ const FlowHistoryView: React.FC = () => {
   const ec = useEcomCreate();
   const [search, setSearch] = useState("");
   const [platform, setPlatform] = useState("all");
-  const [confirming, setConfirming] = useState(false);
   const [stage, setStage] = useState<"pick" | "edit">("pick");
   const [edits, setEdits] = useState<Record<string, Edited>>({});
   const [capNotice, setCapNotice] = useState(false);
@@ -79,7 +78,9 @@ const FlowHistoryView: React.FC = () => {
     );
     const notReady = checks.filter((c) => c.state === "not_ready");
     const warned = checks.filter((c) => c.state === "warning" || c.state === "unknown");
-    return { h, e, prods, goneCities, notReady, warned };
+    const oos = cap.city_targeting ? e.cities.filter((c) => !prods.some((p) => isInStock(p, c))) : [];
+    const oosLines = oos.map((c) => stockExclusionLine(productName(prods[0] ?? "", h.platform), c, prods[0] ?? ""));
+    return { h, e, prods, goneCities, notReady, warned, oos, oosLines };
   });
 
   const missingEndDate = revalidated.filter((r) => r.e.budgetType === "total" && !r.e.endDate);
@@ -104,7 +105,6 @@ const FlowHistoryView: React.FC = () => {
     ec.setFileName(null);
     ec.setSource("copy");
     ec.recheck(rows);
-    setConfirming(false);
     navigate("/ecom/campaigns/create/review?from=copy");
   };
 
@@ -122,16 +122,16 @@ const FlowHistoryView: React.FC = () => {
             </h1>
             <p className="text-[10px] text-muted-foreground">End dates are cleared on a copy. Cities and budgets can be changed here.</p>
           </div>
-          <button onClick={() => setConfirming(true)} disabled={missingEndDate.length > 0}
+          <button onClick={proceed} disabled={missingEndDate.length > 0}
             title={missingEndDate.length ? "A total budget needs an end date." : undefined}
             className="ml-auto px-4 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
-            Continue to review
+            Continue
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-3xl mx-auto space-y-3">
-            {revalidated.map(({ h, e, prods, notReady }) => {
+            {revalidated.map(({ h, e, prods, oos, oosLines }) => {
               const cap = capabilityFor(h.platform);
               const symbol = currencySymbol(currencyFor(h.platform));
               const summary = summariseReadiness(
@@ -149,7 +149,7 @@ const FlowHistoryView: React.FC = () => {
                   </div>
 
                   {cap.city_targeting ? (
-                    <EcomCityPicker platform={h.platform} value={e.cities} onChange={(c) => setEdit(h.name, { cities: c })} />
+                    <EcomCityPicker platform={h.platform} value={e.cities} onChange={(c) => setEdit(h.name, { cities: c })} outOfStock={oos} />
                   ) : (
                     <p className="text-[11px] text-muted-foreground">{platformDisplay(h.platform)} does not target cities.</p>
                   )}
@@ -173,16 +173,12 @@ const FlowHistoryView: React.FC = () => {
                     </label>
                   </div>
 
-                  {notReady.length > 0 && (
-                    <p className="text-[11px] text-sw-amber">{notReady.length} {notReady.length === 1 ? "city" : "cities"} cannot run today for the chosen products.</p>
-                  )}
+                  <EcomStockNotice lines={oosLines} />
                 </div>
               );
             })}
           </div>
         </div>
-
-        <ConfirmDialog open={confirming} onOpenChange={setConfirming} revalidated={revalidated} onProceed={proceed} />
       </div>
     );
   }
@@ -262,44 +258,5 @@ const FlowHistoryView: React.FC = () => {
 };
 
 const inputCls = "w-full bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary/50";
-
-const ConfirmDialog: React.FC<{
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  revalidated: { h: { name: string }; e: Edited; prods: string[]; goneCities: string[]; notReady: unknown[]; warned: unknown[] }[];
-  onProceed: () => void;
-}> = ({ open, onOpenChange, revalidated, onProceed }) => (
-  <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="bg-surface-1 border-border-visible max-w-lg">
-      <DialogHeader>
-        <DialogTitle className="text-sm">What changed since these last ran</DialogTitle>
-        <DialogDescription className="text-[11px]">
-          Copies are never sent as they were. Confirm each point below, then these campaigns go through the same checks as any other.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="space-y-3 max-h-[300px] overflow-y-auto text-xs">
-        {revalidated.map(({ h, e, goneCities, notReady, warned, prods }) => (
-          <div key={h.name} className="rounded-lg border border-subtle p-3">
-            <p className="text-foreground font-medium">{h.name}</p>
-            <ul className="mt-1 space-y-0.5 text-[11px] text-muted-foreground">
-              <li>{e.endDate ? `Ends ${e.endDate}.` : "No end date set."}</li>
-              <li>Budget {e.budgetType} {e.budgetValue}.</li>
-              {goneCities.length > 0 && <li className="text-sw-amber">{goneCities.length} city name{goneCities.length > 1 ? "s are" : " is"} no longer in the list: {goneCities.join(", ")}.</li>}
-              {notReady.length > 0 && <li className="text-sw-red">{notReady.length} {notReady.length === 1 ? "city" : "cities"} cannot run today for the chosen products.</li>}
-              {warned.length > 0 && <li className="text-sw-amber">{warned.length} {warned.length === 1 ? "city needs" : "cities need"} a look.</li>}
-              {goneCities.length === 0 && notReady.length === 0 && warned.length === 0 && <li>All {prods.length} {prods.length === 1 ? "product still looks" : "products still look"} fine.</li>}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="flex justify-end gap-2">
-        <button onClick={() => onOpenChange(false)} className="px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">Back</button>
-        <button onClick={onProceed} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
-          I have read this — continue to review
-        </button>
-      </div>
-    </DialogContent>
-  </Dialog>
-);
 
 export default FlowHistoryView;
