@@ -182,12 +182,18 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
         )}
 
         <div className="space-y-2 pt-1">
-          <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
-            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
-            <span>
-              I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
-            </span>
-          </label>
+          {selected.length === 0 ? (
+            <p className="text-[11px] text-muted-foreground">
+              Everything here is held. Fix the blockers above, or park them for later.
+            </p>
+          ) : (
+            <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
+              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
+              <span>
+                I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+              </span>
+            </label>
+          )}
           {irreversible.length > 0 && (
             <label className="flex items-start gap-2 text-[11px] text-sw-amber cursor-pointer">
               <input
