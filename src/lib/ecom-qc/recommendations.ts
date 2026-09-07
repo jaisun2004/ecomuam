@@ -138,8 +138,35 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
   const out: SkuRecommendation[] = [];
   const symbol = currencySymbol(currency);
   const asOf = asOfLabel();
-  /** Does the brand already run campaigns on this platform? Only then is pacing real. */
-  const hasLiveCampaigns = h % 3 === 0;
+
+  /** How each kind of card is classed, where it belongs, and what grounds it. */
+  const KIND_META: Record<RecoKind, { klass: "observed" | "rule"; step: RecoStep; provenance: string; grounding: string }> = {
+    price: {
+      klass: "observed",
+      step: "products",
+      provenance: `Collected ${asOf}`,
+      grounding: "Both prices are the ones showing on the shelf right now. Nothing estimated.",
+    },
+    city: {
+      klass: "observed",
+      step: "products",
+      provenance: `Collected ${asOf}`,
+      grounding: "Counted from today's store availability crawl, city by city. Nothing estimated.",
+    },
+    keywords: {
+      klass: "rule",
+      step: "targeting",
+      provenance: "Threshold set by your team",
+      grounding: "Your team's threshold for defending a term, applied to today's organic rank. It says nothing about what the campaign will return.",
+    },
+    bids: {
+      klass: "observed",
+      step: "targeting",
+      provenance: "Platform limit",
+      grounding: "The floor is published by the platform. This product has no spend history, so no efficiency figure is used.",
+    },
+  };
+
 
   const mk = (
     kind: RecoKind,
