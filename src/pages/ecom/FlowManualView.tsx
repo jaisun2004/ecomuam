@@ -329,6 +329,8 @@ const FlowManualView: React.FC = () => {
                 {cap?.match_types_used ? "Match types: exact, phrase, broad." : `${platformDisplay(platform)} does not use match types.`}
               </p>
             </Section>
+            <RecoPanel forStep="targeting" />
+            </>
           )}
 
           {step === 5 && (
