@@ -191,6 +191,28 @@ const ReviewPushView: React.FC = () => {
           </ul>
         </div>
 
+        {/* The same recommendation cards, restated before anything is created */}
+        {planRecos.length > 0 && (
+          <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-subtle flex items-center justify-between">
+              <h2 className="font-display font-bold text-xs text-foreground">
+                {planRecos.length} recommendation{planRecos.length > 1 ? "s" : ""} on this plan
+              </h2>
+              <p className="text-[10px] text-muted-foreground">Data as of {asOfLabel()}</p>
+            </div>
+            <div className="divide-y divide-subtle">
+              {planRecos.map((r) => (
+                <EcomRecoCard key={r.id} reco={r} selected readOnly onToggle={() => {}} />
+              ))}
+            </div>
+            <p className="px-4 py-2 text-[10px] text-muted-foreground border-t border-subtle">
+              These were kept earlier in the flow. They are applied to the plan when you push.
+            </p>
+          </div>
+        )}
+
+
+
         {/* Held rows stay visible */}
         {blocked.length > 0 && (
           <div className="rounded-xl border border-sw-red/30 bg-surface-1 overflow-hidden">
