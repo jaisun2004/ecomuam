@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { DateRangeProvider } from "./contexts/DateRangeContext";
-import { EcomCreateProvider } from "./pages/ecom/EcomCreateContext";
+import { EcomCreateProvider } from "@/pages/ecom/EcomCreateContext";
 import CampaignCreateEntry from "./pages/ecom/CampaignCreateEntry";
 import FlowAiView from "./pages/ecom/FlowAiView";
 import FlowHistoryView from "./pages/ecom/FlowHistoryView";
