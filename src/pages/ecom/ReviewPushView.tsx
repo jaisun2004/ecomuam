@@ -97,7 +97,7 @@ const ReviewPushView: React.FC = () => {
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — download the file and upload it in the platform console to set them live.`,
+            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -137,12 +137,6 @@ const ReviewPushView: React.FC = () => {
               }`}>
                 <p className="text-foreground font-medium">{platformDisplay(o.platform)}</p>
                 <p className="text-muted-foreground mt-0.5">{o.detail}</p>
-                {o.status === "exported" && (
-                  <button onClick={() => downloadCorrected(byPlatform.find((g) => g.platform === o.platform)?.rows ?? [])}
-                    className="mt-1.5 flex items-center gap-1 text-[11px] text-primary hover:underline">
-                    <Download size={11} /> Download the file for {platformDisplay(o.platform)}
-                  </button>
-                )}
               </li>
             ))}
           </ul>
@@ -354,7 +348,7 @@ const ReviewPushView: React.FC = () => {
               <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
                 <span>
-                  I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+                  I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} created.
                 </span>
               </label>
             )}
