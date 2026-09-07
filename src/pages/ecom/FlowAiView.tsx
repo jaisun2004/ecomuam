@@ -32,8 +32,10 @@ const MAX_MB = 10;
 const FlowAiView: React.FC = () => {
   const navigate = useNavigate();
   const ec = useEcomCreate();
-  const [started, setStarted] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", text: FIRST_MESSAGE }]);
+  const started = ec.chat.started;
+  const setStarted = (v: boolean) => ec.setChat((c) => ({ ...c, started: v }));
+  const messages: Msg[] = ec.chat.messages.length ? ec.chat.messages : [{ role: "assistant", text: FIRST_MESSAGE }];
+  const setMessages = (fn: (m: Msg[]) => Msg[]) => ec.setChat((c) => ({ ...c, messages: fn(c.messages.length ? c.messages : [{ role: "assistant", text: FIRST_MESSAGE }]) }));
   const [input, setInput] = useState("");
   const [parsing, setParsing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -42,7 +44,8 @@ const FlowAiView: React.FC = () => {
   const [skuQuery, setSkuQuery] = useState("");
   const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
   const [recos, setRecos] = useState<SkuRecommendation[] | null>(null);
-  const [reviewing, setReviewing] = useState(false);
+  const reviewing = ec.chat.reviewing;
+  const setReviewing = (v: boolean) => ec.setChat((c) => ({ ...c, reviewing: v }));
   const [showHeld, setShowHeld] = useState(false);
   const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -64,12 +67,6 @@ const FlowAiView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ec.runs]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") navigate("/ecom/campaigns/create"); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [navigate]);
-
   const say = (text: string) => setMessages((m) => [...m, { role: "assistant", text }]);
 
   const registerRun = (run: SheetRun, previous: SheetRun | null) => {
@@ -79,6 +76,8 @@ const FlowAiView: React.FC = () => {
     ec.recheck(run.rows);
 
     if (run.state === "file_error" || run.state === "wrong_shape" || run.state === "empty") {
+      setRecos(null);
+      setReviewing(false);
       say(
         run.missingColumns.length
           ? `I couldn't use that file. These columns are missing or renamed: ${run.missingColumns.join(", ")}. The template has them in the right order — grab it below and try again.`
@@ -226,7 +225,7 @@ const FlowAiView: React.FC = () => {
     setMessages((m) => [
       ...m,
       { role: "user", text: `Recommendations for ${pickedSkus.map((s) => s.name).join(", ")}.` },
-      { role: "assistant", text: `${list.length} recommendations across ${pickedSkus.length} SKU${pickedSkus.length > 1 ? "s" : ""}, covering budget, cities, keywords and bids. Pick the ones you want and I'll turn them into rows and check them.` },
+      { role: "assistant", text: `${list.length} suggestion${list.length > 1 ? "s" : ""} across ${pickedSkus.length} product${pickedSkus.length > 1 ? "s" : ""}, covering price, cities and keywords. Pick the ones you want and I'll turn them into campaigns and check them.` },
     ]);
   };
 
@@ -324,7 +323,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); setMessages([{ role: "assistant", text: FIRST_MESSAGE }]); setRecos(null); setSkuPicker(false); setFixing(null); setReviewing(false); setShowHeld(false); }}
+              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setRecos(null); setSkuPicker(false); setFixing(null); setShowHeld(false); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
@@ -428,10 +427,7 @@ const FlowAiView: React.FC = () => {
           {recos && recos.length > 0 && (
             <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
               <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
-                <p className="text-xs font-medium text-foreground">Recommendations from Ecom Analytics</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">
-                  Built from what we know today about each SKU — stock, rank, search demand and the platform's own rules. Nothing is created until you add it.
-                </p>
+                <p className="text-xs font-medium text-foreground">{recos.length} suggestion{recos.length > 1 ? "s" : ""}</p>
               </div>
               <div className="max-h-[440px] overflow-y-auto divide-y divide-subtle">
                 {recos.map((r) => (
@@ -453,7 +449,7 @@ const FlowAiView: React.FC = () => {
                 <span className="text-[11px] text-muted-foreground">{chosenRecos.size} selected</span>
                 <button onClick={acceptRecos} disabled={!chosenRecos.size}
                   className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
-                  Add as campaign rows
+                  Add {chosenRecos.size} campaign{chosenRecos.size === 1 ? "" : "s"}
                 </button>
               </div>
             </div>

@@ -28,6 +28,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
 
   const { clean, blocked } = partitionRows(ec.rows, ec.result);
   const selected = clean.filter((r) => r.selected !== false);
+  const noun = (n: number) => (ec.countsRows ? `row${n === 1 ? "" : "s"}` : `campaign${n === 1 ? "" : "s"}`);
 
   const byPlatform = useMemo(() => {
     const map = new Map<string, BatchRow[]>();
@@ -44,6 +45,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
   const canPush = selected.length > 0 && consent && (irreversible.length === 0 || confirmIrreversible);
 
   const push = () => {
+    if (pushing) return;
     setPushing(true);
     setTimeout(() => {
       const outcomes: PushOutcome[] = byPlatform.map((g) => {
@@ -132,7 +134,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
         <p className="text-xs font-medium text-foreground">Review and push</p>
         <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px]">Nothing is created yet</span>
         <span className="ml-auto text-[10px] text-muted-foreground">
-          {selected.length} rows going · {blocked.length} held
+          {selected.length} {noun(selected.length)} going · {blocked.length} held
         </span>
       </div>
 
@@ -142,13 +144,13 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           <ul className="space-y-1">
             {byPlatform.map((g) => (
               <li key={g.platform} className="text-[11px] text-muted-foreground">
-                <span className="text-foreground font-medium">{platformDisplay(g.platform)}</span> · {g.rows.length} rows ·{" "}
+                <span className="text-foreground font-medium">{platformDisplay(g.platform)}</span> · {g.rows.length} {noun(g.rows.length)} ·{" "}
                 {g.cap.can_push_api
-                  ? "sent straight to the platform through its API."
-                  : "campaigns are created as a file — this platform takes new campaigns by file upload in its console."}
+                  ? "created straight on the platform."
+                  : "created as a file — upload it in the platform console to set them live."}
               </li>
             ))}
-            {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">No rows are selected.</li>}
+            {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">Nothing is selected.</li>}
           </ul>
         </div>
 
@@ -156,14 +158,14 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           onClick={() => setShowRows((v) => !v)}
           className="w-full text-left px-3 py-2 rounded-lg border border-subtle bg-surface-2 text-[11px] text-foreground hover:border-primary/40"
         >
-          {showRows ? "Hide the rows" : `Show all ${ec.rows.length} rows, read only`}
+          {showRows ? "Hide them" : `Show all ${ec.rows.length} ${noun(ec.rows.length)}, read only`}
         </button>
-        {showRows && <EcomSheetTable rows={ec.rows} result={ec.result} title="Rows as they will be sent" defaultOpen />}
+        {showRows && <EcomSheetTable rows={ec.rows} result={ec.result} title="As they will be sent" defaultOpen />}
 
         {blocked.length > 0 && (
           <div className="rounded-lg border border-sw-red/30 bg-sw-red-dim px-3 py-2.5">
             <p className="text-[11px] text-sw-red">
-              {blocked.length} rows are held and will not be sent. They keep their budget and stay in the plan.
+              {blocked.length} {noun(blocked.length)} are held and will not be sent. They keep their budget and stay in the plan.
             </p>
             <div className="flex gap-2 mt-2">
               <button onClick={onFixWithAi} className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
@@ -173,7 +175,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
                 onClick={() => downloadCorrected(blocked)}
                 className="px-2.5 py-1 rounded-md text-[10px] bg-surface-3 text-foreground hover:bg-surface-3/70"
               >
-                Download the {blocked.length} rows
+                Download the {blocked.length} {noun(blocked.length)}
               </button>
             </div>
           </div>
@@ -183,7 +185,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
             <span>
-              I have read the {selected.length} rows and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
+              I have read these {selected.length} {noun(selected.length)} and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
             </span>
           </label>
           {irreversible.length > 0 && (
@@ -198,11 +200,6 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
                 On {irreversible.map((g) => platformDisplay(g.platform)).join(", ")} the budget cannot be lowered once live. I have checked the amounts.
               </span>
             </label>
-          )}
-          {ec.overrides.length > 0 && (
-            <p className="text-[10px] text-muted-foreground">
-              {ec.overrides.length} warning{ec.overrides.length > 1 ? "s were" : " was"} accepted with a reason, and each one is recorded with this batch.
-            </p>
           )}
         </div>
       </div>
