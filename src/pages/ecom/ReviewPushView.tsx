@@ -88,7 +88,7 @@ const ReviewPushView: React.FC = () => {
             mode: "export",
             rows: g.rows.length,
             status: "exported",
-            detail: `${platformDisplay(g.platform)} has no campaign API. ${g.rows.length} rows were exported for upload in the platform console. Nothing is live yet.`,
+            detail: `${g.rows.length} campaigns created for ${platformDisplay(g.platform)}. This platform takes new campaigns by file upload — download the file and upload it in the platform console to set them live.`,
           };
         }
         const failed = g.rows.length > 6;
@@ -118,7 +118,7 @@ const ReviewPushView: React.FC = () => {
           <div className="flex items-center gap-2 mb-4">
             {anyFailed ? <AlertTriangle size={22} className="text-sw-amber" /> : <CheckCircle2 size={22} className="text-sw-green" />}
             <h1 className="font-display font-bold text-lg text-foreground">
-              {anyFailed ? "Partly done" : anyPushed ? "Done" : "Exported, not live"}
+              {anyFailed ? "Partly done" : "Campaigns created"}
             </h1>
           </div>
           <ul className="space-y-2">
@@ -201,7 +201,7 @@ const ReviewPushView: React.FC = () => {
                 {caveats.map((g) => (
                   <li key={g.platform} className="text-[10px] text-sw-amber">
                     <span className="font-medium">{platformDisplay(g.platform)}</span>{" "}
-                    {!g.cap.can_push_api && "has no campaign API — the rows are prepared as a file to upload yourself. "}
+                    {!g.cap.can_push_api && "takes new campaigns by file upload — your campaigns are created as a file to upload in the platform console. "}
                     {g.cap.irreversible_fields.length > 0 && "budget cannot be lowered once live."}
                   </li>
                 ))}
@@ -323,7 +323,7 @@ const ReviewPushView: React.FC = () => {
             <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
               <span>
-                I have read the {selected.length} rows and I want them sent. Rows for platforms without an API are prepared as files, not created.
+                I have read the {selected.length} rows and I want them sent. Campaigns for platforms that take file uploads go live once I upload the file in their console.
               </span>
             </label>
             {irreversible.length > 0 && (
