@@ -137,9 +137,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
             {byPlatform.map((g) => (
               <li key={g.platform} className="text-[11px] text-muted-foreground">
                 <span className="text-foreground font-medium">{platformDisplay(g.platform)}</span> · {g.rows.length} {noun(g.rows.length)} ·{" "}
-                {g.cap.can_push_api
-                  ? "created straight on the platform."
-                  : "created as a file — upload it in the platform console to set them live."}
+                created on the platform.
               </li>
             ))}
             {byPlatform.length === 0 && <li className="text-[11px] text-muted-foreground">Nothing is selected.</li>}

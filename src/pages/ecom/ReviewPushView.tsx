@@ -204,8 +204,7 @@ const ReviewPushView: React.FC = () => {
                 {caveats.map((g) => (
                   <li key={g.platform} className="text-[10px] text-sw-amber">
                     <span className="font-medium">{platformDisplay(g.platform)}</span>{" "}
-                    {!g.cap.can_push_api && "takes new campaigns by file upload — upload the generated file in the platform console to set them live. "}
-                    {g.cap.irreversible_fields.length > 0 && "budget cannot be lowered once live."}
+                                        {g.cap.irreversible_fields.length > 0 && "budget cannot be lowered once live."}
                   </li>
                 ))}
               </ul>
