@@ -14,6 +14,8 @@ import { asOfLabel, capabilityFor } from "@/lib/ecom-reference/config";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { downloadCorrected } from "./xlsx-utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import EcomCreatedScreen from "@/components/ecom/EcomCreatedScreen";
+import EcomStockNotice from "@/components/ecom/EcomStockNotice";
 
 const ReviewPushView: React.FC = () => {
   const navigate = useNavigate();
@@ -85,80 +87,43 @@ const ReviewPushView: React.FC = () => {
     setFixing(null);
   };
 
+  const outcomeFor = (g: { platform: string; rows: BatchRow[]; cap: ReturnType<typeof capabilityFor> }, forceOk = false): PushOutcome => {
+    if (!g.cap.can_push_api) {
+      return { platform: g.platform, mode: "export", rows: g.rows.length, status: "exported", detail: "" };
+    }
+    const failed = !forceOk && g.rows.length > 6;
+    return {
+      platform: g.platform,
+      mode: "api",
+      rows: g.rows.length,
+      status: failed ? "failed" : "pushed",
+      detail: failed ? `${platformDisplay(g.platform)} rejected the batch. Nothing was created there. Retry in smaller batches.` : "",
+    };
+  };
+
   const push = () => {
     if (pushing) return;
     setPushing(true);
-    // Mocked delivery. A platform without a campaign API is exported, never reported as pushed.
     setTimeout(() => {
-      const outcomes: PushOutcome[] = byPlatform.map((g) => {
-        if (!g.cap.can_push_api) {
-          return {
-            platform: g.platform,
-            mode: "export",
-            rows: g.rows.length,
-            status: "exported",
-            detail: `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created for ${platformDisplay(g.platform)}.`,
-          };
-        }
-        const failed = g.rows.length > 6;
-        return {
-          platform: g.platform,
-          mode: "api",
-          rows: g.rows.length,
-          status: failed ? "failed" : "pushed",
-          detail: failed
-            ? `${platformDisplay(g.platform)} rejected the batch (rate limit on ${g.rows.length} campaigns). Nothing was created. Retry in smaller batches.`
-            : `${g.rows.length} campaign${g.rows.length === 1 ? "" : "s"} created on ${platformDisplay(g.platform)}.`,
-        };
-      });
-      ec.setOutcomes(outcomes);
+      ec.setOutcomes(byPlatform.map((g) => outcomeFor(g)));
       ec.setPushed(true);
       setPushing(false);
     }, 900);
   };
 
-  /* ── Outcome screen: only what actually happened ── */
-  if (ec.pushed) {
-    const anyPushed = ec.outcomes.some((o) => o.status === "pushed");
-    const anyFailed = ec.outcomes.some((o) => o.status === "failed");
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
-        <div className="max-w-xl w-full">
-          <div className="flex items-center gap-2 mb-4">
-            {anyFailed ? <AlertTriangle size={22} className="text-sw-amber" /> : <CheckCircle2 size={22} className="text-sw-green" />}
-            <h1 className="font-display font-bold text-lg text-foreground">
-              {anyFailed ? "Partly done" : "Campaigns created"}
-            </h1>
-          </div>
-          <ul className="space-y-2">
-            {ec.outcomes.map((o) => (
-              <li key={o.platform} className={`rounded-lg border px-3 py-2.5 text-xs ${
-                o.status === "failed" ? "border-sw-red/30 bg-sw-red-dim" : o.status === "exported" ? "border-subtle bg-surface-2" : "border-sw-green/30 bg-sw-green-dim"
-              }`}>
-                <p className="text-foreground font-medium">{platformDisplay(o.platform)}</p>
-                <p className="text-muted-foreground mt-0.5">{o.detail}</p>
-              </li>
-            ))}
-          </ul>
-          {ec.held.length > 0 && (
-            <p className="mt-3 text-[11px] text-sw-amber">
-              {ec.held.reduce((n, h) => n + h.rows.length, 0)} {noun(ec.held.reduce((n, h) => n + h.rows.length, 0))} are still parked in {ec.held.length} held batch{ec.held.length > 1 ? "es" : ""}.
-            </p>
-          )}
-          <div className="flex gap-2 mt-6">
-            <button onClick={() => { ec.reset(); navigate("/"); }} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90">
-              Back to Campaign Manager
-            </button>
-            {ec.held.length > 0 && (
-              <button onClick={() => { ec.setPushed(false); navigate("/ecom/campaigns/create/held"); }} className="px-5 py-2.5 rounded-xl bg-surface-3 text-foreground text-sm hover:bg-surface-3/70">
-                Open held batches
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+  /** Retrying a failed platform never touches one that already went out. */
+  const retry = (platforms: string[]) => {
+    ec.setOutcomes(
+      ec.outcomes.map((o) => {
+        if (!platforms.includes(o.platform)) return o;
+        const g = byPlatform.find((x) => x.platform === o.platform);
+        return g ? outcomeFor(g, true) : o;
+      }),
     );
-  }
+  };
+
+  /* ── Outcome screen: the same one every flow lands on ── */
+  if (ec.pushed) return <EcomCreatedScreen onRetry={retry} />;
 
   const canPush = selected.length > 0 && consent && (irreversible.length === 0 || confirmIrreversible);
   const allHeld = selected.length === 0 && blocked.length > 0;
