@@ -274,10 +274,12 @@ const FlowAiView: React.FC = () => {
 
     const next = [
       ...ec.rows,
-      ...merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1 } as BatchRow)),
+      ...merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1, origin: "reco" } as BatchRow)),
     ];
     setRecos(null);
+    ec.markRecosUsed((recos ?? []).map((r) => r.id));
     setMessages((m) => [...m, { role: "user", text: `Create ${n(merged.length, "recommended campaign")}.` }]);
+
     registerRun(
       buildRun({ fileName: "Recommended campaigns", sizeKb: 0, rows: next, label: "Recommended campaigns", parentId: latest?.id }),
       latest,
