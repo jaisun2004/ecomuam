@@ -494,6 +494,10 @@ const AvailabilityView: React.FC = () => {
         {(() => {
           const skus = ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 150g", "Sunfeast Orange 120g", "Hide & Seek Choco 120g"];
           const plats = ["Blinkit", "Instamart", "Zepto", "Amazon India"];
+          const fixedDays: Record<string, number[]> = {
+            "Bourbon 250g": [2, 4, 1, 5],
+            "Sunfeast Orange 120g": [4, 2, 3, 1],
+          };
           const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
           const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
           return (
