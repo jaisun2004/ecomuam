@@ -47,9 +47,9 @@ const competitorSpendTrend = [
 ];
 
 const competitorAdProfiles = [
-  { name: "Britannia", color: "#FF5722", estSpend: "₹ 5.5L/wk", platforms: ["Instamart", "Instamart", "Blinkit"], topKeywords: ["butter biscuits", "cream biscuits", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
-  { name: "Britannia", color: "#FF9800", estSpend: "₹ 2.8L/wk", platforms: ["Instamart", "Instamart"], topKeywords: ["glucose biscuits", "parle-g", "butter biscuits"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
-  { name: "Sunfeast", color: "#4CAF50", estSpend: "₹ 1.5L/wk", platforms: ["Instamart", "Instamart", "Zepto"], topKeywords: ["biscuits", "choco chip", "sugar free biscuits"], keywordCount: 22, pattern: "Value play — aggressive on premium biscuits segment.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Britannia", color: "#FF5722", estSpend: "₹ 5.5L/wk", platforms: ["Instamart", "Amazon India", "Blinkit"], topKeywords: ["butter biscuits", "cream biscuits", "dark fantasy"], keywordCount: 38, pattern: "Aggressive — increasing spend 40% MoM. Heavy day-parting 9AM–9PM.", budgetExhausted: false, sponsoredActive: true },
+  { name: "Britannia", color: "#FF9800", estSpend: "₹ 2.8L/wk", platforms: ["Instamart", "BigBasket"], topKeywords: ["glucose biscuits", "parle-g", "butter biscuits"], keywordCount: 32, pattern: "Consistent — steady spend, focused on glucose category.", budgetExhausted: true, sponsoredActive: false },
+  { name: "Sunfeast", color: "#4CAF50", estSpend: "₹ 1.5L/wk", platforms: ["Instamart", "Lulu", "Zepto"], topKeywords: ["biscuits", "choco chip", "sugar free biscuits"], keywordCount: 22, pattern: "Value play — aggressive on premium biscuits segment.", budgetExhausted: false, sponsoredActive: true },
   { name: "Patanjali", color: "#9C27B0", estSpend: "₹ 1.8L/wk", platforms: ["Instamart", "Blinkit"], topKeywords: ["digestive biscuits", "whole wheat biscuits", "healthy biscuits"], keywordCount: 18, pattern: "Health segment focus — targeting Britannia Marie directly.", budgetExhausted: true, sponsoredActive: false },
 ];
 
