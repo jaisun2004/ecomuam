@@ -257,9 +257,8 @@ const ShelfMonitoringSection: React.FC = () => {
   const [val, setVal] = useState(SHELF_VALUE_OPTIONS[SHELF_SIGNAL_OPTIONS[0]][0]);
   const [scope, setScope] = useState(SHELF_SCOPE_OPTIONS[0]);
   const [shelfAction, setShelfAction] = useState(SHELF_ACTION_OPTIONS[0]);
-  const [customShelfRules, setCustomShelfRules] = useState<{ id: string; signal: string; op: string; val: string; scope: string; action: string }[]>([
-    { id: "s1", signal: "Competitors OOS", op: "≥", val: "3", scope: "Blinkit", action: "Reduce budget −30% & bid −15%" },
-  ]);
+  const [customShelfRules, setCustomShelfRules] = useState<{ id: string; signal: string; op: string; val: string; scope: string; action: string }[]>([]);
+
 
   const valueOpts = SHELF_VALUE_OPTIONS[signal] || ["0"];
   const addShelfRule = () => {
@@ -366,7 +365,7 @@ const CAMPAIGN_RECOS: CampaignReco[] = [
   { id: "r1", campaign: "Parle-G 120g — Blinkit SP", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Budget +₹ 800/day", changeTone: "green", reason: "ROAS 4.2x vs goal 3.0x — capacity headroom on top-10 keywords." },
   { id: "r2", campaign: "Britannia Marie 150g — Instamart", platform: "Instamart", platformColor: "#0E4C92", change: "↓ Bid −12%", changeTone: "amber", reason: "CTR holding but CPC up 18% w/w — overpaying for same clicks." },
   { id: "r3", campaign: "Marie Gold 250g — Zepto Riyadh", platform: "Zepto", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
-  { id: "r4", campaign: "Bourbon — Instamart SP", platform: "Instamart", platformColor: "#FEEE00", change: "Shift ₹ 500 → Zepto", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
+  { id: "r4", campaign: "Bourbon — Instamart SP", platform: "Instamart", platformColor: "#FEEE00", change: "Shift ₹ 50K → Zepto", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
   { id: "r5", campaign: "Hide & Seek Choco — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Britannia OOS in 3 Mumbai areas — capture defensive auctions now." },
   { id: "r6", campaign: "Parle-G 250g — Instamart Brand", platform: "Instamart", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Britannia entered top-10 on brand keywords — defend before rank entrenches." },
 ];
