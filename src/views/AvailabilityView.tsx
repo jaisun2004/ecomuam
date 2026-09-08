@@ -514,7 +514,7 @@ const AvailabilityView: React.FC = () => {
                     <tr key={sku} className={ri % 2 === 0 ? "bg-surface-2/50" : ""}>
                       <td className="py-2 text-foreground">{sku}</td>
                       {plats.map(p => {
-                        const days = seed(sku, p);
+                        const days = fixedDays[sku] ? fixedDays[sku][plats.indexOf(p)] : seed(sku, p);
                         const tier = days <= 1 ? "green" : days <= 3 ? "amber" : "red";
                         const bg = tier === "green" ? "bg-sw-green-dim text-sw-green" : tier === "amber" ? "bg-sw-amber-dim text-sw-amber" : "bg-sw-red-dim text-sw-red";
                         return (
