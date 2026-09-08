@@ -46,7 +46,7 @@ Bourbon RT → Bourbon Brand Awareness; Marie Gold SP → Marie Gold Retargeting
 ## 7. Small cleanups
 
 - Remove the stray characters at the bottom of Availability Analytics, Pricing Overview/Analytics, Campaign Manager Overview/Analytics and Budget Optimiser Overview/Analytics.
-- Sidebar icon buttons are icon-only with no hover tooltip and no spoken name. Add a title and aria-label to each of the 22, and remove the red attention dot from the ones that do not lead anywhere. No visual change otherwise.
+- Custom Rule Builder threshold defaults to 2.5.
 - Custom Rule Builder threshold defaults to 2.5.
 - "IF CPC > 12" → "IF CPC > ₹12".
 - Bourbon — Instamart SP card → Shift ₹ 50K → Zepto.
