@@ -115,10 +115,10 @@ const RuleEngine: React.FC = () => {
   });
   const [metric, setMetric] = useState("ROAS");
   const [operator, setOperator] = useState("<");
-  const [threshold, setThreshold] = useState("");
+  const [threshold, setThreshold] = useState("2.5");
   const [action, setAction] = useState("Pause campaign");
   const [customRules, setCustomRules] = useState<CustomRule[]>([
-    { id: "c1", metric: "CPC", operator: ">", threshold: "12", action: "Reduce bid -20%" },
+    { id: "c1", metric: "CPC", operator: ">", threshold: "₹12", action: "Reduce bid -20%" },
   ]);
 
   const toggleRule = (id: string, name: string, next: boolean) => {
