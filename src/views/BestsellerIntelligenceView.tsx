@@ -42,7 +42,7 @@ const competitorBrands: CompetitorBrand[] = [
   { name: "Parle Bourbon", color: "hsl(0,70%,55%)", currentRank: 2, startRank: 3, organicRank: 3, sponsoredRank: 2 },
   { name: "Britannia Premium", color: "hsl(195,70%,45%)", currentRank: 6, startRank: 4, organicRank: 4, sponsoredRank: 5 },
   { name: "Britannia Hide & Seek", color: "hsl(35,85%,50%)", currentRank: 8, startRank: 7, organicRank: 9, sponsoredRank: 7 },
-  { name: "Rauch Choco Chip", color: "hsl(140,55%,40%)", currentRank: 11, startRank: 8, organicRank: 12, sponsoredRank: 10 },
+  { name: "Sunfeast Choco Chip", color: "hsl(140,55%,40%)", currentRank: 11, startRank: 8, organicRank: 12, sponsoredRank: 10 },
 ];
 
 // Build multi-brand rank series for chart

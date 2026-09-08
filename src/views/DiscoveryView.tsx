@@ -60,7 +60,7 @@ const sosData = {
 const poachingIncidents = [
   { keyword: "britannia good day", competitor: "Britannia", platforms: ["Instamart"], firstDetected: "Mar 12", severity: "High" },
   { keyword: "britannia biscuits", competitor: "Britannia", platforms: ["Blinkit"], firstDetected: "Mar 14", severity: "Medium" },
-  { keyword: "britannia bourbon", competitor: "Lacnor", platforms: ["Zepto", "Instamart"], firstDetected: "Mar 15", severity: "Low" },
+  { keyword: "britannia bourbon", competitor: "Unibic", platforms: ["Zepto", "Instamart"], firstDetected: "Mar 15", severity: "Low" },
 ];
 
 const retailerIssues = [
@@ -72,7 +72,7 @@ const retailerIssues = [
 const compRankImprovements = [
   { product: "Britannia Butter Biscuits 200g", brand: "Britannia", platform: "Instamart", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
   { product: "Britannia Cookies 120g", brand: "Britannia", platform: "Instamart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
-  { product: "Rauch Butter Biscuits 150g", brand: "Rauch", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
+  { product: "Sunfeast Butter Biscuits 150g", brand: "Sunfeast", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
   { product: "Patanjali Digestive 200g", brand: "Patanjali", platform: "Instamart", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
   { product: "Britannia Premium 75g", brand: "Britannia", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
   { product: "Britannia Hide & Seek 100g", brand: "Britannia", platform: "Blinkit", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },
@@ -96,7 +96,7 @@ const sosRetailerHeatmap = ["Blinkit", "Zepto", "Instamart"].map(r => ({
 const poachingHistory = [
   { keyword: "britannia good day", competitor: "Britannia", platform: "Instamart", duration: 12, impact: "-3% SoS", status: "Active" },
   { keyword: "britannia biscuits", competitor: "Britannia", platform: "Blinkit", duration: 5, impact: "-1% SoS", status: "Active" },
-  { keyword: "britannia bourbon", competitor: "Lacnor", platform: "Instamart", duration: 18, impact: "-2% SoS", status: "Resolved" },
+  { keyword: "britannia bourbon", competitor: "Unibic", platform: "Instamart", duration: 18, impact: "-2% SoS", status: "Resolved" },
 ];
 
 /* ── Merged keyword + shelf coverage data with binary + avg rank ── */
@@ -421,7 +421,7 @@ const DiscoveryView: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["All", "Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"].map(p => (
+                  {["All", "Blinkit", "Zepto", "Amazon India", "Instamart", "Lulu"].map(p => (
                     <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
                   ))}
                 </SelectContent>
@@ -436,7 +436,7 @@ const DiscoveryView: React.FC = () => {
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
                 <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Britannia" />
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Britannia" />
-                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Lacnor" />
+                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Unibic" />
                 <Line type="monotone" dataKey="categoryAvg" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Category Avg" />
               </LineChart>
             </ResponsiveContainer>

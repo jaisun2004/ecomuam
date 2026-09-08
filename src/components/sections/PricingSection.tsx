@@ -51,7 +51,7 @@ const campaignTriggers: CampaignTrigger[] = [
     strategy: "Defensive Brand Protection", campaignType: "Sponsored Brand + Video Ads",
     platforms: ["Instamart", "Instamart", "Blinkit"],
     keywords: ["electrolyte water", "hydration biscuits", "sports biscuits", "ORS biscuits"],
-    estimatedImpact: "Protect ₹ 5.200g weekly revenue", urgency: "critical",
+    estimatedImpact: "Protect ₹ 5.2L weekly revenue", urgency: "critical",
     icon: <Shield className="h-4 w-4 text-destructive" />,
   },
   {

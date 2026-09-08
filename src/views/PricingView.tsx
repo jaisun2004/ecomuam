@@ -50,11 +50,11 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
 };
 
 const compNamesBySku: Record<string, string[]> = {
-  "Parle-G 250g": ["Britannia", "Britannia", "Rauch"],
-  "Marie Gold 120g": ["Britannia", "Britannia", "Lacnor"],
-  "Britannia Marie 250g": ["Patanjali", "Rauch", "Britannia"],
-  "Bourbon 250g": ["Britannia", "Britannia", "Lacnor"],
-  "Hide & Seek 120g": ["Britannia", "Britannia", "Lacnor"],
+  "Parle-G 250g": ["Britannia", "Britannia", "Sunfeast"],
+  "Marie Gold 120g": ["Britannia", "Britannia", "Unibic"],
+  "Britannia Marie 250g": ["Patanjali", "Sunfeast", "Britannia"],
+  "Bourbon 250g": ["Britannia", "Britannia", "Unibic"],
+  "Hide & Seek 120g": ["Britannia", "Britannia", "Unibic"],
 };
 
 const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
@@ -63,7 +63,7 @@ const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
       { brand: "Parle Parle-G 120g", you: true, price: "₹ 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Britannia 250g", you: false, price: "₹ 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Britannia Cookies 120g", you: false, price: "₹ 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Rauch Multivit 250g", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Sunfeast Dark Fantasy 250g", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
     Blinkit: [
       { brand: "Parle Parle-G 120g", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
@@ -85,10 +85,10 @@ const priceAlerts = [
 
 const platformPricing = [
   { platform: "Instamart", color: "#FF9900", avgIndex: 0.96, skusBelowComp: 3, skusAboveComp: 2, parity: 1, needsAttention: false },
-  { platform: "Instamart", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
+  { platform: "Amazon India", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
   { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
   { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
-  { platform: "Blinkit", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
+  { platform: "Lulu", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
 ];
 
 const platformPricingDetail: Record<string, { sku: string; yourPrice: string; compPrice: string; parity: boolean; competitor: string }[]> = {
@@ -109,7 +109,7 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
 };
 
 const priceAdvantageData = [
-  { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Rauch", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
+  { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Sunfeast", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
   { sku: "Bourbon 250g", yourPrice: "₹ 30", compPrice: "₹ 34", competitor: "Britannia", platform: "Instamart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹ 2.80", estRoas: "4.6x" },
   { sku: "Hide & Seek 120g", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Britannia", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹ 1.90", estRoas: "6.1x" },
 ];

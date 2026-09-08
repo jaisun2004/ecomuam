@@ -101,7 +101,7 @@ export const OPERATOR_LABELS: Record<Operator, string> = {
 export const SCOPE_LABELS: Record<CampaignScope, string> = {
   all: "All campaigns",
   brand_search: "Brand Search",
-  performance_max: "Performance Max",
+  performance_max: "Q-Commerce Always-On",
   non_brand: "Non-Brand",
   retargeting: "Retargeting",
   festival: "Festival",
@@ -238,7 +238,7 @@ const defaultVelocity: VelocityLimits = {
 };
 
 const insightTypes = ["Defense", "Opportunity", "Bid optimisation", "Daypart adjustment", "Budget shift"];
-const campaignTypes = ["Brand Search", "Performance Max", "Non-Brand", "Retargeting", "Festival"];
+const campaignTypes = ["Brand Search", "Q-Commerce Always-On", "Non-Brand", "Retargeting", "Festival"];
 
 const defaultPermissions: Record<string, Record<string, PermissionState>> = {};
 insightTypes.forEach(i => {
@@ -310,9 +310,9 @@ const defaultStrategicLocks: StrategicLock[] = [
 ];
 
 const defaultOwnerships: ActionOwnership[] = [
-  { insightId: "avail-pause", ownerScreen: "campaigns", campaignName: "Creatine Retargeting", status: "active", reason: "Tier 1: Availability < 20%" },
+  { insightId: "avail-pause", ownerScreen: "campaigns", campaignName: "Marie Gold Retargeting", status: "active", reason: "Tier 1: Availability < 20%" },
   { insightId: "defense-kw-cookies", ownerScreen: "campaigns", campaignName: "Cream Biscuits — Sponsored", status: "active" },
-  { insightId: "budget-shift-flipkart", ownerScreen: "budget", campaignName: "Creatine Retargeting", status: "active" },
+  { insightId: "budget-shift-flipkart", ownerScreen: "budget", campaignName: "Marie Gold Retargeting", status: "active" },
 ];
 
 const GuardrailContext = createContext<GuardrailState | null>(null);

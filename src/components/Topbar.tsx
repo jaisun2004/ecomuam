@@ -17,7 +17,7 @@ const presets: TimePreset[] = ["7D", "30D", "90D"];
 const platformFilters = [
   { name: "Instamart", color: "#FF9900" },
   { name: "Blinkit", color: "#FDDC2B" },
-  { name: "Instamart", color: "#2F77FF" },
+  { name: "Zepto", color: "#2F77FF" },
 ];
 
 const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {

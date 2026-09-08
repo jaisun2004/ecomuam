@@ -140,7 +140,7 @@ const competitorAggression = [
   { competitor: "Britannia", platform: "Instamart", action: "Bid increase 2.4x", keywords: 5, impact: "SoS drop -8%", severity: "high" },
   { competitor: "Patanjali", platform: "Zepto", action: "Brand keyword poaching", keywords: 3, impact: "SoS drop -12%", severity: "high" },
   { competitor: "Britannia", platform: "Instamart", action: "New sponsored listings", keywords: 4, impact: "SoS drop -5%", severity: "medium" },
-  { competitor: "Rauch", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
+  { competitor: "Sunfeast", platform: "Blinkit", action: "Category ad blitz", keywords: 8, impact: "SoS drop -3%", severity: "low" },
 ];
 
 const poachingKeywords = [

@@ -27,14 +27,14 @@ const blockAllowData = [
 ];
 
 const insightTypes = ["Defense", "Opportunity", "Bid optimisation", "Daypart adjustment", "Budget shift"];
-const campaignTypes = ["Brand Search", "Performance Max", "Non-Brand", "Retargeting", "Festival"];
+const campaignTypes = ["Brand Search", "Q-Commerce Always-On", "Non-Brand", "Retargeting", "Festival"];
 
 // ─── Mock campaign list for "custom" scope ───
 const MOCK_CAMPAIGNS = [
-  { id: "creatine-retargeting", name: "Creatine Retargeting" },
+  { id: "creatine-retargeting", name: "Marie Gold Retargeting" },
   { id: "cookies-protein-sponsored", name: "Cream Biscuits — Sponsored" },
   { id: "brand-search-main", name: "Brand Search — Main" },
-  { id: "perf-max-protein", name: "Performance Max — Protein" },
+  { id: "perf-max-protein", name: "Q-Commerce Always-On — Protein" },
   { id: "festival-diwali", name: "Diwali Campaign" },
 ];
 

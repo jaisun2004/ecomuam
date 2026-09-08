@@ -153,7 +153,7 @@ const keywordDataByPlatform: Record<string, KeywordRank[]> = {
     { keyword: "digestive biscuits", sponsoredRank: 1, organicRank: 1, topCompetitor: "Patanjali", compRank: 2, searchVol: "45K", searchVolNum: 45, shareOfSearch: 28, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "choco chip biscuits", sponsoredRank: 2, organicRank: 5, topCompetitor: "Britannia Premium", compRank: 1, searchVol: "38K", searchVolNum: 38, shareOfSearch: 15, trend: "flat", action: "Optimise bids", canReduceSpend: false },
     { keyword: "biscuits combo pack", sponsoredRank: 4, organicRank: 11, topCompetitor: "Parle (Own)", compRank: 4, searchVol: "28K", searchVolNum: 28, shareOfSearch: 8, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "sugar free biscuits", sponsoredRank: 8, organicRank: 18, topCompetitor: "Rauch", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
+    { keyword: "sugar free biscuits", sponsoredRank: 8, organicRank: 18, topCompetitor: "Sunfeast", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
     { keyword: "kids biscuits", sponsoredRank: 2, organicRank: 3, topCompetitor: "Britannia", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
   Blinkit: [
@@ -184,7 +184,7 @@ const campaignKeywordPerf = [
 ];
 
 const keywordCampaignImpact = [
-  { keyword: "butter biscuits", activeCampaigns: 3, totalSpend: "₹ 1.200g", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
+  { keyword: "butter biscuits", activeCampaigns: 3, totalSpend: "₹ 1.2L", avgRoas: "5.0x", organicRank: 2, recommendation: "Cut 1 campaign — organic rank < 3, redundant sponsored spend" },
   { keyword: "cream biscuits", activeCampaigns: 2, totalSpend: "₹ 68K", avgRoas: "3.1x", organicRank: 8, recommendation: "Increase bid on best-performing campaign, pause the other" },
   { keyword: "glucose biscuits", activeCampaigns: 1, totalSpend: "₹ 28K", avgRoas: "1.8x", organicRank: 14, recommendation: "Fix content score (42/100) before spending more on ads" },
   { keyword: "digestive biscuits", activeCampaigns: 2, totalSpend: "₹ 85K", avgRoas: "6.1x", organicRank: 1, recommendation: "Reduce to 1 campaign — #1 organically, save ₹ 40K/mo" },
@@ -195,7 +195,7 @@ const keywordCampaignImpact = [
 const losingKeywords = [
   { keyword: "cream biscuits", yourProduct: "Parle-G 120g", lastWeekRank: 5, thisWeekRank: 8, sosLoss: "-4%", compProduct: "Britannia Cream Biscuits 200g", compRankChange: "3→2", reason: "Britannia increased bids by 40%" },
   { keyword: "glucose biscuits", yourProduct: "Marie Gold 250g", lastWeekRank: 10, thisWeekRank: 14, sosLoss: "-3%", compProduct: "Britannia Cookies 120g", compRankChange: "2→1", reason: "Britannia launched new campaign + listing update" },
-  { keyword: "sugar free biscuits", yourProduct: "Britannia Marie 150g", lastWeekRank: 14, thisWeekRank: 18, sosLoss: "-2%", compProduct: "Rauch Sugar Free 150g", compRankChange: "3→2", reason: "Rauch improved content score to 84/100" },
+  { keyword: "sugar free biscuits", yourProduct: "Britannia Marie 150g", lastWeekRank: 14, thisWeekRank: 18, sosLoss: "-2%", compProduct: "Sunfeast Sugar Free 150g", compRankChange: "3→2", reason: "Sunfeast improved content score to 84/100" },
   { keyword: "biscuits combo pack", yourProduct: "Sunfeast Orange 250g", lastWeekRank: 8, thisWeekRank: 11, sosLoss: "-3%", compProduct: "Britannia Variety Pack", compRankChange: "4→3", reason: "Britannia price cut by 15%" },
 ];
 
