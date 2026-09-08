@@ -35,8 +35,9 @@ Confirmed cause: the Keyword Analysis panel points at route id `shelf` and the C
 
 ## 5. Duplicated rows
 
-- Replenishment heatmap: Bourbon 250g → 2d, 4d, 1d, 5d; Sunfeast Orange 120g → 4d, 2d, 3d, 1d. Other rows untouched.
-- Budget Optimiser: delete the custom rule that duplicates the built-in "3+ competitors OOS" rule and show the empty state for that list.
+- Replenishment heatmap: the days shown are currently derived from product-name length, so equal-length names produce identical rows. Replace that with fixed per-product values, changing only Bourbon 250g (2d, 4d, 1d, 5d) and Sunfeast Orange 120g (4d, 2d, 3d, 1d). The other four rows keep the values they show today.
+- Budget Optimiser: the single entry under "Custom shelf rules (1)" repeats the built-in "3+ competitors OOS" rule word for word. Delete the copy so the list shows its empty state and the counter reads (0); the built-in rule is untouched.
+
 
 ## 6. Name mismatches (Budget Optimiser only)
 
@@ -45,7 +46,7 @@ Bourbon RT → Bourbon Brand Awareness; Marie Gold SP → Marie Gold Retargeting
 ## 7. Small cleanups
 
 - Remove the stray characters at the bottom of Availability Analytics, Pricing Overview/Analytics, Campaign Manager Overview/Analytics and Budget Optimiser Overview/Analytics.
-- Give all 22 sidebar icon buttons a title and aria-label; remove the red badge from any that do not navigate.
+- Sidebar icon buttons are icon-only with no hover tooltip and no spoken name. Add a title and aria-label to each of the 22, and remove the red attention dot from the ones that do not lead anywhere. No visual change otherwise.
 - Custom Rule Builder threshold defaults to 2.5.
 - "IF CPC > 12" → "IF CPC > ₹12".
 - Bourbon — Instamart SP card → Shift ₹ 50K → Zepto.
