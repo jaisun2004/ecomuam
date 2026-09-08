@@ -248,7 +248,7 @@ const SHELF_VALUE_OPTIONS: Record<string, string[]> = {
   "Competitor price gap": ["+5%", "+10%", "+15%", "−10%"],
 };
 const SHELF_ACTION_OPTIONS = ["Reduce bid −10%", "Reduce bid −20%", "Reduce budget −20%", "Reduce budget −30% & bid −15%", "Pause campaign", "Raise bid +15%", "Raise bid +25% (defensive)"];
-const SHELF_SCOPE_OPTIONS = ["All platforms", "Blinkit", "Instamart", "Zepto", "Instamart"];
+const SHELF_SCOPE_OPTIONS = ["All platforms", "Blinkit", "Instamart", "Zepto", "Amazon India"];
 
 const ShelfMonitoringSection: React.FC = () => {
   const [on, setOn] = useState<Record<string, boolean>>(Object.fromEntries(STD_RULES.map(r => [r.id, !!r.defaultOn])));
