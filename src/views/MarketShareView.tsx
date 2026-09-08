@@ -59,8 +59,8 @@ const platformColorMap: Record<string, string> = {
   "Zepto": "#833AB4",
 };
 
-const platforms = ["Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"];
-const competitors = ["Britannia", "Britannia", "Sunfeast", "Patanjali", "Unibic"];
+const platforms = ["Blinkit", "Zepto", "Instamart", "Amazon India", "BigBasket"];
+const competitors = ["Britannia", "Parle", "Sunfeast", "Patanjali", "Unibic"];
 
 const platformShareData = platforms.map(p => ({
   platform: p,
@@ -146,7 +146,7 @@ const MarketShareView: React.FC = () => {
               <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
               <Bar dataKey="you" stackId="a" fill="#A78BFA" radius={[0, 0, 0, 0]} name="You" />
               <Bar dataKey="rival1" stackId="a" fill="#FF5C5C" name="Britannia" />
-              <Bar dataKey="rival2" stackId="a" fill="#FF8A80" name="Britannia" />
+              <Bar dataKey="rival2" stackId="a" fill="#FF8A80" name="Parle" />
               <Bar dataKey="rival3" stackId="a" fill="#FFAB91" name="Sunfeast" />
               <Bar dataKey="others" stackId="a" fill="rgba(85,90,110,0.4)" radius={[0, 4, 4, 0]} name="Others" />
             </BarChart>
@@ -236,7 +236,7 @@ const MarketShareView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
                 <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Britannia" />
-                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Britannia" />
+                <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Parle" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Sunfeast" />
                 <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Unibic" />
               </LineChart>
