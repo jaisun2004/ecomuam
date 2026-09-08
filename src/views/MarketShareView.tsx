@@ -60,7 +60,7 @@ const platformColorMap: Record<string, string> = {
 };
 
 const platforms = ["Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"];
-const competitors = ["Britannia", "Britannia", "Rauch", "Patanjali", "Unibic"];
+const competitors = ["Britannia", "Britannia", "Sunfeast", "Patanjali", "Unibic"];
 
 const platformShareData = platforms.map(p => ({
   platform: p,
@@ -147,7 +147,7 @@ const MarketShareView: React.FC = () => {
               <Bar dataKey="you" stackId="a" fill="#A78BFA" radius={[0, 0, 0, 0]} name="You" />
               <Bar dataKey="rival1" stackId="a" fill="#FF5C5C" name="Britannia" />
               <Bar dataKey="rival2" stackId="a" fill="#FF8A80" name="Britannia" />
-              <Bar dataKey="rival3" stackId="a" fill="#FFAB91" name="Rauch" />
+              <Bar dataKey="rival3" stackId="a" fill="#FFAB91" name="Sunfeast" />
               <Bar dataKey="others" stackId="a" fill="rgba(85,90,110,0.4)" radius={[0, 4, 4, 0]} name="Others" />
             </BarChart>
           </ResponsiveContainer>
@@ -155,7 +155,7 @@ const MarketShareView: React.FC = () => {
             <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
             <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Britannia</span>
             <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Britannia</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Rauch</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Sunfeast</span>
           </div>
         </PanelCard>
 
@@ -237,7 +237,7 @@ const MarketShareView: React.FC = () => {
                 <Line type="monotone" dataKey="you" stroke="#A78BFA" strokeWidth={2} dot={false} name="You" />
                 <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Britannia" />
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Britannia" />
-                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Rauch" />
+                <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Sunfeast" />
                 <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Unibic" />
               </LineChart>
             </ResponsiveContainer>
@@ -245,7 +245,7 @@ const MarketShareView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#A78BFA" }} /> You</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF5C5C" }} /> Britannia</span>
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FF8A80" }} /> Britannia</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Rauch</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full" style={{ backgroundColor: "#FFAB91" }} /> Sunfeast</span>
             </div>
           </PanelCard>
 

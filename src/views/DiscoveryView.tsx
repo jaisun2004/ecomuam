@@ -72,7 +72,7 @@ const retailerIssues = [
 const compRankImprovements = [
   { product: "Britannia Butter Biscuits 200g", brand: "Britannia", platform: "Instamart", lastWeekSponsored: 8, thisWeekSponsored: 3, lastWeekOrganic: 12, thisWeekOrganic: 6 },
   { product: "Britannia Cookies 120g", brand: "Britannia", platform: "Instamart", lastWeekSponsored: 6, thisWeekSponsored: 2, lastWeekOrganic: 9, thisWeekOrganic: 4 },
-  { product: "Sunfeast Butter Biscuits 150g", brand: "Rauch", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
+  { product: "Sunfeast Butter Biscuits 150g", brand: "Sunfeast", platform: "Blinkit", lastWeekSponsored: 14, thisWeekSponsored: 5, lastWeekOrganic: 18, thisWeekOrganic: 10 },
   { product: "Patanjali Digestive 200g", brand: "Patanjali", platform: "Instamart", lastWeekSponsored: 10, thisWeekSponsored: 4, lastWeekOrganic: 15, thisWeekOrganic: 7 },
   { product: "Britannia Premium 75g", brand: "Britannia", platform: "Zepto", lastWeekSponsored: 12, thisWeekSponsored: 6, lastWeekOrganic: 20, thisWeekOrganic: 11 },
   { product: "Britannia Hide & Seek 100g", brand: "Britannia", platform: "Blinkit", lastWeekSponsored: 9, thisWeekSponsored: 3, lastWeekOrganic: 14, thisWeekOrganic: 8 },

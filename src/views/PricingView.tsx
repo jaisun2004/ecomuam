@@ -50,9 +50,9 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
 };
 
 const compNamesBySku: Record<string, string[]> = {
-  "Parle-G 250g": ["Britannia", "Britannia", "Rauch"],
+  "Parle-G 250g": ["Britannia", "Britannia", "Sunfeast"],
   "Marie Gold 120g": ["Britannia", "Britannia", "Unibic"],
-  "Britannia Marie 250g": ["Patanjali", "Rauch", "Britannia"],
+  "Britannia Marie 250g": ["Patanjali", "Sunfeast", "Britannia"],
   "Bourbon 250g": ["Britannia", "Britannia", "Unibic"],
   "Hide & Seek 120g": ["Britannia", "Britannia", "Unibic"],
 };
@@ -109,7 +109,7 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
 };
 
 const priceAdvantageData = [
-  { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Rauch", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
+  { sku: "Parle-G 120g", yourPrice: "₹ 40", compPrice: "₹ 45", competitor: "Sunfeast", platform: "Instamart", gap: "−12.5%", keywords: ["unibic butter biscuits", "unibic biscuits", "premium butter biscuits"], estCpc: "₹ 3.20", estRoas: "5.2x" },
   { sku: "Bourbon 250g", yourPrice: "₹ 30", compPrice: "₹ 34", competitor: "Britannia", platform: "Instamart", gap: "−11.8%", keywords: ["sunfeast bourbon", "chocolate cream biscuits", "sunfeast dark fantasy"], estCpc: "₹ 2.80", estRoas: "4.6x" },
   { sku: "Hide & Seek 120g", yourPrice: "₹ 20", compPrice: "₹ 24", competitor: "Britannia", platform: "Blinkit", gap: "−16.7%", keywords: ["parle krackjack", "salted biscuits online", "parle snack biscuits"], estCpc: "₹ 1.90", estRoas: "6.1x" },
 ];

@@ -45,7 +45,7 @@ const brandActivityData = [
   { brand: "Parle", skuCount: 52, activity: 88, adSpend: "₹ 12.4L", roas: "4.8x", availability: 94, contentScore: 82 },
   { brand: "Britannia", skuCount: 68, activity: 45, adSpend: "₹ 8.200g", roas: "3.2x", availability: 91, contentScore: 68 },
   { brand: "Britannia", skuCount: 42, activity: 82, adSpend: "₹ 10.120g", roas: "4.2x", availability: 88, contentScore: 76 },
-  { brand: "Rauch", skuCount: 18, activity: 90, adSpend: "₹ 5.6L", roas: "5.1x", availability: 86, contentScore: 84 },
+  { brand: "Sunfeast", skuCount: 18, activity: 90, adSpend: "₹ 5.6L", roas: "5.1x", availability: 86, contentScore: 84 },
   { brand: "Patanjali", skuCount: 14, activity: 72, adSpend: "₹ 4.2L", roas: "3.8x", availability: 82, contentScore: 79 },
   { brand: "Anmol", skuCount: 38, activity: 25, adSpend: "₹ 2.25L", roas: "2.4x", availability: 72, contentScore: 52 },
   { brand: "Priyagold", skuCount: 45, activity: 30, adSpend: "₹ 3.0L", roas: "2.8x", availability: 78, contentScore: 58 },

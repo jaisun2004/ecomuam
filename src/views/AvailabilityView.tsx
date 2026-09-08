@@ -234,7 +234,7 @@ const competitionAvailability = [
   { competitor: "Britannia", platform: "Instamart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Britannia Cookies 250g", trend: "stable" },
   { competitor: "Britannia", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Britannia Laban 250g", trend: "declining" },
   { competitor: "Unibic", platform: "Blinkit", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Britannia Premium", trend: "improving" },
-  { competitor: "Rauch", platform: "Instamart", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 120g", trend: "stable" },
+  { competitor: "Sunfeast", platform: "Instamart", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Sunfeast Dark Fantasy 120g", trend: "stable" },
 ];
 
 const AvailabilityView: React.FC = () => {
@@ -742,7 +742,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
     { competitor: "Britannia", platform: "Instamart", compAvail: 92, yourAvail: 68, product: "Britannia Cookies 120g", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
     { competitor: "Britannia", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Britannia Laban 250g", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
     { competitor: "Unibic", platform: "Blinkit", compAvail: 72, yourAvail: 21, product: "Britannia Premium", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
-    { competitor: "Rauch", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Sunfeast Dark Fantasy 250g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
+    { competitor: "Sunfeast", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Sunfeast Dark Fantasy 250g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
   ];
 
   return (

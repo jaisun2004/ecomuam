@@ -153,7 +153,7 @@ const keywordDataByPlatform: Record<string, KeywordRank[]> = {
     { keyword: "digestive biscuits", sponsoredRank: 1, organicRank: 1, topCompetitor: "Patanjali", compRank: 2, searchVol: "45K", searchVolNum: 45, shareOfSearch: 28, trend: "up", action: "Reduce spend", canReduceSpend: true },
     { keyword: "choco chip biscuits", sponsoredRank: 2, organicRank: 5, topCompetitor: "Britannia Premium", compRank: 1, searchVol: "38K", searchVolNum: 38, shareOfSearch: 15, trend: "flat", action: "Optimise bids", canReduceSpend: false },
     { keyword: "biscuits combo pack", sponsoredRank: 4, organicRank: 11, topCompetitor: "Parle (Own)", compRank: 4, searchVol: "28K", searchVolNum: 28, shareOfSearch: 8, trend: "down", action: "Boost campaign", canReduceSpend: false },
-    { keyword: "sugar free biscuits", sponsoredRank: 8, organicRank: 18, topCompetitor: "Rauch", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
+    { keyword: "sugar free biscuits", sponsoredRank: 8, organicRank: 18, topCompetitor: "Sunfeast", compRank: 2, searchVol: "22K", searchVolNum: 22, shareOfSearch: 3, trend: "down", action: "New campaign needed", canReduceSpend: false },
     { keyword: "kids biscuits", sponsoredRank: 2, organicRank: 3, topCompetitor: "Britannia", compRank: 1, searchVol: "31K", searchVolNum: 31, shareOfSearch: 14, trend: "up", action: "Reduce spend", canReduceSpend: true },
   ],
   Blinkit: [
