@@ -42,9 +42,9 @@ const toneClasses: Record<string, string> = {
 const budgetUtilData = [
   { name: "Parle-G 250g", ratio: 82, color: "hsl(160,70%,48%)" },
   { name: "Q-Commerce Push", ratio: 91, color: "hsl(38,92%,50%)" },
-  { name: "Bourbon RT", ratio: 98, color: "hsl(0,76%,57%)" },
-  { name: "Britannia Marie Brand", ratio: 67, color: "hsl(160,70%,48%)" },
-  { name: "Marie Gold SP", ratio: 88, color: "hsl(38,92%,50%)" },
+  { name: "Bourbon Brand Awareness", ratio: 98, color: "hsl(0,76%,57%)" },
+  { name: "Britannia Marie New Users", ratio: 67, color: "hsl(160,70%,48%)" },
+  { name: "Marie Gold Retargeting", ratio: 88, color: "hsl(38,92%,50%)" },
 ];
 
 const wastedSpendData = [
@@ -56,7 +56,7 @@ const wastedSpendData = [
 const samePlatformShifts = [
   {
     platform: "Instamart", color: "#FF9900",
-    from: { campaign: "Hide & Seek Choco — SP", roas: "2.1x", currentSpend: "₹ 1.200g" },
+    from: { campaign: "Hide & Seek Choco — SP", roas: "2.1x", currentSpend: "₹ 1.2L" },
     to: { campaign: "Parle-G 120g — SP", roas: "5.1x", currentSpend: "₹ 3.8L" },
     amount: "₹ 40K", projImpact: "+1,200 conversions, blended ROAS +0.4x",
   },
@@ -68,7 +68,7 @@ const samePlatformShifts = [
   },
   {
     platform: "Blinkit", color: "#FDDC2B",
-    from: { campaign: "Generic Biscuits Ads", roas: "2.8x", currentSpend: "₹ 1.200g" },
+    from: { campaign: "Generic Biscuits Ads", roas: "2.8x", currentSpend: "₹ 1.2L" },
     to: { campaign: "Parle-G Q-Commerce Push", roas: "3.8x", currentSpend: "₹ 2.4L" },
     amount: "₹ 25K", projImpact: "+500 conversions, better geo-targeting",
   },
@@ -368,7 +368,7 @@ const CAMPAIGN_RECOS: CampaignReco[] = [
   { id: "r3", campaign: "Marie Gold 250g — Zepto Riyadh", platform: "Zepto", platformColor: "#E91E63", change: "Pause", changeTone: "red", reason: "Own SKU OOS in 5/6 dark stores in Riyadh — clicks wasted." },
   { id: "r4", campaign: "Bourbon — Instamart SP", platform: "Instamart", platformColor: "#FEEE00", change: "Shift ₹ 500 → Zepto", changeTone: "purple", reason: "National-tier saturated; Q-Comm ROAS 4.8x and under-funded." },
   { id: "r5", campaign: "Hide & Seek Choco — Blinkit Mumbai", platform: "Blinkit", platformColor: "#FF5A00", change: "↑ Bid +15%, +Budget 20%", changeTone: "green", reason: "Britannia OOS in 3 Mumbai areas — capture defensive auctions now." },
-  { id: "r6", campaign: "Tropicana OJ — Instamart Brand", platform: "Instamart", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Britannia entered top-10 on brand keywords — defend before rank entrenches." },
+  { id: "r6", campaign: "Parle-G 250g — Instamart Brand", platform: "Instamart", platformColor: "#0E4C92", change: "↑ Defensive Bid +25%", changeTone: "purple", reason: "Britannia entered top-10 on brand keywords — defend before rank entrenches." },
 ];
 const tonePill: Record<string, string> = { red: "bg-sw-red-dim text-sw-red", amber: "bg-sw-amber-dim text-sw-amber", green: "bg-sw-green-dim text-sw-green", purple: "bg-sw-purple-dim text-sw-purple" };
 
@@ -421,7 +421,7 @@ const BudgetOptimiserView: React.FC = () => {
 
   const guardrailStatuses = [
     { type: "Brand Search", tier1: false, tier2: false },
-    { type: "Performance Max", tier1: true, tier2: false },
+    { type: "Q-Commerce Always-On", tier1: true, tier2: false },
     { type: "Non-Brand", tier1: false, tier2: true },
     { type: "Retargeting", tier1: true, tier2: false },
     { type: "Festival", tier1: false, tier2: false },

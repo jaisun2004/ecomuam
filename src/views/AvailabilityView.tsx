@@ -230,10 +230,10 @@ const darkstoreGaps = [
 /* Competition availability data */
 const competitionAvailability = [
   { competitor: "Britannia", platform: "Instamart", avail: 96, yourAvail: 86, gap: "+10%", topProduct: "Britannia 120g", trend: "stable" },
-  { competitor: "Britannia", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Britannia Zero 330ml", trend: "improving" },
+  { competitor: "Britannia", platform: "Blinkit", avail: 88, yourAvail: 41, gap: "+47%", topProduct: "Britannia Good Day 150g", trend: "improving" },
   { competitor: "Britannia", platform: "Instamart", avail: 92, yourAvail: 68, gap: "+24%", topProduct: "Britannia Cookies 250g", trend: "stable" },
   { competitor: "Britannia", platform: "Zepto", avail: 78, yourAvail: 56, gap: "+22%", topProduct: "Britannia Laban 250g", trend: "declining" },
-  { competitor: "Lacnor", platform: "Blinkit", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Britannia Premium", trend: "improving" },
+  { competitor: "Unibic", platform: "Blinkit", avail: 72, yourAvail: 21, gap: "+51%", topProduct: "Britannia Premium", trend: "improving" },
   { competitor: "Rauch", platform: "Instamart", avail: 84, yourAvail: 86, gap: "−2%", topProduct: "Rauch Multivit 120g", trend: "stable" },
 ];
 
@@ -738,11 +738,11 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
 
   const competitionAvailData = [
     { competitor: "Britannia", platform: "Instamart", compAvail: 96, yourAvail: 86, product: "Britannia 250g", keywords: ["sunfeast butter biscuits", "sunfeast biscuits"], trend: "stable" },
-    { competitor: "Britannia", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Britannia Zero 330ml", keywords: ["sunfeast cream biscuits", "cream biscuits"], trend: "improving" },
+    { competitor: "Britannia", platform: "Blinkit", compAvail: 88, yourAvail: 41, product: "Britannia Good Day 150g", keywords: ["sunfeast cream biscuits", "cream biscuits"], trend: "improving" },
     { competitor: "Britannia", platform: "Instamart", compAvail: 92, yourAvail: 68, product: "Britannia Cookies 120g", keywords: ["parle biscuits", "parle-g gold"], trend: "stable" },
     { competitor: "Britannia", platform: "Zepto", compAvail: 78, yourAvail: 56, product: "Britannia Laban 250g", keywords: ["parle krackjack", "salted biscuits"], trend: "declining" },
-    { competitor: "Lacnor", platform: "Blinkit", compAvail: 72, yourAvail: 21, product: "Britannia Premium", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
-    { competitor: "Rauch", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Rauch Multivit 250g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
+    { competitor: "Unibic", platform: "Blinkit", compAvail: 72, yourAvail: 21, product: "Britannia Premium", keywords: ["dark fantasy", "chocolate biscuits"], trend: "improving" },
+    { competitor: "Rauch", platform: "Instamart", compAvail: 84, yourAvail: 86, product: "Sunfeast Dark Fantasy 250g", keywords: ["unibic butter", "premium biscuits"], trend: "stable" },
   ];
 
   return (
@@ -858,7 +858,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
               { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Britannia Marie 150g Share Capture", auto: true },
               { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Britannia Conquest", auto: false },
               { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Hide & Seek Push", auto: false },
-              { city: "Delhi NCR Khalifa", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Rauch Defensive", auto: true },
+              { city: "Delhi NCR Gurugram", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Unibic Defensive", auto: true },
             ].map((r, i) => {
               const triggered = r.auto || !!compCampaignStates[i];
               return (
@@ -896,9 +896,9 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
         <div className="space-y-2">
           {[
-            { competitor: "Britannia", product: "Britannia Zero 330ml", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
+            { competitor: "Britannia", product: "Britannia Good Day 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
             { competitor: "Britannia", product: "Britannia Cookies 250g", platform: "Blinkit", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
-            { competitor: "Lacnor", product: "Britannia Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+            { competitor: "Unibic", product: "Britannia Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
           ].map((item, i) => (
             <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
               <div className="flex items-center justify-between mb-1">

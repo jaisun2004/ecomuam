@@ -51,10 +51,10 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
 
 const compNamesBySku: Record<string, string[]> = {
   "Parle-G 250g": ["Britannia", "Britannia", "Rauch"],
-  "Marie Gold 120g": ["Britannia", "Britannia", "Lacnor"],
+  "Marie Gold 120g": ["Britannia", "Britannia", "Unibic"],
   "Britannia Marie 250g": ["Patanjali", "Rauch", "Britannia"],
-  "Bourbon 250g": ["Britannia", "Britannia", "Lacnor"],
-  "Hide & Seek 120g": ["Britannia", "Britannia", "Lacnor"],
+  "Bourbon 250g": ["Britannia", "Britannia", "Unibic"],
+  "Hide & Seek 120g": ["Britannia", "Britannia", "Unibic"],
 };
 
 const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
@@ -63,7 +63,7 @@ const competitorMatrixByGroup: Record<string, Record<string, any[]>> = {
       { brand: "Parle Parle-G 120g", you: true, price: "₹ 40", priceColor: "text-primary", rating: "4.4★", ratingColor: "text-sw-green", reviews: "2,847", pos: "#3", posColor: "text-sw-green", sos: "28%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Britannia 250g", you: false, price: "₹ 35 ↓", priceColor: "text-sw-red", rating: "4.3★", ratingColor: "text-sw-green", reviews: "18,241", pos: "#1", posColor: "text-sw-red", sos: "41%", sosColor: "text-sw-red", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
       { brand: "Britannia Cookies 120g", you: false, price: "₹ 25", priceColor: "text-sw-green", rating: "4.5★", ratingColor: "text-sw-green", reviews: "44,102", pos: "#2", posColor: "text-sw-amber", sos: "19%", sosColor: "text-sw-amber", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
-      { brand: "Rauch Multivit 250g", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
+      { brand: "Sunfeast Dark Fantasy 250g", you: false, price: "₹ 45", priceColor: "text-sw-amber", rating: "4.1★", ratingColor: "text-sw-amber", reviews: "3,671", pos: "#5", posColor: "text-sw-amber", sos: "7%", sosColor: "text-muted-foreground", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },
     ],
     Blinkit: [
       { brand: "Parle Parle-G 120g", you: true, price: "₹ 42", priceColor: "text-primary", rating: "4.2★", ratingColor: "text-sw-green", reviews: "342", pos: "#2", posColor: "text-sw-green", sos: "35%", sosColor: "text-sw-green", stock: "IN STOCK", stockColor: "text-sw-green bg-sw-green-dim" },

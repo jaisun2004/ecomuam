@@ -100,7 +100,7 @@ const searchKeywords: Record<string, { kw: string; rank: number }[]> = {
 const competitorAggression = [
   { brand: "Britannia", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter biscuits", "cream biscuits"], impact: "-2 rank" },
   { brand: "Britannia", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
-  { brand: "Lacnor", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive biscuits"], impact: "None" },
+  { brand: "Unibic", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive biscuits"], impact: "None" },
 ];
 
 const scoreBuckets = [0, 0, 0, 1, 0, 1, 2, 1, 1, 0].map((count, i) => ({ bucket: `${i * 10}-${(i + 1) * 10}`, count }));
@@ -120,7 +120,7 @@ const benchmarkData = [
   { sku: "Parle-G 250g", yourScore: 77, categoryAvg: 68, compAvg: 74, campaign: "Parle-G SP", campaignActive: true, roas: "4.8x", campaignStatus: "Strong" },
   { sku: "Marie Gold 120g", yourScore: 66, categoryAvg: 68, compAvg: 72, campaign: "Marie Range SP", campaignActive: true, roas: "2.9x", campaignStatus: "Underperforming" },
   { sku: "Hide & Seek Choco 120g", yourScore: 51, categoryAvg: 68, compAvg: 70, campaign: "Hide & Seek Launch", campaignActive: false, roas: "—", campaignStatus: "Paused" },
-  { sku: "Britannia Marie 150g", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "Britannia Marie Brand SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
+  { sku: "Britannia Marie 150g", yourScore: 69, categoryAvg: 65, compAvg: 67, campaign: "Britannia Marie New Users SP", campaignActive: true, roas: "5.4x", campaignStatus: "Strong" },
   { sku: "Bourbon 250g", yourScore: 82, categoryAvg: 68, compAvg: 71, campaign: "Bourbon Premium SP", campaignActive: true, roas: "6.1x", campaignStatus: "Excellent" },
   { sku: "Sunfeast 150g", yourScore: 56, categoryAvg: 68, compAvg: 66, campaign: "Sunfeast Kids", campaignActive: true, roas: "1.6x", campaignStatus: "Poor — fix content first" },
 ];

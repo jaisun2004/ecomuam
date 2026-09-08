@@ -70,7 +70,7 @@ const campaignTriggers: CampaignTrigger[] = [
     strategy: "Sponsored Ads to compensate weak organic", campaignType: "Sponsored Product + Headline Search",
     platforms: ["Instamart", "Instamart"],
     keywords: ["electrolyte water", "keto biscuits", "sports hydration", "coconut water"],
-    estimatedImpact: "Maintain visibility while title is optimized — protect ₹ 2.250g/week", urgency: "critical",
+    estimatedImpact: "Maintain visibility while title is optimized — protect ₹ 2.25L/week", urgency: "critical",
     icon: <Target className="h-4 w-4 text-destructive" />,
   },
   {

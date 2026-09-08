@@ -29,21 +29,21 @@ interface DarkStore {
 
 const darkStores: DarkStore[] = [
   { id: "ds-1", name: "Blinkit Downtown Mumbai", pincode: "110001", city: "Mumbai", platform: "Blinkit", lat: 148, lng: 192, marketShare: 34, availability: 96, avgDeliveryMin: 11, ordersPerDay: 142, revenue: "₹ 1.8L", topSku: "Parle-G 120g", oosRate: 4, competitorPresence: 5, slotShare: 42 },
-  { id: "ds-2", name: "Zepto JLT", pincode: "110016", city: "Mumbai", platform: "Zepto", lat: 153, lng: 188, marketShare: 28, availability: 91, avgDeliveryMin: 14, ordersPerDay: 98, revenue: "₹ 1.200g", topSku: "Marie Gold 250g", oosRate: 9, competitorPresence: 4, slotShare: 31 },
+  { id: "ds-2", name: "Zepto JLT", pincode: "110016", city: "Mumbai", platform: "Zepto", lat: 153, lng: 188, marketShare: 28, availability: 91, avgDeliveryMin: 14, ordersPerDay: 98, revenue: "₹ 1.2L", topSku: "Marie Gold 250g", oosRate: 9, competitorPresence: 4, slotShare: 31 },
   { id: "ds-3", name: "Blinkit Bandra West Sec 18", pincode: "201301", city: "Bandra West", platform: "Blinkit", lat: 156, lng: 200, marketShare: 31, availability: 93, avgDeliveryMin: 12, ordersPerDay: 110, revenue: "₹ 1.4L", topSku: "Bourbon 120g", oosRate: 7, competitorPresence: 3, slotShare: 38 },
   { id: "ds-4", name: "Blinkit Old Delhi", pincode: "110075", city: "Mumbai", platform: "Blinkit", lat: 150, lng: 182, marketShare: 22, availability: 88, avgDeliveryMin: 18, ordersPerDay: 65, revenue: "₹ 82K", topSku: "Britannia Marie 150g", oosRate: 12, competitorPresence: 6, slotShare: 24 },
-  { id: "ds-5", name: "Zepto Al Reem DLF", pincode: "122002", city: "Al Reem", platform: "Zepto", lat: 155, lng: 178, marketShare: 26, availability: 90, avgDeliveryMin: 15, ordersPerDay: 88, revenue: "₹ 1.250g", topSku: "Parle-G 120g", oosRate: 10, competitorPresence: 4, slotShare: 29 },
-  { id: "ds-6", name: "Blinkit Al Reem", pincode: "400058", city: "Delhi NCR", platform: "Blinkit", lat: 285, lng: 155, marketShare: 38, availability: 97, avgDeliveryMin: 10, ordersPerDay: 168, revenue: "₹ 2.250g", topSku: "Parle-G 120g", oosRate: 3, competitorPresence: 6, slotShare: 45 },
+  { id: "ds-5", name: "Zepto Al Reem DLF", pincode: "122002", city: "Al Reem", platform: "Zepto", lat: 155, lng: 178, marketShare: 26, availability: 90, avgDeliveryMin: 15, ordersPerDay: 88, revenue: "₹ 1.25L", topSku: "Parle-G 120g", oosRate: 10, competitorPresence: 4, slotShare: 29 },
+  { id: "ds-6", name: "Blinkit Al Reem", pincode: "400058", city: "Delhi NCR", platform: "Blinkit", lat: 285, lng: 155, marketShare: 38, availability: 97, avgDeliveryMin: 10, ordersPerDay: 168, revenue: "₹ 2.25L", topSku: "Parle-G 120g", oosRate: 3, competitorPresence: 6, slotShare: 45 },
   { id: "ds-7", name: "Zepto Khalifa City", pincode: "400050", city: "Delhi NCR", platform: "Zepto", lat: 288, lng: 160, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 125, revenue: "₹ 1.6L", topSku: "Marie Gold 250g", oosRate: 8, competitorPresence: 5, slotShare: 33 },
   { id: "ds-8", name: "Blinkit Al Nahda", pincode: "400076", city: "Delhi NCR", platform: "Blinkit", lat: 282, lng: 165, marketShare: 24, availability: 86, avgDeliveryMin: 16, ordersPerDay: 72, revenue: "₹ 92K", topSku: "Bourbon 120g", oosRate: 14, competitorPresence: 4, slotShare: 22 },
   { id: "ds-9", name: "Blinkit Olaya", pincode: "560034", city: "Riyadh", platform: "Blinkit", lat: 340, lng: 185, marketShare: 36, availability: 95, avgDeliveryMin: 11, ordersPerDay: 155, revenue: "₹ 1.9L", topSku: "Parle-G 250g", oosRate: 5, competitorPresence: 5, slotShare: 40 },
   { id: "ds-10", name: "Zepto Al Malqa", pincode: "560102", city: "Riyadh", platform: "Zepto", lat: 345, lng: 190, marketShare: 29, availability: 90, avgDeliveryMin: 14, ordersPerDay: 102, revenue: "₹ 1.3L", topSku: "Britannia Marie 150g", oosRate: 10, competitorPresence: 4, slotShare: 30 },
-  { id: "ds-11", name: "Blinkit Al Hamra", pincode: "560066", city: "Riyadh", platform: "Blinkit", lat: 338, lng: 196, marketShare: 32, availability: 93, avgDeliveryMin: 13, ordersPerDay: 120, revenue: "₹ 150g", topSku: "Marie Gold 120g", oosRate: 7, competitorPresence: 3, slotShare: 35 },
-  { id: "ds-12", name: "Blinkit West Bay", pincode: "411057", city: "Khalifa City", platform: "Blinkit", lat: 295, lng: 170, marketShare: 33, availability: 94, avgDeliveryMin: 12, ordersPerDay: 95, revenue: "₹ 1.200g", topSku: "Parle-G 250g", oosRate: 6, competitorPresence: 3, slotShare: 37 },
+  { id: "ds-11", name: "Blinkit Al Hamra", pincode: "560066", city: "Riyadh", platform: "Blinkit", lat: 338, lng: 196, marketShare: 32, availability: 93, avgDeliveryMin: 13, ordersPerDay: 120, revenue: "₹ 1.5L", topSku: "Marie Gold 120g", oosRate: 7, competitorPresence: 3, slotShare: 35 },
+  { id: "ds-12", name: "Blinkit West Bay", pincode: "411057", city: "Khalifa City", platform: "Blinkit", lat: 295, lng: 170, marketShare: 33, availability: 94, avgDeliveryMin: 12, ordersPerDay: 95, revenue: "₹ 1.2L", topSku: "Parle-G 250g", oosRate: 6, competitorPresence: 3, slotShare: 37 },
   { id: "ds-13", name: "Zepto Salmiya", pincode: "411038", city: "Khalifa City", platform: "Zepto", lat: 298, lng: 175, marketShare: 25, availability: 89, avgDeliveryMin: 15, ordersPerDay: 78, revenue: "₹ 98K", topSku: "Bourbon 120g", oosRate: 11, competitorPresence: 4, slotShare: 26 },
-  { id: "ds-14", name: "Blinkit Olaya", pincode: "500081", city: "Jeddah", platform: "Blinkit", lat: 305, lng: 215, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 118, revenue: "₹ 150g", topSku: "Parle-G 250g", oosRate: 8, competitorPresence: 4, slotShare: 34 },
+  { id: "ds-14", name: "Blinkit Olaya", pincode: "500081", city: "Jeddah", platform: "Blinkit", lat: 305, lng: 215, marketShare: 30, availability: 92, avgDeliveryMin: 13, ordersPerDay: 118, revenue: "₹ 1.5L", topSku: "Parle-G 250g", oosRate: 8, competitorPresence: 4, slotShare: 34 },
   { id: "ds-15", name: "Blinkit Al Malqa", pincode: "500032", city: "Jeddah", platform: "Blinkit", lat: 308, lng: 210, marketShare: 20, availability: 84, avgDeliveryMin: 19, ordersPerDay: 55, revenue: "₹ 70K", topSku: "Britannia Marie 150g", oosRate: 16, competitorPresence: 5, slotShare: 20 },
-  { id: "ds-16", name: "Blinkit Al Hamra", pincode: "600017", city: "Doha", platform: "Blinkit", lat: 370, lng: 215, marketShare: 27, availability: 91, avgDeliveryMin: 14, ordersPerDay: 85, revenue: "₹ 1.120g", topSku: "Parle-G 250g", oosRate: 9, competitorPresence: 3, slotShare: 30 },
+  { id: "ds-16", name: "Blinkit Al Hamra", pincode: "600017", city: "Doha", platform: "Blinkit", lat: 370, lng: 215, marketShare: 27, availability: 91, avgDeliveryMin: 14, ordersPerDay: 85, revenue: "₹ 1.12L", topSku: "Parle-G 250g", oosRate: 9, competitorPresence: 3, slotShare: 30 },
   { id: "ds-17", name: "Zepto West Bay", pincode: "600040", city: "Doha", platform: "Zepto", lat: 375, lng: 220, marketShare: 23, availability: 87, avgDeliveryMin: 16, ordersPerDay: 68, revenue: "₹ 86K", topSku: "Marie Gold 120g", oosRate: 13, competitorPresence: 4, slotShare: 25 },
   { id: "ds-18", name: "Blinkit Salmiya", pincode: "700091", city: "Bangalore", platform: "Blinkit", lat: 230, lng: 282, marketShare: 22, availability: 85, avgDeliveryMin: 17, ordersPerDay: 62, revenue: "₹ 78K", topSku: "Parle-G 250g", oosRate: 15, competitorPresence: 3, slotShare: 24 },
   { id: "ds-19", name: "Blinkit Old Delhi", pincode: "302017", city: "Al Hamra", platform: "Blinkit", lat: 182, lng: 152, marketShare: 18, availability: 80, avgDeliveryMin: 20, ordersPerDay: 42, revenue: "₹ 52K", topSku: "Bourbon 120g", oosRate: 20, competitorPresence: 2, slotShare: 18 },
@@ -60,7 +60,7 @@ const platformColorMap: Record<string, string> = {
 };
 
 const platforms = ["Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"];
-const competitors = ["Britannia", "Britannia", "Rauch", "Patanjali", "Lacnor"];
+const competitors = ["Britannia", "Britannia", "Rauch", "Patanjali", "Unibic"];
 
 const platformShareData = platforms.map(p => ({
   platform: p,
@@ -132,7 +132,7 @@ const MarketShareView: React.FC = () => {
         <div className="grid grid-cols-4 gap-4">
           <KPICard title="Overall Category Share" value="22%" delta="▲ 1.4% vs last wk" deltaType="positive" sub="Across all platforms" accentColor="bg-primary" delay={0} />
           <KPICard title="Rank in Category" value="#2 of 8" delta="▲1 vs last week" deltaType="positive" sub="Behind Britannia at 26%" accentColor="bg-sw-green" delay={0.05} />
-          <KPICard title="Fastest Growing Competitor" value="Lacnor" delta="+3.2% share gain" deltaType="negative" sub="Aggressive Q-commerce push" accentColor="bg-sw-red" delay={0.1} />
+          <KPICard title="Fastest Growing Competitor" value="Unibic" delta="+3.2% share gain" deltaType="negative" sub="Aggressive Q-commerce push" accentColor="bg-sw-red" delay={0.1} />
           <KPICard title="Platform Where You Lead" value="Instamart" delta="Highest share: 31%" deltaType="positive" sub="2.1x vs nearest rival" accentColor="bg-sw-purple" delay={0.15} />
         </div>
 
@@ -238,7 +238,7 @@ const MarketShareView: React.FC = () => {
                 <Line type="monotone" dataKey="rival1" stroke="#FF5C5C" strokeWidth={2} dot={false} name="Britannia" />
                 <Line type="monotone" dataKey="rival2" stroke="#FF8A80" strokeWidth={2} dot={false} name="Britannia" />
                 <Line type="monotone" dataKey="rival3" stroke="#FFAB91" strokeWidth={2} dot={false} name="Rauch" />
-                <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Lacnor" />
+                <Line type="monotone" dataKey="rival4" stroke="hsl(220,10%,46%)" strokeWidth={1} dot={false} strokeDasharray="5 5" name="Unibic" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">

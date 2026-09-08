@@ -102,9 +102,9 @@ const platformROAS = [
 
 const budgetAlloc = [
   { name: "Instamart Ads", pct: 38, spend: "₹ 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
-  { name: "Instamart/Meta", pct: 22, spend: "₹ 4.120g", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
+  { name: "Instamart/Meta", pct: 22, spend: "₹ 4.12L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
   { name: "Blinkit Ads", pct: 18, spend: "₹ 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
-  { name: "Instamart Ads", pct: 12, spend: "₹ 2.200g", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
+  { name: "Instamart Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
   { name: "Zepto Ads", pct: 10, spend: "₹ 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
 ];
 
@@ -160,7 +160,7 @@ const reportData: ReportPlatform[] = [
     platform: "Instamart", color: "#FF9900", totalSpend: "₹ 7.8L", blendedRoas: "5.1x", roasColor: "text-sw-green",
     campaigns: [
       {
-        name: "Parle-G 250g — Sponsored", status: "LIVE", spend: "₹ 4.200g", roas: "5.1x", roasColor: "text-sw-green",
+        name: "Parle-G 250g — Sponsored", status: "LIVE", spend: "₹ 4.2L", roas: "5.1x", roasColor: "text-sw-green",
         impressions: "842K", clicks: "28.4K", ctr: "3.4%",
         keywords: [
           {
@@ -179,7 +179,7 @@ const reportData: ReportPlatform[] = [
             ],
           },
           {
-            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹ 2.120g", roas: "3.1x", roasColor: "text-sw-amber",
+            keyword: "cream biscuits", impressions: "498K", clicks: "14.2K", spend: "₹ 2.12L", roas: "3.1x", roasColor: "text-sw-amber",
           },
         ],
       },
@@ -188,7 +188,7 @@ const reportData: ReportPlatform[] = [
         impressions: "284K", clicks: "8.2K", ctr: "2.9%",
         keywords: [
           {
-            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.200g", roas: "1.4x", roasColor: "text-sw-red",
+            keyword: "glucose biscuits bulk", impressions: "187K", clicks: "5.4K", spend: "₹ 1.2L", roas: "1.4x", roasColor: "text-sw-red",
             cities: [
               { city: "Mumbai", impressions: "62K", clicks: "1.8K", spend: "₹ 42K", roas: "1.4x", roasColor: "text-sw-red",
                 products: [
@@ -225,7 +225,7 @@ const reportData: ReportPlatform[] = [
     ],
   },
   {
-    platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.200g", blendedRoas: "2.1x", roasColor: "text-sw-red",
+    platform: "Instamart", color: "#2F77FF", totalSpend: "₹ 5.2L", blendedRoas: "2.1x", roasColor: "text-sw-red",
     campaigns: [
       {
         name: "Marie Gold Retargeting", status: "PAUSED", spend: "₹ 3.0L", roas: "2.1x", roasColor: "text-sw-red",
@@ -762,8 +762,8 @@ const CampaignCreatorModal: React.FC<{ open: boolean; onClose: () => void }> = (
   ];
 
   const historyCampaigns = [
-    { name: "Parle-G Summer Push 2025", platform: "Instamart", spend: "₹ 3.200g", roas: "4.9x", duration: "14 days" },
-    { name: "Festive Season Blast", platform: "Instamart", spend: "₹ 5.120g", roas: "5.6x", duration: "21 days" },
+    { name: "Parle-G Summer Push 2025", platform: "Instamart", spend: "₹ 3.2L", roas: "4.9x", duration: "14 days" },
+    { name: "Festive Season Blast", platform: "Instamart", spend: "₹ 5.12L", roas: "5.6x", duration: "21 days" },
     { name: "Q-Commerce Biscuits Pilot", platform: "Blinkit", spend: "₹ 1.8L", roas: "3.4x", duration: "7 days" },
   ];
 
@@ -981,7 +981,7 @@ const CampaignView: React.FC = () => {
   const digestActions = [
     { id: 0, campaign: "Parle-G 250g — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
     { id: 1, campaign: "Q-Commerce Biscuits Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.200g spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
     { id: 3, campaign: "Bourbon Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
     { id: 4, campaign: "Britannia Marie New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
@@ -1032,10 +1032,10 @@ const CampaignView: React.FC = () => {
 
   const actionHistory = [
     { time: "Mar 16 09:42", action: "Defense bid increase", campaign: "Cream Biscuits — Sponsored", roasBefore: "4.8x", roasAfter: "5.1x", trigger: "Auto" },
-    { time: "Mar 15 14:20", action: "Budget reallocation", campaign: "Creatine Retargeting", roasBefore: "2.1x", roasAfter: "2.1x", trigger: "Manual" },
+    { time: "Mar 15 14:20", action: "Budget reallocation", campaign: "Marie Gold Retargeting", roasBefore: "2.1x", roasAfter: "2.1x", trigger: "Manual" },
     { time: "Mar 15 08:00", action: "Daypart shift", campaign: "Q-Commerce Launch Push", roasBefore: "3.5x", roasAfter: "3.8x", trigger: "Auto" },
-    { time: "Mar 14 16:45", action: "Keyword expansion", campaign: "BCAA Brand Awareness", roasBefore: "4.2x", roasAfter: "4.4x", trigger: "Auto" },
-    { time: "Mar 13 10:30", action: "Bid reduction", campaign: "Pre-Workout New Users", roasBefore: "2.8x", roasAfter: "3.2x", trigger: "Auto" },
+    { time: "Mar 14 16:45", action: "Keyword expansion", campaign: "Bourbon Brand Awareness", roasBefore: "4.2x", roasAfter: "4.4x", trigger: "Auto" },
+    { time: "Mar 13 10:30", action: "Bid reduction", campaign: "Britannia Marie New Users", roasBefore: "2.8x", roasAfter: "3.2x", trigger: "Auto" },
   ];
 
   return (
@@ -1334,7 +1334,7 @@ const CampaignView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KPICard title="Total Ad Spend (30D)" value="₹ 18.4L" delta="▲ ₹ 2.120g vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
+        <KPICard title="Total Ad Spend (30D)" value="₹ 18.4L" delta="▲ ₹ 2.12L vs last mo" deltaType="positive" sub="Across 6 platforms · 24 campaigns" accentColor="bg-primary" delay={0} />
         <KPICard title="Blended ROAS" value="4.2x" delta="▲ 0.6x MoM" deltaType="positive" sub="Target: 4.5x · 93% of goal" accentColor="bg-sw-green" delay={0.05} />
         <KPICard title="AI-Optimised Budget" value="67%" delta="▲ Auto-reallocated ₹ 3.4L" deltaType="positive" sub="From underperforming campaigns" accentColor="bg-sw-purple" delay={0.1} />
         <KPICard title="Impressions (30D)" value="4.2M" delta="▲ 18% MoM" deltaType="positive" sub="Across all campaigns" accentColor="bg-sw-cyan" delay={0.15} />
