@@ -421,7 +421,7 @@ const DiscoveryView: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["All", "Blinkit", "Zepto", "Blinkit", "Instamart", "Instamart"].map(p => (
+                  {["All", "Blinkit", "Zepto", "Amazon India", "Instamart", "Lulu"].map(p => (
                     <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
                   ))}
                 </SelectContent>

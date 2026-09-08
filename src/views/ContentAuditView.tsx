@@ -448,7 +448,7 @@ const ContentAuditView: React.FC = () => {
         {/* Filter bar */}
         <div className="flex items-center gap-3 flex-wrap">
           <FilterDropdown label="Platform" value={platformFilter}
-            options={[{ label: "All platforms", value: "All" }, { label: "Blinkit", value: "Blinkit" }, { label: "Zepto", value: "Zepto" }, { label: "Blinkit", value: "Blinkit" }, { label: "Instamart", value: "Instamart" }, { label: "Instamart", value: "Instamart" }]}
+            options={[{ label: "All platforms", value: "All" }, { label: "Blinkit", value: "Blinkit" }, { label: "Zepto", value: "Zepto" }, { label: "Amazon India", value: "Amazon India" }, { label: "Instamart", value: "Instamart" }, { label: "Lulu", value: "Lulu" }]}
             onChange={setPlatformFilter} />
           <FilterDropdown label="Score range" value={scoreFilter}
             options={[{ label: "All scores", value: "All" }, { label: "Critical (0–59)", value: "Critical" }, { label: "Needs work (60–79)", value: "NeedsWork" }, { label: "Strong (80–100)", value: "Strong" }]}

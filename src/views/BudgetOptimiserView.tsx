@@ -76,13 +76,13 @@ const samePlatformShifts = [
 
 const crossPlatformShifts = [
   {
-    from: { platform: "Instamart", color: "#2F77FF", campaign: "Sunfeast Retargeting", roas: "2.1x", spend: "₹ 2.5L" },
+    from: { platform: "Amazon India", color: "#2F77FF", campaign: "Sunfeast Retargeting", roas: "2.1x", spend: "₹ 2.5L" },
     to: { platform: "Instamart", color: "#FF9900", campaign: "Parle-G 250g — SP", roas: "5.1x", spend: "₹ 3.8L" },
     amount: "₹ 80K", projImpact: "Incremental conversions +2,100, blended portfolio ROAS +0.5x",
     confidence: 92,
   },
   {
-    from: { platform: "Instamart", color: "#2F77FF", campaign: "Various underperformers", roas: "2.1x", spend: "₹ 1.8L" },
+    from: { platform: "Lulu", color: "#2F77FF", campaign: "Various underperformers", roas: "2.1x", spend: "₹ 1.8L" },
     to: { platform: "Instamart", color: "#E1306C", campaign: "Bourbon Brand Awareness", roas: "4.4x", spend: "₹ 40K" },
     amount: "₹ 40K", projImpact: "Expand brand reach +180K impressions, ROAS 4.4x vs 2.1x",
     confidence: 85,
