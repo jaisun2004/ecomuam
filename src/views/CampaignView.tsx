@@ -95,16 +95,16 @@ const campaigns = [
 const platformROAS = [
   { name: "Instamart", roas: 5.1, color: "#FF9900" },
   { name: "Blinkit", roas: 3.8, color: "#FDDC2B" },
-  { name: "Instamart", roas: 2.1, color: "#2F77FF" },
+  { name: "Amazon India", roas: 2.1, color: "#2F77FF" },
   { name: "Zepto", roas: 3.2, color: "#833AB4" },
-  { name: "Instamart", roas: 4.4, color: "#E1306C" },
+  { name: "Lulu", roas: 4.4, color: "#E1306C" },
 ];
 
 const budgetAlloc = [
   { name: "Instamart Ads", pct: 38, spend: "₹ 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
-  { name: "Instamart/Meta", pct: 22, spend: "₹ 4.12L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
+  { name: "Amazon India Ads", pct: 22, spend: "₹ 4.12L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
   { name: "Blinkit Ads", pct: 18, spend: "₹ 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
-  { name: "Instamart Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
+  { name: "Lulu Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
   { name: "Zepto Ads", pct: 10, spend: "₹ 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
 ];
 
@@ -256,7 +256,7 @@ const dayPartingSlots = [
   { slot: "Late Night", configName: "Config_test_006", time: "12:00 – 6:00 AM", campaigns: ["Marie Gold Retargeting"], budgetPct: 3 },
 ];
 
-const DAYPART_PLATFORMS = ["Instamart", "Instamart", "Zepto", "Blinkit", "Amazon India", "Lulu"];
+const DAYPART_PLATFORMS = ["Instamart", "BigBasket", "Zepto", "Blinkit", "Amazon India", "Lulu"];
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 interface DayPartPreset {
@@ -1615,7 +1615,7 @@ const CampaignView: React.FC = () => {
             ))}
           </div>
           <div className={`mt-4 p-3 rounded-xl ${reallocApplied ? "bg-sw-green-dim border border-sw-green/20" : "bg-sw-purple-dim border border-sw-purple/20"}`}>
-            <p className="text-[11px] text-foreground mb-2">💡 Shift ₹ 25K from Instamart → Instamart. Projected ROAS improvement: +0.3x blended</p>
+            <p className="text-[11px] text-foreground mb-2">💡 Shift ₹ 25K from Amazon India → Instamart. Projected ROAS improvement: +0.3x blended</p>
             <button onClick={() => setReallocApplied(true)} className={`text-[11px] font-medium px-3 py-1 rounded-lg ${reallocApplied ? "bg-sw-green/20 text-sw-green" : "bg-sw-purple/20 text-sw-purple hover:bg-sw-purple/30"}`}>
               {reallocApplied ? "✓ Applied!" : "Apply Reallocation →"}
             </button>

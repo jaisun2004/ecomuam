@@ -169,7 +169,7 @@ const platformAvailability = [
     { sku: "Parle-G 120g", avail: 97 }, { sku: "Marie Gold 250g", avail: 100 }, { sku: "Britannia Marie 150g", avail: 72 },
     { sku: "Sunfeast Orange 120g", avail: 95 }, { sku: "Hide & Seek Choco", avail: 54 }, { sku: "Sunfeast Orange 250g", avail: 98 },
   ]},
-  { name: "Instamart", overall: 68, color: "#2F77FF", skus: [
+  { name: "Amazon India", overall: 68, color: "#2F77FF", skus: [
     { sku: "Parle-G 120g", avail: 74 }, { sku: "Marie Gold 250g", avail: 92 }, { sku: "Britannia Marie 150g", avail: 61 },
     { sku: "Sunfeast Orange 120g", avail: 88 }, { sku: "Hide & Seek Choco", avail: 12 }, { sku: "Sunfeast Orange 250g", avail: 78 },
   ]},
@@ -179,7 +179,7 @@ const platformAvailability = [
   { name: "Zepto", overall: 56, color: "#833AB4", skus: [
     { sku: "Parle-G 250g", avail: 93 }, { sku: "Marie Gold 120g", avail: 77 }, { sku: "Sunfeast Orange 250g", avail: 52 },
   ]},
-  { name: "Blinkit", overall: 21, color: "#FC8019", skus: [
+  { name: "Lulu", overall: 21, color: "#FC8019", skus: [
     { sku: "Parle-G 120g", avail: 34 }, { sku: "Marie Gold 250g", avail: 9 }, { sku: "Sunfeast Orange 120g", avail: 41 },
   ]},
 ];
@@ -493,7 +493,7 @@ const AvailabilityView: React.FC = () => {
         <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
         {(() => {
           const skus = ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 150g", "Sunfeast Orange 120g", "Hide & Seek Choco 120g"];
-          const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
+          const plats = ["Blinkit", "Instamart", "Zepto", "Amazon India"];
           const seed = (s: string, p: string) => (s.length * 7 + p.length * 13) % 6;
           const intransit = (s: string, p: string) => ((s.length + p.length) % 5) === 0;
           return (
