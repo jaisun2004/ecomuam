@@ -87,8 +87,8 @@ const revenueData = [
 const campaigns = [
   { name: "Parle-G 250g — Sponsored", platform: "Instamart", platformColor: "#FF9900", roas: "5.1x", spend: "₹ 82K", status: "LIVE", ai: true },
   { name: "Q-Commerce Biscuits Push", platform: "Blinkit", platformColor: "#FDDC2B", roas: "3.8x", spend: "₹ 50K", status: "LIVE", ai: true },
-  { name: "Marie Gold Retargeting", platform: "Instamart", platformColor: "#2F77FF", roas: "2.1x", spend: "₹ 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
-  { name: "Bourbon Brand Awareness", platform: "Instamart", platformColor: "#E1306C", roas: "4.4x", spend: "₹ 50K", status: "LIVE", ai: false },
+  { name: "Marie Gold Retargeting", platform: "Amazon India", platformColor: "#2F77FF", roas: "2.1x", spend: "₹ 30K", status: "PAUSED", ai: false, reason: "ROAS below 2.5x" },
+  { name: "Bourbon Brand Awareness", platform: "Lulu", platformColor: "#E1306C", roas: "4.4x", spend: "₹ 50K", status: "LIVE", ai: false },
   { name: "Britannia Marie New Users", platform: "Zepto", platformColor: "#833AB4", roas: "3.2x", spend: "₹ 30K", status: "LIVE", ai: true },
 ];
 
@@ -981,7 +981,7 @@ const CampaignView: React.FC = () => {
   const digestActions = [
     { id: 0, campaign: "Parle-G 250g — Sponsored", insight: "Defense bid increase", tier: 1 as const, tierLabel: "TIER 1", confidence: 4, metric: "+62% CTR", icon: Swords, blocked: false, ownedBy: null },
     { id: 1, campaign: "Q-Commerce Biscuits Push", insight: "Daypart budget shift", tier: 3 as const, tierLabel: "TIER 3", confidence: 5, metric: "+18% Conv", icon: Clock, blocked: false, ownedBy: null },
-    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+₹ 1.2L spend", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
+    { id: 2, campaign: "Marie Gold Retargeting", insight: "Budget reallocation", tier: 3 as const, tierLabel: "TIER 3", confidence: 4, metric: "+0.5x ROAS", icon: DollarSign, blocked: false, ownedBy: "Budget Optimiser" },
     { id: 3, campaign: "Bourbon Brand Awareness", insight: "Bid optimisation", tier: 3 as const, tierLabel: "TIER 3", confidence: 3, metric: "+0.8x ROAS", icon: TrendingUp, blocked: false, ownedBy: null },
     { id: 4, campaign: "Britannia Marie New Users", insight: "Keyword expansion", tier: 3 as const, tierLabel: "TIER 3", confidence: 2, metric: "+12K Imp", icon: Target, blocked: true, ownedBy: null },
   ];
