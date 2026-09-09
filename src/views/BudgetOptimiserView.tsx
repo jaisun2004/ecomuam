@@ -99,7 +99,7 @@ const platformSummary = [
   { platform: "Instamart", color: "#FF9900", spend: 6.5, roas: 5.1, optSpend: 7.3, optRoas: 5.4 },
   { platform: "Amazon India", color: "#E1306C", spend: 3.2, roas: 4.4, optSpend: 3.6, optRoas: 4.5 },
   { platform: "Blinkit", color: "#FDDC2B", spend: 2.8, roas: 3.8, optSpend: 3.1, optRoas: 4.0 },
-  { platform: "Lulu", color: "#2F77FF", spend: 4.3, roas: 2.1, optSpend: 2.5, optRoas: 3.0 },
+  
   { platform: "Zepto", color: "#833AB4", spend: 1.4, roas: 3.2, optSpend: 1.1, optRoas: 3.5 },
 ];
 
@@ -466,7 +466,7 @@ const BudgetOptimiserView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> Optimised</span>
             </div>
             <button onClick={() => setApplyAll(true)}
-              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-foreground hover:bg-primary/80"}`}>
+              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-primary-foreground hover:bg-primary/80"}`}>
               {applyAll ? "✓ All Reallocations Applied" : "⚡ Apply All Recommendations"}
             </button>
           </div>

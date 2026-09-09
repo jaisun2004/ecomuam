@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ComposedChart, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
 import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical, Shield, AlertTriangle, Swords, TrendingUp, Target, DollarSign, Zap } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -97,14 +97,14 @@ const platformROAS = [
   { name: "Blinkit", roas: 3.8, color: "#FDDC2B" },
   { name: "Amazon India", roas: 2.1, color: "#2F77FF" },
   { name: "Zepto", roas: 3.2, color: "#833AB4" },
-  { name: "Lulu", roas: 4.4, color: "#E1306C" },
+  
 ];
 
 const budgetAlloc = [
   { name: "Instamart Ads", pct: 38, spend: "₹ 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
   { name: "Amazon India Ads", pct: 22, spend: "₹ 4.12L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
   { name: "Blinkit Ads", pct: 18, spend: "₹ 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
-  { name: "Lulu Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
+  
   { name: "Zepto Ads", pct: 10, spend: "₹ 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
 ];
 
@@ -1343,7 +1343,7 @@ const CampaignView: React.FC = () => {
       {/* Action bar */}
       <div className="flex items-center gap-3 justify-end">
         <button onClick={() => navigate("/ecom/campaigns/create")}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-primary text-foreground hover:bg-primary/80 transition-all">
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/80 transition-all">
           <Plus size={14} /> Create Campaign
         </button>
         <button onClick={() => setShowDayParting(!showDayParting)}
@@ -1700,7 +1700,7 @@ const CampaignView: React.FC = () => {
         <div className="space-y-5">
           <PanelCard title="Spend vs ROAS — 30 Day Trend" badge="Dual Axis" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={spendRoasTrend}>
+              <ComposedChart data={spendRoasTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis yAxisId="spend" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
@@ -1708,7 +1708,7 @@ const CampaignView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹ K)" />
                 <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-amber opacity-50" /> Spend</span>
