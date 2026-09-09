@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ComposedChart, LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ZAxis } from "recharts";
 import { ChevronDown, ChevronRight, FileText, X, Plus, Sparkles, History, FileEdit, Clock, GripVertical, Shield, AlertTriangle, Swords, TrendingUp, Target, DollarSign, Zap } from "lucide-react";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -1700,7 +1700,7 @@ const CampaignView: React.FC = () => {
         <div className="space-y-5">
           <PanelCard title="Spend vs ROAS — 30 Day Trend" badge="Dual Axis" badgeColor="accent" delay={0}>
             <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={spendRoasTrend}>
+              <ComposedChart data={spendRoasTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" horizontal={true} vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis yAxisId="spend" tick={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
@@ -1708,7 +1708,7 @@ const CampaignView: React.FC = () => {
                 <RTooltip contentStyle={{ background: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 13 }} />
                 <Bar yAxisId="spend" dataKey="spend" fill="hsl(38,92%,50%)" opacity={0.5} radius={[4, 4, 0, 0]} name="Spend (₹ K)" />
                 <Line yAxisId="roas" type="monotone" dataKey="roas" stroke="hsl(160,70%,48%)" strokeWidth={2} dot={false} name="ROAS" />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 rounded-full bg-sw-amber opacity-50" /> Spend</span>
