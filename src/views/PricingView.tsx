@@ -135,10 +135,10 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 /* Discount % trend — brand level, last 30 days */
-const OWN_BRAND = "Britannia (Own)";
+const OWN_BRAND = "Parle (Own)";
 const DISCOUNT_BRANDS = [
   { name: OWN_BRAND, color: "hsl(228,90%,64%)", base: 14, own: true },
-  { name: "Parle", color: "hsl(0,76%,57%)", base: 18, own: false },
+  { name: "Britannia", color: "hsl(0,76%,57%)", base: 18, own: false },
   { name: "Sunfeast", color: "hsl(160,70%,40%)", base: 11, own: false },
   { name: "Unibic", color: "hsl(38,92%,50%)", base: 9, own: false },
   { name: "Anmol", color: "hsl(280,55%,58%)", base: 21, own: false },
