@@ -3,7 +3,7 @@ import KPICard from "@/components/sw/KPICard";
 import PanelCard from "@/components/sw/PanelCard";
 import ScreenTabs from "@/components/ScreenTabs";
 import { useGuardrails } from "@/contexts/GuardrailContext";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell } from "recharts";
 import { ChevronDown, ChevronRight, Copy, Check, X, AlertTriangle, ArrowRight, Download, Loader2, RefreshCw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 
@@ -27,7 +27,7 @@ export const competitorScores: Record<string, Record<string, { title: number; he
     "sku-005": { title: 17, heroImage: 15, searchListing: 14, pageContent: 16, competitorAggression: 10 },
     "sku-006": { title: 14, heroImage: 13, searchListing: 11, pageContent: 13, competitorAggression: 13 },
   },
-  "Parle": {
+  "Patanjali": {
     "sku-001": { title: 19, heroImage: 19, searchListing: 17, pageContent: 18, competitorAggression: 10 },
     "sku-002": { title: 18, heroImage: 17, searchListing: 14, pageContent: 17, competitorAggression: 12 },
     "sku-003": { title: 14, heroImage: 16, searchListing: 12, pageContent: 14, competitorAggression: 14 },
@@ -99,7 +99,7 @@ const searchKeywords: Record<string, { kw: string; rank: number }[]> = {
 
 const competitorAggression = [
   { brand: "Britannia", changes: 18, level: "High", what: ["Titles", "Images"], keywords: ["butter biscuits", "cream biscuits"], impact: "-2 rank" },
-  { brand: "Britannia", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
+  { brand: "Sunfeast", changes: 9, level: "Medium", what: ["Listings"], keywords: ["glucose biscuits"], impact: "-1 rank" },
   { brand: "Unibic", changes: 4, level: "Low", what: ["Titles"], keywords: ["digestive biscuits"], impact: "None" },
 ];
 
@@ -448,7 +448,7 @@ const ContentAuditView: React.FC = () => {
         {/* Filter bar */}
         <div className="flex items-center gap-3 flex-wrap">
           <FilterDropdown label="Platform" value={platformFilter}
-            options={[{ label: "All platforms", value: "All" }, { label: "Blinkit", value: "Blinkit" }, { label: "Zepto", value: "Zepto" }, { label: "Amazon India", value: "Amazon India" }, { label: "Instamart", value: "Instamart" }, { label: "Lulu", value: "Lulu" }]}
+            options={[{ label: "All platforms", value: "All" }, { label: "Blinkit", value: "Blinkit" }, { label: "Zepto", value: "Zepto" }, { label: "Amazon India", value: "Amazon India" }, { label: "Instamart", value: "Instamart" }]}
             onChange={setPlatformFilter} />
           <FilterDropdown label="Score range" value={scoreFilter}
             options={[{ label: "All scores", value: "All" }, { label: "Critical (0–59)", value: "Critical" }, { label: "Needs work (60–79)", value: "NeedsWork" }, { label: "Strong (80–100)", value: "Strong" }]}
@@ -720,7 +720,7 @@ const ContentAuditView: React.FC = () => {
                   {scoreBuckets.map((_, index) => {
                     const mid = index * 10 + 5;
                     const fill = mid < 30 ? "#EF4444" : mid < 60 ? "#F97316" : mid < 80 ? "#EAB308" : "#22C55E";
-                    return <rect key={index} fill={fill} />;
+                    return <Cell key={index} fill={fill} />;
                   })}
                 </Bar>
               </BarChart>
