@@ -58,6 +58,7 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
 };
 
 const compNamesBySku: Record<string, string[]> = {
+  "All": ["Britannia", "Sunfeast", "Unibic"],
   "Parle-G 250g": ["Britannia", "Britannia", "Sunfeast"],
   "Marie Gold 120g": ["Britannia", "Britannia", "Unibic"],
   "Britannia Marie 250g": ["Patanjali", "Sunfeast", "Britannia"],
