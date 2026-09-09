@@ -97,7 +97,7 @@ const platformROAS = [
   { name: "Blinkit", roas: 3.8, color: "#FDDC2B" },
   { name: "Amazon India", roas: 2.1, color: "#2F77FF" },
   { name: "Zepto", roas: 3.2, color: "#833AB4" },
-  { name: "Lulu", roas: 4.4, color: "#E1306C" },
+  
 ];
 
 const budgetAlloc = [
