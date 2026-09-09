@@ -19,6 +19,12 @@ const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
 const priceHistoryBySku: Record<string, Record<string, any[]>> = {
+  "All": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 34, comp1: i >= 12 ? 30 : 32, comp2: 37, comp3: 28 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 12 ? 31 : 33, comp2: 38, comp3: 29 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: 32, comp2: 39, comp3: 30 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 40, comp3: 31 })),
+  },
   "Parle-G 120g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
