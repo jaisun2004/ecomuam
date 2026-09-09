@@ -225,7 +225,7 @@ interface MonthTarget {
 const MONTH_TARGETS: MonthTarget[] = [
   { key: "spend",  label: "Spend (MTD)", current: 182_400, target: 900_000, unit: "₹", format: n => `₹ ${(n/1000).toFixed(0)}K`, direction: "up" },
   { key: "roas",   label: "ROAS",        current: 4.2,     target: 3.5,     unit: "x",   format: n => `${n.toFixed(1)}x`,            direction: "up" },
-  { key: "acos",   label: "ACoS",        current: 22,      target: 18,      unit: "%",   format: n => `${n.toFixed(0)}%`,            direction: "down" },
+  { key: "acos",   label: "ACoS",        current: +(100 / 4.2).toFixed(1), target: +(100 / 3.5).toFixed(1), unit: "%",   format: n => `${n.toFixed(1)}%`,            direction: "down" },
   { key: "orders", label: "Orders (MTD)",current: 38_100,  target: 180_000, unit: "",    format: n => `${(n/1000).toFixed(1)}K`,     direction: "up" },
 ];
 
