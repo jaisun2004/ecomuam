@@ -104,7 +104,7 @@ const budgetAlloc = [
   { name: "Instamart Ads", pct: 38, spend: "₹ 7L", roas: "5.1x", dir: "↑", color: "#FF9900", roasColor: "text-sw-green" },
   { name: "Amazon India Ads", pct: 22, spend: "₹ 4.12L", roas: "4.4x", dir: "↑", color: "#E1306C", roasColor: "text-sw-green" },
   { name: "Blinkit Ads", pct: 18, spend: "₹ 3.3L", roas: "3.8x", dir: "→", color: "#FDDC2B", roasColor: "text-sw-amber" },
-  { name: "Lulu Ads", pct: 12, spend: "₹ 2.2L", roas: "2.1x", dir: "↓", color: "#2F77FF", roasColor: "text-sw-red" },
+  
   { name: "Zepto Ads", pct: 10, spend: "₹ 1.8L", roas: "3.2x", dir: "→", color: "#833AB4", roasColor: "text-sw-amber" },
 ];
 
