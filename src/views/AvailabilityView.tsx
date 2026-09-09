@@ -179,9 +179,6 @@ const platformAvailability = [
   { name: "Zepto", overall: 56, color: "#833AB4", skus: [
     { sku: "Parle-G 250g", avail: 93 }, { sku: "Marie Gold 120g", avail: 77 }, { sku: "Sunfeast Orange 250g", avail: 52 },
   ]},
-  { name: "Lulu", overall: 21, color: "#FC8019", skus: [
-    { sku: "Parle-G 120g", avail: 34 }, { sku: "Marie Gold 250g", avail: 9 }, { sku: "Sunfeast Orange 120g", avail: 41 },
-  ]},
 ];
 
 const stockForecast = [

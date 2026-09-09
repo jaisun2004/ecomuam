@@ -1,11 +1,16 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useNavigationType } from "react-router-dom";
 import { History, PenLine, Sparkles, X } from "lucide-react";
 import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 
 const CampaignCreateEntry: React.FC = () => {
   const navigate = useNavigate();
+  const navType = useNavigationType();
   const { reset } = useEcomCreate();
+
+  useEffect(() => {
+    if (navType === "POP") navigate("/", { replace: true });
+  }, [navType, navigate]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") navigate("/"); };
