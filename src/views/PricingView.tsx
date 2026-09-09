@@ -453,11 +453,11 @@ const PricingView: React.FC = () => {
   const [alertTeamStates, setAlertTeamStates] = useState<Record<string, boolean>>({});
   const [analyticsSkuFilter, setAnalyticsSkuFilter] = useState("All SKUs");
   const [ppiMode, setPpiMode] = useState<"competitors" | "own">("competitors");
-  const [ppiSku, setPpiSku] = useState(skuOptions[0]);
+  const [ppiSku, setPpiSku] = useState(ownSkuPlatformOptions[0]);
 
-  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Parle-G 250g"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["All"];
   const competitorMatrix = (competitorMatrixByGroup["All SKUs"] || {})[selectedPlatform] || [];
-  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 120g"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 250g"])["All"];
+  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["All"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["All"])["All"];
 
   const filteredPlatformPricing = showNeedAttention ? platformPricing.filter(p => p.needsAttention) : platformPricing;
 
