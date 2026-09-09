@@ -11,12 +11,20 @@ import { toast } from "@/hooks/use-toast";
 import { useGuardrails } from "@/contexts/GuardrailContext";
 
 const skuOptions = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 250g", "Bourbon 250g", "Hide & Seek 120g"];
+/* SKUs that have price data across platforms (used by Own SKU × Platforms) */
+const ownSkuPlatformOptions = ["Britannia Marie 250g", "Hide & Seek 120g"];
 const platformOptions = ["Instamart", "Blinkit", "Zepto"];
 const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
 const priceHistoryBySku: Record<string, Record<string, any[]>> = {
+  "All": {
+    "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 34, comp1: i >= 12 ? 30 : 32, comp2: 37, comp3: 28 })),
+    "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 35, comp1: i >= 12 ? 31 : 33, comp2: 38, comp3: 29 })),
+    "Blinkit": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 36, comp1: 32, comp2: 39, comp3: 30 })),
+    "Zepto": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 37, comp1: 33, comp2: 40, comp3: 31 })),
+  },
   "Parle-G 120g": {
     "All": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 40, comp1: i >= 12 ? 35 : 38, comp2: i >= 18 ? 42 : 45, comp3: 32 })),
     "Instamart": Array.from({ length: 30 }, (_, i) => ({ day: `Mar ${i + 1}`, yours: 42, comp1: i >= 12 ? 36 : 39, comp2: i >= 18 ? 44 : 46, comp3: 33 })),
@@ -50,6 +58,7 @@ const priceHistoryBySku: Record<string, Record<string, any[]>> = {
 };
 
 const compNamesBySku: Record<string, string[]> = {
+  "All": ["Britannia", "Sunfeast", "Unibic"],
   "Parle-G 250g": ["Britannia", "Britannia", "Sunfeast"],
   "Marie Gold 120g": ["Britannia", "Britannia", "Unibic"],
   "Britannia Marie 250g": ["Patanjali", "Sunfeast", "Britannia"],
@@ -88,7 +97,6 @@ const platformPricing = [
   { platform: "Amazon India", color: "#2F77FF", avgIndex: 1.02, skusBelowComp: 2, skusAboveComp: 3, parity: 1, needsAttention: true },
   { platform: "Blinkit", color: "#FDDC2B", avgIndex: 1.08, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
   { platform: "Zepto", color: "#833AB4", avgIndex: 1.05, skusBelowComp: 1, skusAboveComp: 2, parity: 0, needsAttention: true },
-  { platform: "Lulu", color: "#FC8019", avgIndex: 1.12, skusBelowComp: 0, skusAboveComp: 3, parity: 0, needsAttention: true },
 ];
 
 const platformPricingDetail: Record<string, { sku: string; yourPrice: string; compPrice: string; parity: boolean; competitor: string }[]> = {
@@ -106,6 +114,12 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
     { sku: "Parle-G 250g", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Britannia" },
     { sku: "Hide & Seek 120g", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Britannia" },
   ],
+  "Amazon India": [
+    { sku: "Parle-G 120g", yourPrice: "₹ 41", compPrice: "₹ 36", parity: false, competitor: "Britannia" },
+    { sku: "Marie Gold 250g", yourPrice: "₹ 36", compPrice: "₹ 31", parity: false, competitor: "Britannia" },
+    { sku: "Britannia Marie 250g", yourPrice: "₹ 46", compPrice: "₹ 46", parity: true, competitor: "Patanjali" },
+    { sku: "Bourbon 120g", yourPrice: "₹ 31", compPrice: "₹ 33", parity: true, competitor: "Britannia" },
+  ],
 };
 
 const priceAdvantageData = [
@@ -121,10 +135,10 @@ const priceIndexTrend = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 /* Discount % trend — brand level, last 30 days */
-const OWN_BRAND = "Britannia (Own)";
+const OWN_BRAND = "Parle (Own)";
 const DISCOUNT_BRANDS = [
   { name: OWN_BRAND, color: "hsl(228,90%,64%)", base: 14, own: true },
-  { name: "Parle", color: "hsl(0,76%,57%)", base: 18, own: false },
+  { name: "Britannia", color: "hsl(0,76%,57%)", base: 18, own: false },
   { name: "Sunfeast", color: "hsl(160,70%,40%)", base: 11, own: false },
   { name: "Unibic", color: "hsl(38,92%,50%)", base: 9, own: false },
   { name: "Anmol", color: "hsl(280,55%,58%)", base: 21, own: false },
@@ -429,7 +443,7 @@ const PricingView: React.FC = () => {
   const [campaignStates, setCampaignStates] = useState<Record<number, boolean>>({});
   const [keywordCampaignStates, setKeywordCampaignStates] = useState<Record<number, boolean>>({});
   const [openCampaign, setOpenCampaign] = useState<any | null>(null);
-  const [selectedSku, setSelectedSku] = useState("Parle-G 120g");
+  const [selectedSku, setSelectedSku] = useState("All");
   const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [selectedSkuGroup, setSelectedSkuGroup] = useState("All SKUs");
   const [priceHistoryToggle, setPriceHistoryToggle] = useState<"sku" | "platform">("sku");
@@ -439,11 +453,11 @@ const PricingView: React.FC = () => {
   const [alertTeamStates, setAlertTeamStates] = useState<Record<string, boolean>>({});
   const [analyticsSkuFilter, setAnalyticsSkuFilter] = useState("All SKUs");
   const [ppiMode, setPpiMode] = useState<"competitors" | "own">("competitors");
-  const [ppiSku, setPpiSku] = useState(skuOptions[0]);
+  const [ppiSku, setPpiSku] = useState(ownSkuPlatformOptions[0]);
 
-  const compNames = compNamesBySku[selectedSku] || compNamesBySku["Parle-G 250g"];
+  const compNames = compNamesBySku[selectedSku] || compNamesBySku["All"];
   const competitorMatrix = (competitorMatrixByGroup["All SKUs"] || {})[selectedPlatform] || [];
-  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 120g"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["Parle-G 250g"])["All"];
+  const priceHistory = (priceHistoryBySku[selectedSku] || priceHistoryBySku["All"])[priceHistoryPlatform] || (priceHistoryBySku[selectedSku] || priceHistoryBySku["All"])["All"];
 
   const filteredPlatformPricing = showNeedAttention ? platformPricing.filter(p => p.needsAttention) : platformPricing;
 
@@ -625,7 +639,7 @@ const PricingView: React.FC = () => {
               <Select value={ppiSku} onValueChange={setPpiSku}>
                 <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {skuOptions.map(s => <SelectItem key={s} value={s} className="text-[11px]">{s}</SelectItem>)}
+                  {ownSkuPlatformOptions.map(s => <SelectItem key={s} value={s} className="text-[11px]">{s}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
@@ -672,7 +686,11 @@ const PricingView: React.FC = () => {
                             <tr key={ri}>
                               <td className="py-1 text-foreground">{row.sku}</td>
                               <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
-                              <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
+                              <td className={`py-1 text-right font-mono ${
+                                (parseFloat(row.compPrice.replace(/[^0-9.]/g, "")) || 0) < (parseFloat(row.yourPrice.replace(/[^0-9.]/g, "")) || 0)
+                                  ? "text-sw-red"
+                                  : "text-foreground"
+                              }`}>{row.compPrice}</td>
                               <td className="py-1 text-center">
                                 {row.parity ? (
                                   <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
@@ -703,7 +721,7 @@ const PricingView: React.FC = () => {
             </div>
           ) : (
             (() => {
-              const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
+              const plats = ["Blinkit", "Instamart", "Zepto"];
               const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
               const data = base.map((row: any, i: number) => ({
                 day: row.day,
@@ -718,7 +736,7 @@ const PricingView: React.FC = () => {
               const maxP = Math.max(...prices);
               return (
                 <>
-                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
+                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 3 platforms over 30 days.</p>
                   <ResponsiveContainer width="100%" height={180}>
                     <LineChart data={data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
@@ -782,7 +800,7 @@ const PricingView: React.FC = () => {
             <Select value={selectedSku} onValueChange={setSelectedSku}>
               <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {skuOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                {["All", ...skuOptions].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
