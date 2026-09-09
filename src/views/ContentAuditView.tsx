@@ -720,7 +720,7 @@ const ContentAuditView: React.FC = () => {
                   {scoreBuckets.map((_, index) => {
                     const mid = index * 10 + 5;
                     const fill = mid < 30 ? "#EF4444" : mid < 60 ? "#F97316" : mid < 80 ? "#EAB308" : "#22C55E";
-                    return <rect key={index} fill={fill} />;
+                    return <Cell key={index} fill={fill} />;
                   })}
                 </Bar>
               </BarChart>
