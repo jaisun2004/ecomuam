@@ -639,7 +639,7 @@ const PricingView: React.FC = () => {
               <Select value={ppiSku} onValueChange={setPpiSku}>
                 <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {skuOptions.map(s => <SelectItem key={s} value={s} className="text-[11px]">{s}</SelectItem>)}
+                  {ownSkuPlatformOptions.map(s => <SelectItem key={s} value={s} className="text-[11px]">{s}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
