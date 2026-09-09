@@ -14,11 +14,6 @@ interface TopbarProps {
 
 const presets: TimePreset[] = ["7D", "30D", "90D"];
 
-const platformFilters = [
-  { name: "Instamart", color: "#FF9900" },
-  { name: "Blinkit", color: "#FDDC2B" },
-  { name: "Zepto", color: "#2F77FF" },
-];
 
 const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
   const {
@@ -139,19 +134,6 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
           </Popover>
         )}
 
-        {/* Platform pills */}
-        <div className="flex items-center gap-1.5">
-          {platformFilters.map((p) => (
-            <div
-              key={p.name}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-2 text-[11px] text-muted-foreground"
-            >
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-              {p.name}
-            </div>
-          ))}
-          <div className="px-2.5 py-1 rounded-full bg-surface-2 text-[11px] text-primary">+3 more</div>
-        </div>
 
         {/* Avatar */}
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-sw-purple flex items-center justify-center">
