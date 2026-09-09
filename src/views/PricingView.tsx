@@ -721,7 +721,7 @@ const PricingView: React.FC = () => {
             </div>
           ) : (
             (() => {
-              const plats = ["Blinkit", "Instamart", "Zepto", "Instamart"];
+              const plats = ["Blinkit", "Instamart", "Zepto"];
               const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
               const data = base.map((row: any, i: number) => ({
                 day: row.day,
