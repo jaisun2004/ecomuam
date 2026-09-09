@@ -412,12 +412,17 @@ const RecommendationsView: React.FC = () => {
     [dismissed, applied]
   );
 
+  // Single-owner model: each recommendation belongs to exactly one specific tab
+  const ownerTab = (r: Reco): "high" | "budget" | "extend" | "all" => {
+    if (r.category === "Budget") return "budget";
+    if (/expand|increase|scale|extend/i.test(r.headline)) return "extend";
+    if (r.confidence >= 5 || r.warnings.length > 0) return "high";
+    return "all";
+  };
+
   const matchesTab = (r: Reco, t: "all" | "high" | "budget" | "extend") => {
     if (t === "all") return true;
-    if (t === "high") return r.confidence >= 5 || r.warnings.length > 0;
-    if (t === "budget") return r.category === "Budget";
-    if (t === "extend") return /expand|increase|scale|extend/i.test(r.headline);
-    return true;
+    return ownerTab(r) === t;
   };
 
   const tabCounts = useMemo(() => ({
