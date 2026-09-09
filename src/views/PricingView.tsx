@@ -736,7 +736,7 @@ const PricingView: React.FC = () => {
               const maxP = Math.max(...prices);
               return (
                 <>
-                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
+                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 3 platforms over 30 days.</p>
                   <ResponsiveContainer width="100%" height={180}>
                     <LineChart data={data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
