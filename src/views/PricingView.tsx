@@ -686,7 +686,11 @@ const PricingView: React.FC = () => {
                             <tr key={ri}>
                               <td className="py-1 text-foreground">{row.sku}</td>
                               <td className="py-1 text-right font-mono text-foreground">{row.yourPrice}</td>
-                              <td className="py-1 text-right font-mono text-sw-red">{row.compPrice}</td>
+                              <td className={`py-1 text-right font-mono ${
+                                (parseFloat(row.compPrice.replace(/[^0-9.]/g, "")) || 0) < (parseFloat(row.yourPrice.replace(/[^0-9.]/g, "")) || 0)
+                                  ? "text-sw-red"
+                                  : "text-foreground"
+                              }`}>{row.compPrice}</td>
                               <td className="py-1 text-center">
                                 {row.parity ? (
                                   <span className="font-mono text-[8px] px-1 py-0.5 rounded-full bg-sw-green-dim text-sw-green">✓</span>
