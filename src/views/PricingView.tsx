@@ -800,7 +800,7 @@ const PricingView: React.FC = () => {
             <Select value={selectedSku} onValueChange={setSelectedSku}>
               <SelectTrigger className="w-[180px] h-8 text-[11px]"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {skuOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                {["All", ...skuOptions].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
