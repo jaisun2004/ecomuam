@@ -466,7 +466,7 @@ const BudgetOptimiserView: React.FC = () => {
               <span className="flex items-center gap-1"><span className="w-3 h-1.5 bg-sw-green rounded-full" /> Optimised</span>
             </div>
             <button onClick={() => setApplyAll(true)}
-              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-foreground hover:bg-primary/80"}`}>
+              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${applyAll ? "bg-sw-green-dim text-sw-green" : "bg-primary text-primary-foreground hover:bg-primary/80"}`}>
               {applyAll ? "✓ All Reallocations Applied" : "⚡ Apply All Recommendations"}
             </button>
           </div>
