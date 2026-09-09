@@ -114,6 +114,12 @@ const platformPricingDetail: Record<string, { sku: string; yourPrice: string; co
     { sku: "Parle-G 250g", yourPrice: "₹ 43", compPrice: "₹ 38", parity: false, competitor: "Britannia" },
     { sku: "Hide & Seek 120g", yourPrice: "₹ 22", compPrice: "₹ 20", parity: false, competitor: "Britannia" },
   ],
+  "Amazon India": [
+    { sku: "Parle-G 120g", yourPrice: "₹ 41", compPrice: "₹ 36", parity: false, competitor: "Britannia" },
+    { sku: "Marie Gold 250g", yourPrice: "₹ 36", compPrice: "₹ 31", parity: false, competitor: "Britannia" },
+    { sku: "Britannia Marie 250g", yourPrice: "₹ 46", compPrice: "₹ 46", parity: true, competitor: "Patanjali" },
+    { sku: "Bourbon 120g", yourPrice: "₹ 31", compPrice: "₹ 33", parity: true, competitor: "Britannia" },
+  ],
 };
 
 const priceAdvantageData = [
