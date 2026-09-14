@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, History, MapPin, Search } from "lucide-react";
+import { ArrowLeft, History, Search } from "lucide-react";
 import { HISTORICAL_CONFIG } from "@/lib/ecom-reference/workbook-data";
 import { buildCampaignName, citiesFor, currencyFor, currencySymbol, isInStock, platformDisplay, productName, stockExclusionLine } from "@/lib/ecom-reference/platforms";
 import { capabilityFor, asOfLabel } from "@/lib/ecom-reference/config";
@@ -12,6 +12,18 @@ import type { BatchRow } from "@/lib/ecom-qc/types";
 import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 
 const MAX_COPIES = 20;
+const DISPLAY_SPEND = [24800, 19600, 14200, 31800, 27600, 22400, 18900, 15600, 34200, 11800, 9600, 17400, 8200, 12600];
+const DISPLAY_ROAS = [4.2, 3.8, 3.4, 4.6, 3.7, 4.1, 3.5, 4.4, 3.9, 3.2, 3.6, 4.0, 3.1, 3.7];
+
+const runDates = (name: string) => {
+  const match = name.match(/_(\d{4})(\d{2})(\d{2})_/);
+  if (!match) return "—";
+  const end = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const start = new Date(end);
+  start.setDate(start.getDate() - 29);
+  const format = (date: Date) => date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  return `${format(start)} – ${format(end)}`;
+};
 
 interface Edited {
   cities: string[];
@@ -190,13 +202,10 @@ const FlowHistoryView: React.FC = () => {
         <button onClick={() => navigate("/ecom/campaigns/create")} className="p-1.5 rounded-lg hover:bg-surface-3 text-muted-foreground" aria-label="Back">
           <ArrowLeft size={16} />
         </button>
-        <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
-          <History size={15} className="text-primary" />
+        <div className="w-8 h-8 rounded-lg bg-surface-3 flex items-center justify-center">
+          <History size={15} className="text-muted-foreground" />
         </div>
-        <div>
-          <h1 className="font-display font-bold text-sm text-foreground">Copy an existing campaign</h1>
-          <p className="text-[10px] text-muted-foreground">Up to {MAX_COPIES} at a time · checked against today's data, as of {asOfLabel()}</p>
-        </div>
+        <h1 className="font-display font-bold text-sm text-foreground">Copy an existing campaign</h1>
         {selected.length > 0 && (
           <button onClick={() => setStage("edit")} className="ml-auto px-4 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
             Check {selected.length} campaign{selected.length > 1 ? "s" : ""}
@@ -204,54 +213,64 @@ const FlowHistoryView: React.FC = () => {
         )}
       </div>
 
-      <div className="px-4 py-3 border-b border-subtle bg-surface-1 flex items-center gap-3 flex-wrap">
-        <div className="relative">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search campaigns…"
-            className="bg-surface-2 border border-subtle rounded-lg pl-8 pr-3 py-2 text-xs text-foreground w-64 outline-none focus:border-primary/50" />
+      <div className="p-6 max-w-5xl mx-auto space-y-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="relative">
+            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search campaigns…"
+              className="bg-surface-2 border border-subtle rounded-lg pl-8 pr-3 py-2 text-xs text-foreground w-64 outline-none focus:border-primary/50" />
+          </div>
+          <select value={platform} onChange={(e) => setPlatform(e.target.value)} className="bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-xs text-foreground">
+            <option value="all">All platforms</option>
+            {platforms.map((p) => <option key={p} value={p}>{platformDisplay(p)}</option>)}
+          </select>
+          {selected.length > 0 && (
+            <span className="text-[11px] text-muted-foreground">
+              {selected.length} selected
+              <button onClick={() => ec.setCopySelection([])} className="ml-2 underline hover:text-foreground">Clear</button>
+            </span>
+          )}
+          {capNotice && <span className="text-[11px] text-sw-amber">You can copy {MAX_COPIES} campaigns at a time. Untick one to add another.</span>}
         </div>
-        <select value={platform} onChange={(e) => setPlatform(e.target.value)} className="bg-surface-2 border border-subtle rounded-lg px-3 py-2 text-xs text-foreground">
-          <option value="all">All platforms</option>
-          {platforms.map((p) => <option key={p} value={p}>{platformDisplay(p)}</option>)}
-        </select>
-        {selected.length > 0 && (
-          <span className="text-[11px] text-muted-foreground">
-            {selected.length} selected
-            <button onClick={() => ec.setCopySelection([])} className="ml-2 underline hover:text-foreground">Clear</button>
-          </span>
-        )}
-        {capNotice && <span className="text-[11px] text-sw-amber">You can copy {MAX_COPIES} campaigns at a time. Untick one to add another.</span>}
-      </div>
 
-      <div className="p-4 grid grid-cols-2 gap-3 max-w-5xl">
-        {filtered.map((h) => {
-          const isSel = selected.includes(h.name);
-          const cities = h.cities.split(",").map((c) => c.trim()).filter(Boolean);
-          const prods = h.productIds.split(",").map((p) => p.trim()).filter(Boolean);
-          const cap = capabilityFor(h.platform);
-          const summary = prods.length
-            ? summariseReadiness({ name: h.name, code: prods[0], platform: h.platform }, cap.city_targeting ? cities : [], h.name.split(" ")[0] ?? "brand")
-            : undefined;
-          return (
-            <button key={h.name} onClick={() => toggle(h.name)}
-              className={`text-left p-4 rounded-xl border transition-all ${isSel ? "border-primary bg-primary/10" : "border-subtle bg-surface-2 hover:border-primary/30"}`}>
-              <div className="flex items-start justify-between gap-2">
-                <span className="font-display font-bold text-sm text-foreground truncate" title={h.name}>{h.name}</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-3 text-muted-foreground flex-shrink-0">{platformDisplay(h.platform)}</span>
-              </div>
-              <div className="flex gap-3 text-[10px] font-mono text-muted-foreground mt-2">
-                <span>{h.budgetType} · {h.budgetValue}</span>
-                <span>{prods.length} {prods.length === 1 ? "product" : "products"}</span>
-              </div>
-              <div className="flex items-center gap-1.5 mt-2 text-[10px] text-muted-foreground">
-                <MapPin size={10} />
-                <span className="truncate">{cities.slice(0, 2).join(", ")}{cities.length > 2 ? ` +${cities.length - 2} more` : ""}</span>
-              </div>
-              {summary && <div className="mt-2"><EcomReadinessPill summary={summary} /></div>}
-            </button>
-          );
-        })}
-        {filtered.length === 0 && <p className="text-sm text-muted-foreground col-span-2 py-10 text-center">No past campaigns match that search.</p>}
+        <div className="overflow-x-auto border-y border-subtle">
+          <table className="w-full min-w-[1040px] text-[11px]">
+            <thead>
+              <tr className="border-b border-subtle bg-surface-2 text-muted-foreground">
+                {['Campaign name', 'Platform', 'Dates it ran', 'SKUs targeted', 'Cities', 'Total spend', 'ROAS', 'Can be copied today'].map((label) => (
+                  <th key={label} className="px-3 py-2 text-left font-medium">{label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((h) => {
+                const isSel = selected.includes(h.name);
+                const cities = h.cities.split(",").map((c) => c.trim()).filter(Boolean);
+                const prods = h.productIds.split(",").map((p) => p.trim()).filter(Boolean);
+                const cap = capabilityFor(h.platform);
+                const summary = prods.length
+                  ? summariseReadiness({ name: productName(prods[0], h.platform), code: prods[0], platform: h.platform }, cap.city_targeting ? cities : [], h.name.split(" ")[0] ?? "brand")
+                  : undefined;
+                const index = HISTORICAL_CONFIG.indexOf(h);
+                const symbol = currencySymbol(currencyFor(h.platform));
+                const skuNames = prods.slice(0, 2).map((code) => productName(code, h.platform));
+                return (
+                  <tr key={h.name} onClick={() => toggle(h.name)} className={`border-b border-subtle last:border-b-0 cursor-pointer ${isSel ? "bg-primary/10" : "hover:bg-surface-2"}`}>
+                    <td className="px-3 py-2.5 font-medium text-foreground max-w-56 truncate" title={h.name}>{h.name}</td>
+                    <td className="px-3 py-2.5 text-foreground whitespace-nowrap">{platformDisplay(h.platform)}</td>
+                    <td className="px-3 py-2.5 text-muted-foreground whitespace-nowrap">{runDates(h.name)}</td>
+                    <td className="px-3 py-2.5 text-muted-foreground max-w-48 truncate" title={skuNames.join(", ")}>{prods.length} · {skuNames.join(", ")}</td>
+                    <td className="px-3 py-2.5 text-muted-foreground max-w-40 truncate" title={cities.join(", ")}>{cities.length} · {cities.slice(0, 2).join(", ")}</td>
+                    <td className="px-3 py-2.5 font-mono text-foreground whitespace-nowrap">{symbol}{(DISPLAY_SPEND[index] ?? 12000).toLocaleString("en-IN")}</td>
+                    <td className="px-3 py-2.5 font-mono text-foreground whitespace-nowrap">{(DISPLAY_ROAS[index] ?? 3.5).toFixed(1)}x</td>
+                    <td className="px-3 py-2.5 text-foreground whitespace-nowrap">{summary?.state === "not_ready" ? "No" : "Yes"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {filtered.length === 0 && <p className="text-sm text-muted-foreground py-10 text-center">No past campaigns match that search.</p>}
+        </div>
       </div>
     </div>
   );
