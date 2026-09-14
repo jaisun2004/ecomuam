@@ -506,34 +506,109 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
-          {/* Recommendations */}
-          {recos && recos.length > 0 && (
+          {/* Cities step — evidence only, no money yet */}
+          {cityRecos && cityRecos.length > 0 && !planning && (
             <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
               <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
-                <p className="text-xs font-medium text-foreground">{recos.length} suggestion{recos.length > 1 ? "s" : ""}</p>
+                <p className="text-xs font-medium text-foreground">Recommended cities</p>
               </div>
               <div className="max-h-[440px] overflow-y-auto divide-y divide-subtle">
-                {recos.map((r) => (
-                  <EcomRecoCard
-                    key={r.id}
-                    reco={r}
-                    selected={chosenRecos.has(r.id)}
-                    onToggle={() =>
-                      setChosenRecos((prev) => {
-                        const n = new Set(prev);
-                        if (n.has(r.id)) n.delete(r.id); else n.add(r.id);
-                        return n;
-                      })
-                    }
-                  />
-                ))}
+                {cityRecos.map((c) => {
+                  const on = chosenCities.has(c.platformCity);
+                  return (
+                    <div key={c.platformCity} className="px-4 py-3">
+                      <button
+                        onClick={() =>
+                          setChosenCities((prev) => {
+                            const s = new Set(prev);
+                            if (s.has(c.platformCity)) s.delete(c.platformCity); else s.add(c.platformCity);
+                            return s;
+                          })
+                        }
+                        className="flex items-center gap-3 text-left"
+                      >
+                        <span className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${on ? "bg-primary border-primary" : "border-border-visible"}`}>
+                          {on && <Check size={11} className="text-primary-foreground" />}
+                        </span>
+                        <span className="text-xs font-medium text-foreground">{c.platformCity}</span>
+                        {c.geoCity !== c.platformCity && <span className="text-xs text-muted-foreground">{c.geoCity}</span>}
+                      </button>
+                      <div className="mt-2 pl-7 space-y-1">
+                        {c.evidence.slice(0, 4).map((e) => (
+                          <div key={e.label} className="grid grid-cols-[110px_140px_1fr_56px] gap-2 items-baseline">
+                            <span className="text-[11px] text-muted-foreground">{e.label}</span>
+                            <span className="font-mono text-[11px] text-foreground">{e.value}</span>
+                            <span className="text-[11px] text-muted-foreground truncate" title={e.note}>{e.note}</span>
+                            <span className="text-[10px] text-muted-foreground text-right">{e.age}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle bg-surface-2">
-                <span className="text-[11px] text-muted-foreground">{chosenRecos.size} selected</span>
-                <button onClick={acceptRecos} disabled={!chosenRecos.size}
+                <span className="text-[11px] text-muted-foreground">{chosenCities.size} selected</span>
+                <button onClick={() => setPlanning(true)} disabled={!chosenCities.size}
                   className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
-                  Add {chosenRecos.size} campaign{chosenRecos.size === 1 ? "" : "s"}
+                  Set the budget
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Plan step — the budget split */}
+          {cityRecos && planning && (
+            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-subtle bg-surface-2">
+                <p className="text-xs font-medium text-foreground">Budget</p>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground">₹</span>
+                  <input
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value.replace(/[^0-9]/g, ""))}
+                    inputMode="numeric"
+                    className="w-28 bg-surface-1 border border-subtle rounded-md px-2 py-1 text-right font-mono text-xs text-foreground outline-none focus:border-primary"
+                    aria-label="Total budget"
+                  />
+                </div>
+              </div>
+              <div className="divide-y divide-subtle">
+                {split.map((s) => (
+                  <div key={s.city.platformCity} className="px-4 py-2.5 grid grid-cols-[140px_1fr_90px] gap-3 items-baseline">
+                    <button
+                      onClick={() =>
+                        setChosenCities((prev) => {
+                          const set = new Set(prev);
+                          set.delete(s.city.platformCity);
+                          return set;
+                        })
+                      }
+                      className="flex items-center gap-2 text-left"
+                    >
+                      <span className="w-4 h-4 rounded border bg-primary border-primary flex items-center justify-center flex-shrink-0">
+                        <Check size={11} className="text-primary-foreground" />
+                      </span>
+                      <span className="text-xs text-foreground truncate">{s.city.platformCity}</span>
+                    </button>
+                    <span className="font-mono text-[11px] text-muted-foreground">{s.workings}</span>
+                    <span className="font-mono text-xs text-foreground text-right">{inr(s.amount)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-2.5 border-t border-subtle bg-surface-2 flex items-center justify-between">
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  {split.map((s) => inr(s.amount)).join(" + ")} = {inr(split.reduce((t, s) => t + s.amount, 0))}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPlanning(false)} className="px-3 py-1.5 rounded-lg text-[11px] border border-subtle text-foreground hover:bg-surface-3">
+                    Back to cities
+                  </button>
+                  <button onClick={createFromPlan} disabled={!split.length || budgetTotal <= 0}
+                    className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
+                    Create campaigns
+                  </button>
+                </div>
               </div>
             </div>
           )}
