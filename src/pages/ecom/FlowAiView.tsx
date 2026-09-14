@@ -249,10 +249,11 @@ const FlowAiView: React.FC = () => {
     setParsing(false);
   };
 
-  /* ── Recommendations ── */
+  /* ── Recommendation: products, then cities, then the plan ── */
   const openRecommendations = () => {
     setSkuPicker(true);
-    setRecos(null);
+    setCityRecos(null);
+    setPlanning(false);
     setRecoOutcomes(null);
     setPickedSkus([]);
     setMessages((m) => [
@@ -264,55 +265,47 @@ const FlowAiView: React.FC = () => {
 
   const skuResults = useMemo(() => searchSkus(skuQuery, 40), [skuQuery]);
 
+  const planSkus = useMemo(
+    () => (pickedSkus.length ? pickedSkus.filter((s) => s.platform === pickedSkus[0].platform) : []),
+    [pickedSkus],
+  );
+
   const generateRecos = () => {
     if (!pickedSkus.length) return;
-    const all = pickedSkus.flatMap((s) => recommendationsForSku(s));
-    const list = all.filter((r) => !ec.usedRecos.includes(r.id));
-    const alreadyDone = all.length - list.length;
+    const list = cityRecommendations(pickedSkus);
     setSkuPicker(false);
+    setPlanning(false);
     setMessages((m) => [...m, { role: "user", text: `Recommendations for ${pickedSkus.map((s) => s.name).join(", ")}.` }]);
 
     if (!list.length) {
-      setRecos(null);
-      say("Already added — every suggestion for those products has been used or dismissed.");
+      setCityRecos(null);
+      say("No city has a measured signal for those products, so there is nothing to recommend.");
       return;
     }
-    setRecos(list);
-    setChosenRecos(new Set(list.map((r) => r.id)));
+    setCityRecos(list);
+    setChosenCities(new Set(list.map((c) => c.platformCity)));
+    const dropped = pickedSkus.length - planSkus.length;
     say(
-      `${n(list.length, "suggestion")} on price, cities and keywords.${alreadyDone ? ` ${alreadyDone} already used earlier, so they are not repeated.` : ""} Pick the ones you want.`,
+      `${n(list.length, "city")} recommended for ${platformDisplay(list[0].platform)}.${dropped > 0 ? ` ${n(dropped, "product")} on another platform left out, because a campaign runs on one platform.` : ""} Untick any you don't want, then set the budget.`,
     );
   };
 
+  const chosenCityList = useMemo(
+    () => (cityRecos ?? []).filter((c) => chosenCities.has(c.platformCity)),
+    [cityRecos, chosenCities],
+  );
+  const budgetTotal = Number(budget.replace(/[^0-9]/g, "")) || 0;
+  const split = useMemo(() => splitBudget(chosenCityList, budgetTotal), [chosenCityList, budgetTotal]);
+  const inr = (v: number) => `₹${v.toLocaleString("en-IN")}`;
 
-  const acceptRecos = () => {
-    const picked = (recos ?? []).filter((r) => chosenRecos.has(r.id));
-    if (!picked.length) return;
+  const createFromPlan = () => {
+    const drafts = buildCityCampaigns(planSkus, split);
+    if (!drafts.length) return;
+    const next = drafts.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: i + 1, origin: "reco" } as BatchRow));
 
-    // One campaign per product and platform: suggestions on the same product are merged.
-    const merged: BatchRow[] = [];
-    const byKey = new Map<string, BatchRow>();
-    picked.forEach((r) => {
-      const d = r.draft as BatchRow;
-      const key = `${d.platform}|${d.product_id}`;
-      const existing = byKey.get(key);
-      if (!existing) {
-        const copy = { ...d } as BatchRow;
-        byKey.set(key, copy);
-        merged.push(copy);
-        return;
-      }
-      const cities = new Set([...(existing.cities ?? "").split(";"), ...(d.cities ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
-      existing.cities = Array.from(cities).join(";");
-      const kw = new Set([...(existing.targeting_details ?? "").split(";"), ...(d.targeting_details ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
-      existing.targeting_details = Array.from(kw).join("; ");
-      existing.budget_value = String(Math.max(Number(existing.budget_value) || 0, Number(d.budget_value) || 0));
-    });
-
-    const next = merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: i + 1, origin: "reco" } as BatchRow));
-    setRecos(null);
-    ec.markRecosUsed((recos ?? []).map((r) => r.id));
-    setMessages((m) => [...m, { role: "user", text: `Create ${n(merged.length, "recommended campaign")}.` }]);
+    setCityRecos(null);
+    setPlanning(false);
+    setMessages((m) => [...m, { role: "user", text: `Create ${n(next.length, "campaign")} across ${n(split.length, "city")}.` }]);
     setCreatingRecos(true);
     ec.setSource("ai");
     ec.setFileName(null);
