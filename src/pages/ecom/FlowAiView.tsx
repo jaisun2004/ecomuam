@@ -517,8 +517,7 @@ const FlowAiView: React.FC = () => {
           {/* Review is a card in the conversation, not another screen */}
           {reviewing && (
             <EcomReviewCard
-              onBackToCheck={() => { setReviewing(false); say("Back to the check. Ask me to fix anything and we can come back to review."); }}
-              onFixWithAi={() => { setReviewing(false); openFixes(); }}
+              onBackToCheck={() => { setReviewing(false); say("Back to the check."); }}
               onDone={(summary) => say(summary)}
             />
           )}
