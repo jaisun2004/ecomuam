@@ -4,14 +4,13 @@ import {
   ArrowLeft, Check, CheckCircle2, Download, Lightbulb, Loader2, PenLine, RotateCcw, Search, Send, Sparkles, Upload, X,
 } from "lucide-react";
 import EcomFileCard from "@/components/ecom/EcomFileCard";
-import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadHeldRows, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
 import { buildRun, rerun, RULE_FAILURE, type SheetRun } from "@/lib/ecom-qc/sheet-run";
-import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
+import { buildCityCampaigns, cityRecommendations, searchSkus, splitBudget, type CityReco } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { capabilityFor } from "@/lib/ecom-reference/config";
 import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
