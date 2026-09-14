@@ -593,10 +593,15 @@ const FlowAiView: React.FC = () => {
                 <div className="px-4 py-3 border-t border-subtle">
                   <p className="text-[11px] text-foreground">{n(creation.held.length, "row")} not created</p>
                   <ul className="mt-2 space-y-1.5">
-                    {heldLines(creation.held).map((l) => (
-                      <li key={l.rule_key} className="flex items-baseline gap-3">
-                        <span className="text-[11px] text-muted-foreground flex-1">{l.plain}</span>
-                        <span className="font-mono text-[10px] text-muted-foreground">{n(l.count, "row")}</span>
+                    {groupedFindings(creation.held.flatMap((e) => e.findings)).map((l) => (
+                      <li key={l.rule_key}>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-[11px] text-muted-foreground flex-1">{l.plain}</span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{n(l.count, "row")}</span>
+                        </div>
+                        {l.rows.length > 0 && (
+                          <p className="font-mono text-[10px] text-muted-foreground mt-0.5">{rowsLine(l.rows)}</p>
+                        )}
                       </li>
                     ))}
                   </ul>
