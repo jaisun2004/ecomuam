@@ -165,11 +165,73 @@ const FlowAiView: React.FC = () => {
     say(`Parked ${n(dropped, unit)}. ${n(kept, unit)} stay here. Reopen them any time from Held batches.`);
   };
 
+  /* ── Creation from the check card ── */
+  const heldEntries = (rows: BatchRow[], result: QcResult | null): HeldEntry[] =>
+    rows.map((row) => ({ row, findings: (result?.findings ?? []).filter((f) => f.row === row.row) }));
+
+  const heldLines = (entries: HeldEntry[]) => {
+    const map = new Map<string, { plain: string; count: number }>();
+    entries.forEach((e) => {
+      const first = e.findings.find((f) => f.severity === "blocker") ?? e.findings[0];
+      const key = first?.rule_key ?? "unknown";
+      const plain = first ? RULE_FAILURE[first.rule_key] ?? first.message : "Held";
+      const cur = map.get(key);
+      map.set(key, { plain, count: (cur?.count ?? 0) + 1 });
+    });
+    return [...map.entries()].map(([rule_key, v]) => ({ rule_key, ...v })).sort((a, b) => b.count - a.count);
+  };
+
+  const platformCounts = (rows: BatchRow[], base: { platform: string; count: number }[] = []) => {
+    const map = new Map<string, number>(base.map((b) => [b.platform, b.count]));
+    rows.forEach((r) => map.set(r.platform, (map.get(r.platform) ?? 0) + 1));
+    return [...map.entries()].map(([platform, count]) => ({ platform, count }));
+  };
+
   const continueClean = () => {
     if (!latest) return;
-    if (latest.heldRows.length) holdRemaining();
+    const cleanRows = ec.rows.filter((r) => latest.cleanRows.includes(r.row));
+    if (!cleanRows.length) return;
+    const held = heldEntries(ec.rows.filter((r) => latest.heldRows.includes(r.row)), latest.result);
     setShowHeld(false);
-    setReviewing(true);
+    setReviewing(false);
+    ec.setPushed(true);
+    setCreation({ created: platformCounts(cleanRows), held, rowsRead: latest.rowsSeen });
+    say(`${n(cleanRows.length, "campaign")} created.`);
+  };
+
+  const downloadHeld = () => {
+    if (!creation) return;
+    const rows = creation.held.map((e, i) => ({ ...e.row, row: i + 1 }));
+    const findings = creation.held.flatMap((e, i) => e.findings.map((f) => ({ ...f, row: i + 1 })));
+    downloadHeldRows(rows, { ...(ec.result ?? ({} as QcResult)), findings } as QcResult);
+  };
+
+  const handleCorrection = async (file: File) => {
+    if (!creation) return;
+    setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
+    setParsing(true);
+    try {
+      const parsed = await parseWorkbook(file);
+      const run = buildRun({ fileName: file.name, sizeKb: file.size / 1024, rows: parsed.rows });
+      const heldNames = new Set(creation.held.map((e) => e.row.campaign_name.trim().toLowerCase()));
+      const matched = run.rows.filter((r) => heldNames.has(r.campaign_name.trim().toLowerCase()));
+      const matchedNames = new Set(matched.map((r) => r.campaign_name.trim().toLowerCase()));
+      const cleared = matched.filter((r) => run.cleanRows.includes(r.row));
+      const stillHeld = matched.filter((r) => !run.cleanRows.includes(r.row));
+      const untouched = creation.held.filter((e) => !matchedNames.has(e.row.campaign_name.trim().toLowerCase()));
+      const nextHeld = [...untouched, ...heldEntries(stillHeld, run.result)];
+      say(
+        `${n(matched.length, "row")} matched a held campaign name${run.rows.length - matched.length > 0 ? `, ${run.rows.length - matched.length} did not match anything held` : ""}. ${n(cleared.length, "campaign")} came back clean and ${cleared.length === 1 ? "was" : "were"} created. ${n(nextHeld.length, "row")} still held.`,
+      );
+      setCreation({
+        created: platformCounts(cleared, creation.created),
+        held: nextHeld,
+        rowsRead: creation.rowsRead,
+      });
+    } catch (err) {
+      say(`I couldn't use that file. ${err instanceof Error ? err.message : "It has no readable rows."} Nothing here has changed.`);
+    }
+    setParsing(false);
   };
 
   /* ── Recommendations ── */
