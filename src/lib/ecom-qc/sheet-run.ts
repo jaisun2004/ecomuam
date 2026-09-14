@@ -249,7 +249,8 @@ export function groupByRule(result: QcResult | null): RuleGroup[] {
       severity: findings[0].severity,
       rows: [...new Set(findings.map((f) => f.row))].sort((a, b) => a - b),
       findings,
-      plain: RULE_EXPLANATIONS[rule_key]?.checked ?? findings[0].message,
+      plain: RULE_FAILURE[rule_key] ?? RULE_EXPLANATIONS[rule_key]?.checked ?? findings[0].message,
+      unconfirmed: UNCONFIRMED_RULES.has(rule_key),
     }))
     .sort((a, b) =>
       a.severity === b.severity ? b.findings.length - a.findings.length : a.severity === "blocker" ? -1 : 1,
@@ -279,7 +280,7 @@ export function verdict(
     case "partial":
       return {
         headline: `${u(clean)} ready, ${u(held)} held.`,
-        detail: `The held ${unit}s stay visible and are never dropped. You can push the ready ones and come back to the rest.`,
+        detail: "",
         tone: "amber",
       };
     case "all_held":
