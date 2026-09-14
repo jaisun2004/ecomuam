@@ -3,7 +3,8 @@ import type { BatchRow } from "@/lib/ecom-qc/types";
 import { BATCH_FIELDS } from "@/lib/ecom-qc/types";
 import { CITY_LIST, HISTORICAL_CONFIG, PRODUCT_LIST, SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
 import { RULES } from "@/lib/ecom-qc/rules";
-import type { QcResult } from "@/lib/ecom-qc/types";
+import { RULE_EXPLANATIONS } from "@/lib/ecom-qc/explanations";
+import type { QcFinding, QcResult } from "@/lib/ecom-qc/types";
 
 export const CANONICAL_HEADERS = [
   "sub_category",
