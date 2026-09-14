@@ -66,39 +66,47 @@ const EcomFileCard: React.FC<Props> = ({
         )}
       </div>
 
-      {/* Issues grouped by rule */}
+      {/* Counts */}
       {groups.length > 0 && (
-        <div className="border-t border-subtle divide-y divide-subtle">
-          {groups.map((g) => {
-            const open = openGroups.has(g.rule_key);
-            return (
-              <div key={g.rule_key}>
-                <button onClick={() => toggle(g.rule_key)} className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-surface-2 text-left">
-                  {open ? <ChevronDown size={13} className="text-muted-foreground" /> : <ChevronRight size={13} className="text-muted-foreground" />}
-                  <span className={`w-2 h-2 rounded-full ${g.severity === "blocker" ? "bg-sw-red" : "bg-sw-amber"}`} />
-                  <span className="text-[11px] text-foreground">{g.plain}</span>
-                  <span className="ml-auto font-mono text-[10px] text-muted-foreground">
-                    {u(g.rows.length)}{unit === "row" ? `: ${g.rows.slice(0, 6).join(", ")}` : ""}{g.rows.length > 6 ? "…" : ""}
-                  </span>
-                </button>
-                {open && (
-                  <div className="divide-y divide-subtle bg-surface-2/40">
-                    {g.findings.map((f, i) => (
-                      <div key={`${f.row}-${f.field}-${i}`} className="px-8 py-2 flex items-start gap-2 text-[11px]">
-                        <div className="flex-1 min-w-0">
-                          <span className="font-mono text-[10px] text-muted-foreground">{unit === "row" ? `row ${f.row} · ` : ""}{f.field}</span>
-                          <p className="text-foreground">{f.message}</p>
-                          {f.value && <p className="font-mono text-[10px] text-sw-red break-all">“{f.value}”</p>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        <div className="px-4 pb-3 flex items-center gap-6 text-[11px] text-muted-foreground">
+          <span>{blockerRows} blocker{blockerRows === 1 ? "" : "s"}</span>
+          <span>{warningRows} warning{warningRows === 1 ? "" : "s"}</span>
+          <span>{u(run.cleanRows.length)} ready</span>
         </div>
       )}
+
+      {/* Two buckets, one line per rule */}
+      {groups.length > 0 && (
+        <div className="border-t border-subtle">
+          {([
+            { key: "blocker", label: "Blockers", list: blockerGroups, border: "border-l-2 border-l-sw-red" },
+            { key: "warning", label: "Warnings", list: warningGroups, border: "border-l-2 border-l-sw-amber" },
+          ] as const).map((bucket) =>
+            bucket.list.length === 0 ? null : (
+              <div key={bucket.key} className={`${bucket.border} px-4 py-3 border-t border-subtle first:border-t-0`}>
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{bucket.label}</p>
+                <ul className="mt-2 space-y-2.5">
+                  {bucket.list.map((g) => (
+                    <li key={g.rule_key}>
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-[11px] text-foreground flex-1">
+                          {g.plain}
+                          {g.unconfirmed ? ". The limit is unconfirmed" : ""}
+                        </span>
+                        <span className="font-mono text-[10px] text-muted-foreground">{u(g.rows.length)}</span>
+                      </div>
+                      {unit === "row" && (
+                        <p className="font-mono text-[10px] text-muted-foreground mt-0.5">{rowsLine(g.rows, unit)}</p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ),
+          )}
+        </div>
+      )}
+
 
       {/* Tidy-ups */}
       {run.tidies.length > 0 && (
