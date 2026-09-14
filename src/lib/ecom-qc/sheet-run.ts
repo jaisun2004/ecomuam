@@ -28,7 +28,70 @@ export interface RuleGroup {
   rows: number[];
   findings: QcFinding[];
   plain: string;
+  /** The workbook carries no limit behind this check, so it can only warn. */
+  unconfirmed: boolean;
 }
+
+/** What is wrong, written as the failure and not as the rule that should hold. */
+export const RULE_FAILURE: Record<string, string> = {
+  "file.required_sheets_present": "A required sheet is missing from the workbook",
+  "file.header_row_matches": "Header row does not match the template",
+  "file.row_count_within_range": "Row count is outside the allowed range",
+  "file.no_merged_cells": "batch_import contains merged cells",
+  "file.no_html_or_script": "A cell contains HTML or script",
+  "mandatory.sub_category_present": "sub_category is missing",
+  "mandatory.platform_present": "platform is missing",
+  "mandatory.campaign_name_present": "campaign_name is missing",
+  "mandatory.budget_type_valid": "budget_type is not overall or daily",
+  "mandatory.budget_value_positive": "budget_value is missing or not a positive number",
+  "mandatory.cities_present": "cities is missing",
+  "mandatory.product_id_present": "product_id is missing",
+  "mandatory.targeting_present": "targeting_details is missing",
+  "platform.canonical_name": "Platform name is not recognised",
+  "platform.match_types_supported": "Match type is not supported on this platform",
+  "platform.reference_data_available": "No reference data for this platform",
+  "taxonomy.name_unique_in_upload": "Campaign name repeats inside this file",
+  "taxonomy.name_not_numeric": "Campaign name is only numbers",
+  "taxonomy.name_charset": "Campaign name uses characters the platform rejects",
+  "taxonomy.name_length_cap": "Campaign name is longer than the platform allows",
+  "taxonomy.no_active_duplicate_on_platform": "Campaign name may already be live on this platform",
+  "budget.numeric": "Budget value is not a plain number",
+  "budget.daily_above_floor": "Daily budget may be below the platform minimum",
+  "budget.overall_requires_end_date": "Overall budget with no end_date",
+  "budget.daily_without_end_date_runs_until_paused": "Daily budget with no end_date runs until paused",
+  "budget.currency_matches_platform_geo": "Currency does not match the platform",
+  "budget.within_brand_wallet": "Batch spend exceeds the brand wallet",
+  "date.end_date_iso_or_blank": "end_date is not in YYYY-MM-DD format",
+  "date.end_date_in_future": "end_date is in the past",
+  "geo.city_in_platform_city_list": "City is not in city_list for this platform",
+  "geo.platform_city_not_geographical": "City uses the geographical name, not the platform name",
+  "geo.city_is_not_country": "A country is used where a city is expected",
+  "geo.no_duplicate_city_in_row": "The same city repeats in one row",
+  "product.exists_in_product_list": "Product is not in product_list for this platform",
+  "product.code_format_matches_platform": "SKU code does not match the platform format",
+  "product.no_duplicate_in_row": "The same product repeats in one row",
+  "product.sku_cap_per_campaign": "More SKUs than the platform cap",
+  "product.in_stock_in_targeted_cities": "SKU is out of stock in a targeted city",
+  "targeting.segment_has_three_parts": "Targeting segment is not in the expected format",
+  "targeting.match_type_enum": "Match type is not one of the accepted values",
+  "targeting.bid_numeric_or_range": "Bid is not a number or a range",
+  "targeting.bid_above_floor": "Bid may be below the platform minimum",
+  "targeting.bid_range_supported": "Bid ranges are not supported on this platform",
+  "targeting.bid_decimal_format": "Bid has too many decimal places",
+  "targeting.keyword_min_length": "Keyword is shorter than 3 characters",
+  "targeting.keyword_not_placeholder": "Keyword is a placeholder",
+  "targeting.no_duplicate_keyword_in_row": "The same keyword repeats in one row",
+  "targeting.keyword_cap_per_campaign": "More keywords than the platform cap",
+  "targeting.no_duplicate_row_combination": "Two rows target the same thing",
+};
+
+/** These four have no limit in the workbook, so they warn and never hold a row. */
+export const UNCONFIRMED_RULES = new Set([
+  "platform.match_types_supported",
+  "targeting.bid_above_floor",
+  "budget.daily_above_floor",
+  "taxonomy.no_active_duplicate_on_platform",
+]);
 
 export interface SheetRun {
   id: string;
