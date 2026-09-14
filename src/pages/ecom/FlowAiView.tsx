@@ -292,7 +292,10 @@ const FlowAiView: React.FC = () => {
       setCreatingRecos(false);
       const created = outcomes.filter((o) => o.status !== "failed").reduce((total, o) => total + o.rows, 0);
       const failed = outcomes.filter((o) => o.status === "failed");
-      say(`${n(created, "campaign")} created.${failed.length ? ` ${failed.map((o) => `${n(o.rows, "campaign")} on ${platformDisplay(o.platform)} were not created: ${o.detail}`).join(" ")}` : ""}`);
+      setMessages((m) => [...m, {
+        role: "assistant",
+        text: `${n(created, "campaign")} created.${failed.length ? ` ${failed.map((o) => `${n(o.rows, "campaign")} on ${platformDisplay(o.platform)} were not created: ${o.detail}`).join(" ")}` : ""}`,
+      }]);
     }, 900);
   };
 
