@@ -88,7 +88,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
   return (
     <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
       <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2 flex-wrap">
-        <p className="text-xs font-medium text-foreground">Review and push</p>
+        <p className="text-xs font-medium text-foreground">Review campaigns</p>
         <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px]">Nothing is created yet</span>
         <span className="ml-auto text-[10px] text-muted-foreground">
           {selected.length} {noun(selected.length)} going · {blocked.length} held
@@ -153,7 +153,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           disabled={!canPush || pushing}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Rocket size={13} /> {pushing ? "Sending…" : `Create ${selected.length} campaign${selected.length === 1 ? "" : "s"}`}
+          <Rocket size={13} /> {pushing ? "Creating…" : `Create ${selected.length} campaign${selected.length === 1 ? "" : "s"}`}
         </button>
         <button onClick={onBackToCheck} className="px-4 py-2 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-3/70">
           Back to the check
