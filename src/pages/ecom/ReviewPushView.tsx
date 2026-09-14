@@ -219,7 +219,7 @@ const ReviewPushView: React.FC = () => {
           )}
 
           {/* Recommendations */}
-          {ec.source !== "manual" && planRecos.length > 0 && (
+          {ec.source !== "manual" && ec.source !== "copy" && planRecos.length > 0 && (
             <Fold title={`${planRecos.length} suggestion${planRecos.length > 1 ? "s" : ""} kept on this plan`}>
               <div className="divide-y divide-subtle -mx-4 -mb-3">
                 {planRecos.map((r) => (
