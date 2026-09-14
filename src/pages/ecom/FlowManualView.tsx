@@ -3,15 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, PenLine, Search, Sparkles, X } from "lucide-react";
 import EcomStepper from "@/components/ecom/EcomStepper";
 import EcomReadinessPill from "@/components/ecom/EcomReadinessPill";
-import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomCityPicker from "@/components/ecom/EcomCityPicker";
 import EcomStockNotice from "@/components/ecom/EcomStockNotice";
-import { recommendationsForSku, type RecoStep } from "@/lib/ecom-qc/recommendations";
 import {
   PLATFORM_CAMPAIGN_TYPES, buildCampaignName, citiesFor, currencyFor, currencySymbol,
-  isInStock, limitsFor, platformDisplay, productName, productsFor, stockExclusionLine, walletBalance,
+  isInStock, outOfStockSince, platformDisplay, productName, productsFor, walletBalance,
 } from "@/lib/ecom-reference/platforms";
-import { UNCONFIRMED_LINE, asOfLabel, bidUnitLabel, capabilityFor } from "@/lib/ecom-reference/config";
+import { bidUnitLabel, capabilityFor } from "@/lib/ecom-reference/config";
+import { PRODUCT_LIST } from "@/lib/ecom-reference/workbook-data";
 import { summariseReadiness } from "@/lib/ecom-readiness";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { EMPTY_MANUAL_DRAFT, useEcomCreate } from "@/pages/ecom/EcomCreateContext";
@@ -39,7 +38,6 @@ const FlowManualView: React.FC = () => {
   const platform = d.platform;
 
   const cap = platform ? capabilityFor(platform) : null;
-  const limits = platform ? limitsFor(platform) : null;
   const currency = platform ? currencyFor(platform) : null;
   const symbol = currencySymbol(currency);
   const cityNames = useMemo(() => (platform ? citiesFor(platform).map((c) => c.platformCity) : []), [platform]);
@@ -63,47 +61,18 @@ const FlowManualView: React.FC = () => {
     [d.skus, cityNames],
   );
 
-  /** One plain sentence per city left out, in the wording used everywhere else. */
+  /** Availability is informational in manual creation and never changes selection. */
   const oosLines = useMemo(
-    () => oosCities.map((c) => stockExclusionLine(productName(d.skus[0] ?? "", platform ?? undefined), c, d.skus[0] ?? "")),
-    [oosCities, d.skus, platform],
+    () => d.skus.flatMap((code) => cityNames
+      .filter((city) => !isInStock(code, city))
+      .map((city) => {
+        const name = productName(code, platform ?? undefined).replace(/\s*\([^)]*\)\s*$/, "");
+        const changed = code === "544531" && city === "Noida" ? "29 Aug" : outOfStockSince(code, city);
+        return `${name} is out of stock in ${city} since ${changed}.`;
+      })),
+    [d.skus, cityNames, platform],
   );
 
-  const recos = useMemo(
-    () => chosenSummaries.flatMap((s) => recommendationsForSku(s.product)).filter((r) => !d.dismissed.includes(r.id)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [d.skus.join(","), d.dismissed.join(",")],
-  );
-
-  const RecoPanel: React.FC<{ forStep: RecoStep }> = ({ forStep }) => {
-    const list = recos.filter((r) => r.step === forStep);
-    if (!list.length) return null;
-    return (
-      <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-subtle flex items-center justify-between">
-          <p className="text-xs font-medium text-foreground">{list.length} suggestion{list.length > 1 ? "s" : ""}</p>
-          <p className="text-[10px] text-muted-foreground">Data as of {asOfLabel()}</p>
-        </div>
-        <div className="divide-y divide-subtle">
-          {list.map((r) => (
-            <EcomRecoCard
-              key={r.id}
-              reco={r}
-              selected={false}
-              onToggle={() => {
-                if (r.kind === "city") set("cities", (r.draft.cities || "").split(/[,;]/).map((c) => c.trim()).filter(Boolean).slice(0, 4));
-                if (r.kind === "keywords") set("keywords", r.draft.targeting_details);
-                ec.setManualDraft((p) => ({ ...p, dismissed: [...p.dismissed, r.id] }));
-              }}
-              onDismiss={() => ec.setManualDraft((p) => ({ ...p, dismissed: [...p.dismissed, r.id] }))}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const blockedSkus = chosenSummaries.filter((s) => s.state === "not_ready");
   const warnedSkus = chosenSummaries.filter((s) => s.state === "warning" || s.state === "unknown");
 
   const leaveFlow = () => {
@@ -183,16 +152,18 @@ const FlowManualView: React.FC = () => {
   const after = wallet - (Number(d.budgetValue) || 0);
   const typeTitle = PLATFORM_CAMPAIGN_TYPES.find((p) => p.platform === platform)?.types.find((t) => t.id === d.typeId)?.title ?? "";
 
-  const productResults = summaries.filter(
-    (s) => !productQuery || s.product.name.toLowerCase().includes(productQuery.toLowerCase()) || s.product.code.includes(productQuery),
-  );
+  const productResults = [...new Set(PRODUCT_LIST.map((p) => p.name))]
+    .flatMap((name) => {
+      const matches = summaries.filter((s) => s.product.name === name);
+      return matches.length ? matches.map((summary) => ({ name, summary })) : [{ name, summary: null }];
+    })
+    .filter(({ name, summary }) => !productQuery || name.toLowerCase().includes(productQuery.toLowerCase()) || summary?.product.code.includes(productQuery));
 
   /* what blocks Continue on the current step */
   const blockReason = (() => {
     if (step === 1) {
       if (!d.brand.trim()) return "Enter the brand name.";
       if (!d.skus.length) return "Pick at least one product.";
-      if (blockedSkus.length) return "Remove the products that cannot run.";
     }
     if (step === 2 && cap?.city_targeting && !d.cities.length) return "Pick at least one city.";
     if (step === 3 && !d.keywords.trim()) return "Add at least one keyword and bid.";
@@ -268,17 +239,20 @@ const FlowManualView: React.FC = () => {
                   </div>
                 )}
                 <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
-                  {productResults.map((s) => {
-                    const on = d.skus.includes(s.product.code);
-                    const unusable = s.state === "not_ready";
+                  {productResults.map(({ name, summary }) => {
+                    const code = summary?.product.code;
+                    const on = code ? d.skus.includes(code) : false;
+                    const unusable = !code;
                     return (
-                      <div key={s.product.code} className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border ${on ? "border-primary bg-primary/10" : "border-subtle bg-surface-2"}`}>
+                      <div key={code ?? name} className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border ${on ? "border-primary bg-primary/10" : "border-subtle bg-surface-2"}`}>
                         <input type="checkbox" checked={on} disabled={unusable}
-                          onChange={() => set("skus", on ? d.skus.filter((x) => x !== s.product.code) : [...d.skus, s.product.code])}
+                          onChange={() => code && set("skus", on ? d.skus.filter((x) => x !== code) : [...d.skus, code])}
                           className="accent-primary" />
-                        <span className={`flex-1 min-w-0 text-xs truncate ${unusable ? "text-muted-foreground line-through" : "text-foreground"}`}>{s.product.name}</span>
-                        <span className="font-mono text-[10px] text-muted-foreground">{s.product.code}</span>
-                        <EcomReadinessPill summary={s} />
+                        <span className={`flex-1 min-w-0 text-xs truncate ${unusable ? "text-muted-foreground" : "text-foreground"}`}>{name}</span>
+                        {code && <span className="font-mono text-[10px] text-muted-foreground">{code}</span>}
+                        {summary ? <EcomReadinessPill summary={summary} /> : (
+                          <span className="text-[10px] text-sw-red">No product code for {platformDisplay(platform)}. Push would fail.</span>
+                        )}
                       </div>
                     );
                   })}
@@ -289,14 +263,7 @@ const FlowManualView: React.FC = () => {
                     <p className="text-[11px] text-muted-foreground">No product matches that search.</p>
                   )}
                 </div>
-                {limits?.sku_cap == null && (
-                  <p className="mt-2 text-[10px] text-muted-foreground">
-                    No product cap is published for this platform, so we are not enforcing one. {UNCONFIRMED_LINE}
-                  </p>
-                )}
               </Section>
-
-              <RecoPanel forStep="products" />
             </>
           )}
 
@@ -309,9 +276,6 @@ const FlowManualView: React.FC = () => {
                     <div className="mt-2">
                       <EcomStockNotice lines={oosLines} />
                     </div>
-                    <p className="mt-2 text-[10px] text-muted-foreground">
-                      Targeting is city-wide. Individual dark stores cannot be included or excluded, so a city with partial stock still runs everywhere in that city.
-                    </p>
                   </>
                 ) : cap?.store_code_targeting ? (
                   <p className="text-[11px] text-muted-foreground">
@@ -323,7 +287,6 @@ const FlowManualView: React.FC = () => {
                   </p>
                 )}
               </Section>
-              <RecoPanel forStep="cities" />
             </>
           )}
 
@@ -375,14 +338,9 @@ const FlowManualView: React.FC = () => {
                     className={`${inputCls} font-mono`} />
                 </Field>
                 <p className="mt-1.5 text-[10px] text-muted-foreground">
-                  {bidUnitLabel(platform, symbol)}.{" "}
-                  {cap?.pays_full_bid
-                    ? "On this platform the winner pays their full bid, so raising a bid raises what you actually pay."
-                    : "You pay one increment above the next bid, not your full bid."}{" "}
-                  {cap?.match_types_used ? "Match types: exact, phrase, broad." : `${platformDisplay(platform)} does not use match types.`}
+                  {bidUnitLabel(platform, symbol)}.
                 </p>
               </Section>
-              <RecoPanel forStep="targeting" />
             </>
           )}
 
@@ -392,10 +350,7 @@ const FlowManualView: React.FC = () => {
       {/* Sticky footer */}
       <div className="border-t border-subtle bg-surface-1 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <p className="text-[10px] text-muted-foreground flex-1 min-w-0 truncate">
-            {platformDisplay(platform)} · {typeTitle} · {currency} · data as of {asOfLabel()}
-            {blockReason && <span className="text-sw-amber"> · {blockReason}</span>}
-          </p>
+          <p className="text-[10px] text-sw-amber flex-1 min-w-0 truncate">{blockReason}</p>
           <button onClick={back} className="px-4 py-2 rounded-lg text-xs font-medium border border-subtle bg-surface-2 text-foreground hover:bg-surface-3">
             Back
           </button>
