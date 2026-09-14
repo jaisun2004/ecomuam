@@ -4,14 +4,13 @@ import {
   ArrowLeft, Check, CheckCircle2, Download, Lightbulb, Loader2, PenLine, RotateCcw, Search, Send, Sparkles, Upload, X,
 } from "lucide-react";
 import EcomFileCard from "@/components/ecom/EcomFileCard";
-import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadHeldRows, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
 import { buildRun, rerun, RULE_FAILURE, type SheetRun } from "@/lib/ecom-qc/sheet-run";
-import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
+import { buildCityCampaigns, cityRecommendations, searchSkus, splitBudget, type CityReco } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { capabilityFor } from "@/lib/ecom-reference/config";
 import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
@@ -53,11 +52,13 @@ const FlowAiView: React.FC = () => {
   const [skuPicker, setSkuPicker] = useState(false);
   const [skuQuery, setSkuQuery] = useState("");
   const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
-  const [recos, setRecos] = useState<SkuRecommendation[] | null>(null);
+  const [cityRecos, setCityRecos] = useState<CityReco[] | null>(null);
+  const [chosenCities, setChosenCities] = useState<Set<string>>(new Set());
+  const [planning, setPlanning] = useState(false);
+  const [budget, setBudget] = useState("40000");
   const reviewing = ec.chat.reviewing;
   const setReviewing = (v: boolean) => ec.setChat((c) => ({ ...c, reviewing: v }));
   const [showHeld, setShowHeld] = useState(false);
-  const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const [creatingRecos, setCreatingRecos] = useState(false);
   const [recoOutcomes, setRecoOutcomes] = useState<PushOutcome[] | null>(null);
   const [creation, setCreation] = useState<Creation | null>(null);
@@ -68,7 +69,7 @@ const FlowAiView: React.FC = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, ec.runs, recos, skuPicker, reviewing, showHeld]);
+  }, [messages, ec.runs, cityRecos, planning, skuPicker, reviewing, showHeld]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -89,7 +90,8 @@ const FlowAiView: React.FC = () => {
     ec.recheck(run.rows);
 
     if (run.state === "file_error" || run.state === "wrong_shape" || run.state === "empty") {
-      setRecos(null);
+      setCityRecos(null);
+      setPlanning(false);
       setReviewing(false);
       say(
         run.missingColumns.length
@@ -247,10 +249,11 @@ const FlowAiView: React.FC = () => {
     setParsing(false);
   };
 
-  /* ── Recommendations ── */
+  /* ── Recommendation: products, then cities, then the plan ── */
   const openRecommendations = () => {
     setSkuPicker(true);
-    setRecos(null);
+    setCityRecos(null);
+    setPlanning(false);
     setRecoOutcomes(null);
     setPickedSkus([]);
     setMessages((m) => [
@@ -262,55 +265,47 @@ const FlowAiView: React.FC = () => {
 
   const skuResults = useMemo(() => searchSkus(skuQuery, 40), [skuQuery]);
 
+  const planSkus = useMemo(
+    () => (pickedSkus.length ? pickedSkus.filter((s) => s.platform === pickedSkus[0].platform) : []),
+    [pickedSkus],
+  );
+
   const generateRecos = () => {
     if (!pickedSkus.length) return;
-    const all = pickedSkus.flatMap((s) => recommendationsForSku(s));
-    const list = all.filter((r) => !ec.usedRecos.includes(r.id));
-    const alreadyDone = all.length - list.length;
+    const list = cityRecommendations(pickedSkus);
     setSkuPicker(false);
+    setPlanning(false);
     setMessages((m) => [...m, { role: "user", text: `Recommendations for ${pickedSkus.map((s) => s.name).join(", ")}.` }]);
 
     if (!list.length) {
-      setRecos(null);
-      say("Already added — every suggestion for those products has been used or dismissed.");
+      setCityRecos(null);
+      say("No city has a measured signal for those products, so there is nothing to recommend.");
       return;
     }
-    setRecos(list);
-    setChosenRecos(new Set(list.map((r) => r.id)));
+    setCityRecos(list);
+    setChosenCities(new Set(list.map((c) => c.platformCity)));
+    const dropped = pickedSkus.length - planSkus.length;
     say(
-      `${n(list.length, "suggestion")} on price, cities and keywords.${alreadyDone ? ` ${alreadyDone} already used earlier, so they are not repeated.` : ""} Pick the ones you want.`,
+      `${n(list.length, "city")} recommended for ${platformDisplay(list[0].platform)}.${dropped > 0 ? ` ${n(dropped, "product")} on another platform left out, because a campaign runs on one platform.` : ""} Untick any you don't want, then set the budget.`,
     );
   };
 
+  const chosenCityList = useMemo(
+    () => (cityRecos ?? []).filter((c) => chosenCities.has(c.platformCity)),
+    [cityRecos, chosenCities],
+  );
+  const budgetTotal = Number(budget.replace(/[^0-9]/g, "")) || 0;
+  const split = useMemo(() => splitBudget(chosenCityList, budgetTotal), [chosenCityList, budgetTotal]);
+  const inr = (v: number) => `₹${v.toLocaleString("en-IN")}`;
 
-  const acceptRecos = () => {
-    const picked = (recos ?? []).filter((r) => chosenRecos.has(r.id));
-    if (!picked.length) return;
+  const createFromPlan = () => {
+    const drafts = buildCityCampaigns(planSkus, split);
+    if (!drafts.length) return;
+    const next = drafts.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: i + 1, origin: "reco" } as BatchRow));
 
-    // One campaign per product and platform: suggestions on the same product are merged.
-    const merged: BatchRow[] = [];
-    const byKey = new Map<string, BatchRow>();
-    picked.forEach((r) => {
-      const d = r.draft as BatchRow;
-      const key = `${d.platform}|${d.product_id}`;
-      const existing = byKey.get(key);
-      if (!existing) {
-        const copy = { ...d } as BatchRow;
-        byKey.set(key, copy);
-        merged.push(copy);
-        return;
-      }
-      const cities = new Set([...(existing.cities ?? "").split(";"), ...(d.cities ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
-      existing.cities = Array.from(cities).join(";");
-      const kw = new Set([...(existing.targeting_details ?? "").split(";"), ...(d.targeting_details ?? "").split(";")].map((c) => c.trim()).filter(Boolean));
-      existing.targeting_details = Array.from(kw).join("; ");
-      existing.budget_value = String(Math.max(Number(existing.budget_value) || 0, Number(d.budget_value) || 0));
-    });
-
-    const next = merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: i + 1, origin: "reco" } as BatchRow));
-    setRecos(null);
-    ec.markRecosUsed((recos ?? []).map((r) => r.id));
-    setMessages((m) => [...m, { role: "user", text: `Create ${n(merged.length, "recommended campaign")}.` }]);
+    setCityRecos(null);
+    setPlanning(false);
+    setMessages((m) => [...m, { role: "user", text: `Create ${n(next.length, "campaign")} across ${n(split.length, "city")}.` }]);
     setCreatingRecos(true);
     ec.setSource("ai");
     ec.setFileName(null);
@@ -419,7 +414,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setRecos(null); setSkuPicker(false); setShowHeld(false); setCreation(null); }}
+              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setCityRecos(null); setPlanning(false); setSkuPicker(false); setShowHeld(false); setCreation(null); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
@@ -511,34 +506,109 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
-          {/* Recommendations */}
-          {recos && recos.length > 0 && (
+          {/* Cities step — evidence only, no money yet */}
+          {cityRecos && cityRecos.length > 0 && !planning && (
             <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
               <div className="px-4 py-2.5 border-b border-subtle bg-surface-2">
-                <p className="text-xs font-medium text-foreground">{recos.length} suggestion{recos.length > 1 ? "s" : ""}</p>
+                <p className="text-xs font-medium text-foreground">Recommended cities</p>
               </div>
               <div className="max-h-[440px] overflow-y-auto divide-y divide-subtle">
-                {recos.map((r) => (
-                  <EcomRecoCard
-                    key={r.id}
-                    reco={r}
-                    selected={chosenRecos.has(r.id)}
-                    onToggle={() =>
-                      setChosenRecos((prev) => {
-                        const n = new Set(prev);
-                        if (n.has(r.id)) n.delete(r.id); else n.add(r.id);
-                        return n;
-                      })
-                    }
-                  />
-                ))}
+                {cityRecos.map((c) => {
+                  const on = chosenCities.has(c.platformCity);
+                  return (
+                    <div key={c.platformCity} className="px-4 py-3">
+                      <button
+                        onClick={() =>
+                          setChosenCities((prev) => {
+                            const s = new Set(prev);
+                            if (s.has(c.platformCity)) s.delete(c.platformCity); else s.add(c.platformCity);
+                            return s;
+                          })
+                        }
+                        className="flex items-center gap-3 text-left"
+                      >
+                        <span className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${on ? "bg-primary border-primary" : "border-border-visible"}`}>
+                          {on && <Check size={11} className="text-primary-foreground" />}
+                        </span>
+                        <span className="text-xs font-medium text-foreground">{c.platformCity}</span>
+                        {c.geoCity !== c.platformCity && <span className="text-xs text-muted-foreground">{c.geoCity}</span>}
+                      </button>
+                      <div className="mt-2 pl-7 space-y-1">
+                        {c.evidence.slice(0, 4).map((e) => (
+                          <div key={e.label} className="grid grid-cols-[110px_140px_1fr_56px] gap-2 items-baseline">
+                            <span className="text-[11px] text-muted-foreground">{e.label}</span>
+                            <span className="font-mono text-[11px] text-foreground">{e.value}</span>
+                            <span className="text-[11px] text-muted-foreground truncate" title={e.note}>{e.note}</span>
+                            <span className="text-[10px] text-muted-foreground text-right">{e.age}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle bg-surface-2">
-                <span className="text-[11px] text-muted-foreground">{chosenRecos.size} selected</span>
-                <button onClick={acceptRecos} disabled={!chosenRecos.size}
+                <span className="text-[11px] text-muted-foreground">{chosenCities.size} selected</span>
+                <button onClick={() => setPlanning(true)} disabled={!chosenCities.size}
                   className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
-                  Add {chosenRecos.size} campaign{chosenRecos.size === 1 ? "" : "s"}
+                  Set the budget
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Plan step — the budget split */}
+          {cityRecos && planning && (
+            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-subtle bg-surface-2">
+                <p className="text-xs font-medium text-foreground">Budget</p>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground">₹</span>
+                  <input
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value.replace(/[^0-9]/g, ""))}
+                    inputMode="numeric"
+                    className="w-28 bg-surface-1 border border-subtle rounded-md px-2 py-1 text-right font-mono text-xs text-foreground outline-none focus:border-primary"
+                    aria-label="Total budget"
+                  />
+                </div>
+              </div>
+              <div className="divide-y divide-subtle">
+                {split.map((s) => (
+                  <div key={s.city.platformCity} className="px-4 py-2.5 grid grid-cols-[140px_1fr_90px] gap-3 items-baseline">
+                    <button
+                      onClick={() =>
+                        setChosenCities((prev) => {
+                          const set = new Set(prev);
+                          set.delete(s.city.platformCity);
+                          return set;
+                        })
+                      }
+                      className="flex items-center gap-2 text-left"
+                    >
+                      <span className="w-4 h-4 rounded border bg-primary border-primary flex items-center justify-center flex-shrink-0">
+                        <Check size={11} className="text-primary-foreground" />
+                      </span>
+                      <span className="text-xs text-foreground truncate">{s.city.platformCity}</span>
+                    </button>
+                    <span className="font-mono text-[11px] text-muted-foreground">{s.workings}</span>
+                    <span className="font-mono text-xs text-foreground text-right">{inr(s.amount)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-2.5 border-t border-subtle bg-surface-2 flex items-center justify-between">
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  {split.map((s) => inr(s.amount)).join(" + ")} = {inr(split.reduce((t, s) => t + s.amount, 0))}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPlanning(false)} className="px-3 py-1.5 rounded-lg text-[11px] border border-subtle text-foreground hover:bg-surface-3">
+                    Back to cities
+                  </button>
+                  <button onClick={createFromPlan} disabled={!split.length || budgetTotal <= 0}
+                    className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">
+                    Create campaigns
+                  </button>
+                </div>
               </div>
             </div>
           )}
