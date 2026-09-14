@@ -28,7 +28,7 @@ const rowsLine = (rows: number[], unit: "row" | "campaign") => {
 };
 
 const EcomFileCard: React.FC<Props> = ({
-  run, isLatest, onContinueClean, onReupload, onDownloadTemplate, onHold, unit = "row",
+  run, isLatest, onContinueClean, onDownloadHeld, onDownloadTemplate, resolvedLine, unit = "row",
 }) => {
   const u = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
   const [tidyOpen, setTidyOpen] = useState(false);
