@@ -19,22 +19,28 @@ const toneCls: Record<string, string> = {
   red: "bg-sw-red-dim text-sw-red border-sw-red/30",
 };
 
+const rowsLine = (rows: number[], unit: "row" | "campaign") => {
+  if (unit !== "row") return "";
+  const shown = rows.slice(0, 5);
+  const rest = rows.length - shown.length;
+  return `Rows ${shown.join(", ")}${rest > 0 ? ` and ${rest} more` : ""}`;
+};
+
 const EcomFileCard: React.FC<Props> = ({
-  run, isLatest, onFixWithAi, onContinueClean, onReupload, onDownloadTemplate, onHold, unit = "row",
+  run, isLatest, onContinueClean, onReupload, onDownloadTemplate, onHold, unit = "row",
 }) => {
   const u = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
   const [tidyOpen, setTidyOpen] = useState(false);
   const v = verdict(run, unit);
   const groups = groupByRule(run.result);
   const failed = run.state === "file_error" || run.state === "empty" || run.state === "wrong_shape";
 
-  const toggle = (k: string) =>
-    setOpenGroups((prev) => {
-      const n = new Set(prev);
-      if (n.has(k)) n.delete(k); else n.add(k);
-      return n;
-    });
+  const blockerGroups = groups.filter((g) => g.severity === "blocker");
+  const warningGroups = groups.filter((g) => g.severity === "warning");
+  const sumRows = (list: RuleGroup[]) => list.reduce((total, g) => total + g.rows.length, 0);
+  const blockerRows = sumRows(blockerGroups);
+  const warningRows = sumRows(warningGroups);
+
 
   return (
     <div className={`rounded-xl border overflow-hidden ${isLatest ? "border-border-visible" : "border-subtle opacity-80"} bg-surface-1`}>
