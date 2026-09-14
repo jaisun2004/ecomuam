@@ -5,14 +5,12 @@ import {
 } from "lucide-react";
 import EcomFileCard from "@/components/ecom/EcomFileCard";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
-import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { buildRun, rerun, type SheetRun } from "@/lib/ecom-qc/sheet-run";
-import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "@/lib/ecom-qc/fix-proposals";
 import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { capabilityFor } from "@/lib/ecom-reference/config";
@@ -41,7 +39,6 @@ const FlowAiView: React.FC = () => {
   const [input, setInput] = useState("");
   const [parsing, setParsing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [fixing, setFixing] = useState<FixProposal[] | null>(null);
   const [skuPicker, setSkuPicker] = useState(false);
   const [skuQuery, setSkuQuery] = useState("");
   const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
@@ -59,7 +56,7 @@ const FlowAiView: React.FC = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, ec.runs, recos, skuPicker, fixing, reviewing, showHeld]);
+  }, [messages, ec.runs, recos, skuPicker, reviewing, showHeld]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -153,32 +150,6 @@ const FlowAiView: React.FC = () => {
       registerRun(run, prev);
     }
     setParsing(false);
-  };
-
-  /* ── Fix with AI: proposals only ── */
-  const openFixes = () => {
-    const proposals = proposalsFor(ec.result, ec.rows);
-    if (!proposals.length) {
-      say("Nothing here has a safe value I can fill in. Open Why on a line to see what to change.");
-      return;
-    }
-    setFixing(proposals);
-    say(`${n(proposals.length, "change")} suggested. Accept, edit or skip any of them.`);
-
-  };
-
-  const applyFixes = (accepted: { proposal: FixProposal; value: string }[]) => {
-    let next = ec.rows;
-    for (const a of accepted) next = applyProposal(next, a.proposal, a.value);
-    const prev = latest;
-    const run = rerun(
-      prev ?? buildRun({ fileName: ec.fileName ?? "batch", sizeKb: 0, rows: next }),
-      next,
-      `After fixes ${ec.runs.length + 1}`,
-    );
-    setFixing(null);
-    setMessages((m) => [...m, { role: "user", text: `Apply ${accepted.length} changes.` }]);
-    registerRun(run, prev);
   };
 
   const holdRemaining = () => {
@@ -311,7 +282,6 @@ const FlowAiView: React.FC = () => {
     }
     if (/push .*(clean|ready)|only .*(clean|ready)/i.test(text) && ec.result) return continueClean();
     if (/park|hold|later/i.test(text) && latest?.heldRows.length) return holdRemaining();
-    if (/fix|repair|correct/i.test(text)) return openFixes();
     if (/explain row (\d+)/i.exec(text)) {
       const n = Number(/explain row (\d+)/i.exec(text)![1]);
       const f = (ec.result?.findings ?? []).filter((x) => x.row === n);
@@ -323,7 +293,7 @@ const FlowAiView: React.FC = () => {
     }
     say(
       ec.rows.length
-        ? 'I can propose fixes ("fix"), park held rows ("park them"), download the sheet as it stands, or take the ready rows to review.'
+        ? 'I can park held rows ("park them"), download the sheet as it stands, or take the ready rows to review.'
         : "Upload your campaign sheet, take the template, or press Recommendation and I'll build campaigns from your products.",
     );
   };
@@ -374,7 +344,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setRecos(null); setSkuPicker(false); setFixing(null); setShowHeld(false); }}
+              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setRecos(null); setSkuPicker(false); setShowHeld(false); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
@@ -410,8 +380,7 @@ const FlowAiView: React.FC = () => {
             <EcomFileCard
               key={run.id}
               run={run}
-              isLatest={i === ec.runs.length - 1 && !fixing}
-              onFixWithAi={openFixes}
+              isLatest={i === ec.runs.length - 1}
               onContinueClean={continueClean}
               onHold={holdRemaining}
               onReupload={() => fileRef.current?.click()}
@@ -420,14 +389,6 @@ const FlowAiView: React.FC = () => {
             />
           ))}
 
-          {fixing && (
-            <EcomFixProposal
-              proposals={fixing}
-              manual={manualDecisions(ec.result)}
-              onApply={applyFixes}
-              onCancel={() => { setFixing(null); say("Left everything as it was."); }}
-            />
-          )}
 
           {/* SKU picker */}
           {skuPicker && (
@@ -556,8 +517,7 @@ const FlowAiView: React.FC = () => {
           {/* Review is a card in the conversation, not another screen */}
           {reviewing && (
             <EcomReviewCard
-              onBackToCheck={() => { setReviewing(false); say("Back to the check. Ask me to fix anything and we can come back to review."); }}
-              onFixWithAi={() => { setReviewing(false); openFixes(); }}
+              onBackToCheck={() => { setReviewing(false); say("Back to the check."); }}
               onDone={(summary) => say(summary)}
             />
           )}

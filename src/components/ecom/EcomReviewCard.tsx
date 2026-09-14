@@ -12,13 +12,13 @@ import { downloadCorrected } from "@/pages/ecom/xlsx-utils";
 interface Props {
   /** go back up the conversation to the check card */
   onBackToCheck: () => void;
-  onFixWithAi: () => void;
+  onFixWithAi?: () => void;
   onDone: (summary: string) => void;
 }
 
 /**
  * Review is a commit card inside the conversation. The rows are read only here.
- * To change a value the user goes back to the check card and uses Fix with AI.
+ * To change a value the user goes back to the check card.
  */
 const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone }) => {
   const ec = useEcomCreate();
@@ -123,9 +123,11 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
               {blocked.length} {noun(blocked.length)} are held and will not be sent. They keep their budget and stay in the plan.
             </p>
             <div className="flex gap-2 mt-2">
-              <button onClick={onFixWithAi} className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
-                Fix them now instead
-              </button>
+              {onFixWithAi && (
+                <button onClick={onFixWithAi} className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
+                  Fix them now instead
+                </button>
+              )}
               <button
                 onClick={() => downloadCorrected(blocked)}
                 className="px-2.5 py-1 rounded-md text-[10px] bg-surface-3 text-foreground hover:bg-surface-3/70"

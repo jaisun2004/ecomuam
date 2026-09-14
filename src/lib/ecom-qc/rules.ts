@@ -245,7 +245,7 @@ export const RULES: RuleDef[] = [
   {
     rule_key: "platform.match_types_supported",
     group: "C. Platform identity",
-    severity: "blocker",
+    severity: "warning",
     when: "live",
     title: "Platform supports the match types used in targeting_details",
     rationale: "An unsupported match type is rejected by the retailer API on push.",
@@ -358,7 +358,7 @@ export const RULES: RuleDef[] = [
   {
     rule_key: "taxonomy.no_active_duplicate_on_platform",
     group: "D. Taxonomy",
-    severity: "blocker",
+    severity: "warning",
     when: "deep",
     title: "No active campaign with the same name on that platform and account",
     rationale: "The retailer rejects the push and the batch part-fails.",
@@ -394,7 +394,7 @@ export const RULES: RuleDef[] = [
   {
     rule_key: "budget.daily_above_floor",
     group: "E. Budget",
-    severity: "blocker",
+    severity: "warning",
     when: "live",
     title: "Daily budget at or above the retailer minimum",
     rationale: "Below the floor the campaign is accepted but never serves.",
@@ -739,7 +739,7 @@ export const RULES: RuleDef[] = [
   {
     rule_key: "targeting.bid_above_floor",
     group: "I. Targeting details",
-    severity: "blocker",
+    severity: "warning",
     when: "live",
     title: "Bid is at or above the platform floor",
     rationale: "Bids of 0, 0.2 and .2 never win a placement.",
