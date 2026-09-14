@@ -90,7 +90,8 @@ const FlowAiView: React.FC = () => {
     ec.recheck(run.rows);
 
     if (run.state === "file_error" || run.state === "wrong_shape" || run.state === "empty") {
-      setRecos(null);
+      setCityRecos(null);
+      setPlanning(false);
       setReviewing(false);
       say(
         run.missingColumns.length
