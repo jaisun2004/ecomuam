@@ -199,6 +199,59 @@ export function downloadAnnotated(rows: BatchRow[], result: QcResult | null) {
   XLSX.writeFile(wb, "campaign_batch_import_annotated.xlsx");
 }
 
+const HOW_TO_FIX: Record<string, string> = {
+  "budget.overall_requires_end_date": "Set end_date to a date after today, format YYYY-MM-DD.",
+  "budget.daily_without_end_date_runs_until_paused": "Set end_date to a date after today, format YYYY-MM-DD.",
+  "date.end_date_iso_or_blank": "Write the date as YYYY-MM-DD, for example 2026-09-30.",
+  "date.end_date_in_future": "Set end_date to a date after today, format YYYY-MM-DD.",
+  "taxonomy.name_unique_in_upload": "Rename one of them. Names must be unique inside an upload.",
+  "mandatory.budget_value_positive": "Enter a positive number with no currency symbol, for example 2000.",
+  "mandatory.budget_type_valid": "Use daily or overall.",
+  "budget.numeric": "Enter a plain number with no commas or symbols, for example 2000.",
+};
+
+/** The exact replacement value, or where to find it. Actionable with the app closed. */
+function howToFix(f: QcFinding, row: BatchRow | undefined): string {
+  const platform = row?.platform ?? "";
+  if (f.rule_key.startsWith("geo.")) {
+    const match = CITY_LIST.find(
+      (c) => c.platform === platform && c.geoCity.toLowerCase() === String(f.value).trim().toLowerCase(),
+    );
+    const named = match ? `Use ${match.platformCity}, ${platform}'s own name for ${f.value}. ` : "";
+    return `${named}Valid ${platform} cities are on the city_list tab.`;
+  }
+  if (f.rule_key.startsWith("product.")) {
+    const codes = PRODUCT_LIST.filter((p) => p.platform === platform).slice(0, 3).map((p) => p.code);
+    return `Use a product code listed for ${platform} on the product_list tab${codes.length ? `, for example ${codes.join(", ")}` : ""}.`;
+  }
+  return HOW_TO_FIX[f.rule_key] ?? f.suggestion ?? RULE_EXPLANATIONS[f.rule_key]?.fix ?? "";
+}
+
+/**
+ * The held rows only, in the batch_import shape, with three appended columns
+ * so a planner can fix them in Excel and re-upload without reformatting.
+ */
+export function downloadHeldRows(rows: BatchRow[], result: QcResult | null) {
+  const data = rows.map((r) => {
+    const findings = (result?.findings ?? []).filter((f) => f.row === r.row);
+    const blockers = findings.filter((f) => f.severity === "blocker");
+    const shown = blockers.length ? blockers : findings;
+    const out: Record<string, string> = {};
+    for (const f of BATCH_FIELDS) out[f] = String(r[f] ?? "");
+    out.qc_status = blockers.length ? "Blocker" : "Warning";
+    out.qc_reason = shown.map((f) => f.message).join(" ");
+    out.how_to_fix = shown.map((f) => howToFix(f, r)).filter(Boolean).join(" ");
+    return out;
+  });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.json_to_sheet(data, { header: [...CANONICAL_HEADERS, "qc_status", "qc_reason", "how_to_fix"] }),
+    "batch_import",
+  );
+  XLSX.writeFile(wb, "campaign_batch_import_held_rows.xlsx");
+}
+
 /** Corrected workbook download after chat-applied fixes. */
 export function downloadCorrected(rows: BatchRow[]) {
   const data = rows.map((r) => {
