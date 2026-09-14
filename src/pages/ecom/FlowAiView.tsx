@@ -8,7 +8,7 @@ import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadHeldRows, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
-import { buildRun, rerun, RULE_FAILURE, type SheetRun } from "@/lib/ecom-qc/sheet-run";
+import { buildRun, rerun, groupByRule, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 import { buildCityCampaigns, cityRecommendations, searchSkus, splitBudget, type CityReco } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { capabilityFor } from "@/lib/ecom-reference/config";
@@ -70,15 +70,6 @@ const FlowAiView: React.FC = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, ec.runs, cityRecos, planning, skuPicker, reviewing, creation]);
 
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const f = (e as CustomEvent<File>).detail;
-      if (f) void handleFile(f);
-    };
-    window.addEventListener("ecom-reupload", handler);
-    return () => window.removeEventListener("ecom-reupload", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ec.runs]);
 
   const say = (text: string) => setMessages((m) => [...m, { role: "assistant", text }]);
 
