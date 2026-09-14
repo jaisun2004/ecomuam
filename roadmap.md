@@ -6,4 +6,4 @@
 - [ ] Verify all three flows: AI chat, copy from history, manual
 
 ## Screen logic document (Sep 14)
-- [ ] Write screen-logic.md: every screen, each visual, plain language, max 2 pages per screen
+
