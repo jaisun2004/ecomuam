@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { AlertTriangle, ChevronDown, ChevronRight, FileSpreadsheet, Sparkles, Upload } from "lucide-react";
+import { AlertTriangle, FileSpreadsheet, Upload } from "lucide-react";
 import EcomSheetTable from "./EcomSheetTable";
-import { groupByRule, receiptLine, verdict, type SheetRun } from "@/lib/ecom-qc/sheet-run";
+import { groupByRule, receiptLine, verdict, type RuleGroup, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 
 interface Props {
   run: SheetRun;
   isLatest: boolean;
-  onFixWithAi?: () => void;
   onContinueClean?: () => void;
   onReupload?: () => void;
   onDownloadTemplate?: () => void;

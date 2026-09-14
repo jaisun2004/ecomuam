@@ -274,7 +274,7 @@ export function verdict(
     case "warnings_only":
       return {
         headline: `${u(clean)} ready to push, with ${run.result?.warnings ?? 0} thing${(run.result?.warnings ?? 0) === 1 ? "" : "s"} worth a look.`,
-        detail: "None of these stop the push. Read them, then continue or fix them first.",
+        detail: "None of these stop the push.",
         tone: "amber",
       };
     case "partial":
