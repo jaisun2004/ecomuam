@@ -301,7 +301,7 @@ const ReviewPushView: React.FC = () => {
           <div className="flex-1 min-w-0 space-y-1">
             {allHeld ? (
               <p className="text-[11px] text-muted-foreground">
-                Everything here is held. Fix the blockers above, or park them for later.
+                Everything here is held. Fix the blockers above and upload the sheet again.
               </p>
             ) : (
               <p className="text-[11px] text-muted-foreground">{selected.length} {noun(selected.length)} ready to create.</p>

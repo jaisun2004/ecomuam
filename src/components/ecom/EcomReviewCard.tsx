@@ -120,7 +120,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
         {blocked.length > 0 && (
           <div className="rounded-lg border border-sw-red/30 bg-sw-red-dim px-3 py-2.5">
             <p className="text-[11px] text-sw-red">
-              {blocked.length} {noun(blocked.length)} are held and will not be sent. They keep their budget and stay in the plan.
+              {blocked.length} {noun(blocked.length)} are held and will not be sent.
             </p>
             <div className="flex gap-2 mt-2">
               {onFixWithAi && (
@@ -141,7 +141,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
         <div className="pt-1">
           {selected.length === 0 ? (
             <p className="text-[11px] text-muted-foreground">
-              Everything here is held. Fix the blockers above, or park them for later.
+              Everything here is held. Fix the blockers above and upload the sheet again.
             </p>
           ) : (
             <p className="text-[11px] text-muted-foreground">{selected.length} {noun(selected.length)} ready to create.</p>

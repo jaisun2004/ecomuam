@@ -12,7 +12,6 @@ import FlowAiView from "./pages/ecom/FlowAiView";
 import FlowHistoryView from "./pages/ecom/FlowHistoryView";
 import FlowManualView from "./pages/ecom/FlowManualView";
 import ReviewPushView from "./pages/ecom/ReviewPushView";
-import HeldBatchView from "./pages/ecom/HeldBatchView";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +29,7 @@ const App = () => (
               <Route path="/ecom/campaigns/create/ai" element={<FlowAiView />} />
               <Route path="/ecom/campaigns/create/copy" element={<FlowHistoryView />} />
               <Route path="/ecom/campaigns/create/manual" element={<FlowManualView />} />
-              <Route path="/ecom/campaigns/create/review" element={<ReviewPushView />} />
-              <Route path="/ecom/campaigns/create/held" element={<HeldBatchView />} />
+              <Route path="/ecom/campaigns/create/review" element={<ReviewPushView />} />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
