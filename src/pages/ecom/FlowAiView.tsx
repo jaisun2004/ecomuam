@@ -196,9 +196,6 @@ const FlowAiView: React.FC = () => {
 
   const continueClean = () => {
     if (!latest) return;
-    const unit = ec.countsRows ? "row" : "campaign";
-    const ready = latest.cleanRows.length;
-    if (!window.confirm(`Create ${n(ready, unit === "row" ? "campaign" : unit)}?`)) return;
     if (latest.heldRows.length) holdRemaining();
     setShowHeld(false);
     setReviewing(true);
@@ -370,7 +367,6 @@ const FlowAiView: React.FC = () => {
             )}
             <button
               onClick={() => {
-                if (ec.rows.length && !window.confirm("Switch to manual entry? The rows in this chat stay here and you can come back to them.")) return;
                 navigate("/ecom/campaigns/create/manual");
               }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
