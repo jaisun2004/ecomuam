@@ -160,7 +160,7 @@ const EcomFileCard: React.FC<Props> = ({
           )}
           {run.heldRows.length > 0 && onDownloadHeld && (
             <button onClick={onDownloadHeld} className="px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">
-              Download the {u(run.heldRows.length)}
+              Download the {u(run.heldRows.length)} to fix
             </button>
           )}
           {failed && onDownloadTemplate && (
