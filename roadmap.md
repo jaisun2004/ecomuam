@@ -4,3 +4,6 @@
 - [ ] Recommendation card shape: code, Observed/Rule, provenance, grounding, Apply/Dismiss (28 days)
 - [ ] Strip narrator/reference-note copy
 - [ ] Verify all three flows: AI chat, copy from history, manual
+
+## Screen logic document (Sep 14)
+- [ ] Write screen-logic.md: every screen, each visual, plain language, max 2 pages per screen
