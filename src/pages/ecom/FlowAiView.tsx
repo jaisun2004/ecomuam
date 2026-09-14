@@ -549,6 +549,63 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
+          {creation && (
+            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+              <div className="px-4 py-3">
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Created</p>
+                <ul className="mt-2 space-y-1.5">
+                  {creation.created.map((c) => (
+                    <li key={c.platform} className="flex items-baseline gap-3">
+                      <span className="text-[11px] text-foreground flex-1">{platformDisplay(c.platform)}</span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{n(c.count, "campaign")}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {creation.held.length > 0 && (
+                <div className="px-4 py-3 border-t border-subtle">
+                  <p className="text-[11px] text-foreground">{n(creation.held.length, "row")} not created</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {heldLines(creation.held).map((l) => (
+                      <li key={l.rule_key} className="flex items-baseline gap-3">
+                        <span className="text-[11px] text-muted-foreground flex-1">{l.plain}</span>
+                        <span className="font-mono text-[10px] text-muted-foreground">{n(l.count, "row")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex items-center gap-2 flex-wrap">
+                    <button onClick={downloadHeld} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+                      Download the {n(creation.held.length, "row")}
+                    </button>
+                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
+                      <Upload size={12} /> Upload corrected file
+                      <input
+                        type="file"
+                        accept=".xlsx,.xlsm,.csv"
+                        className="hidden"
+                        onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleCorrection(f); e.target.value = ""; }}
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              <div className="px-4 py-3 border-t border-subtle bg-surface-2">
+                <button
+                  onClick={() => { ec.reset(); navigate("/", { state: { active: "campaigns" } }); }}
+                  className={
+                    creation.held.length === 0
+                      ? "px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70"
+                  }
+                >
+                  Go to Campaign Manager
+                </button>
+              </div>
+            </div>
+          )}
+
           {recoOutcomes && (
             <div className="rounded-xl border border-subtle bg-surface-1 p-4">
               <div className="flex items-center gap-2 text-sm text-foreground">
