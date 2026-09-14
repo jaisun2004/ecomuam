@@ -29,7 +29,7 @@ const App = () => (
               <Route path="/ecom/campaigns/create/ai" element={<FlowAiView />} />
               <Route path="/ecom/campaigns/create/copy" element={<FlowHistoryView />} />
               <Route path="/ecom/campaigns/create/manual" element={<FlowManualView />} />
-              <Route path="/ecom/campaigns/create/review" element={<ReviewPushView />} />} />
+              <Route path="/ecom/campaigns/create/review" element={<ReviewPushView />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
