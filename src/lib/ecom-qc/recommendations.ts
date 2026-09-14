@@ -217,3 +217,149 @@ export function recommendationsForSku(sku: RefProduct): SkuRecommendation[] {
 export function recommendationsForSkus(skus: RefProduct[]): SkuRecommendation[] {
   return skus.flatMap(recommendationsForSku);
 }
+
+/* ── City-first recommendation ──────────────────────────────────────────────
+ * Order is products, then cities, then the plan. The cities step ranks cities
+ * on measured signals only. Availability is the one signal with a confirmed
+ * source today; every other signal is rendered only if its source returns a
+ * value, never as a placeholder and never as a generated number.
+ */
+
+export interface CityEvidence {
+  label: string;
+  value: string;
+  note: string;
+  age: string;
+}
+
+export interface CityReco {
+  platform: string;
+  platformCity: string;
+  geoCity: string;
+  inStock: number;
+  totalSkus: number;
+  outNames: string[];
+  /** in-stock SKUs over selected SKUs in that city */
+  availability: number;
+  /** stores listed over stores total — null until a source is named */
+  coverage: number | null;
+  evidence: CityEvidence[];
+}
+
+/** Cities recommended for the selected SKUs, best first. */
+export function cityRecommendations(skus: RefProduct[]): CityReco[] {
+  if (!skus.length) return [];
+  const platform = skus[0].platform;
+  const onPlatform = skus.filter((s) => s.platform === platform);
+  if (!onPlatform.length) return [];
+
+  const out: CityReco[] = [];
+  citiesFor(platform).forEach((c) => {
+    const inStock = onPlatform.filter((s) => isInStock(s.code, c.platformCity));
+    const outSkus = onPlatform.filter((s) => !isInStock(s.code, c.platformCity));
+    if (!inStock.length) return; // no recommended signal in this city
+    const evidence: CityEvidence[] = [
+      {
+        label: "In stock",
+        value: `${inStock.length} of ${onPlatform.length} ${onPlatform.length === 1 ? "product" : "products"}`,
+        note: outSkus.length ? `out: ${outSkus.map((s) => s.name).join(", ")}` : "",
+        age: "today",
+      },
+    ];
+    out.push({
+      platform,
+      platformCity: c.platformCity,
+      geoCity: c.geoCity,
+      inStock: inStock.length,
+      totalSkus: onPlatform.length,
+      outNames: outSkus.map((s) => s.name),
+      availability: inStock.length / onPlatform.length,
+      coverage: null,
+      evidence,
+    });
+  });
+
+  return out.sort((a, b) => b.availability - a.availability || a.platformCity.localeCompare(b.platformCity));
+}
+
+export interface CitySplit {
+  city: CityReco;
+  weight: number;
+  amount: number;
+  /** the arithmetic, written out */
+  workings: string;
+}
+
+/** Split the entered budget across the ticked cities, weight by weight. */
+export function splitBudget(cities: CityReco[], total: number): CitySplit[] {
+  const weights = cities.map((c) => (c.coverage === null ? c.availability : c.availability * c.coverage));
+  const sum = weights.reduce((t, w) => t + w, 0);
+  if (!cities.length || sum <= 0 || total <= 0) {
+    return cities.map((c, i) => ({ city: c, weight: weights[i], amount: 0, workings: "" }));
+  }
+  const raw = weights.map((w) => (w / sum) * total);
+  const amounts = raw.map((v) => Math.floor(v / 100) * 100);
+  let rest = total - amounts.reduce((t, v) => t + v, 0);
+  // give the rounding remainder to the heaviest cities so the split reconciles
+  const order = raw.map((v, i) => i).sort((a, b) => (raw[b] - amounts[b]) - (raw[a] - amounts[a]));
+  let k = 0;
+  while (rest >= 100 && order.length) {
+    amounts[order[k % order.length]] += 100;
+    rest -= 100;
+    k++;
+  }
+  if (rest > 0 && order.length) amounts[order[0]] += rest;
+
+  return cities.map((c, i) => ({
+    city: c,
+    weight: weights[i],
+    amount: amounts[i],
+    workings:
+      c.coverage === null
+        ? `availability ${c.availability.toFixed(2)} = ${weights[i].toFixed(2)}`
+        : `availability ${c.availability.toFixed(2)} × coverage ${c.coverage.toFixed(2)} = ${weights[i].toFixed(2)}`,
+  }));
+}
+
+/** One campaign per city and product, carrying that city's share of the budget. */
+export function buildCityCampaigns(skus: RefProduct[], split: CitySplit[]): Omit<BatchRow, "id" | "row">[] {
+  if (!skus.length) return [];
+  const platform = skus[0].platform;
+  const onPlatform = skus.filter((s) => s.platform === platform);
+  const currency = currencyFor(platform) ?? "INR";
+  const def = getPlatform(platform);
+  const matchType = def?.matchTypes[0] ?? null;
+
+  const rows: Omit<BatchRow, "id" | "row">[] = [];
+  split.forEach((s) => {
+    const live = onPlatform.filter((p) => isInStock(p.code, s.city.platformCity));
+    if (!live.length || s.amount <= 0) return;
+    const each = Math.floor(s.amount / live.length / 100) * 100;
+    let left = s.amount - each * live.length;
+    live.forEach((sku) => {
+      const brand = sku.name.split(/[ _]/)[0] || "brand";
+      const kws = keywordSeed(sku);
+      const h = hash(`${sku.code}|${platform}`);
+      const bid = 5 + (h % 6);
+      const extra = left > 0 ? left : 0;
+      left = 0;
+      rows.push({
+        sub_category: "biscuits",
+        brand_name: brand,
+        platform,
+        campaign_name: buildCampaignName({ brand, platform, target: `${sku.code}_${slugify(s.city.platformCity)}`, action: "city" }),
+        end_date: "",
+        budget_type: "daily",
+        budget_value: String(each + extra),
+        cities: s.city.platformCity,
+        product_id: sku.code,
+        targeting_details: kws
+          .map((k) => (matchType ? `${k}:${matchType}:${bid.toFixed(1)}` : `${k}:${bid.toFixed(1)}`))
+          .join("; "),
+        currency,
+        selected: true,
+      });
+    });
+  });
+  return rows;
+}
