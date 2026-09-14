@@ -1,7 +1,8 @@
 import * as XLSX from "xlsx";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { BATCH_FIELDS } from "@/lib/ecom-qc/types";
-import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
+import { CITY_LIST, HISTORICAL_CONFIG, PRODUCT_LIST, SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
+import { RULES } from "@/lib/ecom-qc/rules";
 import type { QcResult } from "@/lib/ecom-qc/types";
 
 export const CANONICAL_HEADERS = [
@@ -148,6 +149,33 @@ export function downloadTemplate() {
   }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, sheetFromRows([formatRow, exampleRow, ...samples]), "batch_import");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(PRODUCT_LIST.map((p) => ({
+    product_name: p.name,
+    product_code: p.code,
+    platform: p.platform,
+  }))), "product_list");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(CITY_LIST.map((c) => ({
+    platform: c.platform,
+    platform_city: c.platformCity,
+    geographical_city: c.geoCity,
+  }))), "city_list");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(HISTORICAL_CONFIG.map((h) => ({
+    platform: h.platform,
+    campaign_name: h.name,
+    budget_type: h.budgetType,
+    budget_value: h.budgetValue,
+    cities: h.cities,
+    product_ids: h.productIds,
+    targeting_details: h.targeting,
+  }))), "historical_configuration");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(RULES.map((r) => ({
+    rule_key: r.rule_key,
+    group: r.group,
+    severity: r.severity,
+    when: r.when,
+    title: r.title,
+    rationale: r.rationale,
+  }))), "qc_checks");
   XLSX.writeFile(wb, "campaign_batch_import_template.xlsx");
 }
 
