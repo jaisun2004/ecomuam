@@ -5,7 +5,6 @@ import {
 } from "lucide-react";
 import EcomFileCard from "@/components/ecom/EcomFileCard";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
-import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadHeldRows, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
@@ -58,7 +57,7 @@ const FlowAiView: React.FC = () => {
   const [budget, setBudget] = useState("40000");
   const reviewing = ec.chat.reviewing;
   const setReviewing = (v: boolean) => ec.setChat((c) => ({ ...c, reviewing: v }));
-  const [showHeld, setShowHeld] = useState(false);
+  const [resolved, setResolved] = useState<Record<string, string>>({});
   const [creatingRecos, setCreatingRecos] = useState(false);
   const [recoOutcomes, setRecoOutcomes] = useState<PushOutcome[] | null>(null);
   const [creation, setCreation] = useState<Creation | null>(null);
@@ -69,7 +68,7 @@ const FlowAiView: React.FC = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, ec.runs, cityRecos, planning, skuPicker, reviewing, showHeld]);
+  }, [messages, ec.runs, cityRecos, planning, skuPicker, reviewing, creation]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -124,7 +123,6 @@ const FlowAiView: React.FC = () => {
   };
 
   const handleFile = async (file: File) => {
-    if (creation) return handleCorrection(file);
     const sizeKb = file.size / 1024;
     const prev = ec.runs.length ? ec.runs[ec.runs.length - 1] : null;
     setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
@@ -167,19 +165,6 @@ const FlowAiView: React.FC = () => {
     setParsing(false);
   };
 
-  const holdRemaining = () => {
-    if (!latest || !latest.heldRows.length) {
-      say("There is nothing held right now.");
-      return;
-    }
-    const unit = ec.countsRows ? "row" : "campaign";
-    const heldRows = ec.rows.filter((r) => latest.heldRows.includes(r.row));
-    ec.holdRows(heldRows, ec.result, latest.fileName, `Parked from ${latest.label}`);
-    const { kept, dropped } = ec.keepOnlyCleanRows();
-    setShowHeld(true);
-    say(`Parked ${n(dropped, unit)}. ${n(kept, unit)} stay here. Reopen them any time from Held batches.`);
-  };
-
   /* ── Creation from the check card ── */
   const heldEntries = (rows: BatchRow[], result: QcResult | null): HeldEntry[] =>
     rows.map((row) => ({ row, findings: (result?.findings ?? []).filter((f) => f.row === row.row) }));
@@ -202,52 +187,33 @@ const FlowAiView: React.FC = () => {
     return [...map.entries()].map(([platform, count]) => ({ platform, count }));
   };
 
-  const continueClean = () => {
-    if (!latest) return;
-    const cleanRows = ec.rows.filter((r) => latest.cleanRows.includes(r.row));
+  /** Each card acts on its own run, so a later upload never changes an earlier card. */
+  const continueClean = (run: SheetRun) => {
+    const cleanRows = run.rows.filter((r) => run.cleanRows.includes(r.row));
     if (!cleanRows.length) return;
-    const held = heldEntries(ec.rows.filter((r) => latest.heldRows.includes(r.row)), latest.result);
-    setShowHeld(false);
+    const held = heldEntries(run.rows.filter((r) => run.heldRows.includes(r.row)), run.result);
     setReviewing(false);
     ec.setPushed(true);
-    setCreation({ created: platformCounts(cleanRows), held, rowsRead: latest.rowsSeen });
+    setResolved((prev) => ({ ...prev, [run.id]: `${n(cleanRows.length, "campaign")} created.` }));
+    setCreation((prev) => ({
+      created: platformCounts(cleanRows, prev?.created ?? []),
+      held: [...(prev?.held ?? []), ...held],
+      rowsRead: (prev?.rowsRead ?? 0) + run.rowsSeen,
+    }));
     say(`${n(cleanRows.length, "campaign")} created.`);
   };
 
-  const downloadHeld = () => {
-    if (!creation) return;
-    const rows = creation.held.map((e, i) => ({ ...e.row, row: i + 1 }));
-    const findings = creation.held.flatMap((e, i) => e.findings.map((f) => ({ ...f, row: i + 1 })));
+  const downloadEntries = (entries: HeldEntry[]) => {
+    if (!entries.length) return;
+    const rows = entries.map((e, i) => ({ ...e.row, row: i + 1 }));
+    const findings = entries.flatMap((e, i) => e.findings.map((f) => ({ ...f, row: i + 1 })));
     downloadHeldRows(rows, { ...(ec.result ?? ({} as QcResult)), findings } as QcResult);
   };
 
-  const handleCorrection = async (file: File) => {
-    if (!creation) return;
-    setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
-    setParsing(true);
-    try {
-      const parsed = await parseWorkbook(file);
-      const run = buildRun({ fileName: file.name, sizeKb: file.size / 1024, rows: parsed.rows });
-      const heldNames = new Set(creation.held.map((e) => e.row.campaign_name.trim().toLowerCase()));
-      const matched = run.rows.filter((r) => heldNames.has(r.campaign_name.trim().toLowerCase()));
-      const matchedNames = new Set(matched.map((r) => r.campaign_name.trim().toLowerCase()));
-      const cleared = matched.filter((r) => run.cleanRows.includes(r.row));
-      const stillHeld = matched.filter((r) => !run.cleanRows.includes(r.row));
-      const untouched = creation.held.filter((e) => !matchedNames.has(e.row.campaign_name.trim().toLowerCase()));
-      const nextHeld = [...untouched, ...heldEntries(stillHeld, run.result)];
-      say(
-        `${n(matched.length, "row")} matched a held campaign name${run.rows.length - matched.length > 0 ? `, ${run.rows.length - matched.length} did not match anything held` : ""}. ${n(cleared.length, "campaign")} came back clean and ${cleared.length === 1 ? "was" : "were"} created. ${n(nextHeld.length, "row")} still held.`,
-      );
-      setCreation({
-        created: platformCounts(cleared, creation.created),
-        held: nextHeld,
-        rowsRead: creation.rowsRead,
-      });
-    } catch (err) {
-      say(`I couldn't use that file. ${err instanceof Error ? err.message : "It has no readable rows."} Nothing here has changed.`);
-    }
-    setParsing(false);
-  };
+  const downloadHeldForRun = (run: SheetRun) =>
+    downloadEntries(heldEntries(run.rows.filter((r) => run.heldRows.includes(r.row)), run.result));
+
+  const downloadHeld = () => downloadEntries(creation?.held ?? []);
 
   /* ── Recommendation: products, then cities, then the plan ── */
   const openRecommendations = () => {
@@ -350,8 +316,7 @@ const FlowAiView: React.FC = () => {
       downloadCorrected(ec.rows);
       return say("Downloaded the sheet as it stands now, so you can compare it with the original.");
     }
-    if (/push .*(clean|ready)|only .*(clean|ready)/i.test(text) && ec.result) return continueClean();
-    if (/park|hold|later/i.test(text) && latest?.heldRows.length) return holdRemaining();
+    if (/push .*(clean|ready)|only .*(clean|ready)/i.test(text) && latest && !resolved[latest.id]) return continueClean(latest);
     if (/explain row (\d+)/i.exec(text)) {
       const n = Number(/explain row (\d+)/i.exec(text)![1]);
       const f = (ec.result?.findings ?? []).filter((x) => x.row === n);
@@ -363,7 +328,7 @@ const FlowAiView: React.FC = () => {
     }
     say(
       ec.rows.length
-        ? 'I can park held rows ("park them"), download the sheet as it stands, or take the ready rows to review.'
+        ? "I can download the sheet as it stands, or take the ready rows to review."
         : "Upload your campaign sheet, take the template, or press Recommendation and I'll build campaigns from your products.",
     );
   };
@@ -400,11 +365,6 @@ const FlowAiView: React.FC = () => {
         onBack={() => navigate("/ecom/campaigns/create")}
         right={
           <div className="flex items-center gap-3">
-            {ec.held.length > 0 && (
-              <button onClick={() => { setShowHeld((v) => !v); }} className="text-[11px] text-sw-amber hover:underline">
-                {ec.held.length} held batch{ec.held.length > 1 ? "es" : ""}
-              </button>
-            )}
             <button
               onClick={() => {
                 navigate("/ecom/campaigns/create/manual");
@@ -414,7 +374,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setCityRecos(null); setPlanning(false); setSkuPicker(false); setShowHeld(false); setCreation(null); }}
+              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setCityRecos(null); setPlanning(false); setSkuPicker(false); setCreation(null); setResolved({}); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
@@ -451,10 +411,10 @@ const FlowAiView: React.FC = () => {
               key={run.id}
               run={run}
               isLatest={i === ec.runs.length - 1}
-              onContinueClean={creation ? undefined : continueClean}
-              onHold={holdRemaining}
-              onReupload={() => fileRef.current?.click()}
+              onContinueClean={() => continueClean(run)}
+              onDownloadHeld={() => downloadHeldForRun(run)}
               onDownloadTemplate={downloadTemplate}
+              resolvedLine={resolved[run.id]}
               unit={ec.countsRows ? "row" : "campaign"}
             />
           ))}
@@ -648,15 +608,6 @@ const FlowAiView: React.FC = () => {
                     <button onClick={downloadHeld} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
                       Download the {n(creation.held.length, "row")}
                     </button>
-                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
-                      <Upload size={12} /> Upload corrected file
-                      <input
-                        type="file"
-                        accept=".xlsx,.xlsm,.csv"
-                        className="hidden"
-                        onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleCorrection(f); e.target.value = ""; }}
-                      />
-                    </label>
                   </div>
                 </div>
               )}
@@ -694,27 +645,6 @@ const FlowAiView: React.FC = () => {
             </div>
           )}
 
-          {/* Held batches stay in the conversation */}
-          {showHeld && (
-            <div className="rounded-xl border border-sw-amber/30 bg-surface-1 overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2">
-                <p className="text-xs font-medium text-foreground">Held batches</p>
-                <span className="text-[10px] text-muted-foreground">Reopening re-checks them against today's data.</span>
-                <button onClick={() => setShowHeld(false)} className="ml-auto text-muted-foreground hover:text-foreground" aria-label="Close">
-                  <X size={13} />
-                </button>
-              </div>
-              <div className="p-3">
-                <EcomHeldList
-                  onReopen={() => {
-                    setShowHeld(false);
-                    setReviewing(true);
-                    say("Reopened those rows and checked them again. Here is the plan as it stands.");
-                  }}
-                />
-              </div>
-            </div>
-          )}
 
           {/* Review is a card in the conversation, not another screen */}
           {reviewing && (
@@ -745,7 +675,7 @@ const FlowAiView: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="Ask me to fix something, park what is held, or explain a check…"
+              placeholder="Ask me to fix something, download a sheet, or explain a check…"
               className="flex-1 bg-surface-2 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50"
             />
             <button onClick={send} className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90" aria-label="Send">

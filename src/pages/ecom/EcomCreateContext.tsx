@@ -5,25 +5,6 @@ import type { SheetRun } from "@/lib/ecom-qc/sheet-run";
 
 export type FlowSource = "ai" | "copy" | "manual" | null;
 
-export interface HeldBatch {
-  id: string;
-  createdAt: string;
-  fileName: string;
-  note: string;
-  rows: BatchRow[];
-  result: QcResult | null;
-  overrides: OverrideEntry[];
-  reopenedAt?: string;
-}
-
-export interface OverrideEntry {
-  id: string;
-  row: number;
-  signal: string;
-  reason: string;
-  at: string;
-}
-
 export interface PushOutcome {
   platform: string;
   mode: "api" | "export";
@@ -101,12 +82,6 @@ interface EcomCreateState {
   addRun: (run: SheetRun) => void;
   clearRuns: () => void;
 
-  /** Rows parked for later, with their findings and overrides intact. */
-  held: HeldBatch[];
-  holdRows: (rows: BatchRow[], result: QcResult | null, fileName: string, note: string) => string;
-  reopenHeld: (id: string) => void;
-  dropHeld: (id: string) => void;
-
   /** Draft state kept outside the screens so back navigation restores it. */
   manualDraft: ManualDraft;
   setManualDraft: (d: ManualDraft | ((prev: ManualDraft) => ManualDraft)) => void;
@@ -142,7 +117,6 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [deepPending, setDeepPending] = useState(false);
   const [pushed, setPushed] = useState(false);
   const [runs, setRuns] = useState<SheetRun[]>([]);
-  const [held, setHeld] = useState<HeldBatch[]>([]);
   const [manualDraft, setManualDraft] = useState<ManualDraft>(EMPTY_MANUAL_DRAFT);
   const [copySelection, setCopySelection] = useState<string[]>([]);
   const [chat, setChat] = useState<ChatState>(EMPTY_CHAT);
@@ -220,40 +194,6 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const addRun = useCallback((run: SheetRun) => setRuns((prev) => [...prev, run]), []);
   const clearRuns = useCallback(() => setRuns([]), []);
 
-  const holdRows = useCallback(
-    (heldRows: BatchRow[], res: QcResult | null, file: string, note: string) => {
-      const id = `held-${Date.now()}`;
-      setHeld((prev) => [
-        ...prev,
-        {
-          id,
-          createdAt: new Date().toISOString(),
-          fileName: file,
-          note,
-          rows: heldRows,
-          result: res,
-          overrides: [],
-        },
-      ]);
-      return id;
-    },
-    [],
-  );
-
-  const reopenHeld = useCallback(
-    (id: string) => {
-      const batch = held.find((h) => h.id === id);
-      if (!batch) return;
-      const renumbered = batch.rows.map((r, i) => ({ ...r, row: i + 1 }));
-      setFileName(batch.fileName);
-      recheck(renumbered);
-      setHeld((prev) => prev.map((h) => (h.id === id ? { ...h, reopenedAt: new Date().toISOString() } : h)));
-    },
-    [held, recheck],
-  );
-
-  const dropHeld = useCallback((id: string) => setHeld((prev) => prev.filter((h) => h.id !== id)), []);
-
   const markRecosUsed = useCallback(
     (ids: string[]) => setUsedRecos((prev) => Array.from(new Set([...prev, ...ids]))),
     [],
@@ -278,7 +218,7 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     () => ({
       rows, setRows, fileName, setFileName, source, setSource, result, deepPending,
       runLive, runDeep, recheck, applyFix, applyAllFixes, addRows, keepOnlyCleanRows,
-      runs, addRun, clearRuns, held, holdRows, reopenHeld, dropHeld,
+      runs, addRun, clearRuns,
       manualDraft, setManualDraft, copySelection, setCopySelection, chat, setChat,
       usedRecos, markRecosUsed,
       countsRows: source === "ai" && !!fileName,
@@ -286,8 +226,8 @@ export const EcomCreateProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }),
     [
       rows, setRows, fileName, source, result, deepPending, runLive, runDeep, recheck, applyFix,
-      applyAllFixes, addRows, keepOnlyCleanRows, runs, addRun, clearRuns, held, holdRows, reopenHeld,
-      dropHeld, manualDraft, copySelection, chat, usedRecos, markRecosUsed, pushed, outcomes, reset,
+      applyAllFixes, addRows, keepOnlyCleanRows, runs, addRun, clearRuns,
+      manualDraft, copySelection, chat, usedRecos, markRecosUsed, pushed, outcomes, reset,
     ],
   );
 

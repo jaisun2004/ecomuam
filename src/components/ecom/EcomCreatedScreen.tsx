@@ -20,9 +20,6 @@ const EcomCreatedScreen: React.FC<Props> = ({ onRetry }) => {
   const outcomes = ec.outcomes;
   const created = outcomes.filter((o) => o.status !== "failed").reduce((n, o) => n + o.rows, 0);
   const failed = outcomes.filter((o) => o.status === "failed");
-  const heldRows = ec.held.flatMap((h) => h.rows);
-  const heldBudget = heldRows.reduce((n, r) => n + (Number(r.budget_value) || 0), 0);
-  const heldCurrency = heldRows[0]?.currency ?? "";
   const noEndDate = ec.rows.filter((r) => r.selected !== false && !r.end_date).length;
   const warnings = ec.rows
     .filter((r) => r.selected !== false)
@@ -75,15 +72,6 @@ const EcomCreatedScreen: React.FC<Props> = ({ onRetry }) => {
         </ul>
 
         <div className="mt-3 space-y-1">
-          {heldRows.length > 0 && (
-            <p className="text-[11px] text-sw-amber">
-              {plural(heldRows.length, "campaign")} held, {heldCurrency} {heldBudget.toLocaleString()} not committed ·{" "}
-              {ec.held.map((h) => h.fileName).join(", ")}{" "}
-              <button onClick={() => navigate("/ecom/campaigns/create/held")} className="underline hover:text-foreground">
-                Open held batches
-              </button>
-            </p>
-          )}
           {noEndDate > 0 && (
             <p className="text-[11px] text-muted-foreground">
               No end date set. {noEndDate === 1 ? "This campaign runs" : "These campaigns run"} until you pause {noEndDate === 1 ? "it" : "them"}.

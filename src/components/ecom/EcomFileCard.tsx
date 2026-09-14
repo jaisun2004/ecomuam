@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AlertTriangle, FileSpreadsheet, Upload } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import EcomSheetTable from "./EcomSheetTable";
 import { groupByRule, receiptLine, verdict, type RuleGroup, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 
@@ -7,9 +7,10 @@ interface Props {
   run: SheetRun;
   isLatest: boolean;
   onContinueClean?: () => void;
-  onReupload?: () => void;
+  onDownloadHeld?: () => void;
   onDownloadTemplate?: () => void;
-  onHold?: () => void;
+  /** Once this card has been actioned, one line replaces its buttons. */
+  resolvedLine?: string;
   unit?: "row" | "campaign";
 }
 
@@ -27,7 +28,7 @@ const rowsLine = (rows: number[], unit: "row" | "campaign") => {
 };
 
 const EcomFileCard: React.FC<Props> = ({
-  run, isLatest, onContinueClean, onReupload, onDownloadTemplate, onHold, unit = "row",
+  run, isLatest, onContinueClean, onDownloadHeld, onDownloadTemplate, resolvedLine, unit = "row",
 }) => {
   const u = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
   const [tidyOpen, setTidyOpen] = useState(false);
@@ -145,33 +146,22 @@ const EcomFileCard: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Actions */}
-      {isLatest && (
+      {/* Actions — each card keeps its own, and settles once it has been actioned */}
+      {resolvedLine ? (
+        <div className="px-4 py-3 border-t border-subtle bg-surface-2">
+          <p className="text-[11px] text-muted-foreground">{resolvedLine}</p>
+        </div>
+      ) : (
         <div className="flex items-center gap-2 flex-wrap px-4 py-3 border-t border-subtle bg-surface-2">
           {!failed && run.cleanRows.length > 0 && onContinueClean && (
             <button onClick={onContinueClean} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
               {run.heldRows.length ? `Continue with the ${u(run.cleanRows.length)} ready` : `Continue with all ${u(run.cleanRows.length)}`}
             </button>
           )}
-          {run.heldRows.length > 0 && onHold && (
-            <button onClick={onHold} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">
-              <AlertTriangle size={12} /> Keep the {u(run.heldRows.length)} held for later
+          {run.heldRows.length > 0 && onDownloadHeld && (
+            <button onClick={onDownloadHeld} className="px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">
+              Download the {u(run.heldRows.length)}
             </button>
-          )}
-          {onReupload && unit === "row" && (
-            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
-              <Upload size={12} /> Upload a corrected file
-              <input
-                type="file"
-                accept=".xlsx,.xlsm,.csv"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) window.dispatchEvent(new CustomEvent("ecom-reupload", { detail: f }));
-                  e.target.value = "";
-                }}
-              />
-            </label>
           )}
           {failed && onDownloadTemplate && (
             <button onClick={onDownloadTemplate} className="px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70">
