@@ -189,52 +189,33 @@ const FlowAiView: React.FC = () => {
     return [...map.entries()].map(([platform, count]) => ({ platform, count }));
   };
 
-  const continueClean = () => {
-    if (!latest) return;
-    const cleanRows = ec.rows.filter((r) => latest.cleanRows.includes(r.row));
+  /** Each card acts on its own run, so a later upload never changes an earlier card. */
+  const continueClean = (run: SheetRun) => {
+    const cleanRows = run.rows.filter((r) => run.cleanRows.includes(r.row));
     if (!cleanRows.length) return;
-    const held = heldEntries(ec.rows.filter((r) => latest.heldRows.includes(r.row)), latest.result);
-    setShowHeld(false);
+    const held = heldEntries(run.rows.filter((r) => run.heldRows.includes(r.row)), run.result);
     setReviewing(false);
     ec.setPushed(true);
-    setCreation({ created: platformCounts(cleanRows), held, rowsRead: latest.rowsSeen });
+    setResolved((prev) => ({ ...prev, [run.id]: `${n(cleanRows.length, "campaign")} created.` }));
+    setCreation((prev) => ({
+      created: platformCounts(cleanRows, prev?.created ?? []),
+      held: [...(prev?.held ?? []), ...held],
+      rowsRead: (prev?.rowsRead ?? 0) + run.rowsSeen,
+    }));
     say(`${n(cleanRows.length, "campaign")} created.`);
   };
 
-  const downloadHeld = () => {
-    if (!creation) return;
-    const rows = creation.held.map((e, i) => ({ ...e.row, row: i + 1 }));
-    const findings = creation.held.flatMap((e, i) => e.findings.map((f) => ({ ...f, row: i + 1 })));
+  const downloadEntries = (entries: HeldEntry[]) => {
+    if (!entries.length) return;
+    const rows = entries.map((e, i) => ({ ...e.row, row: i + 1 }));
+    const findings = entries.flatMap((e, i) => e.findings.map((f) => ({ ...f, row: i + 1 })));
     downloadHeldRows(rows, { ...(ec.result ?? ({} as QcResult)), findings } as QcResult);
   };
 
-  const handleCorrection = async (file: File) => {
-    if (!creation) return;
-    setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
-    setParsing(true);
-    try {
-      const parsed = await parseWorkbook(file);
-      const run = buildRun({ fileName: file.name, sizeKb: file.size / 1024, rows: parsed.rows });
-      const heldNames = new Set(creation.held.map((e) => e.row.campaign_name.trim().toLowerCase()));
-      const matched = run.rows.filter((r) => heldNames.has(r.campaign_name.trim().toLowerCase()));
-      const matchedNames = new Set(matched.map((r) => r.campaign_name.trim().toLowerCase()));
-      const cleared = matched.filter((r) => run.cleanRows.includes(r.row));
-      const stillHeld = matched.filter((r) => !run.cleanRows.includes(r.row));
-      const untouched = creation.held.filter((e) => !matchedNames.has(e.row.campaign_name.trim().toLowerCase()));
-      const nextHeld = [...untouched, ...heldEntries(stillHeld, run.result)];
-      say(
-        `${n(matched.length, "row")} matched a held campaign name${run.rows.length - matched.length > 0 ? `, ${run.rows.length - matched.length} did not match anything held` : ""}. ${n(cleared.length, "campaign")} came back clean and ${cleared.length === 1 ? "was" : "were"} created. ${n(nextHeld.length, "row")} still held.`,
-      );
-      setCreation({
-        created: platformCounts(cleared, creation.created),
-        held: nextHeld,
-        rowsRead: creation.rowsRead,
-      });
-    } catch (err) {
-      say(`I couldn't use that file. ${err instanceof Error ? err.message : "It has no readable rows."} Nothing here has changed.`);
-    }
-    setParsing(false);
-  };
+  const downloadHeldForRun = (run: SheetRun) =>
+    downloadEntries(heldEntries(run.rows.filter((r) => run.heldRows.includes(r.row)), run.result));
+
+  const downloadHeld = () => downloadEntries(creation?.held ?? []);
 
   /* ── Recommendation: products, then cities, then the plan ── */
   const openRecommendations = () => {
