@@ -148,11 +148,6 @@ const EcomFileCard: React.FC<Props> = ({
       {/* Actions */}
       {isLatest && (
         <div className="flex items-center gap-2 flex-wrap px-4 py-3 border-t border-subtle bg-surface-2">
-          {!failed && (run.result?.findings.length ?? 0) > 0 && onFixWithAi && (
-            <button onClick={onFixWithAi} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
-              <Sparkles size={12} /> Fix with AI
-            </button>
-          )}
           {!failed && run.cleanRows.length > 0 && onContinueClean && (
             <button onClick={onContinueClean} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
               {run.heldRows.length ? `Continue with the ${u(run.cleanRows.length)} ready` : `Continue with all ${u(run.cleanRows.length)}`}
