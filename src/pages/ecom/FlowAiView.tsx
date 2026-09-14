@@ -122,6 +122,7 @@ const FlowAiView: React.FC = () => {
   };
 
   const handleFile = async (file: File) => {
+    if (creation) return handleCorrection(file);
     const sizeKb = file.size / 1024;
     const prev = ec.runs.length ? ec.runs[ec.runs.length - 1] : null;
     setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
