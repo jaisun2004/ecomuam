@@ -188,16 +188,6 @@ const ReviewPushView: React.FC = () => {
                     className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-primary/15 text-primary hover:bg-primary/25">
                     See proposed fixes
                   </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      ec.holdRows(blocked, ec.result, ec.fileName ?? "batch", "Parked from review");
-                      ec.keepOnlyCleanRows();
-                    }}
-                    className="px-2.5 py-1 rounded-md text-[10px] bg-surface-3 text-foreground hover:bg-surface-3/70"
-                  >
-                    Park for later
-                  </button>
                 </>
               }
             >
