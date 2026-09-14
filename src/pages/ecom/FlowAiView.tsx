@@ -8,7 +8,7 @@ import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadHeldRows, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
-import { buildRun, rerun, RULE_FAILURE, type SheetRun } from "@/lib/ecom-qc/sheet-run";
+import { buildRun, rerun, groupByRule, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 import { buildCityCampaigns, cityRecommendations, searchSkus, splitBudget, type CityReco } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { capabilityFor } from "@/lib/ecom-reference/config";
@@ -70,15 +70,6 @@ const FlowAiView: React.FC = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, ec.runs, cityRecos, planning, skuPicker, reviewing, creation]);
 
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const f = (e as CustomEvent<File>).detail;
-      if (f) void handleFile(f);
-    };
-    window.addEventListener("ecom-reupload", handler);
-    return () => window.removeEventListener("ecom-reupload", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ec.runs]);
 
   const say = (text: string) => setMessages((m) => [...m, { role: "assistant", text }]);
 
@@ -125,6 +116,11 @@ const FlowAiView: React.FC = () => {
   const handleFile = async (file: File) => {
     const sizeKb = file.size / 1024;
     const prev = ec.runs.length ? ec.runs[ec.runs.length - 1] : null;
+    // A new file clears any stale recommendation/creation cards so they cannot sit beside it.
+    setRecoOutcomes(null);
+    setCreatingRecos(false);
+    setCityRecos(null);
+    setPlanning(false);
     setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
 
     if (file.size > MAX_MB * 1024 * 1024) {
@@ -169,16 +165,16 @@ const FlowAiView: React.FC = () => {
   const heldEntries = (rows: BatchRow[], result: QcResult | null): HeldEntry[] =>
     rows.map((row) => ({ row, findings: (result?.findings ?? []).filter((f) => f.row === row.row) }));
 
-  const heldLines = (entries: HeldEntry[]) => {
-    const map = new Map<string, { plain: string; count: number }>();
-    entries.forEach((e) => {
-      const first = e.findings.find((f) => f.severity === "blocker") ?? e.findings[0];
-      const key = first?.rule_key ?? "unknown";
-      const plain = first ? RULE_FAILURE[first.rule_key] ?? first.message : "Held";
-      const cur = map.get(key);
-      map.set(key, { plain, count: (cur?.count ?? 0) + 1 });
-    });
-    return [...map.entries()].map(([rule_key, v]) => ({ rule_key, ...v })).sort((a, b) => b.count - a.count);
+  /** One line per check, with the affected rows — same grouping as the check card. */
+  const groupedFindings = (findings: QcFinding[]) =>
+    groupByRule({ findings } as QcResult)
+      .map((g) => ({ rule_key: g.rule_key, plain: g.plain, count: g.rows.length, rows: g.rows }))
+      .sort((a, b) => b.count - a.count);
+
+  const rowsLine = (rows: number[]) => {
+    const shown = rows.slice(0, 5);
+    const rest = rows.length - shown.length;
+    return `Rows ${shown.join(", ")}${rest > 0 ? ` and ${rest} more` : ""}`;
   };
 
   const platformCounts = (rows: BatchRow[], base: { platform: string; count: number }[] = []) => {
@@ -597,10 +593,15 @@ const FlowAiView: React.FC = () => {
                 <div className="px-4 py-3 border-t border-subtle">
                   <p className="text-[11px] text-foreground">{n(creation.held.length, "row")} not created</p>
                   <ul className="mt-2 space-y-1.5">
-                    {heldLines(creation.held).map((l) => (
-                      <li key={l.rule_key} className="flex items-baseline gap-3">
-                        <span className="text-[11px] text-muted-foreground flex-1">{l.plain}</span>
-                        <span className="font-mono text-[10px] text-muted-foreground">{n(l.count, "row")}</span>
+                    {groupedFindings(creation.held.flatMap((e) => e.findings)).map((l) => (
+                      <li key={l.rule_key}>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-[11px] text-muted-foreground flex-1">{l.plain}</span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{n(l.count, "row")}</span>
+                        </div>
+                        {l.rows.length > 0 && (
+                          <p className="font-mono text-[10px] text-muted-foreground mt-0.5">{rowsLine(l.rows)}</p>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -636,8 +637,16 @@ const FlowAiView: React.FC = () => {
               {recoOutcomes.filter((o) => o.status === "failed").map((o) => (
                 <p key={o.platform} className="mt-2 text-[11px] text-sw-red">{platformDisplay(o.platform)}: {o.detail}</p>
               ))}
-              {(ec.result?.findings ?? []).filter((finding) => finding.severity === "warning").map((warning, index) => (
-                <p key={`${warning.row}-${warning.rule_key}-${index}`} className="mt-2 text-[11px] text-sw-amber">{warning.message}</p>
+              {groupByRule(ec.result).filter((g) => g.severity === "warning").map((g) => (
+                <div key={g.rule_key} className="mt-2">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-[11px] text-sw-amber flex-1">{g.plain}</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">{n(g.rows.length, "row")}</span>
+                  </div>
+                  {g.rows.length > 0 && (
+                    <p className="font-mono text-[10px] text-muted-foreground mt-0.5">{rowsLine(g.rows)}</p>
+                  )}
+                </div>
               ))}
               <button onClick={() => { ec.reset(); navigate("/", { state: { active: "campaigns" } }); }} className="mt-3 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90">
                 Go to Campaign Manager
