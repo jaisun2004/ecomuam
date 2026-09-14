@@ -8,15 +8,15 @@ import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
-import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
+import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { buildRun, rerun, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "@/lib/ecom-qc/fix-proposals";
 import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
-import { capabilityFor, platformDisplay } from "@/lib/ecom-reference/platforms";
+import { platformDisplay } from "@/lib/ecom-reference/platforms";
+import { capabilityFor } from "@/lib/ecom-reference/config";
 import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
-import type { PushOutcome } from "@/pages/ecom/EcomCreateContext";
 
 interface Msg {
   role: "user" | "assistant";
