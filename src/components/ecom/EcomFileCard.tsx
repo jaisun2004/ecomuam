@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AlertTriangle, FileSpreadsheet, Upload } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import EcomSheetTable from "./EcomSheetTable";
 import { groupByRule, receiptLine, verdict, type RuleGroup, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 
@@ -7,9 +7,10 @@ interface Props {
   run: SheetRun;
   isLatest: boolean;
   onContinueClean?: () => void;
-  onReupload?: () => void;
+  onDownloadHeld?: () => void;
   onDownloadTemplate?: () => void;
-  onHold?: () => void;
+  /** Once this card has been actioned, one line replaces its buttons. */
+  resolvedLine?: string;
   unit?: "row" | "campaign";
 }
 
