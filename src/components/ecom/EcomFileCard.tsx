@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import { AlertTriangle, ChevronDown, ChevronRight, FileSpreadsheet, Info, Sparkles, Upload } from "lucide-react";
+import { AlertTriangle, ChevronDown, ChevronRight, FileSpreadsheet, Sparkles, Upload } from "lucide-react";
 import EcomSheetTable from "./EcomSheetTable";
 import { groupByRule, receiptLine, verdict, type SheetRun } from "@/lib/ecom-qc/sheet-run";
-import { RULE_EXPLANATIONS } from "@/lib/ecom-qc/explanations";
-import { RULE_INDEX } from "@/lib/ecom-qc/rules";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import type { QcFinding } from "@/lib/ecom-qc/types";
 
 interface Props {
   run: SheetRun;
@@ -30,7 +26,6 @@ const EcomFileCard: React.FC<Props> = ({
   const u = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
   const [tidyOpen, setTidyOpen] = useState(false);
-  const [shown, setShown] = useState<QcFinding | null>(null);
   const v = verdict(run, unit);
   const groups = groupByRule(run.result);
   const failed = run.state === "file_error" || run.state === "empty" || run.state === "wrong_shape";
@@ -41,8 +36,6 @@ const EcomFileCard: React.FC<Props> = ({
       if (n.has(k)) n.delete(k); else n.add(k);
       return n;
     });
-
-  const explain = shown ? RULE_EXPLANATIONS[shown.rule_key] : undefined;
 
   return (
     <div className={`rounded-xl border overflow-hidden ${isLatest ? "border-border-visible" : "border-subtle opacity-80"} bg-surface-1`}>
@@ -92,9 +85,6 @@ const EcomFileCard: React.FC<Props> = ({
                           <p className="text-foreground">{f.message}</p>
                           {f.value && <p className="font-mono text-[10px] text-sw-red break-all">“{f.value}”</p>}
                         </div>
-                        <button onClick={() => setShown(f)} className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] bg-surface-3 text-muted-foreground hover:text-foreground">
-                          <Info size={10} /> Why
-                        </button>
                       </div>
                     ))}
                   </div>
@@ -182,41 +172,8 @@ const EcomFileCard: React.FC<Props> = ({
           )}
         </div>
       )}
-
-      {/* Why dialog */}
-      <Dialog open={!!shown} onOpenChange={() => setShown(null)}>
-        <DialogContent className="bg-surface-1 border-border-visible">
-          <DialogHeader>
-            <DialogTitle className="text-sm">{shown ? RULE_INDEX[shown.rule_key]?.title ?? shown.message : ""}</DialogTitle>
-            <DialogDescription className="text-[11px]">
-              {shown?.severity === "blocker" ? `This holds the ${unit} until it is settled.` : "This does not stop the push."}
-            </DialogDescription>
-          </DialogHeader>
-          {shown && (
-            <div className="space-y-3 text-xs">
-              <Block label="What we checked" body={explain?.checked ?? shown.message} />
-              <div>
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">What we found</p>
-                <p className="text-foreground">{shown.message}</p>
-                <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-                  {unit === "row" ? `row ${shown.row} · column ` : ""}{shown.field}{shown.value ? ` · “${shown.value}”` : ""}
-                </p>
-              </div>
-              <Block label="Why it matters" body={explain?.why ?? "This check protects the batch from failing on push."} />
-              <Block label="How to fix it" body={explain?.fix ?? "Correct the value in the sheet and upload it again."} />
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
-
-const Block: React.FC<{ label: string; body: string }> = ({ label, body }) => (
-  <div>
-    <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">{label}</p>
-    <p className="text-foreground">{body}</p>
-  </div>
-);
 
 export default EcomFileCard;

@@ -23,8 +23,6 @@ interface Props {
 const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone }) => {
   const ec = useEcomCreate();
   const navigate = useNavigate();
-  const [consent, setConsent] = useState(false);
-  const [confirmIrreversible, setConfirmIrreversible] = useState(false);
   const [pushing, setPushing] = useState(false);
   const [showRows, setShowRows] = useState(false);
 
@@ -43,8 +41,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ec.rows, ec.result]);
 
-  const irreversible = byPlatform.filter((g) => g.cap.irreversible_fields.length > 0);
-  const canPush = selected.length > 0 && consent && (irreversible.length === 0 || confirmIrreversible);
+  const canPush = selected.length > 0;
 
   const push = () => {
     if (pushing) return;
@@ -67,16 +64,31 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
       ec.setPushed(true);
       setPushing(false);
       const created = outcomes.filter((o) => o.status !== "failed").reduce((n, o) => n + o.rows, 0);
-      onDone(`${created} campaign${created === 1 ? "" : "s"} created.`);
-      // every flow lands on the same outcome screen
-      navigate("/ecom/campaigns/create/review?from=ai");
+      const failed = outcomes.filter((o) => o.status === "failed");
+      onDone(`${created} campaign${created === 1 ? "" : "s"} created.${failed.length ? ` ${failed.map((o) => `${o.rows} on ${platformDisplay(o.platform)} not created: ${o.detail}`).join(" ")}` : ""}`);
     }, 900);
   };
+
+  if (ec.pushed) {
+    const failed = ec.outcomes.filter((o) => o.status === "failed");
+    const created = ec.outcomes.filter((o) => o.status !== "failed").reduce((n, o) => n + o.rows, 0);
+    const warnings = (ec.result?.findings ?? []).filter((f) => f.severity === "warning" && selected.some((r) => r.row === f.row));
+    return (
+      <div className="rounded-xl border border-subtle bg-surface-1 p-4">
+        <p className="text-sm font-medium text-foreground">{created} campaign{created === 1 ? "" : "s"} created</p>
+        {failed.map((o) => <p key={o.platform} className="mt-2 text-[11px] text-sw-red">{platformDisplay(o.platform)}: {o.detail}</p>)}
+        {warnings.map((warning, index) => <p key={`${warning.row}-${warning.rule_key}-${index}`} className="mt-2 text-[11px] text-sw-amber">{warning.message}</p>)}
+        <button onClick={() => { ec.reset(); navigate("/", { state: { active: "campaigns" } }); }} className="mt-3 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+          Go to Campaign Manager
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
       <div className="px-4 py-2.5 border-b border-subtle bg-surface-2 flex items-center gap-2 flex-wrap">
-        <p className="text-xs font-medium text-foreground">Review and push</p>
+        <p className="text-xs font-medium text-foreground">Review campaigns</p>
         <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px]">Nothing is created yet</span>
         <span className="ml-auto text-[10px] text-muted-foreground">
           {selected.length} {noun(selected.length)} going · {blocked.length} held
@@ -124,31 +136,13 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           </div>
         )}
 
-        <div className="space-y-2 pt-1">
+        <div className="pt-1">
           {selected.length === 0 ? (
             <p className="text-[11px] text-muted-foreground">
               Everything here is held. Fix the blockers above, or park them for later.
             </p>
           ) : (
-            <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
-              <span>
-                I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} created.
-              </span>
-            </label>
-          )}
-          {irreversible.length > 0 && (
-            <label className="flex items-start gap-2 text-[11px] text-sw-amber cursor-pointer">
-              <input
-                type="checkbox"
-                checked={confirmIrreversible}
-                onChange={(e) => setConfirmIrreversible(e.target.checked)}
-                className="accent-primary mt-0.5"
-              />
-              <span>
-                On {irreversible.map((g) => platformDisplay(g.platform)).join(", ")} the budget cannot be lowered once live. I have checked the amounts.
-              </span>
-            </label>
+            <p className="text-[11px] text-muted-foreground">{selected.length} {noun(selected.length)} ready to create.</p>
           )}
         </div>
       </div>
@@ -159,7 +153,7 @@ const EcomReviewCard: React.FC<Props> = ({ onBackToCheck, onFixWithAi, onDone })
           disabled={!canPush || pushing}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Rocket size={13} /> {pushing ? "Sending…" : `Create ${selected.length} campaign${selected.length === 1 ? "" : "s"}`}
+          <Rocket size={13} /> {pushing ? "Creating…" : `Create ${selected.length} campaign${selected.length === 1 ? "" : "s"}`}
         </button>
         <button onClick={onBackToCheck} className="px-4 py-2 rounded-lg text-xs bg-surface-3 text-foreground hover:bg-surface-3/70">
           Back to the check

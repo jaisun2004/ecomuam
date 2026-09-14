@@ -13,7 +13,6 @@ import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "
 import { asOfLabel, capabilityFor } from "@/lib/ecom-reference/config";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { downloadCorrected } from "./xlsx-utils";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import EcomCreatedScreen from "@/components/ecom/EcomCreatedScreen";
 import EcomStockNotice from "@/components/ecom/EcomStockNotice";
 
@@ -21,8 +20,6 @@ const ReviewPushView: React.FC = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const ec = useEcomCreate();
-  const [consent, setConsent] = useState(false);
-  const [confirmIrreversible, setConfirmIrreversible] = useState(false);
   const [fixing, setFixing] = useState<FixProposal[] | null>(null);
   const [pushing, setPushing] = useState(false);
 
@@ -66,8 +63,6 @@ const ReviewPushView: React.FC = () => {
   }, [ec.rows, ec.result]);
 
   if (ec.rows.length === 0) return null;
-
-  const irreversible = byPlatform.filter((g) => g.cap.irreversible_fields.length > 0);
 
   const updateCell = (id: string, field: keyof BatchRow, value: string) =>
     ec.setRows(ec.rows.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
@@ -125,7 +120,7 @@ const ReviewPushView: React.FC = () => {
   /* ── Outcome screen: the same one every flow lands on ── */
   if (ec.pushed) return <EcomCreatedScreen onRetry={retry} />;
 
-  const canPush = selected.length > 0 && consent && (irreversible.length === 0 || confirmIrreversible);
+  const canPush = selected.length > 0;
   const allHeld = selected.length === 0 && blocked.length > 0;
 
   const budgetChips = (() => {
@@ -146,8 +141,8 @@ const ReviewPushView: React.FC = () => {
           <ArrowLeft size={16} />
         </button>
         <div>
-          <h1 className="font-display font-bold text-sm text-foreground">Review and push</h1>
-          <p className="text-[10px] text-muted-foreground">Nothing is created until you press send.</p>
+          <h1 className="font-display font-bold text-sm text-foreground">Review campaigns</h1>
+          <p className="text-[10px] text-muted-foreground">Nothing is created until you press Create.</p>
         </div>
       </div>
 
@@ -309,20 +304,7 @@ const ReviewPushView: React.FC = () => {
                 Everything here is held. Fix the blockers above, or park them for later.
               </p>
             ) : (
-              <label className="flex items-start gap-2 text-[11px] text-foreground cursor-pointer">
-                <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="accent-primary mt-0.5" />
-                <span>
-                  I have read the {selected.length} {noun(selected.length)} and I want {selected.length === 1 ? "it" : "them"} created.
-                </span>
-              </label>
-            )}
-            {irreversible.length > 0 && (
-              <label className="flex items-start gap-2 text-[11px] text-sw-amber cursor-pointer">
-                <input type="checkbox" checked={confirmIrreversible} onChange={(e) => setConfirmIrreversible(e.target.checked)} className="accent-primary mt-0.5" />
-                <span>
-                  On {irreversible.map((g) => platformDisplay(g.platform)).join(", ")} the budget cannot be lowered once live. I have checked the amounts.
-                </span>
-              </label>
+              <p className="text-[11px] text-muted-foreground">{selected.length} {noun(selected.length)} ready to create.</p>
             )}
           </div>
           <button
@@ -330,21 +312,17 @@ const ReviewPushView: React.FC = () => {
             disabled={!canPush || pushing}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
           >
-            <Rocket size={13} /> {pushing ? "Sending…" : allHeld ? "Nothing can be sent yet" : `Create ${selected.length} ${noun(selected.length)}`}
+            <Rocket size={13} /> {pushing ? "Creating…" : allHeld ? "Nothing can be created yet" : `Create ${selected.length} ${noun(selected.length)}`}
           </button>
         </div>
       </div>
 
-      <Dialog open={fixing?.length === 0} onOpenChange={() => setFixing(null)}>
-        <DialogContent className="bg-surface-1 border-border-visible">
-          <DialogHeader>
-            <DialogTitle className="text-sm">Nothing here can be filled in for you</DialogTitle>
-            <DialogDescription className="text-[11px]">
-              Every open point needs a decision. Edit the cells in the sheet, or park the rows and come back with the right values.
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      {fixing?.length === 0 && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 rounded-lg border border-subtle bg-surface-1 px-4 py-3 text-[11px] text-muted-foreground shadow-lg">
+          Every open point needs a decision. Edit the values, or park the rows for later.
+          <button onClick={() => setFixing(null)} className="ml-3 text-foreground">Dismiss</button>
+        </div>
+      )}
     </div>
   );
 };

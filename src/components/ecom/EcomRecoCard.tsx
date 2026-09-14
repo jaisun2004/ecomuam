@@ -1,7 +1,7 @@
 import React from "react";
 import { Check } from "lucide-react";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
-import { collectedLabel, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
+import type { SkuRecommendation } from "@/lib/ecom-qc/recommendations";
 
 interface Props {
   reco: SkuRecommendation;
@@ -68,9 +68,6 @@ const EcomRecoCard: React.FC<Props> = ({ reco, selected, onToggle, readOnly, onD
 
         <div className="mt-2.5 rounded-lg border border-subtle bg-surface-2 p-3">
           <Evidence reco={reco} />
-          <p className={`mt-2 text-[10px] ${reco.collectedDaysAgo > 2 ? "text-sw-amber" : "text-muted-foreground"}`}>
-            {reco.source} · {collectedLabel(reco.collectedDaysAgo)}
-          </p>
         </div>
 
         <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
