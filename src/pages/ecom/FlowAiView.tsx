@@ -22,6 +22,17 @@ interface Msg {
   runId?: string;
 }
 
+interface HeldEntry {
+  row: BatchRow;
+  findings: QcFinding[];
+}
+
+interface Creation {
+  created: { platform: string; count: number }[];
+  held: HeldEntry[];
+  rowsRead: number;
+}
+
 const FIRST_MESSAGE =
   "Upload your campaign sheet and I'll check every row, or press Recommendation and I'll build campaigns for the products you pick.";
 
