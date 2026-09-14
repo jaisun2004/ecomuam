@@ -1,6 +1,6 @@
 import type { BatchRow } from "./types";
 import { PRODUCT_LIST, CITY_LIST, type RefProduct } from "@/lib/ecom-reference/workbook-data";
-import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock } from "@/lib/ecom-reference/platforms";
+import { buildCampaignName, citiesFor, currencyFor, currencySymbol, getPlatform, isInStock, slugify } from "@/lib/ecom-reference/platforms";
 
 export type RecoKind = "price" | "city" | "keywords";
 
