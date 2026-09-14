@@ -208,6 +208,7 @@ const FlowAiView: React.FC = () => {
   const openRecommendations = () => {
     setSkuPicker(true);
     setRecos(null);
+    setRecoOutcomes(null);
     setPickedSkus([]);
     setMessages((m) => [
       ...m,
