@@ -37,4 +37,4 @@ Each screen section holds four short parts:
 
 ## How it gets written
 
-Read each screen and its data in turn and describe only what is actually there — every threshold, colour rule and grouping stated in the document is taken from the screen itself, not assumed. Length target: roughly one screenful per screen.
+Read each screen and its data in turn and describe only what is actually there — every threshold, colour rule and grouping stated in the document is taken from the screen itself, not assumed. Length limit: at most two pages per screen.
