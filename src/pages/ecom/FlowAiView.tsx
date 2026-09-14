@@ -116,6 +116,11 @@ const FlowAiView: React.FC = () => {
   const handleFile = async (file: File) => {
     const sizeKb = file.size / 1024;
     const prev = ec.runs.length ? ec.runs[ec.runs.length - 1] : null;
+    // A new file clears any stale recommendation/creation cards so they cannot sit beside it.
+    setRecoOutcomes(null);
+    setCreatingRecos(false);
+    setCityRecos(null);
+    setPlanning(false);
     setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
 
     if (file.size > MAX_MB * 1024 * 1024) {
