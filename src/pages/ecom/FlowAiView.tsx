@@ -160,16 +160,16 @@ const FlowAiView: React.FC = () => {
   const heldEntries = (rows: BatchRow[], result: QcResult | null): HeldEntry[] =>
     rows.map((row) => ({ row, findings: (result?.findings ?? []).filter((f) => f.row === row.row) }));
 
-  const heldLines = (entries: HeldEntry[]) => {
-    const map = new Map<string, { plain: string; count: number }>();
-    entries.forEach((e) => {
-      const first = e.findings.find((f) => f.severity === "blocker") ?? e.findings[0];
-      const key = first?.rule_key ?? "unknown";
-      const plain = first ? RULE_FAILURE[first.rule_key] ?? first.message : "Held";
-      const cur = map.get(key);
-      map.set(key, { plain, count: (cur?.count ?? 0) + 1 });
-    });
-    return [...map.entries()].map(([rule_key, v]) => ({ rule_key, ...v })).sort((a, b) => b.count - a.count);
+  /** One line per check, with the affected rows — same grouping as the check card. */
+  const groupedFindings = (findings: QcFinding[]) =>
+    groupByRule({ findings } as QcResult)
+      .map((g) => ({ rule_key: g.rule_key, plain: g.plain, count: g.rows.length, rows: g.rows }))
+      .sort((a, b) => b.count - a.count);
+
+  const rowsLine = (rows: number[]) => {
+    const shown = rows.slice(0, 5);
+    const rest = rows.length - shown.length;
+    return `Rows ${shown.join(", ")}${rest > 0 ? ` and ${rest} more` : ""}`;
   };
 
   const platformCounts = (rows: BatchRow[], base: { platform: string; count: number }[] = []) => {
