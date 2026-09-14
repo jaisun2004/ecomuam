@@ -8,9 +8,9 @@ import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
 import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
-import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
-import type { BatchRow } from "@/lib/ecom-qc/types";
-import { buildRun, rerun, type SheetRun } from "@/lib/ecom-qc/sheet-run";
+import { downloadCorrected, downloadHeldRows, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
+import type { BatchRow, QcFinding, QcResult } from "@/lib/ecom-qc/types";
+import { buildRun, rerun, RULE_FAILURE, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
 import { capabilityFor } from "@/lib/ecom-reference/config";
@@ -20,6 +20,17 @@ interface Msg {
   role: "user" | "assistant";
   text: string;
   runId?: string;
+}
+
+interface HeldEntry {
+  row: BatchRow;
+  findings: QcFinding[];
+}
+
+interface Creation {
+  created: { platform: string; count: number }[];
+  held: HeldEntry[];
+  rowsRead: number;
 }
 
 const FIRST_MESSAGE =
@@ -49,6 +60,7 @@ const FlowAiView: React.FC = () => {
   const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const [creatingRecos, setCreatingRecos] = useState(false);
   const [recoOutcomes, setRecoOutcomes] = useState<PushOutcome[] | null>(null);
+  const [creation, setCreation] = useState<Creation | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -110,6 +122,7 @@ const FlowAiView: React.FC = () => {
   };
 
   const handleFile = async (file: File) => {
+    if (creation) return handleCorrection(file);
     const sizeKb = file.size / 1024;
     const prev = ec.runs.length ? ec.runs[ec.runs.length - 1] : null;
     setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
@@ -165,11 +178,73 @@ const FlowAiView: React.FC = () => {
     say(`Parked ${n(dropped, unit)}. ${n(kept, unit)} stay here. Reopen them any time from Held batches.`);
   };
 
+  /* ── Creation from the check card ── */
+  const heldEntries = (rows: BatchRow[], result: QcResult | null): HeldEntry[] =>
+    rows.map((row) => ({ row, findings: (result?.findings ?? []).filter((f) => f.row === row.row) }));
+
+  const heldLines = (entries: HeldEntry[]) => {
+    const map = new Map<string, { plain: string; count: number }>();
+    entries.forEach((e) => {
+      const first = e.findings.find((f) => f.severity === "blocker") ?? e.findings[0];
+      const key = first?.rule_key ?? "unknown";
+      const plain = first ? RULE_FAILURE[first.rule_key] ?? first.message : "Held";
+      const cur = map.get(key);
+      map.set(key, { plain, count: (cur?.count ?? 0) + 1 });
+    });
+    return [...map.entries()].map(([rule_key, v]) => ({ rule_key, ...v })).sort((a, b) => b.count - a.count);
+  };
+
+  const platformCounts = (rows: BatchRow[], base: { platform: string; count: number }[] = []) => {
+    const map = new Map<string, number>(base.map((b) => [b.platform, b.count]));
+    rows.forEach((r) => map.set(r.platform, (map.get(r.platform) ?? 0) + 1));
+    return [...map.entries()].map(([platform, count]) => ({ platform, count }));
+  };
+
   const continueClean = () => {
     if (!latest) return;
-    if (latest.heldRows.length) holdRemaining();
+    const cleanRows = ec.rows.filter((r) => latest.cleanRows.includes(r.row));
+    if (!cleanRows.length) return;
+    const held = heldEntries(ec.rows.filter((r) => latest.heldRows.includes(r.row)), latest.result);
     setShowHeld(false);
-    setReviewing(true);
+    setReviewing(false);
+    ec.setPushed(true);
+    setCreation({ created: platformCounts(cleanRows), held, rowsRead: latest.rowsSeen });
+    say(`${n(cleanRows.length, "campaign")} created.`);
+  };
+
+  const downloadHeld = () => {
+    if (!creation) return;
+    const rows = creation.held.map((e, i) => ({ ...e.row, row: i + 1 }));
+    const findings = creation.held.flatMap((e, i) => e.findings.map((f) => ({ ...f, row: i + 1 })));
+    downloadHeldRows(rows, { ...(ec.result ?? ({} as QcResult)), findings } as QcResult);
+  };
+
+  const handleCorrection = async (file: File) => {
+    if (!creation) return;
+    setMessages((m) => [...m, { role: "user", text: `Uploaded ${file.name}.` }]);
+    setParsing(true);
+    try {
+      const parsed = await parseWorkbook(file);
+      const run = buildRun({ fileName: file.name, sizeKb: file.size / 1024, rows: parsed.rows });
+      const heldNames = new Set(creation.held.map((e) => e.row.campaign_name.trim().toLowerCase()));
+      const matched = run.rows.filter((r) => heldNames.has(r.campaign_name.trim().toLowerCase()));
+      const matchedNames = new Set(matched.map((r) => r.campaign_name.trim().toLowerCase()));
+      const cleared = matched.filter((r) => run.cleanRows.includes(r.row));
+      const stillHeld = matched.filter((r) => !run.cleanRows.includes(r.row));
+      const untouched = creation.held.filter((e) => !matchedNames.has(e.row.campaign_name.trim().toLowerCase()));
+      const nextHeld = [...untouched, ...heldEntries(stillHeld, run.result)];
+      say(
+        `${n(matched.length, "row")} matched a held campaign name${run.rows.length - matched.length > 0 ? `, ${run.rows.length - matched.length} did not match anything held` : ""}. ${n(cleared.length, "campaign")} came back clean and ${cleared.length === 1 ? "was" : "were"} created. ${n(nextHeld.length, "row")} still held.`,
+      );
+      setCreation({
+        created: platformCounts(cleared, creation.created),
+        held: nextHeld,
+        rowsRead: creation.rowsRead,
+      });
+    } catch (err) {
+      say(`I couldn't use that file. ${err instanceof Error ? err.message : "It has no readable rows."} Nothing here has changed.`);
+    }
+    setParsing(false);
   };
 
   /* ── Recommendations ── */
@@ -344,7 +419,7 @@ const FlowAiView: React.FC = () => {
               <PenLine size={12} /> Switch to manual entry
             </button>
             <button
-              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setRecos(null); setSkuPicker(false); setShowHeld(false); }}
+              onClick={() => { ec.reset(); ec.setChat({ started: true, messages: [{ role: "assistant", text: FIRST_MESSAGE }], reviewing: false }); setRecos(null); setSkuPicker(false); setShowHeld(false); setCreation(null); }}
               className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <RotateCcw size={12} /> Start Over
@@ -381,7 +456,7 @@ const FlowAiView: React.FC = () => {
               key={run.id}
               run={run}
               isLatest={i === ec.runs.length - 1}
-              onContinueClean={continueClean}
+              onContinueClean={creation ? undefined : continueClean}
               onHold={holdRemaining}
               onReupload={() => fileRef.current?.click()}
               onDownloadTemplate={downloadTemplate}
@@ -471,6 +546,63 @@ const FlowAiView: React.FC = () => {
           {creatingRecos && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground px-4">
               <Loader2 size={13} className="animate-spin" /> Creating campaigns…
+            </div>
+          )}
+
+          {creation && (
+            <div className="rounded-xl border border-subtle bg-surface-1 overflow-hidden">
+              <div className="px-4 py-3">
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Created</p>
+                <ul className="mt-2 space-y-1.5">
+                  {creation.created.map((c) => (
+                    <li key={c.platform} className="flex items-baseline gap-3">
+                      <span className="text-[11px] text-foreground flex-1">{platformDisplay(c.platform)}</span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{n(c.count, "campaign")}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {creation.held.length > 0 && (
+                <div className="px-4 py-3 border-t border-subtle">
+                  <p className="text-[11px] text-foreground">{n(creation.held.length, "row")} not created</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {heldLines(creation.held).map((l) => (
+                      <li key={l.rule_key} className="flex items-baseline gap-3">
+                        <span className="text-[11px] text-muted-foreground flex-1">{l.plain}</span>
+                        <span className="font-mono text-[10px] text-muted-foreground">{n(l.count, "row")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex items-center gap-2 flex-wrap">
+                    <button onClick={downloadHeld} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+                      Download the {n(creation.held.length, "row")}
+                    </button>
+                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70 cursor-pointer">
+                      <Upload size={12} /> Upload corrected file
+                      <input
+                        type="file"
+                        accept=".xlsx,.xlsm,.csv"
+                        className="hidden"
+                        onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleCorrection(f); e.target.value = ""; }}
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              <div className="px-4 py-3 border-t border-subtle bg-surface-2">
+                <button
+                  onClick={() => { ec.reset(); navigate("/", { state: { active: "campaigns" } }); }}
+                  className={
+                    creation.held.length === 0
+                      ? "px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "px-3 py-1.5 rounded-lg text-[11px] bg-surface-3 text-foreground hover:bg-surface-3/70"
+                  }
+                >
+                  Go to Campaign Manager
+                </button>
+              </div>
             </div>
           )}
 
