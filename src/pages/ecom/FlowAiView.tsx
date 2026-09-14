@@ -1,21 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, Check, Download, FileSpreadsheet, Lightbulb, Loader2, PenLine, RotateCcw, Search, Send, Sparkles, Upload, X,
+  ArrowLeft, Check, CheckCircle2, Download, Lightbulb, Loader2, PenLine, RotateCcw, Search, Send, Sparkles, Upload, X,
 } from "lucide-react";
 import EcomFileCard from "@/components/ecom/EcomFileCard";
 import EcomRecoCard from "@/components/ecom/EcomRecoCard";
 import EcomFixProposal from "@/components/ecom/EcomFixProposal";
 import EcomReviewCard from "@/components/ecom/EcomReviewCard";
 import EcomHeldList from "@/components/ecom/EcomHeldList";
-import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
+import { useEcomCreate, type PushOutcome } from "@/pages/ecom/EcomCreateContext";
 import { downloadCorrected, downloadTemplate, parseWorkbook, CANONICAL_HEADERS } from "./xlsx-utils";
-import { SAMPLE_BATCH_ROWS } from "@/lib/ecom-reference/workbook-data";
 import type { BatchRow } from "@/lib/ecom-qc/types";
 import { buildRun, rerun, type SheetRun } from "@/lib/ecom-qc/sheet-run";
 import { applyProposal, manualDecisions, proposalsFor, type FixProposal } from "@/lib/ecom-qc/fix-proposals";
 import { recommendationsForSku, searchSkus, type SkuRecommendation } from "@/lib/ecom-qc/recommendations";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
+import { capabilityFor } from "@/lib/ecom-reference/config";
 import type { RefProduct } from "@/lib/ecom-reference/workbook-data";
 
 interface Msg {
@@ -50,6 +50,8 @@ const FlowAiView: React.FC = () => {
   const setReviewing = (v: boolean) => ec.setChat((c) => ({ ...c, reviewing: v }));
   const [showHeld, setShowHeld] = useState(false);
   const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
+  const [creatingRecos, setCreatingRecos] = useState(false);
+  const [recoOutcomes, setRecoOutcomes] = useState<PushOutcome[] | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -153,18 +155,6 @@ const FlowAiView: React.FC = () => {
     setParsing(false);
   };
 
-  const useSamplePlan = () => {
-    const rows: BatchRow[] = SAMPLE_BATCH_ROWS.map((s, i) => ({
-      id: `sample-${i}`, row: i + 1,
-      sub_category: s.subCategory, brand_name: s.brandName, platform: s.platform,
-      campaign_name: s.campaignName, end_date: s.endDate, budget_type: s.budgetType,
-      budget_value: s.budgetValue, cities: s.cities, product_id: s.productIds,
-      targeting_details: s.targetingDetails, currency: s.currency, selected: true,
-    }));
-    setMessages((m) => [...m, { role: "user", text: "Use last month's plan." }]);
-    registerRun(buildRun({ fileName: "last_months_plan.xlsx", sizeKb: 24, rows, label: "Last month's plan" }), latest);
-  };
-
   /* ── Fix with AI: proposals only ── */
   const openFixes = () => {
     const proposals = proposalsFor(ec.result, ec.rows);
@@ -218,6 +208,7 @@ const FlowAiView: React.FC = () => {
   const openRecommendations = () => {
     setSkuPicker(true);
     setRecos(null);
+    setRecoOutcomes(null);
     setPickedSkus([]);
     setMessages((m) => [
       ...m,
@@ -273,19 +264,40 @@ const FlowAiView: React.FC = () => {
       existing.budget_value = String(Math.max(Number(existing.budget_value) || 0, Number(d.budget_value) || 0));
     });
 
-    const next = [
-      ...ec.rows,
-      ...merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: ec.rows.length + i + 1, origin: "reco" } as BatchRow)),
-    ];
+    const next = merged.map((d, i) => ({ ...d, id: `reco-${Date.now()}-${i}`, row: i + 1, origin: "reco" } as BatchRow));
     setRecos(null);
     ec.markRecosUsed((recos ?? []).map((r) => r.id));
     setMessages((m) => [...m, { role: "user", text: `Create ${n(merged.length, "recommended campaign")}.` }]);
+    setCreatingRecos(true);
+    ec.setSource("ai");
+    ec.setFileName(null);
+    ec.recheck(next);
 
-    registerRun(
-      buildRun({ fileName: "Recommended campaigns", sizeKb: 0, rows: next, label: "Recommended campaigns", parentId: latest?.id }),
-      latest,
-      ec.fileName ? "row" : "campaign",
-    );
+    setTimeout(() => {
+      const groups = new Map<string, BatchRow[]>();
+      next.forEach((row) => groups.set(row.platform, [...(groups.get(row.platform) ?? []), row]));
+      const outcomes: PushOutcome[] = [...groups.entries()].map(([platform, rows]) => {
+        const cap = capabilityFor(platform);
+        const rejected = cap.can_push_api && rows.length > 6;
+        return {
+          platform,
+          mode: cap.can_push_api ? "api" : "export",
+          rows: rows.length,
+          status: rejected ? "failed" : cap.can_push_api ? "pushed" : "exported",
+          detail: rejected ? `${platformDisplay(platform)} rejected the batch because it exceeded the platform batch limit.` : "",
+        };
+      });
+      ec.setOutcomes(outcomes);
+      ec.setPushed(true);
+      setRecoOutcomes(outcomes);
+      setCreatingRecos(false);
+      const created = outcomes.filter((o) => o.status !== "failed").reduce((total, o) => total + o.rows, 0);
+      const failed = outcomes.filter((o) => o.status === "failed");
+      setMessages((m) => [...m, {
+        role: "assistant",
+        text: `${n(created, "campaign")} created.${failed.length ? ` ${failed.map((o) => `${n(o.rows, "campaign")} on ${platformDisplay(o.platform)} were not created: ${o.detail}`).join(" ")}` : ""}`,
+      }]);
+    }, 900);
   };
 
   const send = () => {
@@ -323,7 +335,6 @@ const FlowAiView: React.FC = () => {
     { label: "Recommendation", icon: Lightbulb, onClick: openRecommendations },
     { label: "Upload File", icon: Upload, onClick: () => fileRef.current?.click() },
     { label: "Download template", icon: Download, onClick: downloadTemplate },
-    { label: "Use last month's plan", icon: FileSpreadsheet, onClick: useSamplePlan },
   ];
 
   if (!started) {
@@ -497,6 +508,27 @@ const FlowAiView: React.FC = () => {
                   Add {chosenRecos.size} campaign{chosenRecos.size === 1 ? "" : "s"}
                 </button>
               </div>
+            </div>
+          )}
+
+          {creatingRecos && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground px-4">
+              <Loader2 size={13} className="animate-spin" /> Creating campaigns…
+            </div>
+          )}
+
+          {recoOutcomes && (
+            <div className="rounded-xl border border-subtle bg-surface-1 p-4">
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <CheckCircle2 size={16} className={recoOutcomes.some((o) => o.status === "failed") ? "text-sw-amber" : "text-sw-green"} />
+                <span className="font-medium">Campaign creation complete</span>
+              </div>
+              {recoOutcomes.filter((o) => o.status === "failed").map((o) => (
+                <p key={o.platform} className="mt-2 text-[11px] text-sw-red">{platformDisplay(o.platform)}: {o.detail}</p>
+              ))}
+              <button onClick={() => { ec.reset(); navigate("/"); }} className="mt-3 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+                Go to Campaign Manager
+              </button>
             </div>
           )}
 
