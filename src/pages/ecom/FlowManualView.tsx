@@ -63,14 +63,14 @@ const FlowManualView: React.FC = () => {
 
   /** Availability is informational in manual creation and never changes selection. */
   const oosLines = useMemo(
-    () => d.skus.flatMap((code) => cityNames
+    () => d.skus.flatMap((code) => d.cities
       .filter((city) => !isInStock(code, city))
       .map((city) => {
         const name = productName(code, platform ?? undefined).replace(/\s*\([^)]*\)\s*$/, "");
         const changed = code === "544531" && city === "Noida" ? "29 Aug" : outOfStockSince(code, city);
         return `${name} is out of stock in ${city} since ${changed}.`;
       })),
-    [d.skus, cityNames, platform],
+    [d.skus, d.cities, platform],
   );
 
   const warnedSkus = chosenSummaries.filter((s) => s.state === "warning" || s.state === "unknown");
@@ -150,8 +150,6 @@ const FlowManualView: React.FC = () => {
 
   const wallet = walletBalance(d.brand || "brand", platform);
   const after = wallet - (Number(d.budgetValue) || 0);
-  const typeTitle = PLATFORM_CAMPAIGN_TYPES.find((p) => p.platform === platform)?.types.find((t) => t.id === d.typeId)?.title ?? "";
-
   const productResults = [...new Set(PRODUCT_LIST.map((p) => p.name))]
     .flatMap((name) => {
       const matches = summaries.filter((s) => s.product.name === name);
