@@ -52,11 +52,13 @@ const FlowAiView: React.FC = () => {
   const [skuPicker, setSkuPicker] = useState(false);
   const [skuQuery, setSkuQuery] = useState("");
   const [pickedSkus, setPickedSkus] = useState<RefProduct[]>([]);
-  const [recos, setRecos] = useState<SkuRecommendation[] | null>(null);
+  const [cityRecos, setCityRecos] = useState<CityReco[] | null>(null);
+  const [chosenCities, setChosenCities] = useState<Set<string>>(new Set());
+  const [planning, setPlanning] = useState(false);
+  const [budget, setBudget] = useState("40000");
   const reviewing = ec.chat.reviewing;
   const setReviewing = (v: boolean) => ec.setChat((c) => ({ ...c, reviewing: v }));
   const [showHeld, setShowHeld] = useState(false);
-  const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const [creatingRecos, setCreatingRecos] = useState(false);
   const [recoOutcomes, setRecoOutcomes] = useState<PushOutcome[] | null>(null);
   const [creation, setCreation] = useState<Creation | null>(null);
@@ -67,7 +69,7 @@ const FlowAiView: React.FC = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, ec.runs, recos, skuPicker, reviewing, showHeld]);
+  }, [messages, ec.runs, cityRecos, planning, skuPicker, reviewing, showHeld]);
 
   useEffect(() => {
     const handler = (e: Event) => {
