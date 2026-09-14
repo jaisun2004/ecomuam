@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { AlertTriangle, CheckCircle2, Download, RotateCcw } from "lucide-react";
+import { AlertTriangle, CheckCircle2, RotateCcw } from "lucide-react";
 import { useEcomCreate } from "@/pages/ecom/EcomCreateContext";
 import { platformDisplay } from "@/lib/ecom-reference/platforms";
-import { downloadCorrected } from "@/pages/ecom/xlsx-utils";
+import { findingsForRow } from "@/lib/ecom-qc/engine";
 
 interface Props {
   /** retry only the platforms that failed */
@@ -24,6 +24,9 @@ const EcomCreatedScreen: React.FC<Props> = ({ onRetry }) => {
   const heldBudget = heldRows.reduce((n, r) => n + (Number(r.budget_value) || 0), 0);
   const heldCurrency = heldRows[0]?.currency ?? "";
   const noEndDate = ec.rows.filter((r) => r.selected !== false && !r.end_date).length;
+  const warnings = ec.rows
+    .filter((r) => r.selected !== false)
+    .flatMap((r) => findingsForRow(ec.result, r.row).filter((f) => f.severity === "warning"));
 
   const resumeDate = (() => {
     const d = new Date();
@@ -56,19 +59,9 @@ const EcomCreatedScreen: React.FC<Props> = ({ onRetry }) => {
                 <p className="text-muted-foreground mt-0.5">
                   {o.status === "failed"
                     ? `${plural(o.rows, "campaign")} not created. ${o.detail}`
-                    : o.status === "exported"
-                      ? `${plural(o.rows, "campaign")} · file ready to download`
-                      : `${plural(o.rows, "campaign")} · pushed over the API`}
+                    : `${plural(o.rows, "campaign")} created`}
                 </p>
               </div>
-              {o.status === "exported" && (
-                <button
-                  onClick={() => downloadCorrected(ec.rows.filter((r) => r.platform === o.platform))}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] bg-surface-3 text-foreground hover:bg-surface-3/70 flex-shrink-0"
-                >
-                  <Download size={11} /> Download
-                </button>
-              )}
               {o.status === "failed" && onRetry && (
                 <button
                   onClick={() => onRetry([o.platform])}
@@ -96,11 +89,14 @@ const EcomCreatedScreen: React.FC<Props> = ({ onRetry }) => {
               No end date set. {noEndDate === 1 ? "This campaign runs" : "These campaigns run"} until you pause {noEndDate === 1 ? "it" : "them"}.
             </p>
           )}
+          {warnings.map((warning, index) => (
+            <p key={`${warning.row}-${warning.rule_key}-${index}`} className="text-[11px] text-sw-amber">{warning.message}</p>
+          ))}
           <p className="text-[11px] text-muted-foreground">Recommendations pause until {resumeDate}.</p>
         </div>
 
         <button
-          onClick={() => { ec.reset(); navigate("/"); }}
+          onClick={() => { ec.reset(); navigate("/", { state: { active: "campaigns" } }); }}
           className="mt-6 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90"
         >
           Go to Campaign Manager

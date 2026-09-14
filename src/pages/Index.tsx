@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
@@ -71,7 +72,9 @@ const views: Record<string, React.FC> = {
 };
 
 const IndexInner = () => {
-  const [active, setActive] = useState("cockpit");
+  const location = useLocation();
+  const requestedActive = (location.state as { active?: string } | null)?.active;
+  const [active, setActive] = useState(requestedActive && views[requestedActive] ? requestedActive : "cockpit");
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [scrollTarget, setScrollTarget] = useState<string | null>(null);
   const g = useGuardrails();

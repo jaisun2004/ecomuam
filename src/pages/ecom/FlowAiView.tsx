@@ -522,7 +522,7 @@ const FlowAiView: React.FC = () => {
               {recoOutcomes.filter((o) => o.status === "failed").map((o) => (
                 <p key={o.platform} className="mt-2 text-[11px] text-sw-red">{platformDisplay(o.platform)}: {o.detail}</p>
               ))}
-              <button onClick={() => { ec.reset(); navigate("/"); }} className="mt-3 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+              <button onClick={() => { ec.reset(); navigate("/", { state: { active: "campaigns" } }); }} className="mt-3 px-4 py-2 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90">
                 Go to Campaign Manager
               </button>
             </div>
