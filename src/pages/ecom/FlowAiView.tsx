@@ -456,7 +456,7 @@ const FlowAiView: React.FC = () => {
               key={run.id}
               run={run}
               isLatest={i === ec.runs.length - 1}
-              onContinueClean={continueClean}
+              onContinueClean={creation ? undefined : continueClean}
               onHold={holdRemaining}
               onReupload={() => fileRef.current?.click()}
               onDownloadTemplate={downloadTemplate}
