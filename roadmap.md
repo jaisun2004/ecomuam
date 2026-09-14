@@ -7,3 +7,4 @@
 
 ## Screen logic document (Sep 14)
 
+- [x] Wrote screen-logic.md (every screen, plain language, delivered)
