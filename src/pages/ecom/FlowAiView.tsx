@@ -60,6 +60,7 @@ const FlowAiView: React.FC = () => {
   const [chosenRecos, setChosenRecos] = useState<Set<string>>(new Set());
   const [creatingRecos, setCreatingRecos] = useState(false);
   const [recoOutcomes, setRecoOutcomes] = useState<PushOutcome[] | null>(null);
+  const [creation, setCreation] = useState<Creation | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
