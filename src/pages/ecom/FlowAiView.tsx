@@ -167,19 +167,6 @@ const FlowAiView: React.FC = () => {
     setParsing(false);
   };
 
-  const holdRemaining = () => {
-    if (!latest || !latest.heldRows.length) {
-      say("There is nothing held right now.");
-      return;
-    }
-    const unit = ec.countsRows ? "row" : "campaign";
-    const heldRows = ec.rows.filter((r) => latest.heldRows.includes(r.row));
-    ec.holdRows(heldRows, ec.result, latest.fileName, `Parked from ${latest.label}`);
-    const { kept, dropped } = ec.keepOnlyCleanRows();
-    setShowHeld(true);
-    say(`Parked ${n(dropped, unit)}. ${n(kept, unit)} stay here. Reopen them any time from Held batches.`);
-  };
-
   /* ── Creation from the check card ── */
   const heldEntries = (rows: BatchRow[], result: QcResult | null): HeldEntry[] =>
     rows.map((row) => ({ row, findings: (result?.findings ?? []).filter((f) => f.row === row.row) }));
