@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
+import CampaignCreateModal, { type CampaignPrefill } from "@/views/CampaignCreateModal";
+
 
 /* One dark store per pincode — locality map per city */
 const cityLocalities: Record<string, { pincode: string; locality: string }[]> = {
@@ -719,8 +721,45 @@ const AvailabilityView: React.FC = () => {
   );
 };
 
+const TRIGGER_ROWS = [
+  { city: "Bandra West", platform: "Blinkit", compOos: 4, yourAvail: 96, campaign: "Boost Parle-G 120g — Bandra West", auto: true },
+  { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Bourbon vs Britannia", auto: true },
+  { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Britannia Marie 150g Share Capture", auto: true },
+  { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Britannia Conquest", auto: false },
+  { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Hide & Seek Push", auto: false },
+  { city: "Delhi NCR Gurugram", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Unibic Defensive", auto: true },
+];
+
+const OOS_OPPS = [
+  { competitor: "Britannia", product: "Britannia Good Day 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
+  { competitor: "Britannia", product: "Britannia Cookies 250g", platform: "Blinkit", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
+  { competitor: "Unibic", product: "Britannia Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+];
+
+/** Our own SKU names, longest first, so the suggested-campaign text yields the SKU it names. */
+const OWN_SKU_NAMES = [
+  "Britannia Marie 150g",
+  "Parle-G 120g",
+  "Parle-G 250g",
+  "Marie Gold 120g",
+  "Marie Gold 250g",
+  "Hide & Seek 120g",
+  "Hide & Seek",
+  "Bourbon 250g",
+  "Bourbon 120g",
+  "Bourbon",
+  "Sunfeast Orange 250g",
+  "Sunfeast Orange 120g",
+].sort((a, b) => b.length - a.length);
+
+function skuFromCampaign(campaign: string): string {
+  return OWN_SKU_NAMES.find((n) => campaign.toLowerCase().includes(n.toLowerCase())) ?? "";
+}
+
 const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
+  const [modal, setModal] = useState<{ keys: (string | number)[]; prefill: CampaignPrefill } | null>(null);
+
 
   const skuNames = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Hide & Seek Choco", "Sunfeast Orange 120g"];
   const heatmapData = useMemo(() => skuNames.map(sku => ({
@@ -837,7 +876,22 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
         <div className="flex items-center justify-between mb-3">
           <p className="text-[10px] text-muted-foreground">Cities where competitor availability is low and own SKU coverage is healthy — campaigns auto-trigger to capture the demand.</p>
           <button
-            onClick={() => toast({ title: "All pending triggers fired", description: "5 city-level campaigns queued" })}
+            onClick={() => {
+              const pending = TRIGGER_ROWS.filter((r, i) => !(r.auto || !!compCampaignStates[i]));
+              if (!pending.length) return;
+              setModal({
+                keys: TRIGGER_ROWS.map((r, i) => (r.auto || compCampaignStates[i] ? null : i)).filter((k): k is number => k !== null),
+                prefill: {
+                  platform: pending[0].platform,
+                  targetingMode: "city",
+                  cities: pending.map((r) => r.city),
+                  sku: skuFromCampaign(pending[0].campaign),
+                  keywords: [],
+                  dailyBudget: 1000,
+                  contextLine: pending[0].campaign,
+                },
+              });
+            }}
             className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1">
             <Zap size={11} /> Trigger All Pending
           </button>
@@ -853,14 +907,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
             </tr>
           </thead>
           <tbody>
-            {[
-              { city: "Bandra West", platform: "Blinkit", compOos: 4, yourAvail: 96, campaign: "Boost Parle-G 120g — Bandra West", auto: true },
-              { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Bourbon vs Britannia", auto: true },
-              { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Britannia Marie 150g Share Capture", auto: true },
-              { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Britannia Conquest", auto: false },
-              { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Hide & Seek Push", auto: false },
-              { city: "Delhi NCR Gurugram", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Unibic Defensive", auto: true },
-            ].map((r, i) => {
+            {TRIGGER_ROWS.map((r, i) => {
               const triggered = r.auto || !!compCampaignStates[i];
               return (
                 <tr key={i} className={i % 2 === 0 ? "bg-surface-2/50" : ""}>
@@ -879,7 +926,20 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
                       </span>
                     ) : (
                       <button
-                        onClick={() => { setCompCampaignStates(p => ({ ...p, [i]: true })); toast({ title: "Campaign triggered", description: `${r.campaign} in ${r.city}` }); }}
+                        onClick={() =>
+                          setModal({
+                            keys: [i],
+                            prefill: {
+                              platform: r.platform,
+                              targetingMode: "city",
+                              cities: [r.city],
+                              sku: skuFromCampaign(r.campaign),
+                              keywords: [],
+                              dailyBudget: 1000,
+                              contextLine: r.campaign,
+                            },
+                          })
+                        }
                         className="px-2 py-1 rounded-lg text-[10px] font-medium bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1">
                         <Megaphone size={10} /> Trigger
                       </button>
@@ -896,11 +956,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
       <PanelCard title="Competition OOS — Your Opportunity" badge="Strike now" badgeColor="red" delay={0.2}>
         <p className="text-[10px] text-muted-foreground mb-3">Competitor products currently out of stock. Launch campaigns to capture their demand.</p>
         <div className="space-y-2">
-          {[
-            { competitor: "Britannia", product: "Britannia Good Day 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
-            { competitor: "Britannia", product: "Britannia Cookies 250g", platform: "Blinkit", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
-            { competitor: "Unibic", product: "Britannia Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
-          ].map((item, i) => (
+          {OOS_OPPS.map((item, i) => (
             <div key={i} className="p-3 rounded-xl bg-sw-green-dim/10 border border-sw-green/20">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-foreground font-medium">{item.competitor} — {item.product}</span>
@@ -913,7 +969,20 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
                 ))}
               </div>
               <button
-                onClick={() => setCompCampaignStates(p => ({ ...p, [`oos-${i}`]: true }))}
+                onClick={() =>
+                  setModal({
+                    keys: [`oos-${i}`],
+                    prefill: {
+                      platform: item.platform,
+                      targetingMode: item.platform.toLowerCase().startsWith("amazon") ? "country" : "city",
+                      cities: [],
+                      sku: "",
+                      keywords: item.keywords,
+                      dailyBudget: 1000,
+                      contextLine: `${item.platform} · Est. demand: ${item.estDemand}`,
+                    },
+                  })
+                }
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
                   compCampaignStates[`oos-${i}`] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
                 }`}>
@@ -924,6 +993,23 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
           ))}
         </div>
       </PanelCard>
+
+      <CampaignCreateModal
+        open={!!modal}
+        onOpenChange={(o) => !o && setModal(null)}
+        prefill={modal?.prefill}
+        onConfirm={(draft) => {
+          const keys = modal?.keys ?? [];
+          setCompCampaignStates((p) => {
+            const next = { ...p } as Record<string | number, boolean>;
+            keys.forEach((k) => { next[k] = true; });
+            return next as Record<number, boolean>;
+          });
+          toast({ title: "Campaign launched", description: `${draft.campaignName || "Untitled campaign"} · ₹${draft.dailyBudget || 0}/day` });
+          setModal(null);
+        }}
+      />
+
     </div>
   );
 };
