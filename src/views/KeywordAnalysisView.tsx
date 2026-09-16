@@ -202,7 +202,6 @@ const losingKeywords = [
 const KeywordAnalysisView: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("Instamart");
   const [tab, setTab] = useState("overview");
-  const [defendStates, setDefendStates] = useState<Record<number, boolean>>({});
   const [reviewItem, setReviewItem] = useState<ReviewPayload | null>(null);
   const g = useGuardrails();
 
@@ -325,12 +324,10 @@ const KeywordAnalysisView: React.FC = () => {
                   </div>
                   <p className="text-[9px] text-muted-foreground mb-2">Reason: {lk.reason}</p>
                   <button
-                    onClick={() => setDefendStates(p => ({ ...p, [i]: true }))}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                      defendStates[i] ? "bg-sw-green-dim text-sw-green" : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}>
+                    onClick={() => setReviewItem({ source: "ranking", keyword: lk.keyword, platform: selectedPlatform, actionType: "Defend keyword", recommendation: lk.reason })}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all bg-primary/10 text-primary hover:bg-primary/20">
                     <Shield size={10} />
-                    {defendStates[i] ? "✓ Defense Campaign Launched" : "Defend This Keyword"}
+                    Defend This Keyword
                   </button>
                 </div>
               ))}
@@ -349,7 +346,7 @@ const KeywordAnalysisView: React.FC = () => {
                       <p className="text-[9px] text-muted-foreground">{k.searchVol} monthly searches · {k.topCompetitor} at #{k.compRank} · Your SoS: {k.shareOfSearch}%</p>
                     </div>
                     <button
-                      onClick={() => g.navigateWithContext("campaigns", "campaign-digest", { type: "keyword-boost", params: { keyword: k.keyword, platform: selectedPlatform } })}
+                      onClick={() => setReviewItem({ source: "ranking", keyword: k.keyword, platform: selectedPlatform, actionType: "Optimise campaign", recommendation: `${k.searchVol} monthly searches · ${k.topCompetitor} at #${k.compRank} · Your SoS: ${k.shareOfSearch}%` })}
                       className="text-[10px] font-medium px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-1">
                       Optimise Campaign <ArrowRight size={10} />
                     </button>
