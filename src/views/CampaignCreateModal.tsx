@@ -2,9 +2,6 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Megaphone } from "lucide-react";
-import { PRODUCT_LIST } from "@/lib/ecom-reference/workbook-data";
-
-export const PLACEMENT_OPTIONS = ["Search Top", "Category", "Brand Shelf", "Home Carousel", "Product Page"];
 
 /** Platforms the app can launch on, and how they target. */
 export const MODAL_PLATFORMS: { name: string; slug: string; mode: TargetingMode; currency: "INR" | "AED" }[] = [
@@ -19,27 +16,10 @@ export const MODAL_PLATFORMS: { name: string; slug: string; mode: TargetingMode;
   { name: "Amazon AE", slug: "amazonae", mode: "country", currency: "AED" },
 ];
 
-export const CITY_OPTIONS = [
-  "All cities",
-  "Delhi",
-  "Gurugram",
-  "Noida",
-  "Mumbai",
-  "Pune",
-  "Bengaluru",
-  "Hyderabad",
-  "Chennai",
-  "Kolkata",
-  "Ahmedabad",
-  "Jaipur",
-  "Dubai",
-  "Abu Dhabi",
-  "Sharjah",
-];
-
-export const COUNTRY_OPTIONS = ["India", "United Arab Emirates"];
-
 export type TargetingMode = "city" | "country";
+
+export const MATCH_TYPES = ["Exact", "Phrase", "Broad"] as const;
+export type MatchType = (typeof MATCH_TYPES)[number];
 
 export interface CampaignPrefill {
   reviewTitle?: string;
@@ -61,27 +41,19 @@ export interface CampaignDraft {
   platform: string;
   sku: string;
   targetingMode: TargetingMode;
-  cities: string[];
-  countries: string[];
-  keywords: { kw: string; bid: number }[];
+  locations: string[];
+  keywords: { kw: string; matchType: MatchType; bid: number }[];
   dailyBudget: number | "";
   duration: string;
-  excludedPlacements: string[];
 }
 
 function platformOf(name: string) {
   return MODAL_PLATFORMS.find((p) => p.name === name || p.slug === name);
 }
 
-function skusFor(platformName: string): string[] {
-  const p = platformOf(platformName);
-  const rows = p ? PRODUCT_LIST.filter((x) => x.platform === p.slug) : [];
-  const names = Array.from(new Set((rows.length ? rows : PRODUCT_LIST).map((x) => x.name)));
-  return names.sort();
-}
-
 const label = "text-[10px] text-muted-foreground uppercase tracking-wide mb-1";
 const field = "w-full px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-xs";
+const readOnlyText = "text-xs text-foreground font-mono py-1";
 const warn = "text-[10px] text-sw-amber mt-1";
 
 const CampaignCreateModal: React.FC<{
@@ -92,19 +64,18 @@ const CampaignCreateModal: React.FC<{
 }> = ({ open, onOpenChange, prefill, onConfirm }) => {
   const initial = React.useCallback((): CampaignDraft => {
     const platform = prefill?.platform ?? "";
-    const mode = prefill?.targetingMode ?? platformOf(platform)?.mode ?? "city";
+    const mode = platformOf(platform)?.mode ?? prefill?.targetingMode ?? "city";
     const kws = prefill?.keywords ?? [];
+    const locations = mode === "country" ? prefill?.countries ?? [] : prefill?.cities ?? [];
     return {
       campaignName: prefill?.campaignName ?? "",
       platform,
       sku: prefill?.sku ?? "",
       targetingMode: mode,
-      cities: prefill?.cities ?? [],
-      countries: prefill?.countries ?? [],
-      keywords: kws.map((kw, i) => ({ kw, bid: prefill?.bids?.[i] ?? 0 })),
+      locations: [...locations],
+      keywords: kws.map((kw, i) => ({ kw, matchType: "Exact" as MatchType, bid: prefill?.bids?.[i] ?? 0 })),
       dailyBudget: prefill?.dailyBudget ?? 1000,
       duration: prefill?.duration ?? "",
-      excludedPlacements: [],
     };
   }, [prefill]);
 
@@ -120,13 +91,14 @@ const CampaignCreateModal: React.FC<{
 
   const update = (patch: Partial<CampaignDraft>) => setDraft((d) => ({ ...d, ...patch }));
 
-  const currency = platformOf(draft.platform)?.currency ?? "INR";
-  const skuList = skusFor(draft.platform);
+  const platformMeta = platformOf(draft.platform);
+  const currency = platformMeta?.currency ?? "INR";
   const budgetNum = typeof draft.dailyBudget === "number" ? draft.dailyBudget : 0;
   const budgetWarning =
     draft.dailyBudget === "" ? "No daily budget set." : currency === "INR" && budgetNum < 1000 ? "Below the Rs 1,000 minimum used on Indian platforms" : "";
 
-  const toggleCity = (c: string) => update({ cities: draft.cities.includes(c) ? draft.cities.filter((x) => x !== c) : [...draft.cities, c] });
+  const isCountry = draft.targetingMode === "country";
+  const fallbackChip = isCountry ? "All countries" : "All cities";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -150,34 +122,12 @@ const CampaignCreateModal: React.FC<{
             </div>
             <div>
               <div className={label}>Platform</div>
-              <Select
-                value={draft.platform || undefined}
-                onValueChange={(v) => {
-                  const mode = platformOf(v)?.mode ?? draft.targetingMode;
-                  update({ platform: v, targetingMode: mode });
-                }}
-              >
-                <SelectTrigger className="h-7 text-[11px]"><SelectValue placeholder="Select platform" /></SelectTrigger>
-                <SelectContent>
-                  {MODAL_PLATFORMS.map((p) => <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              {!draft.platform && <p className={warn}>No platform set.</p>}
+              <p className={readOnlyText}>{platformMeta?.name ?? draft.platform ?? "—"}</p>
             </div>
 
             <div>
               <div className={label}>Product / SKU</div>
-              <input
-                list="campaign-sku-list"
-                value={draft.sku}
-                onChange={(e) => update({ sku: e.target.value })}
-                placeholder="Type or pick a SKU"
-                className={field}
-              />
-              <datalist id="campaign-sku-list">
-                {skuList.map((s) => <option key={s} value={s} />)}
-              </datalist>
-              {!draft.sku.trim() && <p className={warn}>No product selected.</p>}
+              <p className={readOnlyText}>{draft.sku.trim() ? draft.sku : "—"}</p>
             </div>
 
             <div>
@@ -199,88 +149,27 @@ const CampaignCreateModal: React.FC<{
           </div>
 
           <div className="p-2 rounded-lg bg-surface-2 border border-subtle">
-            <div className={label}>Targeting</div>
-            <div className="flex gap-1.5 mb-2">
-              {(["city", "country"] as TargetingMode[]).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => update({ targetingMode: m })}
-                  className={`px-2 py-0.5 rounded-full text-[10px] border ${
-                    draft.targetingMode === m ? "bg-primary/15 text-primary border-primary/30" : "bg-surface-3 text-foreground border-subtle"
-                  }`}
-                >
-                  {m === "city" ? "City level" : "Country level"}
-                </button>
-              ))}
-            </div>
-            {draft.targetingMode === "city" ? (
-              <>
-                <div className="flex flex-wrap gap-1.5">
-                  {CITY_OPTIONS.map((c) => {
-                    const on = draft.cities.includes(c);
-                    return (
-                      <button
-                        key={c}
-                        onClick={() => toggleCity(c)}
-                        className={`px-2 py-0.5 rounded-full text-[10px] border ${
-                          on ? "bg-primary/15 text-primary border-primary/30" : "bg-surface-3 text-foreground border-subtle hover:bg-surface-2"
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    );
-                  })}
-                </div>
-                {draft.cities.length === 0 && <p className={warn}>No cities selected.</p>}
-              </>
-            ) : (
-              <>
-                <div className="flex flex-wrap gap-1.5">
-                  {COUNTRY_OPTIONS.map((c) => {
-                    const on = draft.countries.includes(c);
-                    return (
-                      <button
-                        key={c}
-                        onClick={() =>
-                          update({ countries: on ? draft.countries.filter((x) => x !== c) : [...draft.countries, c] })
-                        }
-                        className={`px-2 py-0.5 rounded-full text-[10px] border ${
-                          on ? "bg-primary/15 text-primary border-primary/30" : "bg-surface-3 text-foreground border-subtle hover:bg-surface-2"
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    );
-                  })}
-                </div>
-                {draft.countries.length === 0 && <p className={warn}>No countries selected.</p>}
-              </>
-            )}
-          </div>
-
-          <div>
-            <div className={label}>Exclude placements</div>
+            <div className={label}>{isCountry ? "Country" : "Cities"}</div>
             <div className="flex flex-wrap gap-1.5">
-              {PLACEMENT_OPTIONS.map((p) => {
-                const excluded = draft.excludedPlacements.includes(p);
-                return (
-                  <button
-                    key={p}
-                    onClick={() =>
-                      update({
-                        excludedPlacements: excluded
-                          ? draft.excludedPlacements.filter((x) => x !== p)
-                          : [...draft.excludedPlacements, p],
-                      })
-                    }
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-mono border transition-colors ${
-                      excluded ? "bg-sw-red-dim text-sw-red border-sw-red/30 line-through" : "bg-surface-3 text-foreground border-subtle hover:bg-surface-2"
-                    }`}
+              {draft.locations.length === 0 ? (
+                <span className="px-2 py-0.5 rounded-full text-[10px] border bg-surface-3 text-foreground border-subtle">{fallbackChip}</span>
+              ) : (
+                draft.locations.map((loc) => (
+                  <span
+                    key={loc}
+                    className="px-2 py-0.5 rounded-full text-[10px] border bg-primary/15 text-primary border-primary/30 inline-flex items-center gap-1"
                   >
-                    {p}
-                  </button>
-                );
-              })}
+                    {loc}
+                    <button
+                      onClick={() => update({ locations: draft.locations.filter((x) => x !== loc) })}
+                      className="hover:text-sw-red"
+                      aria-label={`Remove ${loc}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))
+              )}
             </div>
           </div>
 
@@ -298,6 +187,19 @@ const CampaignCreateModal: React.FC<{
                     }}
                     className="flex-1 px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground font-mono text-[11px]"
                   />
+                  <Select
+                    value={k.matchType}
+                    onValueChange={(v) => {
+                      const next = [...draft.keywords];
+                      next[idx] = { ...next[idx], matchType: v as MatchType };
+                      update({ keywords: next });
+                    }}
+                  >
+                    <SelectTrigger className="h-7 w-24 text-[11px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {MATCH_TYPES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                   <input
                     type="number"
                     step="0.1"
@@ -330,7 +232,7 @@ const CampaignCreateModal: React.FC<{
               <button
                 onClick={() => {
                   if (!newKw.trim()) return;
-                  update({ keywords: [...draft.keywords, { kw: newKw.trim(), bid: 0 }] });
+                  update({ keywords: [...draft.keywords, { kw: newKw.trim(), matchType: "Exact", bid: 0 }] });
                   setNewKw("");
                 }}
                 className="px-2 py-1 rounded-md bg-surface-3 border border-subtle text-foreground text-[11px] hover:bg-surface-2"
