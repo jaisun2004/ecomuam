@@ -713,7 +713,7 @@ const PricingView: React.FC = () => {
           if (openCampaign?._index != null) {
             setCampaignStates((p) => ({ ...p, [openCampaign._index]: true }));
           }
-          const where = draft.targetingMode === "city" ? draft.cities.join(", ") || "No cities" : draft.countries.join(", ") || "No countries";
+          const where = draft.locations.join(", ") || (draft.targetingMode === "city" ? "All cities" : "All countries");
           toast({
             title: "Campaign launched",
             description: `${draft.campaignName || "Untitled campaign"} · ₹${draft.dailyBudget || 0}/day · ${draft.keywords.length} keywords · ${where}`,
