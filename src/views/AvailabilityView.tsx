@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
+import CampaignCreateModal, { type CampaignPrefill } from "@/views/CampaignCreateModal";
+
 
 /* One dark store per pincode — locality map per city */
 const cityLocalities: Record<string, { pincode: string; locality: string }[]> = {
