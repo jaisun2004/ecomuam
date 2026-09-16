@@ -882,6 +882,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
               setModal({
                 keys: TRIGGER_ROWS.map((r, i) => (r.auto || compCampaignStates[i] ? null : i)).filter((k): k is number => k !== null),
                 prefill: {
+                  reviewTitle: "Review Competitor Low-Availability Campaign",
                   platform: pending[0].platform,
                   targetingMode: "city",
                   cities: pending.map((r) => r.city),
@@ -930,6 +931,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
                           setModal({
                             keys: [i],
                             prefill: {
+                              reviewTitle: "Review Competitor Low-Availability Campaign",
                               platform: r.platform,
                               targetingMode: "city",
                               cities: [r.city],
@@ -973,6 +975,7 @@ const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; com
                   setModal({
                     keys: [`oos-${i}`],
                     prefill: {
+                      reviewTitle: "Review Launch Conquest Campaign",
                       platform: item.platform,
                       targetingMode: item.platform.toLowerCase().startsWith("amazon") ? "country" : "city",
                       cities: [],

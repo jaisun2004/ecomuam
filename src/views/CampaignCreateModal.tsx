@@ -42,6 +42,7 @@ export const COUNTRY_OPTIONS = ["India", "United Arab Emirates"];
 export type TargetingMode = "city" | "country";
 
 export interface CampaignPrefill {
+  reviewTitle?: string;
   campaignName?: string;
   platform?: string;
   sku?: string;
@@ -131,7 +132,7 @@ const CampaignCreateModal: React.FC<{
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-sm">Review Price-Win Campaign</DialogTitle>
+          <DialogTitle className="text-sm">{prefill?.reviewTitle ?? "Review Price-Win Campaign"}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 text-xs">
