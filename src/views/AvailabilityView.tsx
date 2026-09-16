@@ -719,8 +719,45 @@ const AvailabilityView: React.FC = () => {
   );
 };
 
+const TRIGGER_ROWS = [
+  { city: "Bandra West", platform: "Blinkit", compOos: 4, yourAvail: 96, campaign: "Boost Parle-G 120g — Bandra West", auto: true },
+  { city: "Downtown Mumbai", platform: "Zepto", compOos: 3, yourAvail: 92, campaign: "Conquest Bourbon vs Britannia", auto: true },
+  { city: "Riyadh Olaya", platform: "Blinkit", compOos: 5, yourAvail: 88, campaign: "Britannia Marie 150g Share Capture", auto: true },
+  { city: "Jeddah Al Hamra", platform: "Zepto", compOos: 2, yourAvail: 84, campaign: "Marie Gold — Britannia Conquest", auto: false },
+  { city: "Doha West Bay", platform: "Blinkit", compOos: 3, yourAvail: 78, campaign: "Hide & Seek Push", auto: false },
+  { city: "Delhi NCR Gurugram", platform: "Instamart", compOos: 4, yourAvail: 91, campaign: "Sunfeast — Unibic Defensive", auto: true },
+];
+
+const OOS_OPPS = [
+  { competitor: "Britannia", product: "Britannia Good Day 150g", platform: "Zepto", since: "12h", keywords: ["cream biscuits", "sunfeast cream"], estDemand: "4.2K searches/day" },
+  { competitor: "Britannia", product: "Britannia Cookies 250g", platform: "Blinkit", since: "6h", keywords: ["parle biscuits", "glucose biscuits"], estDemand: "8.1K searches/day" },
+  { competitor: "Unibic", product: "Britannia Premium", platform: "Blinkit", since: "3h", keywords: ["dark fantasy", "chocolate biscuits premium"], estDemand: "3.8K searches/day" },
+];
+
+/** Our own SKU names, longest first, so the suggested-campaign text yields the SKU it names. */
+const OWN_SKU_NAMES = [
+  "Britannia Marie 150g",
+  "Parle-G 120g",
+  "Parle-G 250g",
+  "Marie Gold 120g",
+  "Marie Gold 250g",
+  "Hide & Seek 120g",
+  "Hide & Seek",
+  "Bourbon 250g",
+  "Bourbon 120g",
+  "Bourbon",
+  "Sunfeast Orange 250g",
+  "Sunfeast Orange 120g",
+].sort((a, b) => b.length - a.length);
+
+function skuFromCampaign(campaign: string): string {
+  return OWN_SKU_NAMES.find((n) => campaign.toLowerCase().includes(n.toLowerCase())) ?? "";
+}
+
 const AvailabilityAnalytics: React.FC<{ g: ReturnType<typeof useGuardrails>; compCampaignStates: Record<number, boolean>; setCompCampaignStates: React.Dispatch<React.SetStateAction<Record<number, boolean>>> }> = ({ g, compCampaignStates, setCompCampaignStates }) => {
   const [selectedCell, setSelectedCell] = useState<{ sku: string; day: number; value: number } | null>(null);
+  const [modal, setModal] = useState<{ keys: (string | number)[]; prefill: CampaignPrefill } | null>(null);
+
 
   const skuNames = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 150g", "Sunfeast Orange 250g", "Hide & Seek Choco", "Sunfeast Orange 120g"];
   const heatmapData = useMemo(() => skuNames.map(sku => ({
