@@ -692,30 +692,36 @@ const PricingView: React.FC = () => {
         </div>
       )}
 
-      <Dialog open={!!openCampaign} onOpenChange={(o) => !o && setOpenCampaign(null)}>
-        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-sm">Review Price-Win Campaign</DialogTitle>
-          </DialogHeader>
-          {openCampaign && (
-            <CampaignReviewForm
-              source={openCampaign}
-              onCancel={() => setOpenCampaign(null)}
-              onConfirm={(draft) => {
-                if (openCampaign?._index != null) {
-                  setCampaignStates(p => ({ ...p, [openCampaign._index]: true }));
-                }
-                toast({
-                  title: "Campaign launched",
-                  description: `${draft.campaignName} · ₹${draft.budget}/day · ${draft.keywords.length} keywords · ${draft.isNational ? "National" : draft.cities}`,
-                });
-                setOpenCampaign(null);
-              }}
-            />
-          )}
-        </DialogContent>
+      <CampaignCreateModal
+        open={!!openCampaign}
+        onOpenChange={(o) => !o && setOpenCampaign(null)}
+        prefill={
+          openCampaign
+            ? {
+                campaignName: openCampaign.campaignName,
+                platform: openCampaign.platform,
+                sku: openCampaign.sku,
+                keywords: openCampaign.keywords ?? [],
+                bids: (openCampaign.keywords ?? []).map(() => parseFloat(String(openCampaign.bid).replace(/[^0-9.]/g, "")) || 0),
+                dailyBudget: parseFloat(String(openCampaign.budget).replace(/[^0-9.]/g, "")) || 1000,
+                duration: openCampaign.duration,
+                contextLine: openCampaign.insight,
+              }
+            : undefined
+        }
+        onConfirm={(draft) => {
+          if (openCampaign?._index != null) {
+            setCampaignStates((p) => ({ ...p, [openCampaign._index]: true }));
+          }
+          const where = draft.targetingMode === "city" ? draft.cities.join(", ") || "No cities" : draft.countries.join(", ") || "No countries";
+          toast({
+            title: "Campaign launched",
+            description: `${draft.campaignName || "Untitled campaign"} · ₹${draft.dailyBudget || 0}/day · ${draft.keywords.length} keywords · ${where}`,
+          });
+          setOpenCampaign(null);
+        }}
+      />
 
-      </Dialog>
     </div>
   );
 };
