@@ -31,12 +31,11 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
     <div className="sticky top-0 h-[60px] bg-background border-b border-subtle flex items-center justify-between px-6 z-40">
       {/* Brand + Tabs */}
       <div className="flex items-center gap-6">
-        <h1 className="font-display font-bold text-lg">
-          <span className="text-foreground"></span>
-          <span className="text-primary"></span>
+        <h1 className="font-display font-bold text-lg tracking-tight">
+          <span className="text-foreground">Shelf</span><span className="text-primary">wise</span>
         </h1>
 
-        <div className="flex items-center bg-surface-2 rounded-full p-0.5">
+        <div className="ml-auto flex items-center bg-surface-2 rounded-full p-0.5">
           <button
             onClick={() => onChange("shelf")}
             className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
