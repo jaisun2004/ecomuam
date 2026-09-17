@@ -35,7 +35,7 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
           <span className="text-foreground">Shelf</span><span className="text-primary">wise</span>
         </h1>
 
-        <div className="ml-auto flex items-center bg-surface-2 rounded-full p-0.5">
+        <div className="ml-8 flex items-center bg-surface-2 rounded-full p-0.5">
           <button
             onClick={() => onChange("shelf")}
             className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
