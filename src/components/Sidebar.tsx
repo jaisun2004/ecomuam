@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LayoutGrid, ShoppingCart, Search, BarChart2, Radio, User, Package, DollarSign, Eye, Zap, CalendarDays, FileText, Target, Tv, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeft, Shield, Gauge, PieChart, FileCheck, Settings, Database, LayoutList, MapPin, Lightbulb, KeyRound, ClipboardCheck, Trophy, Sparkles, ScrollText, ClipboardList, Image as ImageIcon, ShieldCheck, TrendingUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import affleLogo from "@/assets/affle-logo.jpg.asset.json";
+import mfilteritLogo from "@/assets/mfilterit-logo.png.asset.json";
 
 
 const cockpitItem = { id: "cockpit", icon: Gauge, label: "Central Cockpit", notify: false };
@@ -126,8 +126,8 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onChange, expanded, onToggleE
           onClick={() => onChange("cockpit")}
         >
           <img
-            src={affleLogo.url}
-            alt="Affle — Insights powered by mFilterIt"
+            src={mfilteritLogo.url}
+            alt="mFilterIt"
             className={expanded ? "h-9 w-full object-contain" : "w-full h-full object-contain object-center"}
           />
         </div>
