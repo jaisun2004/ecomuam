@@ -529,13 +529,14 @@ const PricingView: React.FC = () => {
             </div>
           ) : (
             (() => {
-              const plats = ["Blinkit", "Instamart", "Zepto"];
+              const plats = ["Blinkit", "Instamart", "Zepto", "Flipkart"];
               const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
               const data = base.map((row: any, i: number) => ({
                 day: row.day,
                 Blinkit: row.yours,
                 Instamart: row.yours - 1 + (i % 3),
                 "Zepto": row.yours + 2 - (i % 4),
+                Flipkart: row.yours - 2 + (i % 2),
               }));
               const latest: any = data[data.length - 1] || {};
               const prev: any = data[data.length - 8] || latest;
