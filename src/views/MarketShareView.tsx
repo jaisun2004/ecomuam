@@ -44,7 +44,7 @@ const platformColorMap: Record<string, string> = {
   "Zepto": "#833AB4",
 };
 
-const platforms = ["Blinkit", "Zepto", "Instamart", "Amazon India", "BigBasket"];
+const platforms = ["Blinkit", "Zepto", "Instamart", "Amazon India", "BigBasket", "Flipkart"];
 const competitors = ["Britannia", "Parle", "Sunfeast", "Patanjali", "Unibic"];
 
 const platformShareData = platforms.map(p => ({

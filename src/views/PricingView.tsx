@@ -13,7 +13,7 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 const skuOptions = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 250g", "Bourbon 250g", "Hide & Seek 120g"];
 /* SKUs that have price data across platforms (used by Own SKU × Platforms) */
 const ownSkuPlatformOptions = ["Britannia Marie 250g", "Hide & Seek 120g"];
-const platformOptions = ["Instamart", "Blinkit", "Zepto"];
+const platformOptions = ["Instamart", "Blinkit", "Zepto", "Flipkart"];
 const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];

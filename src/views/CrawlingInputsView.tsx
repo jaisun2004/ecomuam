@@ -112,7 +112,7 @@ TagInput.displayName = "TagInput";
 const availableKeywords = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip biscuits", "biscuits combo", "health biscuits", "kids biscuits", "premium biscuits", "rusk online"];
 const availableProducts = ["SKU-GD200", "SKU-GD100", "SKU-MG250", "SKU-5050", "SKU-NC100", "SKU-MF150", "SKU-TREAT75", "SKU-BOURBON", "SKU-JIM100", "SKU-TIGER250"];
 const availablePincodes = ["110001", "110020", "110045", "400001", "400050", "560001", "560034", "500001", "600001", "700001", "411001", "380001", "302001", "226001", "144001"];
-const availablePlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit", "JioMart", "BigBasket"];
+const availablePlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "Blinkit", "JioMart", "BigBasket", "Flipkart"];
 
 const campaignKeywords = [
   { value: "butter biscuits", volume: "142K" },
