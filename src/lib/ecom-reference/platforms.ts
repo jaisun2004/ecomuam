@@ -57,6 +57,16 @@ export const PLATFORMS: PlatformDef[] = [
     supportsBidRange: false,
   },
   {
+    slug: "Flipkart",
+    display: "Flipkart",
+    geo: "IN",
+    currency: "INR",
+    skuFormat: "FSN, 16-char alphanumeric, e.g. CKBFK7GDY150GZQA",
+    skuPattern: /^[A-Z0-9]{16}$/i,
+    matchTypes: ["exact", "phrase", "broad"],
+    supportsBidRange: false,
+  },
+  {
     slug: "noon_minutes_uae_app",
     display: "Noon Minutes",
     geo: "UAE",
@@ -109,6 +119,8 @@ export const PLATFORM_ALIASES: Record<string, string> = {
   blinkit: "Blinkit",
   bigbasket: "BigBasket",
   "big basket": "BigBasket",
+  flipkart: "Flipkart",
+  fk: "Flipkart",
   "noon minutes": "noon_minutes_uae_app",
   noon: "noon_minutes_uae_app",
   noon_minutes_uae_app: "noon_minutes_uae_app",
@@ -320,6 +332,14 @@ export const PLATFORM_CAMPAIGN_TYPES: { platform: string; geo: Geo; types: Campa
     types: [
       { id: "sp", title: "Sponsored Products", description: "SKU-level ads in search and browse." },
       { id: "store", title: "Brand Store", description: "A hosted brand page with placements driving to it." },
+    ],
+  },
+  {
+    platform: "Flipkart",
+    geo: "IN",
+    types: [
+      { id: "pla", title: "Product Listing Ads", description: "Sponsored products in search and browse." },
+      { id: "display", title: "Display Ads", description: "Banner placements across the storefront." },
     ],
   },
   {
