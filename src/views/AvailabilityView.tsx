@@ -492,7 +492,7 @@ const AvailabilityView: React.FC = () => {
         <p className="text-[10px] text-muted-foreground mb-3">Click any cell to raise a restock task. Green ≤1d · Amber 2–3d · Red ≥4d. Truck icon = in transit.</p>
         {(() => {
           const skus = ["Parle-G 250g", "Marie Gold 120g", "Bourbon 250g", "Britannia Marie 150g", "Sunfeast Orange 120g", "Hide & Seek Choco 120g"];
-          const plats = ["Blinkit", "Instamart", "Zepto", "Amazon India"];
+          const plats = ["Blinkit", "Instamart", "Zepto", "Amazon India", "Flipkart"];
           const fixedDays: Record<string, number[]> = {
             "Bourbon 250g": [2, 4, 1, 5],
             "Sunfeast Orange 120g": [4, 2, 3, 1],
