@@ -427,7 +427,7 @@ const CampaignLaunchModal = ({
   setLaunched: (v: boolean) => void;
   onClose: () => void;
 }) => {
-  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "BigBasket"];
+  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "BigBasket", "Flipkart"];
   const togglePlatform = (p: string) => {
     setForm({ ...form, platforms: form.platforms.includes(p) ? form.platforms.filter((x: string) => x !== p) : [...form.platforms, p] });
   };

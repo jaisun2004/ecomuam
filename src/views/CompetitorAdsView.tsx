@@ -27,8 +27,8 @@ const contestedKeywords = [
   { keyword: "choco chip biscuits", yourPos: "#6", topComp: "Britannia Premium", compBidIndex: "1.8x", overlap: 25, yourShare: "12%", action: "Raise bid" },
 ];
 
-const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Blinkit: "#FDDC2B", "Zepto": "#833AB4" };
+const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto", "Flipkart"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Blinkit: "#FDDC2B", "Zepto": "#833AB4", Flipkart: "#047BD5" };
 
 const keywordOptions = ["butter biscuits", "cream biscuits", "glucose biscuits", "digestive biscuits", "choco chip biscuits"];
 

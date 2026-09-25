@@ -141,6 +141,7 @@ export const PLATFORM_CAPABILITIES: Record<string, PlatformCapability> = {
   Zepto_app: base("Zepto_app", { budget_types: ["daily"], max_products: 150, max_products_confirmed: false }),
   Instamart_app: base("Instamart_app", { bid_unit: "per_1000_impressions" }),
   BigBasket: base("BigBasket"),
+  Flipkart: base("Flipkart", { city_targeting: false, marketplace_targeting: true, settling_days: 14 }),
   noon_minutes_uae_app: base("noon_minutes_uae_app"),
   talabat_mart_uae: base("talabat_mart_uae", { irreversible_fields: ["budget_value"] }),
   carrefour_now_uae: base("carrefour_now_uae", { store_code_targeting: true }),

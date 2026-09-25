@@ -5,6 +5,7 @@ const platforms = [
   { name: "Blinkit Brand Portal", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
   { name: "Instamart Brand Portal", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
   { name: "Zepto Brand Portal", status: "SYNCING", color: "text-sw-amber bg-sw-amber-dim" },
+  { name: "Flipkart Ads", status: "LIVE", color: "text-sw-green bg-sw-green-dim" },
   { name: "Meesho · Myntra", status: "connect", color: "" },
 ];
 

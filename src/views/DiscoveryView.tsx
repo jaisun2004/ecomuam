@@ -20,8 +20,8 @@ const demandForecast = [
   { category: "Health & Fibre", current: 48, forecast: 62 },
 ];
 
-const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto"];
-const platformColors: Record<string, string> = { Instamart: "#FF9900", Blinkit: "#FDDC2B", "Zepto": "#833AB4" };
+const platformFilter = ["All Platforms", "Instamart", "Blinkit", "Zepto", "Flipkart"];
+const platformColors: Record<string, string> = { Instamart: "#FF9900", Blinkit: "#FDDC2B", "Zepto": "#833AB4", Flipkart: "#047BD5" };
 const categoryFilter = ["All Categories", "Cream Biscuits", "Glucose", "Digestive", "Biscuits", "Health & Fibre"];
 
 const trendingKwsByCategory: Record<string, { kw: string; vol: string; wow: string; opp: string; oppColor: string; platform?: string }[]> = {
@@ -421,7 +421,7 @@ const DiscoveryView: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["All", "Blinkit", "Zepto", "Amazon India", "Instamart", "Lulu"].map(p => (
+                  {["All", "Blinkit", "Zepto", "Amazon India", "Instamart", "Flipkart"].map(p => (
                     <SelectItem key={p} value={p} className="text-[11px]">{p}</SelectItem>
                   ))}
                 </SelectContent>

@@ -13,6 +13,7 @@ export const MODAL_PLATFORMS: { name: string; slug: string; mode: TargetingMode;
   { name: "Talabat Mart", slug: "talabat_mart_uae", mode: "city", currency: "AED" },
   { name: "Carrefour Now", slug: "carrefour_now_uae", mode: "city", currency: "AED" },
   { name: "Amazon India", slug: "amazonin", mode: "country", currency: "INR" },
+  { name: "Flipkart", slug: "Flipkart", mode: "country", currency: "INR" },
   { name: "Amazon AE", slug: "amazonae", mode: "country", currency: "AED" },
 ];
 

@@ -321,7 +321,10 @@ export const PRODUCT_LIST: RefProduct[] = [
     "name": "La Shield Fisico Matte Sunscreen Gel (SPF 50+ PA+++)",
     "code": "La Shield Fisico Matte Sunscreen Gel (SPF 50+ PA+++)",
     "platform": "Blinkit"
-  }
+  },
+  { "name": "Britannia Good Day 150g", "code": "CKBFK7GDY150GZQA", "platform": "Flipkart" },
+  { "name": "Parle-G 250g", "code": "CKBFK9PRLG250HWN", "platform": "Flipkart" },
+  { "name": "Bourbon 120g", "code": "CKBFK2BRB120GXLM", "platform": "Flipkart" }
 ];
 
 export const CITY_LIST: RefCity[] = [
@@ -469,7 +472,8 @@ export const CITY_LIST: RefCity[] = [
     "platform": "amazonae",
     "platformCity": "Dubai",
     "geoCity": "Dubai"
-  }
+  },
+  { "platform": "Flipkart", "platformCity": "All of India", "geoCity": "India" }
 ];
 
 export const HISTORICAL_CONFIG: RefHistorical[] = [
@@ -616,7 +620,8 @@ export const HISTORICAL_CONFIG: RefHistorical[] = [
     "cities": "003_DUB_Deira_City_Ctr",
     "productIds": "1020818",
     "targeting": "jade forest:broad:2"
-  }
+  },
+  { "platform": "Flipkart", "name": "na_flipkart_good_day_defend_keyword_20260801_mf", "budgetType": "daily", "budgetValue": 1500.0, "cities": "All of India", "productIds": "CKBFK7GDY150GZQA", "targeting": "good day biscuits:exact:6" }
 ];
 
 export const SAMPLE_BATCH_ROWS: RefSampleRow[] = [

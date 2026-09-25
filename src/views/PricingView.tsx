@@ -13,8 +13,8 @@ import { useGuardrails } from "@/contexts/GuardrailContext";
 const skuOptions = ["Parle-G 250g", "Marie Gold 120g", "Britannia Marie 250g", "Bourbon 250g", "Hide & Seek 120g"];
 /* SKUs that have price data across platforms (used by Own SKU × Platforms) */
 const ownSkuPlatformOptions = ["Britannia Marie 250g", "Hide & Seek 120g"];
-const platformOptions = ["Instamart", "Blinkit", "Zepto"];
-const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4" };
+const platformOptions = ["Instamart", "Blinkit", "Zepto", "Flipkart"];
+const platformColors: Record<string, string> = { Instamart: "#2F77FF", Blinkit: "#FDDC2B", Zepto: "#833AB4", Flipkart: "#047BD5" };
 
 const skuGroupOptions = ["All SKUs", "Butter Range", "Cream Range", "Health Range", "Value Range"];
 
@@ -529,13 +529,14 @@ const PricingView: React.FC = () => {
             </div>
           ) : (
             (() => {
-              const plats = ["Blinkit", "Instamart", "Zepto"];
+              const plats = ["Blinkit", "Instamart", "Zepto", "Flipkart"];
               const base = priceHistoryBySku[ppiSku]?.["All"] ?? [];
               const data = base.map((row: any, i: number) => ({
                 day: row.day,
                 Blinkit: row.yours,
                 Instamart: row.yours - 1 + (i % 3),
                 "Zepto": row.yours + 2 - (i % 4),
+                Flipkart: row.yours - 2 + (i % 2),
               }));
               const latest: any = data[data.length - 1] || {};
               const prev: any = data[data.length - 8] || latest;
@@ -544,7 +545,7 @@ const PricingView: React.FC = () => {
               const maxP = Math.max(...prices);
               return (
                 <>
-                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 3 platforms over 30 days.</p>
+                  <p className="text-[10px] text-muted-foreground mb-2">{ppiSku} — price across 4 platforms over 30 days.</p>
                   <ResponsiveContainer width="100%" height={180}>
                     <LineChart data={data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />

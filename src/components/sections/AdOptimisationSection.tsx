@@ -446,7 +446,7 @@ const CampaignCreatorModal = ({ onClose }: { onClose: () => void }) => {
     budget: '', duration: '7', keywords: '',
   });
 
-  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "BigBasket"];
+  const allPlatforms = ["Instamart", "Instamart", "Blinkit", "Zepto", "BigBasket", "Flipkart"];
 
   const historicalCampaigns = [
     { name: 'Summer Sale - Energy Biscuits', date: 'Jun 2025', roas: '4.2x', spend: '₹ 50K' },
