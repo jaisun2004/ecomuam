@@ -32,7 +32,7 @@ const Topbar: React.FC<TopbarProps> = ({ active, onChange }) => {
       {/* Brand + Tabs */}
       <div className="flex items-center gap-6">
         <h1 className="font-display font-bold text-lg tracking-tight">
-          <span className="text-foreground">Shelf</span><span className="text-primary">wise</span>
+          <span className="text-foreground">m</span><span className="text-primary">Pulse</span>
         </h1>
 
         <div className="ml-8 flex items-center bg-surface-2 rounded-full p-0.5">
